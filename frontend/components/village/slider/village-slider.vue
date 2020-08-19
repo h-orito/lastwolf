@@ -52,7 +52,7 @@
             async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
           ></script>
-          <!-- firewolf-slider -->
+          <!-- lastwolf-slider -->
           <ins
             class="adsbygoogle"
             style="display:inline-block;width:260px;height:90px"

@@ -7,7 +7,7 @@
       <div class="content m-t-10">
         <p>エピローグを迎えた村の戦績を取得できます。</p>
         <h3 class="is-size-6">Request</h3>
-        <p>GET: https://wolfort.net/firewolf/village-record/list</p>
+        <p>GET: https://wolfort.net/lastwolf/village-record/list</p>
         <strong>Parameter</strong>
         <table class="table">
           <thead>
@@ -224,7 +224,7 @@
       <div class="content m-t-10">
         <p>戦績取得可能な最大の村IDを取得できます。</p>
         <h3 class="is-size-6">Request</h3>
-        <p>GET: https://wolfort.net/firewolf/village-record/latest-vid</p>
+        <p>GET: https://wolfort.net/lastwolf/village-record/latest-vid</p>
         <h3>Response</h3>
         <p>型：application/json</p>
         <p>文字コード：UTF8</p>
@@ -261,7 +261,7 @@ export default class extends Vue {
         "epilogue_datetime": "2020/01/03 00:00",
         "epilogue_day": 3,
         "organization": "村占霊狼狂",
-        "url": "https://firewolf.com/village?id=1",
+        "url": "https://lastwolf.com/village?id=1",
         "win_camp_name": "人狼陣営",
         "participant_list": [
           {

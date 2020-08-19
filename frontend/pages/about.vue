@@ -4,7 +4,7 @@
       <h1 class="title is-5">このサイトは</h1>
       <div class="content">
         <ul>
-          <li>FIREWOLFは、オンラインで長期人狼が遊べるサイトです。</li>
+          <li>LASTWOLFは、オンラインで短期人狼が遊べるサイトです。</li>
           <li>ユーザが自分で好きな設定の村を作成することができます。</li>
         </ul>
       </div>

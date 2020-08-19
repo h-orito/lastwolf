@@ -1,12 +1,12 @@
-# FIREWOLF
+# LASTWOLF
 
 ## Overview
 
-- [howling-wolf-ui](https://github.com/h-orito/howling-wolf-ui)から派生した、ユーザが自由に村を作成できるサイトです
+- [howling-wolf-ui](https://github.com/h-orito/howling-wolf-ui)から派生した、短期人狼が遊べるサイトです
 
 - Vue.js で画面 UI を提供します
 
-- API は[firewolf-api](https://github.com/h-orito/firewolf-api)を参照
+- API は[lastwolf-api](https://github.com/h-orito/lastwolf-api)を参照
 
 ## Requirement for local development
 
@@ -14,7 +14,7 @@
 
   - 最新版をインストールしてください
 
-- [firewolf-api](https://github.com/h-orito/firewolf-api) のセットアップもしておいてください
+- [lastwolf-api](https://github.com/h-orito/lastwolf-api) のセットアップもしておいてください
 
 ## Setup for local development
 
@@ -31,7 +31,7 @@
 
   - http://localhost:3000/ が画面 URL になります
 
-- [firewolf-api](https://github.com/h-orito/firewolf-api) を起動しておいてください
+- [lastwolf-api](https://github.com/h-orito/lastwolf-api) を起動しておいてください
 
 ## Contribution
 

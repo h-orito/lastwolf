@@ -1,10 +1,10 @@
 import { NuxtConfig } from '@nuxt/types'
 require('dotenv').config()
 
-const siteName = 'FIREWOLF'
-const siteDesc = '人狼ゲームが無料で遊べるサービスです。'
-const siteKeywords = '人狼,人狼ゲーム,長期人狼'
-const baseUrl = process.env.FIREWOLF_UI_BASEURL || 'http://localhost:3000'
+const siteName = 'LASTWOLF'
+const siteDesc = '短期人狼ゲームが無料で遊べるサービスです。'
+const siteKeywords = '人狼,人狼ゲーム,短期人狼'
+const baseUrl = process.env.LASTWOLF_UI_BASEURL || 'http://localhost:3000'
 const ogpImages = baseUrl + '/image/ogp/'
 const manifestIcon = '/image/icons/icon-512.png'
 
@@ -120,7 +120,7 @@ const nuxtConfig: NuxtConfig = {
     '@fortawesome/fontawesome-free-webfonts',
     '@fortawesome/fontawesome-free-webfonts/css/fa-brands.css',
     '@fortawesome/fontawesome-free-webfonts/css/fa-solid.css',
-    '~/assets/sass/firewolf.scss',
+    '~/assets/sass/lastwolf.scss',
     '~/assets/css/main.css'
   ],
 
@@ -134,7 +134,7 @@ const nuxtConfig: NuxtConfig = {
 
   axios: {
     baseURL:
-      process.env.FIREWOLF_API_BASEURL || 'http://localhost:8087/firewolf'
+      process.env.LASTWOLF_API_BASEURL || 'http://localhost:8088/lastwolf'
   },
 
   router: {
@@ -172,7 +172,7 @@ const nuxtConfig: NuxtConfig = {
   ],
 
   sitemap: {
-    hostname: 'https://fire-wolf.com',
+    hostname: 'https://last-wolf.com',
     // 除外ディレクトリ、ページ
     exclude: [],
     // 動的なルーティングで生成したページ
@@ -180,7 +180,7 @@ const nuxtConfig: NuxtConfig = {
   },
 
   styleResources: {
-    scss: ['~/assets/sass/firewolf.scss']
+    scss: ['~/assets/sass/lastwolf.scss']
   },
 
   loadingIndicator: {

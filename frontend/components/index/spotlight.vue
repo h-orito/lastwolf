@@ -3,8 +3,7 @@
     <img src="~/static/image/top.jpg" alt="top_image" width="100%" />
     <div class="spotlight-tablet is-hidden-mobile has-text-left">
       <p class="spotlight-intro spotlight-shadow is-size-1 has-text-white">
-        勝つのは<br /><span class="spotlight-strong">人</span>か
-        <span class="spotlight-strong">狼</span>か
+        最後まで<br />戦い続ける
       </p>
       <b-button
         v-if="!isLogin"
@@ -22,8 +21,7 @@
       class="spotlight-mobile has-text-left is-block-mobile is-hidden-tablet"
     >
       <p class="spotlight-intro spotlight-shadow is-size-3 has-text-white">
-        勝つのは<br /><span class="spotlight-strong">人</span>か
-        <span class="spotlight-strong">狼</span>か
+        最後まで<br />戦い続ける
       </p>
     </div>
     <div
@@ -56,10 +54,6 @@ export default class Spotlight extends Vue {
   /** computed */
   public get isLogin(): boolean {
     return this.$store.getters.isLogin
-  }
-
-  private get catchCopy(): string {
-    return '勝つのは<br /><span class="spotlight-strong">人</span>か　<span class="spotlight-strong">狼</span>か'
   }
 
   /** methods */
@@ -107,14 +101,6 @@ export default class Spotlight extends Vue {
     font-family: '游明朝', YuMincho, 'Hiragino Mincho ProN W3',
       'ヒラギノ明朝 ProN W3', 'Hiragino Mincho ProN', 'HG明朝E', 'ＭＳ Ｐ明朝',
       'ＭＳ 明朝', serif;
-
-    .spotlight-strong {
-      font-weight: 700;
-      color: #ff0000;
-      text-shadow: 2px 2px 5px rgba(180, 180, 180, 1),
-        -2px 2px 5px rgba(180, 180, 180, 1), 2px -2px 5px rgba(180, 180, 180, 1),
-        -2px -2px 5px rgba(180, 180, 180, 1);
-    }
   }
 }
 </style>
