@@ -87,9 +87,9 @@ export default class Spotlight extends Vue {
     bottom: 4%;
 
     .spotlight-signin-button {
-      text-shadow: 2px 2px 5px rgba(133, 97, 69, 1),
-        -2px 2px 5px rgba(133, 97, 69, 1), 2px -2px 5px rgba(133, 97, 69, 1),
-        -2px -2px 5px rgba(133, 97, 69, 1);
+      text-shadow: 2px 2px 5px rgba(128, 0, 0, 1),
+        -2px 2px 5px rgba(128, 0, 0, 1), 2px -2px 5px rgba(255, 0, 0, 1),
+        -2px -2px 5px rgba(255, 0, 0, 1);
     }
     .spotlight-signin-button:hover {
       text-shadow: none;
