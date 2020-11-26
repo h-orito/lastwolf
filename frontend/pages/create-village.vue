@@ -6,7 +6,9 @@
         ref="setting"
         :village-name.sync="villageName"
         :start-datetime.sync="startDatetime"
-        :silent-hours.sync="silentHours"
+        :noon-seconds.sync="noonSeconds"
+        :vote-seconds.sync="voteSeconds"
+        :night-seconds.sync="nightSeconds"
         :charachip-id.sync="charachipId"
         :dummy-chara-id.sync="dummyCharaId"
         :organization.sync="organization"
@@ -18,18 +20,6 @@
         :visible-grave-message.sync="visibleGraveMessage"
         :available-suddelny-death.sync="availableSuddelnyDeath"
         :available-commit.sync="availableCommit"
-        :normal-count.sync="normalCount"
-        :normal-length.sync="normalLength"
-        :whisper-count.sync="whisperCount"
-        :whisper-length.sync="whisperLength"
-        :sympathize-count.sync="sympathizeCount"
-        :sympathize-length.sync="sympathizeLength"
-        :grave-count.sync="graveCount"
-        :grave-length.sync="graveLength"
-        :monologue-count.sync="monologueCount"
-        :monologue-length.sync="monologueLength"
-        :spectate-count.sync="spectateCount"
-        :spectate-length.sync="spectateLength"
         :join-password.sync="joinPassword"
         save-label="村を作成する"
         @confirm="confirmVillage"
@@ -42,57 +32,42 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import dayjs from 'dayjs'
-import setting from '~/components/create-village/setting.vue'
+import setting from '~/components/setting/setting.vue'
+import Villages from '~/@types/village'
 
 @Component({
-  components: {
-    setting
-  }
+  components: { setting }
 })
 export default class CreateVillage extends Vue {
   /** head */
   private head() {
-    return { title: ' | 村作成' }
+    return { title: '' }
   }
 
-  /** data */
   // form data ------------------------------------
   private villageName: string = ''
   // @ts-ignore
   private startDatetime: Date = this.$dayjs()
-    .add(7, 'days') // 1週間後にしておく
-    .startOf('days')
+    .add(2, 'hours') // 2時間後にしておく
+    .startOf('hour')
     .toDate()
 
-  private silentHours: string = '0'
+  private noonSeconds: string = '3600'
+  private voteSeconds: string = '600'
+  private nightSeconds: string = '1200'
   private charachipId: string = '1'
   private dummyCharaId: string = '1'
-  private organization: string = '村'
-  private availableDummySkill: boolean = false
-  private openVote: boolean = false
+  private organization: string = '狼狼狼狂狐占霊狩共共村村村村村村村'
+  private availableDummySkill: boolean = true
+  private openVote: boolean = true
   private availableSkillRequest: boolean = true
   private availableSpectate: boolean = false
   private openSkillInGrave: boolean = false
   private visibleGraveMessage: boolean = false
   private availableSuddelnyDeath: boolean = true
-  private availableCommit: boolean = false
-
-  private normalCount: string = '20'
-  private normalLength: string = '200'
-  private whisperCount: string = '40'
-  private whisperLength: string = '200'
-  private sympathizeCount: string = '40'
-  private sympathizeLength: string = '200'
-  private graveCount: string = '40'
-  private graveLength: string = '200'
-  private monologueCount: string = '100'
-  private monologueLength: string = '200'
-  private spectateCount: string = '40'
-  private spectateLength: string = '200'
+  private availableCommit: boolean = true
 
   private joinPassword: string = ''
-
-  /** computed */
 
   /** mounted */
   private mounted() {
@@ -102,8 +77,6 @@ export default class CreateVillage extends Vue {
     this.$refs.setting.loadCharas()
     // @ts-ignore
     this.$refs.setting.loadSkills()
-    // @ts-ignore
-    this.$refs.setting.overrideGeneralOrg()
   }
 
   /** methods */
@@ -126,5 +99,3 @@ export default class CreateVillage extends Vue {
   }
 }
 </script>
-
-<style lang="scss"></style>

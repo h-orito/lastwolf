@@ -10,24 +10,19 @@
           <a :href="charachip.description_url" target="_blank">作者HP</a>
         </div>
         <div class="content is-size-7">
-          <loading
-            v-if="loadingCharachip"
-            :message="'キャラチップを読み込み中...'"
-          ></loading>
           <div v-if="!loadingCharachip" class="chara-select-content">
             <div
               v-for="chara in charachip.chara_list"
               :key="chara.id"
               class="has-text-centered chara-select-box"
             >
-              <chara-image
-                v-for="face in chara.face_list"
-                :key="face.type"
-                :chara="chara"
-                :face-type="face.type"
-                :alt="chara.chara_name.name"
+              <img
+                :src="chara.image.image_url"
+                :alt="chara.name.name"
+                :width="chara.image.width"
+                :height="chara.image.height"
               />
-              <p class="is-size-7">{{ chara.chara_name.name }}</p>
+              <p class="is-size-7">{{ chara.name.name }}</p>
             </div>
           </div>
         </div>
@@ -39,19 +34,12 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import qs from 'qs'
-// component
-import loading from '~/components/loading.vue'
 // type
-import Charachip from '~/components/type/charachip'
-import Chara from '~/components/type/chara'
-import { FACE_TYPE } from '~/components/const/consts'
-const charaImage = () => import('~/components/village/chara-image.vue')
+import Charachip from '~/@types/charachip'
+import Chara from '~/@types/chara'
 
 @Component({
-  components: {
-    loading,
-    charaImage
-  },
+  components: {},
   asyncData({ query }) {
     return { charachipId: query.id }
   }
@@ -94,7 +82,7 @@ export default class CharachipDetail extends Vue {
     border-radius: 16px;
     padding: 5px;
     margin: 5px auto;
-    width: 300px;
+    width: 100px;
   }
 }
 </style>

@@ -1,357 +1,120 @@
 <template>
-  <div class="is-size-7 village-wrapper">
-    <div v-if="!$window.isMobile" class="village-leftside-wrapper">
-      <village-slider
-        :village="village"
-        :charachip-name="charachipName"
-        :is-expanded="isSliderExpanded"
-        :messages="messages"
-        @refresh="reload"
-        @filter="filter($event)"
-        @hide-slider="hideSlider"
-        ref="slider"
-      />
+  <div class="is-size-7 has-text-left village-wrapper">
+    <div class="columns">
+      <div class="column p-b-0">
+        <div v-if="village">
+          <p>
+            <strong>{{ village.id }}. {{ village.name }}</strong>
+          </p>
+        </div>
+      </div>
     </div>
-    <div class="village-rightside-wrapper">
-      <village-header
-        class="village-header-wrapper"
-        :current-village-day="displayVillageDay"
-        :village="village"
-        @to-head="toHead"
-        @current-day-change="changeDisplayDay($event)"
-      />
-      <div
-        class="village-main-wrapper"
-        :style="
-          $window.isMobile
-            ? 'max-width: 100vw;'
-            : 'max-width: calc(100vw - 280px);'
-        "
-      >
-        <loading
-          v-if="loadingVillage"
-          :message="'村情報を読み込み中...'"
-          :fixed="true"
-        ></loading>
-        <loading
-          v-if="loadingMessage"
-          :message="'発言を読み込み中...'"
-          :fixed="true"
-        ></loading>
-        <loading
-          v-if="!loadingMessage && loadingSituation"
-          :message="'参加状況を読み込み中...'"
-          :fixed="true"
-        ></loading>
-        <div v-if="village" class="village-article-wrapper">
-          <h1 class="village-name has-text-left">{{ villageName }}</h1>
-          <village-day-list
-            v-if="displayVillageDay"
-            :village="village"
-            :display-village-day-id="displayVillageDay.id"
-            @current-day-change="changeDisplayDay($event)"
-          />
-          <message-cards
-            v-if="messages"
-            :village="village"
-            :messages="messages"
-            :per-page="perPage"
-            :is-latest-day="
-              displayVillageDay &&
-                latestDay &&
-                displayVillageDay.id === latestDay.id
-            "
-            @change-message-page="changeMessagePage($event)"
-            ref="messageCards"
-          />
-          <village-day-list
-            v-if="displayVillageDay"
-            :village="village"
-            :display-village-day-id="displayVillageDay.id"
-            @current-day-change="changeDisplayDay($event)"
-          />
-          <div id="message-bottom" />
-          <div v-if="isDispDebugMenu">
-            <village-debug :village="debugVillage" @reload="reload" />
+    <div class="columns is-desktop">
+      <div class="column p-t-5 p-b-5">
+        <div class="village-info-area-wrapper">
+          <div class="village-participants-area">
+            <participants />
           </div>
-          <div v-if="isDispCreatorMenu">
-            <village-creator
-              :village="village"
-              :situation="situation"
-              @reload="reload"
-            />
+          <div class="village-myself-area">
+            <village-progress ref="progress" />
           </div>
         </div>
-        <action
-          v-if="situation && existsAction"
-          :situation="situation"
-          :village="village"
-          @reload="reload"
-          ref="action"
-        ></action>
       </div>
-      <village-footer
-        class="village-footer-wrapper"
-        :village="village"
-        :exists-new-messages="existsNewMessages"
-        @refresh="reload"
-        @to-bottom="toBottom"
-        @toggle-slider="toggleSlider"
-        ref="footer"
-      />
-      <village-slider
-        v-if="$window.isMobile"
-        :village="village"
-        :charachip-name="charachipName"
-        :is-expanded="isSliderExpanded"
-        :messages="messages"
-        @refresh="reload"
-        @filter="filter($event)"
-        @hide-slider="hideSlider"
-        ref="slider"
-      />
+      <div class="column p-t-5 p-b-5">
+        <div class="village-message-area-wrapper">
+          <div class="village-message-area">
+            <messages ref="messages" />
+          </div>
+          <div class="village-creator-area">
+            <creator v-if="isCreator" />
+          </div>
+        </div>
+        <debug v-if="isDebug" />
+        <div class="has-text-right">
+          <link-button text="トップページへ" path="/" is-small />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import qs from 'qs'
+import dayjs from 'dayjs'
 import firebase from '~/plugins/firebase'
-// components
-import loading from '~/components/loading.vue'
-import action from '~/components/village/action/action.vue'
-import villageFooter from '~/components/village/footer/village-footer.vue'
-import villageHeader from '~/components/village/header/village-header.vue'
-import villageSlider from '~/components/village/slider/village-slider.vue'
-// type
-import Village from '~/components/type/village'
-import VillageDay from '~/components/type/village-day'
-import VillageLatest from '~/components/type/village-latest'
-import Messages from '~/components/type/messages'
-import SituationAsParticipant from '~/components/type/situation-as-participant'
-import DebugVillage from '~/components/type/debug-village'
-import Charachip from '~/components/type/charachip'
-import { VILLAGE_STATUS } from '~/components/const/consts'
-import villageUserSettings, {
-  VillageUserSettings
-} from '~/components/village/user-settings/village-user-settings'
-import actionHelper from '~/components/village/action/village-action-helper'
-import api from '~/components/village/village-api'
-import toast from '~/components/village/village-toast'
-// dynamic imports
-const messageCards = () =>
-  import('~/components/village/message/message-cards.vue')
-const villageDebug = () =>
-  import('~/components/village/debug/village-debug.vue')
-const villageDayList = () => import('~/components/village/village-day-list.vue')
-const villageCreator = () =>
-  import('~/components/village/action/creator/village-creator.vue')
+import messages from '~/components/message/messages.vue'
+import creator from '~/components/creator/creator.vue'
+import villageProgress from '~/components/progress/progress.vue'
+import participants from '~/components/participants/participants.vue'
+import * as actionTypes from '~/store/action-types'
+import Village from '~/@types/village'
+import MyselfPlayer from '~/@types/myself-player'
 
 @Component({
   components: {
-    loading,
-    messageCards,
-    action,
-    villageDebug,
-    villageDayList,
-    villageFooter,
-    villageHeader,
-    villageSlider,
-    villageCreator
+    messages,
+    creator,
+    villageProgress,
+    participants,
+    debug: () => import('~/components/debug/debug.vue'),
+    linkButton: () => import('~/components/parts/link-button.vue')
   },
   asyncData({ query }) {
     return { villageId: query.id }
   }
 })
-export default class extends Vue {
-  // ----------------------------------------------------------------
-  // head
-  // ----------------------------------------------------------------
+export default class VillageV extends Vue {
+  /** head */
   private head() {
-    return { title: this.village == null ? '' : ` | ${this.village.name}` }
+    return { title: '' }
   }
 
-  // ----------------------------------------------------------------
-  // layout
-  // ----------------------------------------------------------------
-  private layout() {
-    return 'village-layout'
-  }
-
-  // ----------------------------------------------------------------
-  // data
-  // ----------------------------------------------------------------
-  /** village_id */
   private villageId: number = 0
-  /** 現在表示している村日付 */
-  private displayVillageDay: VillageDay | null = null
-  /** 村情報を取得中か */
-  private loadingVillage: boolean = true
-  /** 発言を取得中か */
-  private loadingMessage: boolean = false
-  /** 参加状況を取得中か */
-  private loadingSituation: boolean = false
-  /** 村 */
-  private village: Village | null = null
-  /** 発言 */
-  private messages: Messages | null = null
-  /** 参加状況 */
-  private situation: SituationAsParticipant | null = null
-  /** ローカル環境限定の村情報 */
-  private debugVillage: DebugVillage | null = null
-  /** 現在の発言ページ番号 */
-  private currentPageNum: number | null = 1
-  /** 1ページあたりの表示件数 */
-  private perPage: number = 0
-  /** 最新発言unix time milli */
-  private latestMessageUnixTimeMilli: number = 0
-  /** 新しい発言があるか */
-  private existsNewMessages: boolean = false
-  /** 新しい発言があるか定期的にチェックするtimer */
-  private latestTimer: any | null = null
-  /** 残り時間表示 */
-  private daychangeTimer: any | null = null
-  /** この村のキャラチップ名 */
-  private charachipName: string | null = null
-  /** 発言抽出：発言種別 */
-  private messageTypeFilter: string[] | null = null
-  /** 発言抽出：参加者 */
-  private participantIdFilter: number[] | null = null
-  /** 発言抽出：キーワード */
-  private keywordFilter: string | null = null
-  /** サイドバー */
-  private isSliderExpanded: boolean = false
-
-  // ----------------------------------------------------------------
-  // computed
-  // ----------------------------------------------------------------
-  /** 村名と状態 */
-  private get villageName(): string {
-    const status = this.village!.status
-    if (status.code !== VILLAGE_STATUS.PROGRESS || !this.displayVillageDay) {
-      return this.village!.name + ' - ' + status.name
-    }
-    return (
-      this.village!.name +
-      ' - ' +
-      status.name +
-      ' - ' +
-      this.displayVillageDay!.day +
-      '日目'
-    )
-  }
-
-  /** 最新村日付 */
-  private get latestDay(): VillageDay | null {
-    if (this.village == null) return null
-    return this.village.day.day_list[this.village.day.day_list.length - 1]
-  }
+  private timer: any | null = null
 
   /** ローカル環境か */
   private get isDebug(): boolean {
     return (process.env as any).ENV === 'local'
   }
 
-  /** デバッグメニューを表示するか */
-  private get isDispDebugMenu(): boolean {
-    return this.isDebug && this.debugVillage != null && this.situation != null
-  }
-
-  private get isDispCreatorMenu(): boolean {
-    return (
-      !!this.village &&
-      !!this.situation &&
-      this.situation.creator.available_creator_setting
-    )
-  }
-
-  /** 自動的に最新発言を読み込むか */
-  private get shouldLoadMessage(): boolean {
-    // 最新日の最新ページを見ていない場合は勝手に更新したくない
-    if (!this.isViewingLatest) return false
-    // 発言入力中も勝手に更新したくない
-    // @ts-ignore
-    if (this.$refs.action && this.$refs.action.isInputting) return false
-    // 発言抽出中も勝手に更新したくない
-    // @ts-ignore
-    if (this.$refs.slider.isFiltering) return false
-    return true
-  }
-
-  /** 最新日・最新ページを見ているか */
-  private get isViewingLatest(): boolean {
-    // 最新日を見ていない
-    if (this.displayVillageDay!.id !== this.latestDay!.id) return false
-    // 最新ページを見ていない
-    if (
-      this.messages!.all_page_count != null &&
-      this.currentPageNum !== this.messages!.all_page_count
-    )
-      return false
-
-    return true
-  }
-
-  private get existsAction(): boolean {
-    return !!this.situation && actionHelper.existsAction(this.situation)
-  }
-
-  private get isNotFinished(): boolean {
-    const status = this.village!.status.code
-    return (
-      this.village!.status.code !== VILLAGE_STATUS.COMPLETE &&
-      this.village!.status.code !== VILLAGE_STATUS.CANCEL
-    )
+  private get village(): Village | null {
+    return this.$store.getters.village
   }
 
   private get isAlreadyAuthenticated(): boolean {
     return this.$store.getters.isAuthenticated
   }
 
-  // ----------------------------------------------------------------
-  // mounted
-  // ----------------------------------------------------------------
-  private mounted() {
-    this.mountedLoading()
-    this.$nextTick(() => {
-      // ビュー全体がレンダリングされた後に実行
-      // safari対策
-      this.resizeHeight()
-      window.addEventListener('resize', () => this.resizeHeight())
-    })
+  private get isCreator(): boolean {
+    const player = this.$store.getters.player
+    return (
+      !!this.village && !!player && this.village.creator_player.id === player.id
+    )
   }
 
-  private async mountedLoading(): Promise<void> {
-    // 認証を待つ
+  private async mounted(): Promise<void> {
     await this.auth()
-    // 表示設定が作成されていなかったら作成
-    villageUserSettings.createCookieIfNeeded(this)
-    // もろもろ読込
-    await this.reload()
-    // キャラチップ名
-    this.charachipName = await this.loadCharachipName()
-    // 定期的に最新発言がないかチェックする
-    if (this.isNotFinished) {
-      this.latestTimer = this.setLatestTimer()
-      this.daychangeTimer = this.setDaychangeTimer()
-    } else {
-      // 1回だけ実行
-      this.updateDaychangeTimer()
-    }
+    const self = this
+    await Promise.all([
+      this.$store.dispatch(actionTypes.INIT_VILLAGE, {
+        villageId: this.villageId,
+        uid: this.$store.getters.user.uid,
+        dayChangeCallback: () => self.openLatestday()
+      }),
+      this.$store.dispatch(actionTypes.INIT_MESSAGE, {
+        villageId: this.villageId,
+        uid: this.$store.getters.user.uid
+      })
+    ])
+    this.timer = this.setTimer()
   }
 
-  // ----------------------------------------------------------------
-  // destroyed
-  // ----------------------------------------------------------------
   private destroyed(): void {
-    this.clearTimer()
+    this.$store.dispatch(actionTypes.TERMINATE_VILLAGE)
+    this.$store.dispatch(actionTypes.TERMINATE_MESSAGE)
+    clearInterval(this.timer)
   }
 
-  // ----------------------------------------------------------------
-  // methods
-  // ----------------------------------------------------------------
-  /** 認証 */
   private async auth(): Promise<void> {
     // 認証済みなら何もしない
     if (this.isAlreadyAuthenticated) return
@@ -363,285 +126,140 @@ export default class extends Vue {
     })
   }
 
-  /** 村を読み込み */
-  private async loadVillage(): Promise<void> {
-    this.loadingVillage = true
-    this.village = await api.fetchVillage(this, this.villageId)
-    this.loadingVillage = false
-  }
-
-  /** 発言を読み込み */
-  private async loadMessage(
-    isDispLatestDay: boolean = false,
-    isDispLatestPage: boolean = false
-  ): Promise<void> {
-    this.loadingMessage = true
-    // 村を読み込めていない場合は何もしない
-    if (this.latestDay == null) {
-      this.loadingMessage = false
-      return
-    }
-    // 表示する日付
-    const displayDay = isDispLatestDay ? this.latestDay : this.displayVillageDay
-    // 読み込み
-    this.messages = await api.fetchMessageList(
-      this,
-      this.villageId,
-      displayDay,
-      isDispLatestPage,
-      this.currentPageNum,
-      this.messageTypeFilter,
-      this.participantIdFilter,
-      this.keywordFilter
-    )
-    if (villageUserSettings.getPaging(this).is_paging) {
-      this.perPage = villageUserSettings.getPaging(this).message_per_page
-    }
-    this.currentPageNum = this.messages!.current_page_num
-    this.updateLatestMessageUnixTimeMilliIfNeeded()
-    this.loadingMessage = false
-  }
-
-  /** 参加状況を読み込み */
-  private async loadSituation(): Promise<void> {
-    this.loadingSituation = true
-    // 村を読み込めていない場合は何もしない
-    if (this.village == null) {
-      this.loadingSituation = false
-      return
-    }
-    // 参加状況を読み込み
-    this.situation = await api.fetchSituation(this, this.villageId)
-    this.loadingSituation = false
-  }
-
-  /** キャラチップ名を読み込み */
-  private loadCharachipName(): Promise<string> {
-    return api.fetchCharachipName(this, this.village!)
-  }
-
-  /** デバッグ用村情報を読み込み */
-  private loadDebugVillage(): Promise<DebugVillage> {
-    return api.fetchDebugVillage(this, this.villageId)
-  }
-
-  /** もろもろ読み込み */
-  private async reload(): Promise<void> {
-    await this.loadVillage()
-    await Promise.all([
-      this.loadMessage(true, true), // 最新
-      this.loadSituation()
-    ])
-    // デバッグ用村情報
-    if (this.isDebug) this.debugVillage = await this.loadDebugVillage()
-    // 最新日を表示
-    this.displayVillageDay = this.latestDay!
-    this.existsNewMessages = false
-    if (this.isNotFinished) {
-      // 能力行使等をリセット
-      // @ts-ignore
-      if (this.existsAction) this.$refs.action.reset()
-    }
-    this.toBottom()
-
-    // 発言抽出欄を初期状態に戻す
+  // 最新日を開く
+  private openLatestday(): void {
     // @ts-ignore
-    this.$refs.slider.filterRefresh()
-    // アンカーメッセージを非表示にする
-    // @ts-ignore
-    if (this.$refs.messageCards) this.$refs.messageCards.clearAnchorMessages()
+    this.$refs.messages.openLatestday()
   }
 
-  private async reloadVillage(): Promise<void> {
-    await this.loadVillage()
-    // デバッグ用村情報
-    if (this.isDebug) this.debugVillage = await this.loadDebugVillage()
-    // 最新日を表示
-    this.displayVillageDay = this.latestDay!
-  }
-
-  /** 表示する村日付を変更 */
-  private async changeDisplayDay({ villageDayId }): Promise<void> {
-    const selectedDay = this.village!.day.day_list.find(
-      day => day.id === villageDayId
-    )
-    if (selectedDay == null) return
-    this.displayVillageDay = selectedDay
-    this.currentPageNum = 1
-    await this.loadMessage()
-    this.toHead()
-  }
-
-  /** 表示するページを変更 */
-  private async changeMessagePage({ pageNum }): Promise<void> {
-    this.currentPageNum = pageNum
-    await this.loadMessage()
-    this.toHead()
-  }
-
-  /** 発言抽出 */
-  private async filter({
-    messageTypeList,
-    participantIdList,
-    keyword
-  }): Promise<void> {
-    this.messageTypeFilter = messageTypeList
-    this.participantIdFilter = participantIdList
-    this.keywordFilter = keyword
-    await this.loadMessage()
-  }
-
-  /** 発言内容の最上部にスクロール */
-  private toHead(): void {
-    const element = document.getElementsByClassName('site')
-    if (element == null) return
-    this.$scrollTo(element[0], {
-      container: '.village-article-wrapper'
-    })
-  }
-
-  private toBottom(): void {
-    const element = document.getElementById('message-bottom')
-    if (element == null) return
-    this.$scrollTo(element, {
-      container: '.village-article-wrapper'
-    })
-  }
-
-  /** 定期的に最新発言がないかチェック */
-  private setLatestTimer(): any {
-    return setInterval(this.loadVillageLatest, 30 * 1000)
-  }
-
-  /** 更新までの残り時間を表示 */
-  private setDaychangeTimer(): any {
+  // タイマー
+  private setTimer(): any {
     return setInterval(this.updateDaychangeTimer, 1000)
   }
 
-  /** 最新発言チェックを解除 */
-  private clearTimer(): void {
-    clearInterval(this.latestTimer)
-    clearInterval(this.daychangeTimer)
-    if (this.resizeTimeout) clearTimeout(this.resizeTimeout)
-  }
-
-  private updateLatestMessageUnixTimeMilliIfNeeded(): void {
-    if (!this.messages || this.messages.list.length <= 0) return
-    const unixTimeMilli = this.messages!.list[this.messages!.list.length - 1]
-      .time.unix_time_milli
-    if (this.latestMessageUnixTimeMilli < unixTimeMilli)
-      this.latestMessageUnixTimeMilli = unixTimeMilli
-  }
-
-  /** 最新発言チェック */
-  private async loadVillageLatest(): Promise<void> {
-    const latest: VillageLatest = await api.fetchVillageLatest(
-      this,
-      this.villageId,
-      this.latestMessageUnixTimeMilli
-    )
-    const currentLatestVillageDayId: number = this.latestDay!.id
-    if (latest.village_day_id !== currentLatestVillageDayId) {
-      // 日付が変わった
-      this.existsNewMessages = true
-      if (this.shouldLoadMessage) {
-        this.reload()
-        toast.info(this, '日付が変わりました')
-      } else {
-        toast.info(this, '日付が変わりました。リロードしてください。')
-      }
-    } else if (this.latestMessageUnixTimeMilli < latest.unix_time_milli) {
-      // 発言が増えた
-      this.existsNewMessages = true
-      if (this.shouldLoadMessage) {
-        this.loadMessage()
-        toast.info(this, '最新発言を読み込みました')
-        this.existsNewMessages = false
-      }
-    }
-  }
-
   private updateDaychangeTimer(): void {
-    ;(this.$refs as any).footer.refreshTimer()
-  }
-
-  private toggleSlider(): void {
-    this.isSliderExpanded = !this.isSliderExpanded
-  }
-
-  private hideSlider(): void {
-    this.isSliderExpanded = false
-  }
-
-  // safariアドレスバーメニューバー対策
-  private resizeTimeout: any = null
-  private resizeHeight(): void {
-    if (this.resizeTimeout) clearTimeout(this.resizeTimeout)
-    this.resizeTimeout = setTimeout(() => {
-      const vh = window.innerHeight * 0.01
-      document.documentElement.style.setProperty('--vh', `${vh}px`)
-    }, 500)
+    // @ts-ignore
+    this.$refs.progress.refreshTimer()
   }
 }
 </script>
 
-<style lang="scss" scoped>
-// 全体レイアウト
-html {
-  overflow-y: auto !important;
-}
+<style lang="scss">
 .village-wrapper {
-  display: flex;
-  flex-shrink: 0;
-  justify-content: space-between;
-  width: 100%;
-  height: 100vh;
-  height: calc(100 * var(--vh, 1vh));
+  padding: 5px;
 
-  .village-leftside-wrapper {
-    height: 100vh;
-    background-color: $dark;
-  }
+  .village-info-area-wrapper {
+    .village-participants-area {
+      margin-bottom: 5px;
 
-  .village-rightside-wrapper {
-    flex: 1;
-    display: flex;
-    flex-shrink: 0;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    height: calc(100 * var(--vh, 1vh));
+      .participants {
+        .participant {
+          display: inline-block;
+          vertical-align: top;
 
-    .village-header-wrapper {
-      height: 1.8rem;
-    }
+          .bold {
+            font-weight: bold;
+          }
 
-    .village-footer-wrapper {
-      height: 1.8rem;
-      height: calc(1.8rem + env(safe-area-inset-bottom));
-    }
-
-    .village-main-wrapper {
-      flex: 1;
-      display: flex;
-      flex-shrink: 0;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow-y: auto;
-
-      .village-article-wrapper {
-        flex: 1;
-        overflow-y: scroll;
-
-        .village-name {
-          margin: 10px 5px;
+          img {
+            width: 50px;
+            height: 77px;
+          }
+          img.dead {
+            opacity: 0.3;
+          }
         }
       }
-      .village-action-wrapper {
+    }
+    .village-myself-area {
+      margin-bottom: 5px;
+
+      .myself {
+        p {
+          line-height: 1.5;
+        }
+      }
+      .chara-select-content {
         display: flex;
-        flex-shrink: 0;
-        flex-direction: column;
-        justify-content: space-between;
+        flex-wrap: wrap;
+
+        .chara-select-box {
+          border: 1px solid #cccccc;
+          border-radius: 16px;
+          padding: 5px;
+          margin: 5px auto;
+          width: 160px;
+        }
+        .chara-select-box:hover {
+          cursor: pointer;
+          border: 1px solid $primary;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  .village-message-area-wrapper {
+    .village-message-area {
+      .messages {
+        .message-area {
+          max-height: 80vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+
+          .village-message {
+            color: #777777;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            line-height: 1.8;
+
+            .message-speaker {
+            }
+            .message-content {
+              flex: 1;
+              font-family: sans-serif;
+              white-space: pre-wrap;
+              word-wrap: break-word;
+              word-break: break-all;
+            }
+            .message-strong {
+              font-weight: bold;
+            }
+            .message-type {
+              color: #ccc;
+              text-align: right;
+            }
+            .message-time {
+              color: #ccc;
+              text-align: right;
+            }
+          }
+
+          .message-border {
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+          }
+
+          /** 線同士の重なりを防ぐ */
+          .message-border + .message-border {
+            border-top: none;
+          }
+        }
+      }
+      .b-tabs .tab-content {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-bottom: 0 !important;
+      }
+
+      .tabs.is-toggle li {
+        a {
+          text-decoration: none !important;
+        }
+
+        &.is-active a {
+          color: $white !important;
+        }
       }
     }
   }

@@ -13,7 +13,7 @@ import {
   min_value
 } from 'vee-validate/dist/rules'
 import ja from 'vee-validate/dist/locale/ja.json'
-import * as CustomRules from '~/components/create-village/form/organization-rules'
+import * as CustomRules from '~/components/form/validation/organization-rules'
 
 // 必要なルールのみインポート
 extend('required', required)

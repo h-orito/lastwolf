@@ -87,10 +87,10 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import Skill from '~/components/type/skill'
-import Camp from '~/components/type/camp'
-import AbilityType from '~/components/type/ability-type'
-import MessageType from '~/components/type/message-type'
+import Skill from '~/@types/skill'
+import Camp from '~/@types/camp'
+import AbilityType from '~/@types/ability-type'
+import MessageType from '~/@types/message-type'
 
 interface TableSkill {
   name: string

@@ -1,70 +1,91 @@
 <template>
-  <div class="menu-wrap">
-    <spotlight @signin="signin" />
-    <div
-      v-if="isStg"
-      class="p-t-30 p-b-30 p-l-30 p-r-30"
-      style="background: linear-gradient(#0a0a1a 0%, #112 50%, #0a0a1a 100%);"
-    >
-      <div
-        style="border-radius: 4px; border: 1px solid #ff0000; width: 100%; background: linear-gradient(#0a0a1a 0%, #112 50%, #0a0a1a 100%);"
-        class="has-text-danger is-size-6 p-t-5 p-b-5 p-l-5 p-r-5"
-      >
-        テストサーバのため、データは不定期に削除される可能性があります。
+  <div>
+    <div class="spotlight-area">
+      <img src="~/static/image/top.jpg" alt="top_image" width="100%" />
+      <div class="spotlight has-text-left">
+        <p class="spotlight-intro spotlight-shadow is-size-3 has-text-white">
+          LASTWOLF
+        </p>
       </div>
     </div>
-    <intro />
-    <player-stats
-      :myself-player="user"
-      :is-loading="loadingAuth"
-      @signin="signin"
-      @logout="logout"
-    />
-    <village-list :loading-villages="isLoadingVillages" :villages="villages" />
-    <reserved-village
-      v-if="
-        !isLoadingReservedVillages &&
-          reservedVillages &&
-          reservedVillages.list.length > 0
-      "
-      :is-loading="isLoadingReservedVillages"
-      :reserved-villages="reservedVillages"
-    />
-    <charachip />
-    <index-footer />
+    <section class="section">
+      <div class="container">
+        <h1 class="title is-5">LASTWOLF</h1>
+        <div class="content is-size-6">
+          <p>LASTWOLFは短期人狼が無料で遊べるサービスです。</p>
+          <link-button text="このサイトは" path="/about" class="m-b-10" />
+          <link-button text="仕様" path="/rule" class="m-b-10" /><br />
+          <link-button text="よくある質問" path="/faq" class="m-b-10" />
+          <link-button text="更新情報" path="/release-note" class="m-b-10" />
+        </div>
+      </div>
+    </section>
+    <section class="section has-background-light" v-if="isLogin">
+      <div class="container">
+        <h2 class="title is-5">ようこそ</h2>
+        <div class="content">
+          <p class="is-size-6">
+            {{ `${player.nickname}@${player.twitter_user_name} さん` }}
+          </p>
+        </div>
+        <b-button icon-pack="fab" icon-left="twitter" @click="logout"
+          >ログアウト</b-button
+        >
+      </div>
+    </section>
+    <section class="section has-background-light" v-if="!isLogin">
+      <div class="container">
+        <h2 class="title is-5">アプリ連携すると参加できます</h2>
+        <div class="content is-size-6">
+          <p class="is-size-7">名前とユーザ名がエピローグで表示されます</p>
+        </div>
+        <b-button
+          type="is-primary"
+          icon-pack="fab"
+          icon-left="twitter"
+          @click="signin"
+          >連携する</b-button
+        >
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <h1 class="title is-5">村一覧</h1>
+        <div class="content is-size-7">
+          <village-list :villages="villages" />
+          <link-button
+            :disabled="!canCreateVillage"
+            class="m-t-10 m-r-10"
+            text="村を作成"
+            path="/create-village"
+          />
+          <link-button class="m-t-10" text="終了した村" path="/village-list" />
+        </div>
+      </div>
+    </section>
+    <section class="section has-background-light">
+      <div class="container">
+        <div class="content is-size-7">
+          <toppage-footer />
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import qs from 'qs'
 import cookies from 'cookie-universal-nuxt'
 import firebase from '~/plugins/firebase'
-// component
-import spotlight from '~/components/index/spotlight.vue'
-import intro from '~/components/index/intro.vue'
-import loading from '~/components/loading.vue'
-// type
-import Villages from '~/components/type/villages'
-import SimpleVillage from '~/components/type/simple-village'
-import MyselfPlayer from '~/components/type/myself-player'
-import { VILLAGE_STATUS } from '~/components/const/consts'
-
-// dynamic imports
-const playerStats = () => import('~/components/index/player-stats.vue')
-const villageList = () => import('~/components/index/village-list.vue')
-const charachip = () => import('~/components/index/charachip.vue')
-const indexFooter = () => import('~/components/index/index-footer.vue')
+import Villages from '~/@types/village'
+import MyselfPlayer from '~/@types/myself-player'
+import linkButton from '~/components/parts/link-button.vue'
 
 @Component({
   components: {
-    spotlight,
-    intro,
-    playerStats,
-    villageList,
-    charachip,
-    indexFooter,
-    loading
+    linkButton,
+    villageList: () => import('~/components/toppage/village-list.vue'),
+    toppageFooter: () => import('~/components/toppage/footer.vue')
   }
 })
 export default class TopPage extends Vue {
@@ -73,44 +94,41 @@ export default class TopPage extends Vue {
     return { title: '' }
   }
 
+  private layout() {
+    return 'top-layout'
+  }
+
   /** data */
-  // 村一覧
-  private villages: SimpleVillage[] = []
-  // loading
-  private loadingAuth: boolean = true
-  private isLoadingVillages: boolean = true
-  private isLoadingReservedVillages: boolean = true
+  private villages: Villages | null = null
+  private loadingVillages: boolean = false
 
-  /** computed */
-  private get user(): MyselfPlayer | null {
-    return this.$store.getters.getPlayer
+  private get player(): MyselfPlayer | null {
+    return this.$store.getters.player
   }
 
-  private get isDebug(): boolean {
-    return (process.env as any).ENV === 'local'
-  }
-
-  private get isStg(): boolean {
-    return (process.env as any).ENV !== 'production'
+  private get isLogin(): boolean {
+    return this.$store.getters.isLogin
   }
 
   private get isAlreadyAuthenticated(): boolean {
     return this.$store.getters.isAuthenticated
   }
 
+  private get canCreateVillage(): boolean {
+    if (!this.player) return false
+    return this.player.available_create_village
+  }
+
   /** created */
-  async created() {
-    // 認証を待つ
+  private async created(): Promise<void> {
+    this.loadingVillages = true
+    this.villages = await this.$axios.$get('/village/list')
+    this.loadingVillages = false
     await this.auth()
     // ログイン後のリダイレクトの際、ユーザ情報をサーバに保存
     this.registerUserIfNeeded()
-    this.loadingAuth = false
-
-    // 村一覧
-    this.loadingVillages()
   }
 
-  /** methods */
   private async auth(): Promise<void> {
     // 認証済みなら何もしない
     if (this.isAlreadyAuthenticated) return
@@ -120,43 +138,6 @@ export default class TopPage extends Vue {
     await this.$store.dispatch('LOGINOUT', {
       user
     })
-  }
-
-  private async loadingVillages(): Promise<void> {
-    this.isLoadingVillages = true
-    const res = await this.$axios.$get('/village/list', {
-      params: {
-        village_status: [
-          VILLAGE_STATUS.PROLOGUE,
-          VILLAGE_STATUS.PROGRESS,
-          VILLAGE_STATUS.EPILOGUE
-        ],
-        is_auto_generate: true
-      },
-      paramsSerializer: params =>
-        qs.stringify(params, { arrayFormat: 'repeat' })
-    })
-    this.villages = (res as Villages).list
-    this.isLoadingVillages = false
-  }
-
-  private openModal(selector: string): void {
-    const modal = document.querySelector(selector)
-    const html = document.querySelector('html')
-    modal!.classList.add('is-active')
-    html!.classList.add('is-clipped')
-    modal!
-      .querySelector('.modal-background')!
-      .addEventListener('click', function(e) {
-        e.preventDefault()
-        modal!.classList.remove('is-active')
-        html!.classList.remove('is-clipped')
-      })
-  }
-
-  private async signin(): Promise<void> {
-    const provider = new firebase.auth.TwitterAuthProvider()
-    await firebase.auth().signInWithRedirect(provider)
   }
 
   private async registerUserIfNeeded(): Promise<void> {
@@ -195,6 +176,11 @@ export default class TopPage extends Vue {
     })
   }
 
+  private async signin(): Promise<void> {
+    const provider = new firebase.auth.TwitterAuthProvider()
+    await firebase.auth().signInWithRedirect(provider)
+  }
+
   private async logout(): Promise<void> {
     await firebase.auth().signOut()
     location.reload()
@@ -203,24 +189,25 @@ export default class TopPage extends Vue {
 </script>
 
 <style lang="scss">
-.spotlight-shadow {
-  text-shadow: 2px 2px 5px rgba(128, 0, 0, 1), -2px 2px 5px rgba(128, 0, 0, 1),
-    2px -2px 5px rgba(255, 0, 0, 1), -2px -2px 5px rgba(255, 0, 0, 1);
-}
-.button.spotlight-shadow:hover {
-  text-shadow: none;
-}
-.menu-wrap {
-  background-color: #0a0a1a;
+.spotlight-area {
+  position: relative;
 
-  .menu-area {
-    background: linear-gradient(#0a0a1a 0%, #112 50%, #0a0a1a 100%);
-    color: $white;
-    padding: 30px 30px;
-    margin-bottom: 50px;
+  .spotlight {
+    position: absolute;
+    right: 2%;
+    bottom: calc(50% - 2rem);
   }
-  .menu-area:last-child {
-    margin-bottom: 0;
+
+  .spotlight-intro {
+    font-family: '游明朝', YuMincho, 'Hiragino Mincho ProN W3',
+      'ヒラギノ明朝 ProN W3', 'Hiragino Mincho ProN', 'HG明朝E', 'ＭＳ Ｐ明朝',
+      'ＭＳ 明朝', serif;
+  }
+
+  .spotlight-shadow {
+    text-shadow: 2px 2px 5px rgba(69, 97, 133, 1),
+      -2px 2px 5px rgba(69, 97, 133, 1), 2px -2px 5px rgba(69, 97, 133, 1),
+      -2px -2px 5px rgba(69, 97, 133, 1);
   }
 }
 </style>
