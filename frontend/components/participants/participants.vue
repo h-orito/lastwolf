@@ -52,7 +52,7 @@ export default class Participants extends Vue {
 
   private get participants(): VillageParticipant[] {
     if (!this.village) return []
-    return this.village.participants.member_list.sort(compare)
+    return this.village.participants.member_list.slice().sort(compare)
   }
 
   private get isSolved(): boolean {

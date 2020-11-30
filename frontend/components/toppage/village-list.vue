@@ -42,5 +42,8 @@ import Villages from '~/@types/village'
 export default class VillageList extends Vue {
   @Prop({ type: Object })
   private villages!: Villages | null
+
+  @Prop({ type: Boolean })
+  private loadingVillages!: boolean
 }
 </script>

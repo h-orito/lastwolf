@@ -52,7 +52,10 @@
       <div class="container">
         <h1 class="title is-5">村一覧</h1>
         <div class="content is-size-7">
-          <village-list :villages="villages" />
+          <village-list
+            :villages="villages"
+            :loading-villages="loadingVillages"
+          />
           <link-button
             :disabled="!canCreateVillage"
             class="m-t-10 m-r-10"

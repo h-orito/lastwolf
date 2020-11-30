@@ -13,7 +13,7 @@
       </div>
       <div style="display: 1;" class="has-text-left">
         <div style="display: flex;">
-          <p :class="isMyself ? 'bold' : ''">
+          <p :class="charaNameClass">
             {{ participant.chara.name.name }}
           </p>
           <p v-if="participant.dead" class="has-text-danger m-l-5">
@@ -63,7 +63,7 @@
         :alt="participant.chara.name.name"
         :class="participant.dead ? 'dead' : ''"
       />
-      <p :class="isMyself ? 'bold' : ''">{{ participant.chara.name.name }}</p>
+      <p :class="charaNameClass">{{ participant.chara.name.name }}</p>
       <p class="has-text-info" v-if="participant.co">
         {{ participant.co + 'CO' }}
       </p>
@@ -82,6 +82,7 @@ import VillageParticipant from '~/@types/village-participant'
 import Village from '~/@types/village'
 import SituationAsParticipant from '~/@types/situation-as-participant'
 import { VILLAGE_STATUS } from '~/consts/consts'
+import { getColorClass } from '~/components/message/message-color'
 
 @Component({
   components: {}
@@ -114,6 +115,16 @@ export default class ParticipantV extends Vue {
       this.village.status.code === VILLAGE_STATUS.ROLLCALLING &&
       this.participant.done_roll_call
     )
+  }
+
+  private get color(): string | null {
+    return getColorClass(this.village, this.participant)
+  }
+
+  private get charaNameClass(): string {
+    const bold = this.isMyself ? 'bold' : ''
+    const color = getColorClass(this.village, this.participant)
+    return `${bold} ${color || ''}`
   }
 }
 </script>

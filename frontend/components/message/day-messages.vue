@@ -7,6 +7,7 @@
       :start="day.start_datetime"
       :is-prologue="isPrologue"
       :is-epilogue="day.epilogue"
+      :color="color(m)"
     />
   </div>
 </template>
@@ -18,6 +19,7 @@ import Village from '~/@types/village'
 import VillageDay from '~/@types/village-day'
 import Message from '~/@types/message'
 import { NOONNIGHT_CODE } from '~/consts/consts'
+import { getColorClass } from '~/components/message/message-color'
 
 @Component({
   components: { message }
@@ -46,6 +48,15 @@ export default class Messages extends Vue {
         m => m.time.village_day_id === this.day.id
       )
     }
+  }
+
+  private get village(): Village | null {
+    return this.$store.getters.village
+  }
+
+  private color(message: Message): string | null {
+    if (!message.from || this.isNight) return null
+    return getColorClass(this.village!, message.from)
   }
 }
 </script>

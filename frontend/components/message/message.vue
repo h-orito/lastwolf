@@ -35,6 +35,9 @@ export default class MessageV extends Vue {
   @Prop({ type: Boolean })
   private isEpilogue!: boolean
 
+  @Prop({ type: String })
+  private color!: string | null
+
   private get messageTime(): string {
     if (this.isPrologue || this.isEpilogue) {
       return dayjs().format('HH:mm')
@@ -48,7 +51,8 @@ export default class MessageV extends Vue {
     const system = isSystemMessage(this.message) ? 'message-border' : ''
     const wolfMessage = isWolfMessage(this.message) ? ' has-text-danger' : ''
     const graveMessage = isGraveMessage(this.message) ? ' has-text-info' : ''
-    return system + wolfMessage + graveMessage
+    const color = this.color ? ` ${this.color}` : ''
+    return system + wolfMessage + graveMessage + color
   }
 
   private get messageType(): string {

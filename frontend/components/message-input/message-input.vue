@@ -1,16 +1,27 @@
 <template>
   <b-field>
     <b-input
-      placeholder="発言を入力しEnterで送信してください"
+      placeholder="Enterで発言、Shift+Enterで強調発言できます。"
       icon="comment"
       icon-pack="fas"
       size="is-small"
       v-model="message"
       :disabled="!canSay"
-      @keyup.enter.native="say"
-      @keypress.enter.native="setCanMessageSubmit()"
+      expanded
+      @keypress.enter.native="keypressEnter"
+      @keyup.enter.exact.native="keyupEnter"
+      @keyup.enter.shift.native="strongSay"
     >
     </b-input>
+    <b-checkbox-button
+      v-model="strong"
+      size="is-small"
+      :native-value="true"
+      type="is-primary"
+    >
+      <b-icon pack="fas" icon="bold"></b-icon>
+      <span>強調</span>
+    </b-checkbox-button>
   </b-field>
 </template>
 
@@ -28,10 +39,7 @@ import { NOONNIGHT_CODE, MESSAGE_TYPE } from '~/consts/consts'
 export default class MessageInput extends Vue {
   private canMessageSubmit: boolean = false
   private message: string = ''
-
-  private setCanMessageSubmit(): void {
-    this.canMessageSubmit = true
-  }
+  private strong: boolean = false
 
   private get canSubmit(): boolean {
     const mes = this.message.trim()
@@ -77,20 +85,42 @@ export default class MessageInput extends Vue {
     )
   }
 
+  private keypressEnter(): void {
+    this.canMessageSubmit = true
+  }
+
+  private keyupEnter(e: any): void {
+    // 日本語確定のEnterはスキップ
+    if (!this.canMessageSubmit) {
+      return
+    }
+    this.say()
+    e.preventDefault()
+  }
+
+  private async strongSay(e: any): Promise<void> {
+    // 日本語確定のEnterはスキップ
+    if (!this.canMessageSubmit) {
+      return
+    }
+    this.strong = true
+    await this.say()
+    e.preventDefault()
+  }
+
   private async say(): Promise<void> {
     if (!this.canSubmit) {
       return
     }
     const mes = this.message.trim().substring(0, 200)
-    if (!this.canMessageSubmit) {
-      return
-    }
     this.canMessageSubmit = false
     this.message = ''
+    const isStrong = this.strong
+    this.strong = false
     await this.$axios.$post(`/village/${this.villageId}/say`, {
       message: mes,
       message_type: this.messageType,
-      strong: false
+      strong: isStrong
     })
   }
 }

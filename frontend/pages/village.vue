@@ -2,10 +2,27 @@
   <div class="is-size-7 has-text-left village-wrapper">
     <div class="columns">
       <div class="column p-b-0">
-        <div v-if="village">
-          <p>
-            <strong>{{ village.id }}. {{ village.name }}</strong>
-          </p>
+        <div v-if="village" class="village-name-area-wrapper">
+          <div class="village-name-area">
+            <p class="village-name">
+              <strong>{{ village.id }}. {{ village.name }}</strong>
+            </p>
+          </div>
+          <div class="share-button-area">
+            <a
+              :href="`https://twitter.com/share?text=${village.name}`"
+              class="twitter-share-button"
+              data-hashtags="人狼_LASTWOLF"
+              data-lang="ja"
+              data-show-count="false"
+            ></a>
+            <script
+              v-if="!isDebug"
+              async
+              src="https://platform.twitter.com/widgets.js"
+              charset="utf-8"
+            ></script>
+          </div>
         </div>
       </div>
     </div>
@@ -148,6 +165,22 @@ export default class VillageV extends Vue {
 .village-wrapper {
   padding: 5px;
 
+  .village-name-area-wrapper {
+    display: flex;
+
+    .village-name-area {
+      flex: 1;
+
+      .village-name {
+        line-height: 1.5rem;
+      }
+    }
+
+    .share-button-area {
+      right: 0;
+    }
+  }
+
   .village-info-area-wrapper {
     .village-participants-area {
       margin-bottom: 5px;
@@ -262,6 +295,46 @@ export default class VillageV extends Vue {
         }
       }
     }
+  }
+
+  .message-color-0 {
+    color: #f00 !important;
+  }
+
+  .message-color-1 {
+    color: #785600 !important;
+  }
+
+  .message-color-2 {
+    color: #00f !important;
+  }
+
+  .message-color-3 {
+    color: #880000 !important;
+  }
+
+  .message-color-4 {
+    color: #008800 !important;
+  }
+
+  .message-color-5 {
+    color: #000088 !important;
+  }
+
+  .message-color-6 {
+    color: #f301ff !important;
+  }
+
+  .message-color-7 {
+    color: #017aff !important;
+  }
+
+  .message-color-8 {
+    color: #8800ff !important;
+  }
+
+  .message-color-9 {
+    color: #888800 !important;
   }
 }
 </style>
