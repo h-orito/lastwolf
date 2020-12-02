@@ -6,6 +6,22 @@
     class="messages"
     :closable="false"
   >
+    <b-field>
+      <b-button
+        size="is-small"
+        :type="filteringId ? 'is-warning' : 'is-secondary'"
+        expanded
+        @click="openSelectModal"
+        >{{ filterButtonStr }}</b-button
+      >
+      <b-button
+        size="is-small"
+        :type="filteringId ? 'is-primary' : 'is-secondary'"
+        :disabled="!filteringId"
+        @click="refreshFilter"
+        >抽出解除</b-button
+      >
+    </b-field>
     <b-tabs
       size="is-small"
       type="is-toggle"
@@ -24,9 +40,22 @@
       >
         <message-input />
         <hr class="m-t-5 m-b-5" />
-        <day-messages :day="day" />
+        <day-messages :day="day" :filtering-id="filteringId" />
       </b-tab-item>
     </b-tabs>
+    <b-modal
+      :active.sync="isOpenSelectModal"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <participant-select-modal
+        :participants="village ? village.participants.member_list : []"
+        @close="closeSelectModal"
+        @participant-select="filtering"
+      />
+    </b-modal>
   </b-message>
 </template>
 
@@ -38,7 +67,12 @@ import Village from '~/@types/village'
 import VillageDay from '~/@types/village-day'
 
 @Component({
-  components: { messageInput, dayMessages }
+  components: {
+    messageInput,
+    dayMessages,
+    participantSelectModal: () =>
+      import('~/components/action/participant-select-modal.vue')
+  }
 })
 export default class Messages extends Vue {
   private tabId: number =
@@ -73,6 +107,33 @@ export default class Messages extends Vue {
 
   private openLatestday(): void {
     this.tabId = this.days[this.days.length - 1].id
+  }
+
+  private isOpenSelectModal: boolean = false
+  private openSelectModal(): void {
+    this.isOpenSelectModal = true
+  }
+
+  private closeSelectModal(): void {
+    this.isOpenSelectModal = false
+  }
+
+  private filteringId: number | null = null
+  private get filterButtonStr(): string {
+    if (!this.filteringId) return '個人抽出'
+    const name = this.village!.participants.member_list.find(
+      m => m.id === this.filteringId
+    )!.chara.name.name
+    return `個人抽出（抽出中: ${name}）`
+  }
+
+  private filtering({ participantId }): void {
+    this.closeSelectModal()
+    this.filteringId = participantId
+  }
+
+  private refreshFilter(): void {
+    this.filteringId = null
   }
 }
 </script>

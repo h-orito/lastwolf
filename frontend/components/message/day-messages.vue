@@ -28,6 +28,9 @@ export default class Messages extends Vue {
   @Prop({ type: Object })
   private day!: VillageDay
 
+  @Prop({ type: Number })
+  private filteringId!: number | null
+
   private get isNight(): boolean {
     return this.day.noon_night.code === 'NIGHT'
   }
@@ -39,15 +42,24 @@ export default class Messages extends Vue {
   }
 
   private get messages(): Message[] {
-    if (this.isNight) {
-      return this.$store.getters.nightMessages.filter(
+    let messages: Message[] = []
+    if (!this.day.epilogue && this.isNight) {
+      messages = this.$store.getters.nightMessages.filter(
         m => m.time.village_day_id === this.day.id
       )
     } else {
-      return this.$store.getters.noonMessages.filter(
+      messages = this.$store.getters.noonMessages.filter(
         m => m.time.village_day_id === this.day.id
       )
     }
+
+    if (this.filteringId != null) {
+      messages = messages.filter(
+        m => !!m.from && m.from.id === this.filteringId
+      )
+    }
+
+    return messages
   }
 
   private get village(): Village | null {

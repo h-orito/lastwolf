@@ -208,20 +208,6 @@ export default class ModalVillageInfo extends Vue {
       description:
         '「有効」の場合、割り当てられる役職の希望を出すことができます（自分以外の希望は見られません）。\n他に誰も希望していなかった場合はその役職が割り当てられます。'
     })
-    // 突然死
-    settings.push({
-      name: '突然死',
-      value: rules.available_suddenly_death ? 'あり' : 'なし',
-      description:
-        '「あり」の場合、日付更新のタイミングで、前日に一度も通常発言をしなかった生存者が突然死します。'
-    })
-    // 時短希望
-    settings.push({
-      name: '時短希望',
-      value: rules.available_commit ? 'あり' : 'なし',
-      description:
-        '「あり」の場合、生存者全員が時短を希望すると、日付が更新されます。\n時短により余った時間は翌日に繰り越されます。'
-    })
     // ダミー役欠け
     settings.push({
       name: 'ダミー役欠け',

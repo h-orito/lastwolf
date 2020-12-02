@@ -90,31 +90,11 @@
         description="ダミー役欠けをありにする"
         :input-value.sync="availableDummySkillModel"
       />
-      <hr />
-      <h2 class="title is-6">詳細ルール</h2>
-      <form-switch
-        rules="required"
-        label-message="記名投票"
-        description="記名投票にする"
-        :input-value.sync="openVoteModel"
-      />
       <form-switch
         rules="required"
         label-message="役職希望"
         description="役職希望ありにする"
         :input-value.sync="availableSkillRequestModel"
-      />
-      <form-switch
-        rules="required"
-        label-message="突然死"
-        description="突然死ありにする"
-        :input-value.sync="availableSuddelnyDeathModel"
-      />
-      <form-switch
-        rules="required"
-        label-message="時短"
-        description="時短希望ありにする"
-        :input-value.sync="availableCommitModel"
       />
       <hr />
       <h2 class="title is-6">参加パスワード</h2>
@@ -282,18 +262,6 @@ export default class Setting extends Vue {
     this.$emit('update:availableDummySkill', val)
   }
 
-  /** openVote */
-  @Prop({ type: Boolean, required: true })
-  private openVote!: boolean
-
-  private get openVoteModel(): boolean {
-    return this.openVote
-  }
-
-  private set openVoteModel(val: boolean) {
-    this.$emit('update:openVote', val)
-  }
-
   /** availableSkillRequest */
   @Prop({ type: Boolean, required: true })
   private availableSkillRequest!: boolean
@@ -304,42 +272,6 @@ export default class Setting extends Vue {
 
   private set availableSkillRequestModel(val: boolean) {
     this.$emit('update:availableSkillRequest', val)
-  }
-
-  /** openSkillInGrave */
-  @Prop({ type: Boolean, required: true })
-  private openSkillInGrave!: boolean
-
-  private get openSkillInGraveModel(): boolean {
-    return this.openSkillInGrave
-  }
-
-  private set openSkillInGraveModel(val: boolean) {
-    this.$emit('update:openSkillInGrave', val)
-  }
-
-  /** availableSuddelnyDeath */
-  @Prop({ type: Boolean, required: true })
-  private availableSuddelnyDeath!: boolean
-
-  private get availableSuddelnyDeathModel(): boolean {
-    return this.availableSuddelnyDeath
-  }
-
-  private set availableSuddelnyDeathModel(val: boolean) {
-    this.$emit('update:availableSuddelnyDeath', val)
-  }
-
-  /** availableCommit */
-  @Prop({ type: Boolean, required: true })
-  private availableCommit!: boolean
-
-  private get availableCommitModel(): boolean {
-    return this.availableCommit
-  }
-
-  private set availableCommitModel(val: boolean) {
-    this.$emit('update:availableCommit', val)
   }
 
   /** joinPassword */
@@ -478,12 +410,12 @@ export default class Setting extends Vue {
           charachip_id: parseInt(this.charachipId)
         },
         rule: {
-          open_vote: this.openVote,
+          open_vote: true, // 固定
           available_skill_request: this.availableSkillRequest,
-          open_skill_in_grave: this.openSkillInGrave,
-          visible_grave_message: false,
-          available_suddenly_death: this.availableSuddelnyDeath,
-          available_commit: this.availableCommit,
+          open_skill_in_grave: false, // 固定
+          visible_grave_message: false, // 固定
+          available_suddenly_death: true,
+          available_commit: true, // 固定
           available_dummy_skill: this.availableDummySkill,
           join_password: this.joinPassword
         }

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="village && isProgress">
+  <div v-if="village && isProgress" class="progress-bar">
     <strong>{{ timeName }}</strong>
     <b-progress
       size="is-small"
-      type="is-success"
+      :type="left > 60 ? 'is-success' : left > 30 ? 'is-warning' : 'is-danger'"
       :value="left"
       :max="interval"
       show-value
@@ -37,6 +37,7 @@ export default class Progress extends Vue {
   }
 
   private get timeName(): string {
+    if (!this.village) return ''
     const code = this.$store.getters.latestDay.noon_night.code
     if (code === NOONNIGHT_CODE.NOON) {
       return '議論時間'

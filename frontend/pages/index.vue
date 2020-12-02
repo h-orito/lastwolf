@@ -78,11 +78,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import qs from 'qs'
 import cookies from 'cookie-universal-nuxt'
 import firebase from '~/plugins/firebase'
 import Villages from '~/@types/village'
 import MyselfPlayer from '~/@types/myself-player'
 import linkButton from '~/components/parts/link-button.vue'
+import { VILLAGE_STATUS } from '~/consts/consts'
 
 @Component({
   components: {
@@ -125,7 +127,17 @@ export default class TopPage extends Vue {
   /** created */
   private async created(): Promise<void> {
     this.loadingVillages = true
-    this.villages = await this.$axios.$get('/village/list')
+    this.villages = await this.$axios.$get('/village/list', {
+      params: {
+        village_status: [
+          VILLAGE_STATUS.PROLOGUE,
+          VILLAGE_STATUS.PROGRESS,
+          VILLAGE_STATUS.EPILOGUE
+        ]
+      },
+      paramsSerializer: params =>
+        qs.stringify(params, { arrayFormat: 'repeat' })
+    })
     this.loadingVillages = false
     await this.auth()
     // ログイン後のリダイレクトの際、ユーザ情報をサーバに保存

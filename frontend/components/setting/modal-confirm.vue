@@ -203,33 +203,12 @@ export default class ModalVillageInfo extends Vue {
 
   private addRuleSetting(settings: Settings[]): void {
     const rules = this.param.setting.rule
-    // 投票
-    settings.push({
-      name: '投票',
-      value: rules.open_vote ? '記名投票' : '無記名投票',
-      description:
-        '「記名投票」の場合、処刑の投票結果について、誰が誰に投票したかがわかります。\n「無記名投票」の場合、誰に何票入ったかのみがわかります。'
-    })
     // 役職希望
     settings.push({
       name: '役職希望',
       value: rules.available_skill_request ? '有効' : '無効',
       description:
         '「有効」の場合、割り当てられる役職の希望を出すことができます（自分以外の希望は見られません）。\n他に誰も希望していなかった場合はその役職が割り当てられます。'
-    })
-    // 突然死
-    settings.push({
-      name: '突然死',
-      value: rules.available_suddenly_death ? 'あり' : 'なし',
-      description:
-        '「あり」の場合、日付更新のタイミングで、前日に一度も通常発言をしなかった生存者が突然死します。'
-    })
-    // 時短希望
-    settings.push({
-      name: '時短希望',
-      value: rules.available_commit ? 'あり' : 'なし',
-      description:
-        '「あり」の場合、生存者全員が時短を希望すると、日付が更新されます。\n時短により余った時間は翌日に繰り越されます。'
     })
     // ダミー役欠け
     settings.push({

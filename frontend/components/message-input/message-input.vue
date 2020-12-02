@@ -16,6 +16,7 @@
     <b-checkbox-button
       v-model="strong"
       size="is-small"
+      :disabled="!canSay"
       :native-value="true"
       type="is-primary"
     >

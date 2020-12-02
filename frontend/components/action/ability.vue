@@ -77,10 +77,14 @@ export default class Ability extends Vue {
     }
     message += '\n一度決定すると取り消すことができないため注意してください。'
     if (type === 'ATTACK') {
-      message += '（誰か1人が選択すると他の人は操作不可能になります。）'
+      message += '\n襲撃は誰か1人が行使すると他の人は操作不可能になります。\n'
     }
     message +=
       '\n能力行使しなかった場合突然死するため、必ず能力を行使してください。'
+    if (type === 'ATTACK') {
+      message += '\n襲撃は誰か1人が行使すれば全員突然死しません。'
+    }
+
     return message.replace(/\n/gm, '<br>').split('<br>')
   }
 

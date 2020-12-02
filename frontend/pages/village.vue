@@ -52,6 +52,10 @@
         </div>
       </div>
     </div>
+    <first-day-modal
+      :is-open="isOpenFirstdayModal"
+      @close="closeFirstdayModal"
+    />
   </div>
 </template>
 
@@ -66,6 +70,7 @@ import participants from '~/components/participants/participants.vue'
 import * as actionTypes from '~/store/action-types'
 import Village from '~/@types/village'
 import MyselfPlayer from '~/@types/myself-player'
+import { NOONNIGHT_CODE } from '~/consts/consts'
 
 @Component({
   components: {
@@ -74,7 +79,8 @@ import MyselfPlayer from '~/@types/myself-player'
     villageProgress,
     participants,
     debug: () => import('~/components/debug/debug.vue'),
-    linkButton: () => import('~/components/parts/link-button.vue')
+    linkButton: () => import('~/components/parts/link-button.vue'),
+    firstDayModal: () => import('~/components/day-change/modal-first-day.vue')
   },
   asyncData({ query }) {
     return { villageId: query.id }
@@ -116,7 +122,10 @@ export default class VillageV extends Vue {
       this.$store.dispatch(actionTypes.INIT_VILLAGE, {
         villageId: this.villageId,
         uid: this.$store.getters.user.uid,
-        dayChangeCallback: () => self.openLatestday()
+        dayChangeCallback: () => {
+          self.openLatestday()
+          self.openFirstdayModalIfNeeded()
+        }
       }),
       this.$store.dispatch(actionTypes.INIT_MESSAGE, {
         villageId: this.villageId,
@@ -147,6 +156,31 @@ export default class VillageV extends Vue {
   private openLatestday(): void {
     // @ts-ignore
     this.$refs.messages.openLatestday()
+  }
+
+  // 役職確認モーダル
+  private isOpenFirstdayModal = false
+  private openFirstdayModalIfNeeded(): void {
+    const latestDay = this.$store.getters.latestDay
+    // 1日目夜のみ
+    if (
+      latestDay.day !== 1 ||
+      latestDay.noon_night.code !== NOONNIGHT_CODE.NIGHT
+    ) {
+      return
+    }
+    // 参加している場合のみ
+    if (
+      !!this.$store.getters.situation &&
+      !this.$store.getters.situation.participate.myself
+    ) {
+      return
+    }
+    this.isOpenFirstdayModal = true
+  }
+
+  private closeFirstdayModal(): void {
+    this.isOpenFirstdayModal = false
   }
 
   // タイマー
@@ -206,6 +240,10 @@ export default class VillageV extends Vue {
     }
     .village-myself-area {
       margin-bottom: 5px;
+
+      .progress-bar {
+        margin-bottom: 10px;
+      }
 
       .myself {
         p {
@@ -335,6 +373,24 @@ export default class VillageV extends Vue {
 
   .message-color-9 {
     color: #888800 !important;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .village-wrapper {
+    padding-bottom: 60px;
+
+    .progress-bar {
+      position: fixed;
+      z-index: 100;
+      bottom: 0;
+      left: 0;
+      margin-bottom: 0 !important;
+      padding: 10px;
+      width: 100vw;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+    }
   }
 }
 </style>

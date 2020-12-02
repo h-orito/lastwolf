@@ -117,10 +117,6 @@ export default class ParticipantV extends Vue {
     )
   }
 
-  private get color(): string | null {
-    return getColorClass(this.village, this.participant)
-  }
-
   private get charaNameClass(): string {
     const bold = this.isMyself ? 'bold' : ''
     const color = getColorClass(this.village, this.participant)

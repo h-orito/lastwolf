@@ -7,6 +7,21 @@
     :closable="false"
   >
     <div v-if="isPrologue" class="m-b-10">
+      <strong>設定変更</strong><br />
+      <b-field>
+        <p class="control has-text-right">
+          <b-button
+            :to="{ path: '/village-setting', query: { id: village.id } }"
+            tag="nuxt-link"
+            type="is-primary"
+            size="is-small"
+          >
+            村の設定を変更する
+          </b-button>
+        </p>
+      </b-field>
+    </div>
+    <div v-if="isPrologue" class="m-b-10">
       <strong>キック</strong><br />
       <b-field>
         <b-select

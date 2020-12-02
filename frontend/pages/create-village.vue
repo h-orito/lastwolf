@@ -13,13 +13,7 @@
         :dummy-chara-id.sync="dummyCharaId"
         :organization.sync="organization"
         :available-dummy-skill.sync="availableDummySkill"
-        :open-vote.sync="openVote"
         :available-skill-request.sync="availableSkillRequest"
-        :available-spectate.sync="availableSpectate"
-        :open-skill-in-grave.sync="openSkillInGrave"
-        :visible-grave-message.sync="visibleGraveMessage"
-        :available-suddelny-death.sync="availableSuddelnyDeath"
-        :available-commit.sync="availableCommit"
         :join-password.sync="joinPassword"
         save-label="村を作成する"
         @confirm="confirmVillage"
@@ -59,13 +53,7 @@ export default class CreateVillage extends Vue {
   private dummyCharaId: string = '1'
   private organization: string = '狼狼狼狂狐占霊狩共共村村村村村村村'
   private availableDummySkill: boolean = true
-  private openVote: boolean = true
   private availableSkillRequest: boolean = true
-  private availableSpectate: boolean = false
-  private openSkillInGrave: boolean = false
-  private visibleGraveMessage: boolean = false
-  private availableSuddelnyDeath: boolean = true
-  private availableCommit: boolean = true
 
   private joinPassword: string = ''
 
