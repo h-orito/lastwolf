@@ -95,7 +95,7 @@ const nuxtConfig: NuxtConfig = {
 
   /* Headers of the page */
   head: {
-    titleTemplate: `${siteName}`,
+    titleTemplate: `${siteName}%s`,
     meta,
     link: [
       {

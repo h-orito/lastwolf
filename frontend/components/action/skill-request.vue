@@ -1,6 +1,7 @@
 <template>
   <div>
     <hr class="m-t-10 m-b-10" />
+    <p class="m-b-10"><strong>役職希望</strong></p>
     <p class="m-b-10">
       役職希望を変更することができます。<br />現在の希望は<strong>
         {{ currentRequest }} </strong

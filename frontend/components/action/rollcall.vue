@@ -1,6 +1,7 @@
 <template>
   <div>
     <hr class="m-t-10 m-b-10" />
+    <p class="m-b-10"><strong>点呼</strong></p>
     <p v-if="!rollcalling">準備ができたら準備完了を押してください。</p>
     <p v-if="rollcalling">他の方が準備完了するまでお待ちください。</p>
     <b-button type="is-primary" size="is-small" @click="rollcall">{{

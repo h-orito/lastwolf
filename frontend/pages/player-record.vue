@@ -69,8 +69,9 @@ export default class extends Vue {
     const record = this.playerRecords.whole_record
     return `${record.win_count}勝 ${record.lose_count}負 ${
       record.draw_count
-    }分 (${record.win_rate * 100}%/${record.lose_rate *
-      100}%/${record.draw_rate * 100}%)`
+    }分 (${percent(record.win_rate)}%/${percent(record.lose_rate)}%/${percent(
+      record.draw_rate
+    )}%)`
   }
 
   /** created */
@@ -88,6 +89,10 @@ export default class extends Vue {
     } catch (error) {}
     this.loadingRecords = false
   }
+}
+
+const percent = (rate: number): number => {
+  return Math.round(rate * 1000) / 10
 }
 </script>
 

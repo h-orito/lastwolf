@@ -22,6 +22,7 @@
       </b-field>
     </div>
     <div v-if="isPrologue" class="m-b-10">
+      <hr class="m-b-10" />
       <strong>キック</strong><br />
       <b-field>
         <b-select
@@ -49,6 +50,7 @@
       </b-field>
     </div>
     <div class="m-b-10" v-if="isPrologue || isRollcalling">
+      <hr class="m-b-10" />
       <strong>点呼</strong><br />
       <p>点呼を開始し、全員が点呼すると村を開始することができます。</p>
       <b-button
@@ -66,6 +68,7 @@
       >
     </div>
     <div v-if="isPrologue || isRollcalling">
+      <hr class="m-b-10" />
       <strong>村の開始/廃村</strong><br />
       <p v-if="isRollcalling">{{ currentDoneRollcallCount }}</p>
       <b-button

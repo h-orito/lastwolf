@@ -6,6 +6,7 @@
     <rollcall v-if="isDispRollcall" />
     <ability :ability-type="abilityType" v-if="isDispAbility" />
     <vote v-if="isDispVote" />
+    <commit v-if="isDispCommit" />
   </div>
 </template>
 
@@ -20,7 +21,8 @@ import SituationAsParticipant from '~/@types/situation-as-participant'
     skillRequest: () => import('~/components/action/skill-request.vue'),
     rollcall: () => import('~/components/action/rollcall.vue'),
     ability: () => import('~/components/action/ability.vue'),
-    vote: () => import('~/components/action/vote.vue')
+    vote: () => import('~/components/action/vote.vue'),
+    commit: () => import('~/components/action/commit.vue')
   }
 })
 export default class Action extends Vue {
@@ -68,6 +70,11 @@ export default class Action extends Vue {
   private get isDispVote(): boolean {
     if (!this.situation) return false
     return this.situation.vote.available_vote
+  }
+
+  private get isDispCommit(): boolean {
+    if (!this.situation) return false
+    return this.situation.commit.available_commit
   }
 }
 </script>

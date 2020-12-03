@@ -11,9 +11,11 @@
     <myself />
     <action />
     <hr class="m-t-10 m-b-10" />
-    <b-button type="is-primary" size="is-small" @click="openVillageInfoModal"
-      >村の設定を確認する</b-button
-    >
+    <div class="is-pulled-right">
+      <b-button type="is-primary" size="is-small" @click="openVillageInfoModal"
+        >村の設定を確認する</b-button
+      >
+    </div>
     <village-info-modal
       :is-open="isOpenVillageInfoModal"
       :charachip-name="charachipName"

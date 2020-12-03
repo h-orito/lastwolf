@@ -66,6 +66,8 @@ export default class MessageInput extends Vue {
     const selectable = this.situation.say.selectable_message_type_list
     if (selectable.some(type => type.code === MESSAGE_TYPE.WEREWOLF_SAY)) {
       return MESSAGE_TYPE.WEREWOLF_SAY
+    } else if (selectable.some(type => type.code === MESSAGE_TYPE.MASON_SAY)) {
+      return MESSAGE_TYPE.MASON_SAY
     } else if (selectable.some(type => type.code === MESSAGE_TYPE.NORMAL_SAY)) {
       return MESSAGE_TYPE.NORMAL_SAY
     } else if (selectable.some(type => type.code === MESSAGE_TYPE.GRAVE_SAY)) {

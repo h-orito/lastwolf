@@ -50,9 +50,10 @@ export default class MessageV extends Vue {
   private get messageClass(): string {
     const system = isSystemMessage(this.message) ? 'message-border' : ''
     const wolfMessage = isWolfMessage(this.message) ? ' has-text-danger' : ''
+    const masonMessage = isMasonMessage(this.message) ? ' has-text-success' : ''
     const graveMessage = isGraveMessage(this.message) ? ' has-text-info' : ''
     const color = this.color ? ` ${this.color}` : ''
-    return system + wolfMessage + graveMessage + color
+    return system + wolfMessage + masonMessage + graveMessage + color
   }
 
   private get messageType(): string {
@@ -68,6 +69,9 @@ export default class MessageV extends Vue {
       case MESSAGE_TYPE.PRIVATE_WEREWOLF:
       case MESSAGE_TYPE.WEREWOLF_SAY:
         return '[狼]'
+      case MESSAGE_TYPE.PRIVATE_MASON:
+      case MESSAGE_TYPE.MASON_SAY:
+        return '[共]'
       case MESSAGE_TYPE.GRAVE_SAY:
         return '[墓]'
       default:
@@ -92,6 +96,13 @@ const isSystemMessage = (message: Message): boolean => {
 const isWolfMessage = (message: Message): boolean => {
   const messageTypeCode: string = message.content.type.code
   return [MESSAGE_TYPE.PRIVATE_WEREWOLF, MESSAGE_TYPE.WEREWOLF_SAY].some(
+    code => code === messageTypeCode
+  )
+}
+
+const isMasonMessage = (message: Message): boolean => {
+  const messageTypeCode: string = message.content.type.code
+  return [MESSAGE_TYPE.PRIVATE_MASON, MESSAGE_TYPE.MASON_SAY].some(
     code => code === messageTypeCode
   )
 }

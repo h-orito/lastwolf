@@ -279,7 +279,7 @@ interface Camp {
 export default class extends Vue {
   /** head */
   private head() {
-    return { title: ' | ルール' }
+    return { title: ' | 仕様' }
   }
 
   /** data */

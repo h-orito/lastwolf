@@ -35,7 +35,7 @@ import Villages from '~/@types/village'
 export default class CreateVillage extends Vue {
   /** head */
   private head() {
-    return { title: '' }
+    return { title: ' | 村作成' }
   }
 
   // form data ------------------------------------

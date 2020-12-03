@@ -1,6 +1,7 @@
 <template>
   <div>
     <hr class="m-t-10 m-b-10" />
+    <p class="m-b-10"><strong>参加</strong></p>
     <p class="m-b-10">あなたはこの村に参加できます。</p>
     <b-field label="キャラクター" label-position="on-border">
       <b-select v-model="charaId" expanded size="is-small">

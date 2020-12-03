@@ -1,6 +1,7 @@
 <template>
   <div>
     <hr class="m-t-10 m-b-10" />
+    <p class="m-b-10"><strong>退村</strong></p>
     <p>
       参加を取りやめたい場合は退村することができます。
     </p>

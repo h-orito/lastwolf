@@ -1,6 +1,7 @@
 <template>
   <div>
     <hr class="m-t-10 m-b-10" />
+    <p class="m-b-10"><strong>能力行使</strong></p>
     <p class="m-b-10">
       <span v-for="messageLine in abilityMessage" :key="messageLine.id">
         <span v-html="messageLine"></span><br />

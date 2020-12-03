@@ -89,7 +89,12 @@ import { NOONNIGHT_CODE } from '~/consts/consts'
 export default class VillageV extends Vue {
   /** head */
   private head() {
-    return { title: '' }
+    return { title: this.title }
+  }
+
+  private get title(): string {
+    if (!this.village) return ''
+    return ` | ${this.village.name}`
   }
 
   private villageId: number = 0

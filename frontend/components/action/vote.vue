@@ -1,6 +1,7 @@
 <template>
   <div>
     <hr class="m-t-10 m-b-10" />
+    <p class="m-b-10"><strong>投票</strong></p>
     <p class="m-b-10">
       投票対象を選択してください。<br />全員が投票する前なら投票し直す事もできます。<br />投票しないと突然死するため、必ず投票してください。
     </p>
