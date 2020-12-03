@@ -20,7 +20,7 @@
     "types": [
       "@nuxt/types",
       "@nuxt/vue-app",
-      "@nuxtjs/axios"
+      "@nuxtjs/axios",
     ]
   },
   "exclude": [

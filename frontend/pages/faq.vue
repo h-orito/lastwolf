@@ -3,6 +3,10 @@
     <div class="container">
       <h1 class="title is-5">FAQ</h1>
       <ul class="content has-text-left is-size-7">
+        <li class="question">お金はかかりますか？</li>
+        <li class="answer">無料です</li>
+        <li class="question">観戦したいのですがログインは必須ですか？</li>
+        <li class="answer">観戦はログインしていなくても可能です</li>
         <li class="question">入村できないのですが</li>
         <li class="answer">
           以下のいずれかに当てはまると入村できません
@@ -19,10 +23,6 @@
         </li>
         <li class="answer">
           ランダムに並び替えて表示するため、順序により死因は特定できません
-        </li>
-        <li class="question">発言から絵文字が消える</li>
-        <li class="answer">
-          仕様です。使用できない絵文字は自動的に削除されます
         </li>
       </ul>
     </div>

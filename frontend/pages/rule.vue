@@ -1,32 +1,7 @@
 <template>
   <section class="section">
     <div class="container has-text-left is-size-7">
-      <h1 class="title is-5">共通ルール</h1>
-      <div class="content">
-        <ul>
-          <li>
-            同村しているプレイヤーの画面の向こうにはあなたと同様人間がいます。<br />他者を思いやり、迷惑をかけないプレイを心がけるようお願いします。
-          </li>
-          <li>
-            正常な運営を妨げる行為がなされた場合、管理人の裁量によりアクセス禁止措置等が取られる可能性があります。
-          </li>
-        </ul>
-      </div>
-      <h2 class="title is-6">村ごとに明記がない限り以下も守ってください</h2>
-      <div class="content">
-        <ul>
-          <li>
-            参加如何に関わらず、進行中の村の情報を別の場所でやり取りしないでください。
-          </li>
-          <li>
-            エピローグを迎えるまでは、自身が希望した役職について言及しないでください。
-          </li>
-          <li>
-            勝利を目指してください。
-          </li>
-        </ul>
-      </div>
-      <h2 class="title is-5">仕様</h2>
+      <h1 class="title is-5">仕様</h1>
       <h3 class="title is-6">村作成</h3>
       <div class="content">
         <ul>
@@ -54,8 +29,6 @@
       <h3 class="title is-6">村建てが行えること</h3>
       <div class="content">
         <ul>
-          <li>村建ては参加有無にかかわらず以下を行えます。</li>
-          <li>村建て発言</li>
           <li>村の設定変更（プロローグ中のみ）</li>
           <li>参加者の強制退村（プロローグ中のみ）</li>
           <li>廃村（プロローグ中のみ）</li>
@@ -127,8 +100,6 @@
           </li>
         </ul>
       </div>
-      <h3 class="title is-6">発言</h3>
-      <message />
       <h3 class="title is-6">役職希望、割り当て</h3>
       <div class="content">
         <ul>
@@ -292,9 +263,8 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 // component
 // type
-import Skill from '~/components/type/skill'
-import Skills from '~/components/type/skills'
-const message = () => import('~/components/rule/message.vue')
+import Skill from '~/@types/skill'
+import Skills from '~/@types/skills'
 const skill = () => import('~/components/rule/skill.vue')
 const ability = () => import('~/components/rule/ability.vue')
 
@@ -304,12 +274,12 @@ interface Camp {
 }
 
 @Component({
-  components: { skill, ability, message }
+  components: { skill, ability }
 })
 export default class extends Vue {
   /** head */
   private head() {
-    return { title: ' | ルール' }
+    return { title: ' | 仕様' }
   }
 
   /** data */

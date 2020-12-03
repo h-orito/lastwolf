@@ -4,10 +4,9 @@
       <div class="container">
         <h1 class="title is-5">キャラチップ一覧</h1>
         <div class="content is-size-7">
-          <loading
-            v-if="loadingCharachips"
-            :message="'キャラチップ一覧を読み込み中...'"
-          ></loading>
+          <p>
+            キャラ画像は以下の方々に提供いただいています。ありがとうございます。
+          </p>
           <b-table
             :data="tableCharachips"
             :loading="loadingCharachips"
@@ -29,7 +28,12 @@
               </b-table-column>
 
               <b-table-column field="chara_list" label="例">
-                <chara-image :chara="props.row.chara" />
+                <img
+                  :src="props.row.chara.image.image_url"
+                  :alt="props.row.chara.name.name"
+                  :width="props.row.chara.image.width"
+                  :height="props.row.chara.image.height"
+                />
               </b-table-column>
             </template>
 
@@ -50,20 +54,13 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import qs from 'qs'
-// component
-import loading from '~/components/loading.vue'
 // type
-import Charachips from '~/components/type/charachips'
-import Charachip from '~/components/type/charachip'
-import Chara from '~/components/type/chara'
-import { FACE_TYPE } from '~/components/const/consts'
-const charaImage = () => import('~/components/village/chara-image.vue')
+import Charachips from '~/@types/charachips'
+import Charachip from '~/@types/charachip'
+import Chara from '~/@types/chara'
 
 @Component({
-  components: {
-    loading,
-    charaImage
-  }
+  components: {}
 })
 export default class CharachipList extends Vue {
   /** head */
@@ -99,5 +96,3 @@ export default class CharachipList extends Vue {
   /** methods */
 }
 </script>
-
-<style lang="scss" scoped></style>

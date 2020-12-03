@@ -33,35 +33,6 @@
         <li>
           日付更新時のセット先は生存者の中からランダムで選ばれます。<br />（ダミーキャラも2日目にランダムな占い先に占いを実行します。）
         </li>
-        <li>
-          メッセージ例
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-seer"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="
-                    '[暗] 暗殺者 アシュリーは、[転] 転生者 ハルトを占った。\n[転] 転生者 ハルトは人狼ではないようだ。'
-                  "
-                />
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-seer"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="
-                    '[暗] 暗殺者 アシュリーは、[転] 転生者 ハルトを占った。\n[転] 転生者 ハルトは人狼のようだ。'
-                  "
-                />
-              </div>
-            </div>
-          </div>
-        </li>
       </ul>
     </div>
     <h4 class="is-7" id="wisedivine"><strong>役職占い</strong></h4>
@@ -77,22 +48,6 @@
         <li>
           日付更新時のセット先は生存者の中からランダムで選ばれます。<br />（ダミーキャラも2日目にランダムな占い先に占いを実行します。）
         </li>
-        <li>
-          メッセージ例
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-seer"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="
-                    '[暗] 暗殺者 アシュリーは、[転] 転生者 ハルトを占った。\n[転] 転生者 ハルトは導師のようだ。'
-                  "
-                />
-              </div>
-            </div>
-          </div>
-        </li>
       </ul>
     </div>
     <h4 class="is-7" id="psychic"><strong>霊視</strong></h4>
@@ -103,29 +58,6 @@
         </li>
         <li>
           複数死亡した場合、全員分知ることができます。
-        </li>
-        <li>
-          メッセージ例
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-psychic"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="'勇者 アスベルは人狼ではないようだ。'"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-psychic"
-            >
-              <div class="content has-text-left">
-                <message-text :message-text="'勇者 アスベルは人狼のようだ。'" />
-              </div>
-            </div>
-          </div>
         </li>
       </ul>
     </div>
@@ -138,18 +70,6 @@
         <li>
           複数死亡した場合、全員分知ることができます。
         </li>
-        <li>
-          メッセージ例
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-psychic"
-            >
-              <div class="content has-text-left">
-                <message-text :message-text="'勇者 アスベルは狩人のようだ。'" />
-              </div>
-            </div>
-          </div>
-        </li>
       </ul>
     </div>
     <h4 class="is-7" id="autopsy"><strong>検死</strong></h4>
@@ -160,20 +80,6 @@
         </li>
         <li>
           複数死亡した場合、全員分知ることができます。
-        </li>
-        <li>
-          メッセージ例
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-psychic"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="'勇者 アスベルの死因は呪殺死のようだ。'"
-                />
-              </div>
-            </div>
-          </div>
         </li>
       </ul>
     </div>
@@ -189,22 +95,6 @@
         </li>
         <li>
           日付更新時のセット先は生存者の中からランダムで選ばれます。
-        </li>
-        <li>
-          メッセージ例（エピローグまで見えません）
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="
-                    '槍使い ヘンリエッタは、僧侶 セシリーを護衛している。'
-                  "
-                />
-              </div>
-            </div>
-          </div>
         </li>
       </ul>
     </div>
@@ -226,22 +116,6 @@
         <li>
           道連れになった対象は無惨な死体となって発見されます。（死因は呪殺死扱い）
         </li>
-        <li>
-          メッセージ例（エピローグまで見えません）
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="
-                    '[槍] 槍使い ヘンリエッタは、[僧] 僧侶 セシリーを道連れにした。'
-                  "
-                />
-              </div>
-            </div>
-          </div>
-        </li>
       </ul>
     </div>
     <h4 class="is-7" id="bake"><strong>パン焼き</strong></h4>
@@ -252,26 +126,6 @@
         </li>
         <li>
           この能力を持つ人が全員死亡すると、別の専用のメッセージが表示されます。
-        </li>
-        <li>
-          <div class="card">
-            <div class="card-content p-t-10 p-b-10 m-b-5 message-system">
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="'パン屋がおいしいパンを焼いてくれたそうです。'"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-content p-t-10 p-b-10 m-b-5 message-system">
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="'今日からはもうおいしいパンが食べられません。'"
-                />
-              </div>
-            </div>
-          </div>
         </li>
       </ul>
     </div>
@@ -292,31 +146,6 @@
         <li>
           日付更新時のセット先は生存者の中からランダムで選ばれます。
         </li>
-        <li>
-          メッセージ例
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-werewolf"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="'巫女 ウズメ達は、僧侶 セシリーを襲撃した。'"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-content p-t-10 p-b-10 m-b-5">
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="
-                    '次の日の朝、以下の村人が無惨な姿で発見された。\n僧侶 セシリー'
-                  "
-                />
-              </div>
-            </div>
-          </div>
-        </li>
       </ul>
     </div>
     <h4 class="is-7" id="wiseattack"><strong>襲撃占い</strong></h4>
@@ -325,78 +154,16 @@
         <li>
           基本的に襲撃と変わりありませんが、この能力を持つ人が生存している状態で襲撃に成功すると、襲撃対象の役職を知ることができます。
         </li>
-        <li>
-          メッセージ例
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-werewolf"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="'巫女 ウズメ達は、僧侶 セシリーを襲撃した。'"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div
-              class="card-content p-t-10 p-b-10 m-b-5 message-system-private-werewolf"
-            >
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="'僧侶 セシリーは狩人だったようだ。'"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-content p-t-10 p-b-10 m-b-5">
-              <div class="content has-text-left">
-                <message-text
-                  :message-text="
-                    '次の日の朝、以下の村人が無惨な姿で発見された。\n僧侶 セシリー'
-                  "
-                />
-              </div>
-            </div>
-          </div>
-        </li>
       </ul>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import Message from '~/components/type/message'
-const messageText = () =>
-  import('~/components/village/message/message-text.vue')
+import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component({
-  components: { messageText }
+  components: {}
 })
 export default class RuleAbility extends Vue {}
 </script>
-
-<style lang="scss" scoped>
-.message-system-private {
-  border-top: 1px solid $private-system-border;
-  border-bottom: 1px solid $private-system-border;
-  background-color: $private-system-bg !important;
-}
-.message-system-private-seer {
-  border-top: 1px solid $seer-system-border;
-  border-bottom: 1px solid $seer-system-border;
-  background-color: $seer-system-bg !important;
-}
-.message-system-private-psychic {
-  border-top: 1px solid $psychic-system-border;
-  border-bottom: 1px solid $psychic-system-border;
-  background-color: $psychic-system-bg !important;
-}
-.message-system-private-werewolf {
-  border-top: 1px solid $werewolf-system-border;
-  border-bottom: 1px solid $werewolf-system-border;
-  background-color: $werewolf-system-bg !important;
-}
-</style>

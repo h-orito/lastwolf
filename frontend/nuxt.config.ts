@@ -103,7 +103,7 @@ const nuxtConfig: NuxtConfig = {
         type: 'image/png',
         href: '/image/icons/apple-touch-icon.png'
       },
-      { rel: 'icon', type: 'image/png', href: '/image/icons/icon.png' }
+      { rel: 'icon', type: 'image/png', href: '/image/icons/icon-512.png' }
     ],
     htmlAttrs: {
       prefix: 'og: http://ogp.me/ns#'
@@ -127,9 +127,9 @@ const nuxtConfig: NuxtConfig = {
   /* Plugins to load before mounting the App */
   plugins: [
     '~/plugins/axios',
-    '~/plugins/window-resize',
     '~/plugins/vee-validate',
-    '~/plugins/dayjs'
+    '~/plugins/dayjs',
+    '~/plugins/firebase'
   ],
 
   axios: {
@@ -138,7 +138,7 @@ const nuxtConfig: NuxtConfig = {
   },
 
   router: {
-    middleware: ['authenticated', 'version', 'google-ads']
+    middleware: ['authenticated', 'version']
   },
 
   /* Nuxt.js modules */
@@ -153,10 +153,6 @@ const nuxtConfig: NuxtConfig = {
     '@nuxtjs/dotenv',
     // cookie-universal-nuxt
     'cookie-universal-nuxt',
-    // scroll
-    ['vue-scrollto/nuxt', { duration: 500 }],
-    // copy to clipboard
-    'nuxt-clipboard2',
     // pwa
     '@nuxtjs/pwa',
     // google-analytics
@@ -172,7 +168,7 @@ const nuxtConfig: NuxtConfig = {
   ],
 
   sitemap: {
-    hostname: 'https://last-wolf.com',
+    hostname: 'https://lastwolf.netlify.app',
     // 除外ディレクトリ、ページ
     exclude: [],
     // 動的なルーティングで生成したページ
