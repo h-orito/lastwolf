@@ -1,8 +1,6 @@
 <template>
   <p class="village-message is-size-7" :class="messageClass">
-    <span class="message-speaker">{{
-      message.from ? message.from.chara.name.name : 'システム'
-    }}</span
+    <span class="message-speaker">{{ fromName }}</span
     >:&nbsp;
     <span
       class="message-content"
@@ -38,6 +36,13 @@ export default class MessageV extends Vue {
   @Prop({ type: String })
   private color!: string | null
 
+  private get fromName(): string {
+    if (this.message.from) return this.message.from.chara.name.name
+    if (this.message.content.type.code === MESSAGE_TYPE.CREATOR_SAY)
+      return '村建て'
+    return 'システム'
+  }
+
   private get messageTime(): string {
     if (this.isPrologue || this.isEpilogue) {
       return dayjs().format('HH:mm')
@@ -52,8 +57,18 @@ export default class MessageV extends Vue {
     const wolfMessage = isWolfMessage(this.message) ? ' has-text-danger' : ''
     const masonMessage = isMasonMessage(this.message) ? ' has-text-success' : ''
     const graveMessage = isGraveMessage(this.message) ? ' has-text-info' : ''
+    const creatorMessage = isCreatorMessage(this.message)
+      ? ' message-black'
+      : ''
     const color = this.color ? ` ${this.color}` : ''
-    return system + wolfMessage + masonMessage + graveMessage + color
+    return (
+      system +
+      wolfMessage +
+      masonMessage +
+      graveMessage +
+      creatorMessage +
+      color
+    )
   }
 
   private get messageType(): string {
@@ -109,5 +124,9 @@ const isMasonMessage = (message: Message): boolean => {
 
 const isGraveMessage = (message: Message): boolean => {
   return message.content.type.code === MESSAGE_TYPE.GRAVE_SAY
+}
+
+const isCreatorMessage = (message: Message): boolean => {
+  return message.content.type.code === MESSAGE_TYPE.CREATOR_SAY
 }
 </script>
