@@ -320,6 +320,10 @@ export default class VillageV extends Vue {
           .message-border + .message-border {
             border-top: none;
           }
+
+          .message-black {
+            color: #333;
+          }
         }
       }
       .b-tabs .tab-content {

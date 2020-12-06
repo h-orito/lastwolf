@@ -6,7 +6,22 @@
     class="creator"
     :closable="false"
   >
+    <div v-if="canCreatorSay" class="m-b-10">
+      <strong>村建て発言</strong><br />
+      <creator-message-input v-model="message" ref="messageInput" />
+      <div class="has-text-right">
+        <b-button
+          :disabled="!canSay"
+          @click="say"
+          type="is-primary"
+          size="is-small"
+        >
+          発言
+        </b-button>
+      </div>
+    </div>
     <div v-if="isPrologue" class="m-b-10">
+      <hr class="m-b-10" />
       <strong>設定変更</strong><br />
       <b-field>
         <p class="control has-text-right">
@@ -94,13 +109,16 @@ import Village from '~/@types/village'
 import VillageParticipant from '~/@types/village-participant'
 import SituationAsParticipant from '~/@types/situation-as-participant'
 import { VILLAGE_STATUS } from '~/consts/consts'
+import toast from '~/components/parts/toast'
+import creatorMessageInput from '~/components/creator/creator-message-input.vue'
 
 @Component({
-  components: {}
+  components: { creatorMessageInput }
 })
 export default class Creator extends Vue {
   private submitting: boolean = false
   private participantId: number | null = null
+  private message: string = ''
 
   private get villageId(): number {
     const villageId = this.$store.getters.villageId
@@ -181,6 +199,25 @@ export default class Creator extends Vue {
       p => p.done_roll_call
     ).length
     return `点呼済み ${done}/${max}`
+  }
+
+  private get canCreatorSay(): boolean {
+    return (
+      !this.submitting &&
+      !!this.situation &&
+      this.situation.creator.available_creator_say
+    )
+  }
+
+  private get isOver(): boolean {
+    // @ts-ignore
+    return this.$refs.messageInput.isLengthOver
+  }
+
+  private get canSay(): boolean {
+    if (this.message == null || this.message.trim() === '') return false
+    if (this.isOver) return false
+    return true
   }
 
   private confirmKick(): void {
@@ -308,6 +345,18 @@ export default class Creator extends Vue {
       }
     }
     this.submitting = false
+  }
+
+  private async say(): Promise<void> {
+    try {
+      await this.$axios.$post(`/creator/village/${this.villageId}/say`, {
+        message: this.message
+      })
+      this.message = ''
+    } catch (error) {
+      toast.danger(this, '発言失敗')
+    }
+    await this.$emit('reload')
   }
 }
 </script>
