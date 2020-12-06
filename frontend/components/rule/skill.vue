@@ -26,7 +26,9 @@
         </b-table-column>
         <b-table-column field="camp" label="所属陣営" centered>
           <template>
-            {{ props.row.camp }}
+            <p :class="props.row.camp === '人狼陣営' ? 'has-text-danger' : ''">
+              {{ props.row.camp }}
+            </p>
           </template>
         </b-table-column>
         <b-table-column field="ability" label="能力">
@@ -42,12 +44,24 @@
         </b-table-column>
         <b-table-column field="divine_result" label="占い結果">
           <template>
-            {{ props.row.divine_result }}
+            <p
+              :class="
+                props.row.divine_result === '人狼' ? 'has-text-danger' : ''
+              "
+            >
+              {{ props.row.divine_result }}
+            </p>
           </template>
         </b-table-column>
         <b-table-column field="psychic_result" label="霊視結果">
           <template>
-            {{ props.row.psychic_result }}
+            <p
+              :class="
+                props.row.psychic_result === '人狼' ? 'has-text-danger' : ''
+              "
+            >
+              {{ props.row.psychic_result }}
+            </p>
           </template>
         </b-table-column>
         <b-table-column field="sayable_message_types" label="発言可能" centered>
@@ -74,7 +88,11 @@
         </b-table-column>
         <b-table-column field="count_camp" label="勝敗判定カウント" centered>
           <template>
-            {{ props.row.count_camp }}
+            <p
+              :class="props.row.count_camp === '人狼' ? 'has-text-danger' : ''"
+            >
+              {{ props.row.count_camp }}
+            </p>
           </template>
         </b-table-column>
       </template>

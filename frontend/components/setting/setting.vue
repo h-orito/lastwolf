@@ -19,6 +19,11 @@
       <village-name :input-value.sync="villageNameModel" />
       <hr />
       <h2 class="title is-6">時間</h2>
+      <notification :closable="false">
+        <li>
+          開始は村建てによる操作でしか行えないため、開始予定日時は参加者への案内用です。
+        </li>
+      </notification>
       <start-datetime :input-value.sync="startDatetimeModel" />
       <form-number
         rules="required|max_value:3600|min_value:180"
