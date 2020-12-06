@@ -2,7 +2,31 @@
   <section class="section">
     <div class="container has-text-left is-size-7">
       <h1 class="title is-5">仕様</h1>
-      <h3 class="title is-6">村作成</h3>
+      <notification :closable="false">
+        <ul>
+          <li><a href="#create-village">村作成</a></li>
+          <li><a href="#creator">村建てが行えること</a></li>
+          <li><a href="#overall">流れ</a></li>
+          <li><a href="#skill-assign">役職割り当て</a></li>
+          <li><a href="#vote">投票</a></li>
+          <li><a href="#commit">時短希望</a></li>
+          <li><a href="#suddenly-death">突然死</a></li>
+          <li><a href="#night-process">投票→夜時間の処理</a></li>
+          <li><a href="#noon-process">夜→昼時間の処理</a></li>
+          <li><a href="#skill">役職</a></li>
+          <li>
+            <a href="#ability">能力行使</a>
+            <ul>
+              <li><a href="#ability-overall">全般</a></li>
+              <li><a href="#divine">占い</a></li>
+              <li><a href="#psychic">霊視</a></li>
+              <li><a href="#guard">護衛</a></li>
+              <li><a href="#attack">襲撃</a></li>
+            </ul>
+          </li>
+        </ul>
+      </notification>
+      <h3 id="create-village" class="title is-6">村作成</h3>
       <div class="content">
         <ul>
           <li>
@@ -14,10 +38,7 @@
             </ul>
           </li>
           <li>
-            作成する際の設定については省略します。不明点については過去村の「村の設定」を参照するか、管理者にお問い合わせください。
-          </li>
-          <li>
-            作成後もプロローグ中は設定を変更することができます。
+            作成後も募集中は設定を変更することができます。
             <ul>
               <li>
                 ただし、キャラチップとダミーキャラについては後から変更できません。
@@ -29,80 +50,120 @@
       <h3 class="title is-6">村建てが行えること</h3>
       <div class="content">
         <ul>
-          <li>村の設定変更（プロローグ中のみ）</li>
-          <li>参加者の強制退村（プロローグ中のみ）</li>
-          <li>廃村（プロローグ中のみ）</li>
+          <li>村の設定変更（募集中のみ）</li>
+          <li>
+            参加者の強制退村（募集中のみ）
+            <ul>
+              <li>
+                点呼中は強制退村させられないので、一度点呼を中断してから強制退村させてください。
+              </li>
+            </ul>
+          </li>
+          <li>廃村（募集中のみ）</li>
+          <li>点呼の開始（募集中かつ人数が揃っている場合のみ）</li>
+          <li>
+            点呼の中断
+            <ul>
+              <li>
+                全員の「準備完了」状態が解除されます。
+              </li>
+            </ul>
+          </li>
+          <li>村の開始（点呼中かつ全員が「準備完了」になった場合のみ）</li>
+          <li>
+            参加者のIDや役職を知ることはできないため、村建てもゲームに参加しても問題ありません。
+          </li>
         </ul>
       </div>
 
-      <h3 class="title is-6">流れ</h3>
+      <h3 id="overall" class="title is-6">大まかな流れ</h3>
       <div class="content">
         <ul>
           <li>
-            プロローグ
+            募集中
             <ul>
-              <li>プレイヤーはキャラクターを選んで村に参加できます。</li>
+              <li>プレイヤーはキャラクターを選んで村に参加/退村できます。</li>
               <li>
-                村の設定で見学可能になっている場合、見物人として参加もできます。
+                役職希望が有効な村では、プレイヤーは参加時/募集中に第二希望まで役職を希望することができます。
+              </li>
+              <li>村建ては参加者が揃うと点呼を開始することができます。</li>
+            </ul>
+          </li>
+          <li>
+            点呼中
+            <ul>
+              <li>プレイヤーは準備完了/解除することができます。</li>
+              <li>村建ては全員が準備完了すると村を開始することができます。</li>
+            </ul>
+          </li>
+          <li>
+            夜時間
+            <ul>
+              <li>（初日の夜のみ）役職が割り当てられます。</li>
+              <li>
+                （初日の夜のみ）人狼の襲撃対象はダミーキャラ固定になります。
+                <ul>
+                  <li>そのため、狩人は初日に限り能力行使できません。</li>
+                </ul>
+              </li>
+              <li>
+                人狼は人狼同士にしか聞こえない会話をすることができます。（同共有者）
                 <ul>
                   <li>
-                    見物人は進行中は死亡した人とのみ会話することができます。
+                    人狼や共有者以外はチャットを送信しても自分にしか聞こえない独り言となります。
                   </li>
                 </ul>
               </li>
-              <li>プレイヤーは開始2時間前まで退村することができます。</li>
               <li>
-                開始日時時点で最低開始人数以上の人数がいる場合、1日目に遷移します。
+                規定の時間が経過するか、全員が時短を希望すると昼時間に進みます。
               </li>
               <li>
-                開始日時までに最低開始人数が揃わなかった場合、1日ずつ開始が延長されます。
+                能力行使できる役職が行使しないまま次に進むと突然死します。
               </li>
             </ul>
           </li>
           <li>
-            1日目
+            昼時間
             <ul>
-              <li>役職が割り当てられます。</li>
-              <li>投票および処刑はありません。</li>
+              <li>誰を処刑するかチャットによる議論を行います。</li>
               <li>
-                人狼の襲撃対象はダミーキャラ固定になります。
+                規定の時間が経過するか、全員が時短を希望すると投票時間に進みます。
               </li>
-              <li>占い師は占い対象を選択することができます。</li>
-              <li>狩人は能力行使できません。</li>
             </ul>
           </li>
           <li>
-            2日目以降
+            投票時間
             <ul>
-              <li>処刑するための投票先を選択できるようになります。</li>
-              <li>人狼が襲撃対象を選択できるようになります。</li>
-              <li>狩人が護衛対象を選択できるようになります。</li>
+              <li>処刑したい人に投票を行います。</li>
+              <li>会話することはできません。</li>
               <li>
-                日付更新時、いずれかの陣営の勝利条件に当てはまった場合はエピローグに遷移します。
+                規定の時間が経過するか、全員が投票すると投票時間に進みます。
+              </li>
+              <li>時間内に投票しないと突然死します。</li>
+              <li>
+                最多票の人が処刑されますが、最多票の人が複数いる場合は再投票となります。
+                <ul>
+                  <li>
+                    3回の投票で処刑者が決定しない場合、引き分けとなります。
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            以降
+            <ul>
+              <li>
+                いずれかの陣営の勝利条件を満たすまで夜時間→昼時間→投票時間→夜時間..と繰り返していきます。
               </li>
             </ul>
           </li>
         </ul>
       </div>
-      <h3 class="title is-6" id="vote">投票</h3>
+      <h3 id="skill-assign" class="title is-6">役職割り当て</h3>
       <div class="content">
         <ul>
-          <li>
-            2日目から投票による処刑が始まります。<br />（最初に処刑死者が出るのは3日目朝）
-          </li>
-          <li>日付更新時点では自分にセットされています。</li>
-          <li>翌朝に集計され、最多票となった人が処刑されます。</li>
-          <li>
-            最多票者が複数いる場合はランダムで処刑される人が決まります。
-          </li>
-          <li>
-            村の設定で無記名投票となっている場合は被得票数のみが公表されます。
-          </li>
-        </ul>
-      </div>
-      <h3 class="title is-6">役職希望、割り当て</h3>
-      <div class="content">
-        <ul>
+          <li>村の開始時、以下のように役職が割り当てられます。</li>
           <li>
             ダミーキャラの役職割り当てが最初に行われます。
             <ul>
@@ -142,67 +203,38 @@
           </li>
         </ul>
       </div>
-      <h3 class="title is-6">時短希望</h3>
+      <h3 class="title is-6" id="vote">投票</h3>
       <div class="content">
         <ul>
+          <li>自分以外の生存者に投票することができます。</li>
+          <li>全員が投票すると、誰が誰に投票したか公開されます。</li>
           <li>
-            村の設定で時短希望が可能になっている村では、進行中に時短希望ができます。
+            最多票の人が処刑されますが、最多票の人が複数いる場合は再投票となります。
           </li>
           <li>
-            ダミーキャラ以外の生存者全員が時短を希望すると、すぐに次の日に遷移します。
+            3回の投票で処刑者が決定しない場合、引き分けとなります。
           </li>
+          <li>規定の時間が経過するか、全員が投票すると夜時間に進みます。</li>
+          <li>全員が投票するまでは投票先を変更することができます。</li>
+          <li>時間内に投票しなかった場合、突然死します。</li>
+        </ul>
+      </div>
+      <h3 id="commit" class="title is-6">時短希望</h3>
+      <div class="content">
+        <ul>
+          <li>昼時間と夜時間に、生存者は時短を希望することができます。</li>
           <li>
-            時短により次の日に遷移した場合、次の日が長くなります。（通常の更新時間を迎えた場合と同じ時間になります）
+            全員が時短を希望した場合、すぐに次に進みます。（昼時間なら投票時間へ、夜時間なら昼時間へ）
           </li>
           <li>何人時短希望しているか知ることはできません。</li>
         </ul>
       </div>
-      <h3 class="title is-6">カミングアウト</h3>
+      <h3 id="suddenly-death" class="title is-6">突然死</h3>
       <div class="content">
         <ul>
           <li>
-            進行中の通常発言ができる時間帯に生存者は役職カミングアウトをすることができます。
+            夜時間に能力行使をしなかった/投票時間に投票しなかった生存者は突然死します。
           </li>
-          <li>
-            カミングアウトすると、発言の名前の横と、参加者一覧の名前の横に役職カミングアウト内容が表示されます。
-          </li>
-          <li>
-            表示上わかりやすくするための補助機能で、必ずカミングアウトしなければいけないわけではありません。
-          </li>
-          <li>
-            このカミングアウトに自身の役職を主張する以外の目的をもたせること、またそれを促すことは禁止します。
-            <ul>
-              <li>
-                例.
-                「xxさんもう発言回数がないね。聞きたいことがあるんだけど、XXならYYをカミングアウト、そうでないならZZをカミングアウトして答えてくれない？」
-              </li>
-            </ul>
-          </li>
-          <li>カミングアウトは何回でも変更や取り下げが可能です。</li>
-        </ul>
-      </div>
-      <h3 class="title is-6">日付更新時の処理順</h3>
-      <div class="content">
-        <ol>
-          <li>突然死</li>
-          <li>処刑</li>
-          <li>道連れ（処刑）</li>
-          <li>霊視</li>
-          <li>占い</li>
-          <li>護衛</li>
-          <li>襲撃</li>
-          <li>道連れ（襲撃）</li>
-          <li>勝敗判定</li>
-        </ol>
-      </div>
-      <h3 class="title is-6">突然死</h3>
-      <div class="content">
-        <ul>
-          <li>
-            前日に一度も通常発言をしていなかった生存者は進行中の日付更新のタイミングで突然死します。
-          </li>
-          <li>突然死者の投票は無効票となり、集計されません。</li>
-          <li>突然死者の能力は、人狼の襲撃以外は無効となります。</li>
           <li>突然死者はエピローグ以外で一切の発言ができなくなります。</li>
           <li>突然死者は自陣営が勝利していても敗北となります。</li>
           <li>
@@ -215,9 +247,27 @@
           </li>
         </ul>
       </div>
-      <h3 class="title is-6">役職</h3>
+      <h3 id="night-process" class="title is-6">投票→夜時間の処理</h3>
+      <div class="content">
+        <ol>
+          <li>突然死</li>
+          <li>処刑</li>
+          <li>霊視</li>
+          <li>勝敗判定</li>
+        </ol>
+      </div>
+      <h3 id="noon-process" class="title is-6">夜→昼時間の処理</h3>
+      <div class="content">
+        <ol>
+          <li>突然死</li>
+          <li>呪殺</li>
+          <li>襲撃</li>
+          <li>勝敗判定</li>
+        </ol>
+      </div>
+      <h3 id="skill" class="title is-6">役職</h3>
       <skill :skill-list="skillList" @scroll="scrollAbility($event)" />
-      <h3 class="title is-6">能力</h3>
+      <h3 id="ability" class="title is-6">能力行使</h3>
       <ability />
       <h3 class="title is-6">陣営、勝利条件</h3>
       <div class="content">
@@ -245,7 +295,7 @@
         </b-table>
         <ul>
           <li>
-            「人間」「人狼」どちらにカウントされるかは能力欄の「勝敗判定カウント」を参照してください。
+            「人間」「人狼」どちらにカウントされるかは役職欄の「勝敗判定カウント」を参照してください。
             <ul>
               <li>
                 「勝敗判定カウント」が「-」の場合はどちらにもカウントされません。
@@ -265,6 +315,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 // type
 import Skill from '~/@types/skill'
 import Skills from '~/@types/skills'
+import notification from '~/components/setting/notification.vue'
 const skill = () => import('~/components/rule/skill.vue')
 const ability = () => import('~/components/rule/ability.vue')
 
@@ -274,7 +325,7 @@ interface Camp {
 }
 
 @Component({
-  components: { skill, ability }
+  components: { skill, ability, notification }
 })
 export default class extends Vue {
   /** head */
@@ -295,12 +346,11 @@ export default class extends Vue {
       },
       {
         name: '人狼陣営',
-        win_condition:
-          '夜明け時点で生存している「人狼」の数 ≧ 生存している「人間」の数'
+        win_condition: '生存している「人狼」の数 ≧ 生存している「人間」の数'
       },
       {
         name: '村人陣営',
-        win_condition: '夜明け時点で「人狼」が全員死亡'
+        win_condition: '「人狼」が全員死亡'
       }
     ]
   }

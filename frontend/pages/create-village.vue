@@ -46,9 +46,9 @@ export default class CreateVillage extends Vue {
     .startOf('hour')
     .toDate()
 
-  private noonSeconds: string = '3600'
-  private voteSeconds: string = '600'
-  private nightSeconds: string = '1200'
+  private noonSeconds: string = '480'
+  private voteSeconds: string = '120'
+  private nightSeconds: string = '240'
   private charachipId: string = '1'
   private dummyCharaId: string = '1'
   private organization: string = '狼狼狼狂狐占霊狩共共村村村村村村村'

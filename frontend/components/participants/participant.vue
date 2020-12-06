@@ -16,6 +16,9 @@
           <p :class="charaNameClass">
             {{ participant.chara.name.name }}
           </p>
+          <p v-if="participant.skill" class="m-l-5">
+            {{ participant.skill.name }}
+          </p>
           <p v-if="participant.dead" class="has-text-danger m-l-5">
             {{
               `${participant.dead.village_day.day}d${participant.dead.reason}`
@@ -64,6 +67,9 @@
         :class="participant.dead ? 'dead' : ''"
       />
       <p :class="charaNameClass">{{ participant.chara.name.name }}</p>
+      <p v-if="participant.skill">
+        {{ participant.skill.name }}
+      </p>
       <p class="has-text-info" v-if="participant.co">
         {{ participant.co + 'CO' }}
       </p>
