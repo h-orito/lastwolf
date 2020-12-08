@@ -1,7 +1,8 @@
 <template>
   <b-field>
     <b-input
-      placeholder="Enterで発言、Shift+Enterで強調発言できます。"
+      :custom-class="messageBgColorClass"
+      :placeholder="placeholder"
       icon="comment"
       icon-pack="fas"
       size="is-small"
@@ -80,6 +81,38 @@ export default class MessageInput extends Vue {
     return ''
   }
 
+  private get messageBgColorClass(): string {
+    const type = this.messageType
+    switch (type) {
+      case MESSAGE_TYPE.WEREWOLF_SAY:
+        return 'werewolf-message-bg'
+      case MESSAGE_TYPE.MASON_SAY:
+        return 'mason-message-bg'
+      case MESSAGE_TYPE.GRAVE_SAY:
+        return 'grave-message-bg'
+      case MESSAGE_TYPE.MONOLOGUE_SAY:
+        return 'monologue-message-bg'
+      default:
+        return ''
+    }
+  }
+
+  private get placeholder(): string {
+    const type = this.messageType
+    switch (type) {
+      case MESSAGE_TYPE.WEREWOLF_SAY:
+        return '人狼同士にしか聞こえない会話が可能です。'
+      case MESSAGE_TYPE.MASON_SAY:
+        return '共有者同士にしか聞こえない会話が可能です。'
+      case MESSAGE_TYPE.GRAVE_SAY:
+        return '死者同士にしか聞こえない会話が可能です。'
+      case MESSAGE_TYPE.MONOLOGUE_SAY:
+        return '自分にしか見えない発言が可能です。'
+      default:
+        return 'Enterで発言、Shift+Enterで強調発言できます。'
+    }
+  }
+
   private get canSay(): boolean {
     if (!this.situation) return false
     return (
@@ -129,4 +162,17 @@ export default class MessageInput extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.werewolf-message-bg {
+  background-color: $werewolf-say !important;
+}
+.mason-message-bg {
+  background-color: $mason-say !important;
+}
+.grave-message-bg {
+  background-color: $grave-say !important;
+}
+.monologue-message-bg {
+  background-color: $monologue-say !important;
+}
+</style>
