@@ -9,6 +9,7 @@
     </p>
     <b-field label="対象" label-position="on-border">
       <b-select v-model="participantId" expanded size="is-small">
+        <option :value="null">選択してください</option>
         <option
           v-for="participant in targetList"
           :value="participant.id"
@@ -16,6 +17,11 @@
           >{{ participant.chara.name.name }}</option
         >
       </b-select>
+      <p class="control">
+        <button class="button is-primary is-small" @click="openSelectModal">
+          画像で選択
+        </button>
+      </p>
     </b-field>
     <b-button
       :disabled="!canSubmit || submitting"
@@ -24,6 +30,19 @@
       size="is-small"
       >{{ abilityButtonString }}</b-button
     >
+    <b-modal
+      :active.sync="isOpenSelectModal"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <participant-select-modal
+        :participants="targetList"
+        @close="closeSelectModal"
+        @participant-select="selectParticipant"
+      />
+    </b-modal>
   </div>
 </template>
 
@@ -34,7 +53,10 @@ import VillageParticipant from '~/@types/village-participant'
 import SituationAsParticipant from '~/@types/situation-as-participant'
 
 @Component({
-  components: {}
+  components: {
+    participantSelectModal: () =>
+      import('~/components/action/participant-select-modal.vue')
+  }
 })
 export default class Ability extends Vue {
   @Prop({ type: String })
@@ -102,6 +124,11 @@ export default class Ability extends Vue {
     }
   }
 
+  private selectParticipant({ participantId }): void {
+    this.participantId = participantId
+    this.closeSelectModal()
+  }
+
   private confirmSetAbility(): void {
     const self = this
     const target: VillageParticipant = this.targetList.find(
@@ -141,6 +168,15 @@ export default class Ability extends Vue {
       }
       this.submitting = false
     }
+  }
+
+  private isOpenSelectModal: boolean = false
+  private openSelectModal(): void {
+    this.isOpenSelectModal = true
+  }
+
+  private closeSelectModal(): void {
+    this.isOpenSelectModal = false
   }
 }
 </script>
