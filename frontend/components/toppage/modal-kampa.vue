@@ -59,6 +59,22 @@
             >Amazonほしいものリスト</a
           >
         </div>
+        <h2 class="title is-size-6 m-b-10">
+          Amazonアソシエイト経由でお買い物
+        </h2>
+        <div class="content">
+          下記からAmazonに遷移してカートに追加＆購入すると、管理人に若干の紹介料が入ります。<br />
+          <iframe
+            src="https://rcm-fe.amazon-adsystem.com/e/cm?o=9&p=20&l=ez&f=ifr&linkID=c5438f7fc033eeee42260876403c6c51&t=wolfort0d-22&tracking_id=wolfort0d-22"
+            width="120"
+            height="90"
+            scrolling="no"
+            border="0"
+            marginwidth="0"
+            style="border:none;"
+            frameborder="0"
+          ></iframe>
+        </div>
 
         <h4 class="is-size-5">補足</h4>
         <ul class="is-size-7 content">
