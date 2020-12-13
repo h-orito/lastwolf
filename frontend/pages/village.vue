@@ -156,7 +156,7 @@ export default class VillageV extends Vue {
     await Promise.all([
       this.$store.dispatch(actionTypes.INIT_VILLAGE, {
         villageId: this.villageId,
-        uid: this.$store.getters.user.uid,
+        uid: this.$store.getters.user?.uid,
         dayChangeCallback: () => {
           self.openLatestday()
           self.openFirstdayModalIfNeeded()
@@ -165,7 +165,7 @@ export default class VillageV extends Vue {
       }),
       this.$store.dispatch(actionTypes.INIT_MESSAGE, {
         villageId: this.villageId,
-        uid: this.$store.getters.user.uid
+        uid: this.$store.getters.user?.uid
       })
     ])
     this.timer = this.setTimer()
@@ -225,7 +225,7 @@ export default class VillageV extends Vue {
     if (!latestDay.epilogue) return
     this.$store.dispatch(actionTypes.INIT_MESSAGE, {
       villageId: this.villageId,
-      uid: this.$store.getters.user.uid
+      uid: this.$store.getters.user?.uid
     })
   }
 
