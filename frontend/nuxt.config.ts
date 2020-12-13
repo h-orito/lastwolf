@@ -153,6 +153,8 @@ const nuxtConfig: NuxtConfig = {
     '@nuxtjs/dotenv',
     // cookie-universal-nuxt
     'cookie-universal-nuxt',
+    // scroll
+    ['vue-scrollto/nuxt', { duration: 500 }],
     // pwa
     '@nuxtjs/pwa',
     // google-analytics

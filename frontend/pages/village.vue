@@ -53,8 +53,7 @@
       </div>
       <div class="footer-button-area is-hidden-tablet">
         <b-button
-          tag="a"
-          href="#participants-area"
+          @click="scrollTo('#participants-area')"
           type="is-white"
           icon-left="users"
           icon-pack="fas"
@@ -62,8 +61,7 @@
           >参加者</b-button
         >
         <b-button
-          tag="a"
-          href="#progress-area"
+          @click="scrollTo('#progress-area')"
           type="is-white"
           icon-left="clock"
           icon-pack="fas"
@@ -71,8 +69,7 @@
           >進行</b-button
         >
         <b-button
-          tag="a"
-          href="#messages-area"
+          @click="scrollTo('#messages-area')"
           type="is-white"
           icon-left="comment-dots"
           icon-pack="fas"
@@ -90,6 +87,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import scrollTo from 'vue-scrollto'
 import dayjs from 'dayjs'
 import firebase from '~/plugins/firebase'
 import messages from '~/components/message/messages.vue'
@@ -237,6 +235,10 @@ export default class VillageV extends Vue {
   private updateDaychangeTimer(): void {
     // @ts-ignore
     this.$refs.progress.refreshTimer()
+  }
+
+  private scrollTo(to: string): void {
+    this.$scrollTo(to)
   }
 }
 </script>
@@ -449,7 +451,7 @@ export default class VillageV extends Vue {
       left: 0;
       margin-bottom: 0 !important;
       padding: 2px;
-      width: 100vw;
+      width: 100%;
       height: 40px;
       background-color: #fff;
       border-top: 1px solid #ccc;
