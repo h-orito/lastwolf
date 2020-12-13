@@ -75,17 +75,6 @@
             </span>
           </template>
         </b-table-column>
-        <b-table-column field="visible_message_types" label="可視" centered>
-          <template>
-            <span
-              v-for="(messageType, index) in props.row.visible_message_types"
-              :key="messageType.name"
-            >
-              {{ index !== 0 ? ',' : '' }}
-              {{ messageType.name }}
-            </span>
-          </template>
-        </b-table-column>
         <b-table-column field="count_camp" label="勝敗判定カウント" centered>
           <template>
             <p

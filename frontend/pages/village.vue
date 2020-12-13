@@ -98,6 +98,7 @@ import villageProgress from '~/components/progress/progress.vue'
 import participants from '~/components/participants/participants.vue'
 import * as actionTypes from '~/store/action-types'
 import Village from '~/@types/village'
+import VillageDay from '~/@types/village-day'
 import MyselfPlayer from '~/@types/myself-player'
 import { NOONNIGHT_CODE } from '~/consts/consts'
 
@@ -159,6 +160,7 @@ export default class VillageV extends Vue {
         dayChangeCallback: () => {
           self.openLatestday()
           self.openFirstdayModalIfNeeded()
+          self.reloadMessageIfNeeded()
         }
       }),
       this.$store.dispatch(actionTypes.INIT_MESSAGE, {
@@ -215,6 +217,16 @@ export default class VillageV extends Vue {
 
   private closeFirstdayModal(): void {
     this.isOpenFirstdayModal = false
+  }
+
+  private reloadMessageIfNeeded(): void {
+    const latestDay: VillageDay = this.$store.getters.latestDay
+    // 日付変更後がエピローグだった場合、夜時間のメッセージが読めるようになるので読み込み直す
+    if (!latestDay.epilogue) return
+    this.$store.dispatch(actionTypes.INIT_MESSAGE, {
+      villageId: this.villageId,
+      uid: this.$store.getters.user.uid
+    })
   }
 
   // タイマー
