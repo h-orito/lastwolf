@@ -28,17 +28,17 @@
     </div>
     <div class="columns is-desktop">
       <div class="column p-t-5 p-b-5">
-        <div class="village-info-area-wrapper">
+        <div class="village-info-area-wrapper" id="participants-area">
           <div class="village-participants-area">
             <participants />
           </div>
-          <div class="village-myself-area">
+          <div class="village-myself-area" id="progress-area">
             <village-progress ref="progress" />
           </div>
         </div>
       </div>
       <div class="column p-t-5 p-b-5">
-        <div class="village-message-area-wrapper">
+        <div class="village-message-area-wrapper" id="messages-area">
           <div class="village-message-area">
             <messages ref="messages" />
           </div>
@@ -50,6 +50,35 @@
         <div class="has-text-right">
           <link-button text="トップページへ" path="/" is-small />
         </div>
+      </div>
+      <div class="footer-button-area is-hidden-tablet">
+        <b-button
+          tag="a"
+          href="#participants-area"
+          type="is-white"
+          icon-left="users"
+          icon-pack="fas"
+          class="footer-button"
+          >参加者</b-button
+        >
+        <b-button
+          tag="a"
+          href="#progress-area"
+          type="is-white"
+          icon-left="clock"
+          icon-pack="fas"
+          class="footer-button"
+          >進行</b-button
+        >
+        <b-button
+          tag="a"
+          href="#messages-area"
+          type="is-white"
+          icon-left="comment-dots"
+          icon-pack="fas"
+          class="footer-button"
+          >チャット</b-button
+        >
       </div>
     </div>
     <first-day-modal
@@ -387,18 +416,36 @@ export default class VillageV extends Vue {
 
 @media screen and (max-width: 767px) {
   .village-wrapper {
-    padding-bottom: 60px;
+    padding-bottom: 100px;
 
     .progress-bar {
       position: fixed;
       z-index: 100;
-      bottom: 0;
+      bottom: 40px;
       left: 0;
       margin-bottom: 0 !important;
       padding: 10px;
       width: 100vw;
       background-color: #fff;
       border-top: 1px solid #ccc;
+    }
+
+    .footer-button-area {
+      position: fixed;
+      z-index: 100;
+      bottom: 0;
+      left: 0;
+      margin-bottom: 0 !important;
+      padding: 2px;
+      width: 100vw;
+      height: 40px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+      display: flex;
+
+      .footer-button {
+        flex: 1;
+      }
     }
   }
 }
