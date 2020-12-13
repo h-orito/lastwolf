@@ -79,6 +79,24 @@
     </b-field>
     <b-field>
       <b-button
+        type="is-primary"
+        size="is-small"
+        class="m-t-10"
+        :disabled="!isVoteTime"
+        @click="allDrawVote"
+        >引分投票</b-button
+      >
+      <b-button
+        type="is-primary"
+        size="is-small"
+        class="m-l-10 m-t-10"
+        :disabled="!isVoteTime"
+        @click="allRandomVote"
+        >ランダム投票</b-button
+      >
+    </b-field>
+    <b-field>
+      <b-button
         type="is-danger"
         size="is-small"
         class="m-t-10"
@@ -181,6 +199,25 @@ export default class Debug extends Vue {
     this.$store.dispatch(actionType.DELETE_MESSAGE, {
       villageId: 1
     })
+  }
+
+  private async allDrawVote(): Promise<void> {
+    await this.$axios.$post(`/admin/village/${this.village!.id}/all-draw-vote`)
+  }
+
+  private async allRandomVote(): Promise<void> {
+    await this.$axios.$post(
+      `/admin/village/${this.village!.id}/all-random-vote`
+    )
+  }
+
+  private get isVoteTime(): boolean {
+    return (
+      !!this.village &&
+      this.village.days.list[
+        this.village.days.list.length - 1
+      ].noon_night.code.startsWith('VOTE')
+    )
   }
 }
 
