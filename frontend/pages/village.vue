@@ -1,5 +1,5 @@
 <template>
-  <section class="section" style="padding: 5px;">
+  <section class="section" style="padding: 6px;">
     <div class="container">
       <div class="is-size-7 has-text-left village-wrapper">
         <div class="columns">
