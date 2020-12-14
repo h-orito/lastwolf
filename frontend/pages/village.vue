@@ -246,6 +246,8 @@ export default class VillageV extends Vue {
 <style lang="scss">
 .village-wrapper {
   padding: 5px;
+  height: 100vh;
+  height: calc(100 * var(--vh, 1vh));
 
   .village-name-area-wrapper {
     display: flex;
@@ -431,6 +433,8 @@ export default class VillageV extends Vue {
 @media screen and (max-width: 767px) {
   .village-wrapper {
     padding-bottom: 100px;
+    height: 100vh;
+    height: calc(100 * var(--vh, 1vh));
 
     .progress-bar {
       position: fixed;
@@ -453,6 +457,8 @@ export default class VillageV extends Vue {
       padding: 2px;
       width: 100%;
       height: 40px;
+      height: calc(40px + env(safe-area-inset-bottom));
+
       background-color: #fff;
       border-top: 1px solid #ccc;
       display: flex;
