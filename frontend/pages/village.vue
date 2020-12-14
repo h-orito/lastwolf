@@ -51,37 +51,37 @@
           <link-button text="トップページへ" path="/" is-small />
         </div>
       </div>
-      <div class="footer-button-area is-hidden-tablet">
-        <b-button
-          @click="scrollTo('#participants-area')"
-          type="is-white"
-          icon-left="users"
-          icon-pack="fas"
-          class="footer-button"
-          >参加者</b-button
-        >
-        <b-button
-          @click="scrollTo('#progress-area')"
-          type="is-white"
-          icon-left="clock"
-          icon-pack="fas"
-          class="footer-button"
-          >進行</b-button
-        >
-        <b-button
-          @click="scrollTo('#messages-area')"
-          type="is-white"
-          icon-left="comment-dots"
-          icon-pack="fas"
-          class="footer-button"
-          >チャット</b-button
-        >
-      </div>
     </div>
     <first-day-modal
       :is-open="isOpenFirstdayModal"
       @close="closeFirstdayModal"
     />
+    <div class="footer-button-area is-hidden-tablet">
+      <b-button
+        @click="scrollTo('#participants-area')"
+        type="is-white"
+        icon-left="users"
+        icon-pack="fas"
+        class="footer-button"
+        >参加者</b-button
+      >
+      <b-button
+        @click="scrollTo('#progress-area')"
+        type="is-white"
+        icon-left="clock"
+        icon-pack="fas"
+        class="footer-button"
+        >進行</b-button
+      >
+      <b-button
+        @click="scrollTo('#messages-area')"
+        type="is-white"
+        icon-left="comment-dots"
+        icon-pack="fas"
+        class="footer-button"
+        >チャット</b-button
+      >
+    </div>
   </div>
 </template>
 
@@ -246,8 +246,6 @@ export default class VillageV extends Vue {
 <style lang="scss">
 .village-wrapper {
   padding: 5px;
-  height: 100vh;
-  height: calc(100 * var(--vh, 1vh));
 
   .village-name-area-wrapper {
     display: flex;
@@ -433,8 +431,7 @@ export default class VillageV extends Vue {
 @media screen and (max-width: 767px) {
   .village-wrapper {
     padding-bottom: 100px;
-    height: 100vh;
-    height: calc(100 * var(--vh, 1vh));
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
 
     .progress-bar {
       position: fixed;
