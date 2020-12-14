@@ -45,7 +45,7 @@ export default class MessageInput extends Vue {
 
   private get canSubmit(): boolean {
     const mes = this.message.trim()
-    return mes.length > 0 || mes.length <= 200
+    return mes.length > 0 && mes.length <= 200
   }
 
   private get village(): Village | null {
