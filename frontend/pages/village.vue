@@ -1,5 +1,5 @@
 <template>
-  <div class="is-size-7 has-text-left village-wrapper">
+  <div class="container is-size-7 has-text-left village-wrapper">
     <div class="columns">
       <div class="column p-b-0">
         <div v-if="village" class="village-name-area-wrapper">
