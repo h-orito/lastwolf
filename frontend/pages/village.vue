@@ -1,88 +1,92 @@
 <template>
-  <div class="container is-size-7 has-text-left village-wrapper">
-    <div class="columns">
-      <div class="column p-b-0">
-        <div v-if="village" class="village-name-area-wrapper">
-          <div class="village-name-area">
-            <p class="village-name">
-              <strong>{{ village.id }}. {{ village.name }}</strong>
-            </p>
+  <section class="section" style="padding: 5px;">
+    <div class="container">
+      <div class="is-size-7 has-text-left village-wrapper">
+        <div class="columns">
+          <div class="column p-b-0">
+            <div v-if="village" class="village-name-area-wrapper">
+              <div class="village-name-area">
+                <p class="village-name">
+                  <strong>{{ village.id }}. {{ village.name }}</strong>
+                </p>
+              </div>
+              <div class="share-button-area">
+                <a
+                  :href="`https://twitter.com/share?text=${village.name}`"
+                  class="twitter-share-button"
+                  data-hashtags="人狼_LASTWOLF"
+                  data-lang="ja"
+                  data-show-count="false"
+                ></a>
+                <script
+                  v-if="!isDebug"
+                  async
+                  src="https://platform.twitter.com/widgets.js"
+                  charset="utf-8"
+                ></script>
+              </div>
+            </div>
           </div>
-          <div class="share-button-area">
-            <a
-              :href="`https://twitter.com/share?text=${village.name}`"
-              class="twitter-share-button"
-              data-hashtags="人狼_LASTWOLF"
-              data-lang="ja"
-              data-show-count="false"
-            ></a>
-            <script
-              v-if="!isDebug"
-              async
-              src="https://platform.twitter.com/widgets.js"
-              charset="utf-8"
-            ></script>
+        </div>
+        <div class="columns is-desktop">
+          <div class="column p-t-5 p-b-5">
+            <div class="village-info-area-wrapper" id="participants-area">
+              <div class="village-participants-area">
+                <participants />
+              </div>
+              <div class="village-myself-area" id="progress-area">
+                <village-progress ref="progress" />
+              </div>
+            </div>
           </div>
+          <div class="column p-t-5 p-b-5">
+            <div class="village-message-area-wrapper" id="messages-area">
+              <div class="village-message-area">
+                <messages ref="messages" />
+              </div>
+              <div class="village-creator-area">
+                <creator v-if="isCreator" />
+              </div>
+            </div>
+            <debug v-if="isDebug" />
+            <div class="has-text-right">
+              <link-button text="トップページへ" path="/" is-small />
+            </div>
+          </div>
+        </div>
+        <first-day-modal
+          :is-open="isOpenFirstdayModal"
+          @close="closeFirstdayModal"
+        />
+        <div class="footer-button-area is-hidden-tablet">
+          <b-button
+            @click="scrollTo('#participants-area')"
+            type="is-white"
+            icon-left="users"
+            icon-pack="fas"
+            class="footer-button"
+            >参加者</b-button
+          >
+          <b-button
+            @click="scrollTo('#progress-area')"
+            type="is-white"
+            icon-left="clock"
+            icon-pack="fas"
+            class="footer-button"
+            >進行</b-button
+          >
+          <b-button
+            @click="scrollTo('#messages-area')"
+            type="is-white"
+            icon-left="comment-dots"
+            icon-pack="fas"
+            class="footer-button"
+            >チャット</b-button
+          >
         </div>
       </div>
     </div>
-    <div class="columns is-desktop">
-      <div class="column p-t-5 p-b-5">
-        <div class="village-info-area-wrapper" id="participants-area">
-          <div class="village-participants-area">
-            <participants />
-          </div>
-          <div class="village-myself-area" id="progress-area">
-            <village-progress ref="progress" />
-          </div>
-        </div>
-      </div>
-      <div class="column p-t-5 p-b-5">
-        <div class="village-message-area-wrapper" id="messages-area">
-          <div class="village-message-area">
-            <messages ref="messages" />
-          </div>
-          <div class="village-creator-area">
-            <creator v-if="isCreator" />
-          </div>
-        </div>
-        <debug v-if="isDebug" />
-        <div class="has-text-right">
-          <link-button text="トップページへ" path="/" is-small />
-        </div>
-      </div>
-    </div>
-    <first-day-modal
-      :is-open="isOpenFirstdayModal"
-      @close="closeFirstdayModal"
-    />
-    <div class="footer-button-area is-hidden-tablet">
-      <b-button
-        @click="scrollTo('#participants-area')"
-        type="is-white"
-        icon-left="users"
-        icon-pack="fas"
-        class="footer-button"
-        >参加者</b-button
-      >
-      <b-button
-        @click="scrollTo('#progress-area')"
-        type="is-white"
-        icon-left="clock"
-        icon-pack="fas"
-        class="footer-button"
-        >進行</b-button
-      >
-      <b-button
-        @click="scrollTo('#messages-area')"
-        type="is-white"
-        icon-left="comment-dots"
-        icon-pack="fas"
-        class="footer-button"
-        >チャット</b-button
-      >
-    </div>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -246,6 +250,8 @@ export default class VillageV extends Vue {
 <style lang="scss">
 .village-wrapper {
   padding: 5px;
+  width: 100%;
+  box-sizing: border-box;
 
   .village-name-area-wrapper {
     display: flex;
