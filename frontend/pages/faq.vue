@@ -19,6 +19,24 @@
           </ul>
         </li>
         <li class="question">
+          人狼や共有者は昼には会話できないのですか？
+        </li>
+        <li class="answer">
+          夜時間のみ他の人に聞こえない会話が可能です。
+        </li>
+        <li class="question">
+          人狼の夜会話は他の人に遠吠えとして聞こえますか？
+        </li>
+        <li class="answer">
+          聞こえません。
+        </li>
+        <li class="question">
+          死亡したのですが、昼時間に死者同士で会話できません。
+        </li>
+        <li class="answer">
+          夜時間のみ死者同士での会話が可能です。
+        </li>
+        <li class="question">
           無残な死体が複数いる場合、表示順序に決まりはありますか
         </li>
         <li class="answer">
