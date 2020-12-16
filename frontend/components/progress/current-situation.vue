@@ -68,7 +68,7 @@ const createCurrentDescription = (
   } else if (isRollcalling(village) && isAllRollcall(village)) {
     return `全員準備が完了しました。\n村建てが村を開始するまでお待ちください。\n${daychangeDatetime}開始予定です。`
   } else if (isProgress(village) && isNight(latestDay)) {
-    return '夜時間です。\n能力者は能力を行使してください。\n全員が能力を行使すると夜が明けます。'
+    return '夜時間です。\n能力者は能力を行使してください。\n残り時間がなくなったら夜が明けます。'
   } else if (isProgress(village) && isNoon(latestDay)) {
     return `昼時間です。\n議論で怪しい人を見つけましょう。\n残り時間がなくなったら投票に移ります。`
   } else if (isProgress(village) && isFirstVote(latestDay)) {
