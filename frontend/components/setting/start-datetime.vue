@@ -17,6 +17,7 @@
           :datepicker="datepickerProps"
           :timepicker="timepickerProps"
           :editable="false"
+          :mobile-native="false"
         >
         </b-datetimepicker>
       </b-field>
