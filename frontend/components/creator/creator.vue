@@ -57,7 +57,7 @@
           <b-button
             type="is-danger"
             size="is-small"
-            :disabled="!canKick"
+            :disabled="!canKick || !participantId"
             @click="confirmKick"
             >退村させる</b-button
           >
@@ -154,11 +154,7 @@ export default class Creator extends Vue {
   }
 
   private get canKick(): boolean {
-    return (
-      !!this.participantId &&
-      !!this.situation &&
-      this.situation.creator.available_kick
-    )
+    return !!this.situation && this.situation.creator.available_kick
   }
 
   private get canStartRollcall(): boolean {
