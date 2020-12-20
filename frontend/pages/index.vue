@@ -131,6 +131,7 @@ export default class TopPage extends Vue {
       params: {
         village_status: [
           VILLAGE_STATUS.PROLOGUE,
+          VILLAGE_STATUS.ROLLCALLING,
           VILLAGE_STATUS.PROGRESS,
           VILLAGE_STATUS.EPILOGUE
         ]
