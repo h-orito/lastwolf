@@ -215,6 +215,20 @@ export default class ModalVillageInfo extends Vue {
       description:
         '「あり」の場合、ダミーキャラに村人以外の役職が割り当てられる可能性があります。\n「なし」の場合、必ず村人が割り当てられます。'
     })
+    // 連続護衛
+    settings.push({
+      name: '連続護衛',
+      value: rules.available_same_target_guard ? 'あり' : 'なし',
+      description:
+        '「あり」の場合、狩人が2日連続で同じ対象を護衛できます。\n「なし」の場合、前日護衛した対象を翌日護衛することはできません。'
+    })
+    // 初日白通知
+    settings.push({
+      name: '初日白通知',
+      value: rules.first_divine_nowolf ? 'あり' : 'なし',
+      description:
+        '「あり」の場合、1日目夜の占いは人狼と妖狐以外からランダムで選択・行使されます。\n「なし」の場合、1日目夜も占い師が対象を選択して占うことができます。'
+    })
   }
 
   private addPasswordSetting(settings: Settings[]): void {

@@ -14,6 +14,8 @@
         :organization.sync="organization"
         :available-dummy-skill.sync="availableDummySkill"
         :available-skill-request.sync="availableSkillRequest"
+        :available-same-target-guard.sync="availableSameTargetGuard"
+        :first-divine-nowolf.sync="firstDivineNowolf"
         :join-password.sync="joinPassword"
         save-label="村を作成する"
         @confirm="confirmVillage"
@@ -54,6 +56,8 @@ export default class CreateVillage extends Vue {
   private organization: string = '狼狼狼狂狐占霊狩共共村村村村村村村'
   private availableDummySkill: boolean = true
   private availableSkillRequest: boolean = true
+  private availableSameTargetGuard: boolean = true
+  private firstDivineNowolf: boolean = false
 
   private joinPassword: string = ''
 

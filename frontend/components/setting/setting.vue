@@ -102,6 +102,37 @@
         :input-value.sync="availableSkillRequestModel"
       />
       <hr />
+      <h2 class="title is-6">詳細ルール</h2>
+      <notification>
+        <li>
+          初日白通知の場合、初日の占いのみ人狼と妖狐以外の役職からランダムで対象が選ばれます。
+        </li>
+      </notification>
+      <form-switch
+        rules="required"
+        label-message="連続護衛"
+        :description="
+          `${
+            availableSameTargetGuardModel
+              ? '2日連続同一対象を護衛可能'
+              : '前日護衛した人は護衛できない'
+          }`
+        "
+        :input-value.sync="availableSameTargetGuardModel"
+      />
+      <form-switch
+        rules="required"
+        label-message="初日白通知"
+        :description="
+          `${
+            firstDivineNowolfModel
+              ? '初日ランダム白占い'
+              : '初日から占い対象を選択'
+          }`
+        "
+        :input-value.sync="firstDivineNowolfModel"
+      />
+      <hr />
       <h2 class="title is-6">参加パスワード</h2>
       <join-password :input-value.sync="joinPasswordModel" />
       <hr />
@@ -279,6 +310,30 @@ export default class Setting extends Vue {
     this.$emit('update:availableSkillRequest', val)
   }
 
+  /** availableSameTargetGuard */
+  @Prop({ type: Boolean, required: true })
+  private availableSameTargetGuard!: boolean
+
+  private get availableSameTargetGuardModel(): boolean {
+    return this.availableSameTargetGuard
+  }
+
+  private set availableSameTargetGuardModel(val: boolean) {
+    this.$emit('update:availableSameTargetGuard', val)
+  }
+
+  /** firstDivineNowolf */
+  @Prop({ type: Boolean, required: true })
+  private firstDivineNowolf!: boolean
+
+  private get firstDivineNowolfModel(): boolean {
+    return this.firstDivineNowolf
+  }
+
+  private set firstDivineNowolfModel(val: boolean) {
+    this.$emit('update:firstDivineNowolf', val)
+  }
+
   /** joinPassword */
   @Prop({ type: String, required: true })
   private joinPassword!: string
@@ -422,6 +477,8 @@ export default class Setting extends Vue {
           available_suddenly_death: true,
           available_commit: true, // 固定
           available_dummy_skill: this.availableDummySkill,
+          available_same_target_guard: this.availableSameTargetGuard,
+          first_divine_nowolf: this.firstDivineNowolf,
           join_password: this.joinPassword
         }
       }

@@ -74,26 +74,43 @@
         size="is-small"
         :disabled="!village"
         @click="changeDay"
-        >残り30秒にする</b-button
+        >残り10秒にする</b-button
       >
     </b-field>
+    <b-field label="指定処刑" label-position="on-border">
+      <b-select
+        v-model="participantId"
+        :disabled="!isVoteTime"
+        expanded
+        size="is-small"
+      >
+        <option
+          v-for="participant in voteTargetList"
+          :value="participant.id"
+          :key="participant.id"
+          >{{ participant.chara.name.name }}</option
+        >
+      </b-select>
+      <p class="control">
+        <b-button
+          type="is-primary"
+          size="is-small"
+          :disabled="!isVoteTime || !participantId"
+          @click="allVote"
+          >全員投票</b-button
+        >
+      </p>
+    </b-field>
     <b-field>
-      <b-button
-        type="is-primary"
-        size="is-small"
-        class="m-t-10"
-        :disabled="!isVoteTime"
-        @click="allDrawVote"
-        >引分投票</b-button
-      >
-      <b-button
-        type="is-primary"
-        size="is-small"
-        class="m-l-10 m-t-10"
-        :disabled="!isVoteTime"
-        @click="allRandomVote"
-        >ランダム投票</b-button
-      >
+      <p class="control">
+        <b-button
+          type="is-primary"
+          size="is-small"
+          :disabled="!isVoteTime"
+          @click="allDrawVote"
+          >引分投票</b-button
+        >
+      </p>
     </b-field>
     <b-field>
       <b-button
@@ -121,6 +138,7 @@ import * as actionType from '~/store/action-types'
 export default class Debug extends Vue {
   private village: DebugVillage | null = null
   private playerId: number = 0
+  private participantId: number | null = null
   private participateCharaNum: number = 0
 
   private get isPrologue(): boolean {
@@ -150,6 +168,11 @@ export default class Debug extends Vue {
       })
     }
     return list
+  }
+
+  private get voteTargetList(): Array<VillageParticipant> {
+    if (!this.isVoteTime) return []
+    return this.village!!.participants.member_list.filter(p => !p.dead)
   }
 
   private get participateMemberNumList(): Array<number> {
@@ -193,6 +216,7 @@ export default class Debug extends Vue {
 
   private async changeDay(): Promise<void> {
     await this.$axios.$post(`/admin/village/${this.village!.id}/change-day`)
+    location.reload()
   }
 
   private allDelete() {
@@ -205,9 +229,9 @@ export default class Debug extends Vue {
     await this.$axios.$post(`/admin/village/${this.village!.id}/all-draw-vote`)
   }
 
-  private async allRandomVote(): Promise<void> {
+  private async allVote(): Promise<void> {
     await this.$axios.$post(
-      `/admin/village/${this.village!.id}/all-random-vote`
+      `/admin/village/${this.village!.id}/all-vote/${this.participantId}`
     )
   }
 

@@ -4,6 +4,8 @@ interface VillageRules {
   available_suddenly_death: boolean
   available_commit: boolean
   available_dummy_skill: boolean
+  available_same_target_guard: boolean
+  first_divine_nowolf: boolean
 }
 
 export default VillageRules

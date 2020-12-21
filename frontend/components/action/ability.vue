@@ -99,6 +99,13 @@ export default class Ability extends Vue {
       message = '護衛対象を選択してください。'
     }
     message += '\n一度決定すると取り消すことができないため注意してください。'
+    if (
+      type === 'GUARD' &&
+      !this.village.setting.rules.available_same_target_guard
+    ) {
+      message +=
+        '\nまた、この村では、2日連続同じ対象を護衛できないため注意してください。'
+    }
     if (type === 'ATTACK') {
       message += '\n襲撃は誰か1人が行使すると他の人は操作不可能になります。\n'
     }

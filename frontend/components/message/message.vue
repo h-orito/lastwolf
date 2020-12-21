@@ -45,7 +45,6 @@ export default class MessageV extends Vue {
 
   private get messageTime(): string {
     if (this.isPrologue || this.isEpilogue) {
-      console.log(this.message.time.datetime)
       return dayjs
         .unix(this.message.time.unix_time_milli / 1000)
         .format('HH:mm')

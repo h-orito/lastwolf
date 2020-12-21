@@ -1,6 +1,7 @@
 <template>
   <section>
     <b-input
+      placeholder="村建て発言"
       size="is-small"
       type="textarea"
       rows="5"
