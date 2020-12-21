@@ -125,7 +125,9 @@
         label-message="初日白通知"
         :description="
           `${
-            firstDivineNowolfModel ? '初日ランダム白' : '初日から占い対象を選択'
+            firstDivineNowolfModel
+              ? '初日ランダム白占い'
+              : '初日から占い対象を選択'
           }`
         "
         :input-value.sync="firstDivineNowolfModel"
@@ -475,8 +477,8 @@ export default class Setting extends Vue {
           available_suddenly_death: true,
           available_commit: true, // 固定
           available_dummy_skill: this.availableDummySkill,
-          available_same_target_guard: true,
-          first_divine_nowolf: false,
+          available_same_target_guard: this.availableSameTargetGuard,
+          first_divine_nowolf: this.firstDivineNowolf,
           join_password: this.joinPassword
         }
       }

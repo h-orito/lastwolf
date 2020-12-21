@@ -26,6 +26,8 @@
         :organization.sync="organization"
         :available-dummy-skill.sync="availableDummySkill"
         :available-skill-request.sync="availableSkillRequest"
+        :available-same-target-guard.sync="availableSameTargetGuard"
+        :first-divine-nowolf.sync="firstDivineNowolf"
         :join-password.sync="joinPassword"
         save-label="設定を変更する"
         :modifiable-chara="false"
@@ -77,6 +79,8 @@ export default class VillageSetting extends Vue {
   private organization: string = '村'
   private availableDummySkill: boolean = false
   private availableSkillRequest: boolean = true
+  private availableSameTargetGuard: boolean = true
+  private firstDivineNowolf: boolean = false
   private joinPassword: string = ''
 
   /** computed */
@@ -115,6 +119,8 @@ export default class VillageSetting extends Vue {
     const rules = this.village.setting.rules
     this.availableDummySkill = rules.available_dummy_skill
     this.availableSkillRequest = rules.available_skill_request
+    this.availableSameTargetGuard = rules.available_same_target_guard
+    this.firstDivineNowolf = rules.first_divine_nowolf
     this.joinPassword = ''
   }
 
