@@ -67,7 +67,10 @@ export default class Messages extends Vue {
   }
 
   private color(message: Message): string | null {
-    if (!message.from || this.isNight) return null
+    // シスメは色をつけない
+    if (!message.from) return null
+    // エピ以外の夜は色をつけない
+    if (!this.day.epilogue && this.isNight) return null
     return getColorClass(this.village!, message.from)
   }
 }
