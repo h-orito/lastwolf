@@ -66,6 +66,14 @@
         </div>
       </div>
     </section>
+    <section class="section" v-if="completeVillages">
+      <div class="container">
+        <h1 class="title is-5">最近終了した村</h1>
+        <div class="content is-size-7">
+          <complete-village-list :villages="completeVillages" />
+        </div>
+      </div>
+    </section>
     <section class="section has-background-light">
       <div class="container">
         <div class="content is-size-7">
@@ -81,14 +89,17 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import qs from 'qs'
 import cookies from 'cookie-universal-nuxt'
 import firebase from '~/plugins/firebase'
-import Villages from '~/@types/village'
+import Villages from '~/@types/villages'
+import SimpleVillage from '~/@types/simple-village'
 import MyselfPlayer from '~/@types/myself-player'
 import linkButton from '~/components/parts/link-button.vue'
+import completeVillageList from '~/components/complete-village-list/complete-village-list.vue'
 import { VILLAGE_STATUS } from '~/consts/consts'
 
 @Component({
   components: {
     linkButton,
+    completeVillageList,
     villageList: () => import('~/components/toppage/village-list.vue'),
     toppageFooter: () => import('~/components/toppage/footer.vue')
   }
@@ -105,6 +116,7 @@ export default class TopPage extends Vue {
 
   /** data */
   private villages: Villages | null = null
+  private completeVillages: SimpleVillage[] | null = null
   private loadingVillages: boolean = false
 
   private get player(): MyselfPlayer | null {
@@ -127,7 +139,20 @@ export default class TopPage extends Vue {
   /** created */
   private async created(): Promise<void> {
     this.loadingVillages = true
-    this.villages = await this.$axios.$get('/village/list', {
+    this.villages = await this.loadVillages()
+    this.loadingVillages = false
+    await this.auth()
+    // ログイン後のリダイレクトの際、ユーザ情報をサーバに保存
+    this.registerUserIfNeeded()
+    // 進行中の村がない場合は最近終了した村を表示
+    if (!this.villages || this.villages.list.length === 0) {
+      const completeVillages: Villages = await this.loadCompleteVillages()
+      this.completeVillages = completeVillages.list.slice(0, 3)
+    }
+  }
+
+  private async loadVillages(): Promise<Villages> {
+    return await this.$axios.$get('/village/list', {
       params: {
         village_status: [
           VILLAGE_STATUS.PROLOGUE,
@@ -139,10 +164,14 @@ export default class TopPage extends Vue {
       paramsSerializer: params =>
         qs.stringify(params, { arrayFormat: 'repeat' })
     })
-    this.loadingVillages = false
-    await this.auth()
-    // ログイン後のリダイレクトの際、ユーザ情報をサーバに保存
-    this.registerUserIfNeeded()
+  }
+
+  private async loadCompleteVillages(): Promise<Villages> {
+    return await this.$axios.$get('/village/list', {
+      params: {
+        village_status: VILLAGE_STATUS.COMPLETE
+      }
+    })
   }
 
   private async auth(): Promise<void> {
