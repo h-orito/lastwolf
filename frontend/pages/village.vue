@@ -443,6 +443,7 @@ export default class VillageV extends Vue {
       position: fixed;
       z-index: 100;
       bottom: 40px;
+      bottom: calc(40px + env(safe-area-inset-bottom));
       left: 0;
       margin-bottom: 0 !important;
       padding: 10px;
