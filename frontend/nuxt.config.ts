@@ -164,6 +164,8 @@ const nuxtConfig: NuxtConfig = {
         id: 'UA-168213386-1'
       }
     ],
+    // device判定
+    '@nuxtjs/device',
     // Doc: https://github.com/nuxt-community/sitemap-module
     // ↓配列の最後でsitemapモジュールを宣言
     '@nuxtjs/sitemap'

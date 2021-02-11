@@ -2,6 +2,7 @@ import * as actionType from '~/store/action-types'
 import firebase from '~/plugins/firebase'
 import Village from '~/@types/village'
 import SituationAsParticipant from '~/@types/situation-as-participant'
+import CharaImage from '~/@types/chara-image'
 
 const database = firebase.database()
 let villageRef: any = null
@@ -11,16 +12,21 @@ const state: {
   villageId: number
   village: Village | null
   situation: SituationAsParticipant | null
+  participantIdImgMap: Map<number, CharaImage>
 } = {
   villageId: 0,
   village: null,
-  situation: null
+  situation: null,
+  participantIdImgMap: new Map<number, CharaImage>()
 }
 
 const mutations = {
   initVillage(state, { villageId, village }) {
     state.villageId = villageId
     state.village = village
+    state.participantIdImgMap = new Map(
+      village.participants.member_list.map(p => [p.id, p.chara.image])
+    )
   },
   initSituation(state, { situation }) {
     state.situation = situation
@@ -69,7 +75,8 @@ const getters = {
     state.village
       ? state.village.days.list[state.village.days.list.length - 1]
       : null,
-  situation: state => state.situation
+  situation: state => state.situation,
+  participantIdImgMap: state => state.participantIdImgMap
 }
 
 const dbvillageReference: any = villageId => {

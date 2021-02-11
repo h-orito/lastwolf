@@ -101,7 +101,7 @@ import participants from '~/components/participants/participants.vue'
 import * as actionTypes from '~/store/action-types'
 import Village from '~/@types/village'
 import VillageDay from '~/@types/village-day'
-import MyselfPlayer from '~/@types/myself-player'
+import VillageParticipant from '~/@types/village-participant'
 import { NOONNIGHT_CODE } from '~/consts/consts'
 
 @Component({
@@ -223,8 +223,10 @@ export default class VillageV extends Vue {
 
   private reloadMessageIfNeeded(): void {
     const latestDay: VillageDay = this.$store.getters.latestDay
+    const myself: VillageParticipant | null = this.$store.getters.situation
+      .participate.myself
     // 日付変更後がエピローグだった場合、夜時間のメッセージが読めるようになるので読み込み直す
-    if (!latestDay.epilogue) return
+    if (!shouldReloadMessage(latestDay, myself)) return
     this.$store.dispatch(actionTypes.INIT_MESSAGE, {
       villageId: this.villageId,
       uid: this.$store.getters.user?.uid
@@ -244,6 +246,19 @@ export default class VillageV extends Vue {
   private scrollTo(to: string): void {
     this.$scrollTo(to)
   }
+}
+
+const shouldReloadMessage = (
+  latestDay: VillageDay,
+  myself: VillageParticipant | null
+): boolean => {
+  // 日付変更後がエピローグだった場合、夜時間のメッセージが読めるようになるので読み込み直す
+  if (latestDay.epilogue) return true
+  // 死亡した場合、呻きが読めるようになるので読み込み直す
+  if (!!myself && !!myself.dead && myself.dead.village_day.id === latestDay.id)
+    return true
+
+  return false
 }
 </script>
 
@@ -332,6 +347,58 @@ export default class VillageV extends Vue {
           -webkit-overflow-scrolling: touch;
 
           .village-message {
+            color: #777777;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            line-height: 1.8;
+            padding-top: 2px;
+            padding-bottom: 2px;
+
+            .message-image-area {
+              margin-right: 5px;
+
+              img {
+                border-radius: 5px;
+              }
+            }
+
+            .message-content-area {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+
+              .message-speaker-time-area {
+                display: flex;
+
+                .message-speaker {
+                  flex: 1;
+                }
+                .message-type {
+                  color: #ccc;
+                }
+                .message-time {
+                  color: #ccc;
+                }
+              }
+              .message-text-area {
+                flex: 1;
+
+                .message-content {
+                  flex: 1;
+                  font-family: sans-serif;
+                  white-space: pre-wrap;
+                  word-wrap: break-word;
+                  word-break: break-all;
+                }
+                .message-strong {
+                  font-weight: bold;
+                }
+              }
+            }
+          }
+
+          .village-simple-message {
             color: #777777;
             display: flex;
             flex-direction: row;

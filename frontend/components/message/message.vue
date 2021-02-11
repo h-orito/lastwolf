@@ -1,21 +1,32 @@
 <template>
-  <p class="village-message is-size-7" :class="messageClass">
-    <span class="message-speaker">{{ fromName }}</span
-    >:&nbsp;
-    <span
-      class="message-content"
-      :class="message.content.strong ? 'message-strong' : ''"
-      >{{ message.content.text }}</span
-    ><span v-if="messageType" class="message-type">{{ messageType }}</span
-    ><span class="message-time">{{ messageTime }}</span>
-  </p>
+  <div class="village-message message-border" :class="messageClass">
+    <div v-if="image" class="message-image-area">
+      <img :src="imgUrl" :width="imgWidth" :height="imgHeight" />
+    </div>
+    <div class="message-content-area">
+      <div class="message-speaker-time-area">
+        <span class="message-speaker">{{ fromName }}</span
+        ><span v-if="messageType" class="message-type">{{ messageType }}</span
+        ><span class="message-time">{{ messageTime }}</span>
+      </div>
+      <div class="message-text-area">
+        <span
+          class="message-content"
+          :class="message.content.strong ? 'message-strong' : ''"
+          >{{ message.content.text }}</span
+        >
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import device from '@nuxtjs/device'
 import dayjs from 'dayjs'
 import Message from '~/@types/message'
 import { MESSAGE_TYPE } from '~/consts/consts'
+import CharaImage from '~/@types/chara-image'
 
 @Component({
   components: {}
@@ -54,23 +65,15 @@ export default class MessageV extends Vue {
     return `${mesDatetime.diff(startDatetime, 'second')}秒` // ミリ秒を秒に変換
   }
 
-  private get messageClass(): string {
-    const system = isSystemMessage(this.message) ? 'message-border' : ''
-    const wolfMessage = isWolfMessage(this.message) ? ' has-text-danger' : ''
-    const masonMessage = isMasonMessage(this.message) ? ' has-text-success' : ''
-    const graveMessage = isGraveMessage(this.message) ? ' has-text-info' : ''
-    const creatorMessage = isCreatorMessage(this.message)
-      ? ' message-black'
-      : ''
-    const color = this.color ? ` ${this.color}` : ''
-    return (
-      system +
-      wolfMessage +
-      masonMessage +
-      graveMessage +
-      creatorMessage +
-      color
-    )
+  private get messageClass(): string[] {
+    const classNames: string[] = []
+    if (isWolfMessage(this.message)) classNames.push('has-text-danger')
+    else if (isMasonMessage(this.message)) classNames.push('has-text-success')
+    else if (isGraveMessage(this.message)) classNames.push('has-text-info')
+    else if (isCreatorMessage(this.message)) classNames.push('message-black')
+    if (this.color) classNames.push(this.color)
+    if (this.$device.isDesktopOrTablet) classNames.push('is-size-6')
+    return classNames
   }
 
   private get messageType(): string {
@@ -95,19 +98,26 @@ export default class MessageV extends Vue {
         return ''
     }
   }
-}
 
-const isSystemMessage = (message: Message): boolean => {
-  const messageTypeCode: string = message.content.type.code
-  return [
-    MESSAGE_TYPE.PUBLIC_SYSTEM,
-    MESSAGE_TYPE.PRIVATE_SYSTEM,
-    MESSAGE_TYPE.PRIVATE_ABILITY,
-    MESSAGE_TYPE.PRIVATE_PSYCHIC,
-    MESSAGE_TYPE.PRIVATE_WEREWOLF,
-    MESSAGE_TYPE.PRIVATE_MASON,
-    MESSAGE_TYPE.PARTICIPANTS
-  ].some(code => code === messageTypeCode)
+  private get image(): CharaImage | null {
+    const map: Map<number, CharaImage> = this.$store.getters.participantIdImgMap
+    if (!this.message.from) return null
+    return map.get(this.message.from.id) || null
+  }
+
+  private get imgUrl(): string {
+    return this.image!.image_url
+  }
+
+  private get imgWidth(): number {
+    if (this.$device.isMobile) return this.image!.width / 2
+    else return this.image!.width
+  }
+
+  private get imgHeight(): number {
+    if (this.$device.isMobile) return this.image!.height / 2
+    else return this.image!.height
+  }
 }
 
 const isWolfMessage = (message: Message): boolean => {

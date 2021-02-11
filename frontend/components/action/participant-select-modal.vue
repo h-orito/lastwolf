@@ -56,25 +56,29 @@ export default class ParticipantSelectModal extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.chara-select-content {
-  display: flex;
-  flex-wrap: wrap;
+.modal-card {
+  max-height: calc(100vh - 100px);
 
-  .chara-select-box {
-    border: 1px solid #cccccc;
-    border-radius: 16px;
-    padding: 5px;
-    margin: 5px auto;
-    width: 160px;
+  .chara-select-content {
+    display: flex;
+    flex-wrap: wrap;
 
-    img.dead {
-      opacity: 0.3;
+    .chara-select-box {
+      border: 1px solid #cccccc;
+      border-radius: 16px;
+      padding: 5px;
+      margin: 5px auto;
+      width: 160px;
+
+      img.dead {
+        opacity: 0.3;
+      }
     }
-  }
-  .chara-select-box:hover {
-    cursor: pointer;
-    border: 1px solid $primary;
-    font-weight: 700;
+    .chara-select-box:hover {
+      cursor: pointer;
+      border: 1px solid $primary;
+      font-weight: 700;
+    }
   }
 }
 </style>
