@@ -357,6 +357,7 @@ const shouldReloadMessage = (
 
             .message-image-area {
               margin-right: 5px;
+              cursor: pointer;
 
               img {
                 border-radius: 5px;

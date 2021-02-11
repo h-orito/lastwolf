@@ -1,6 +1,6 @@
 <template>
   <div class="village-message message-border" :class="messageClass">
-    <div v-if="image" class="message-image-area">
+    <div v-if="image" class="message-image-area" @click="filter">
       <img :src="imgUrl" :width="imgWidth" :height="imgHeight" />
     </div>
     <div class="message-content-area">
@@ -117,6 +117,12 @@ export default class MessageV extends Vue {
   private get imgHeight(): number {
     if (this.$device.isMobile) return this.image!.height / 2
     else return this.image!.height
+  }
+
+  private filter(): void {
+    this.$emit('filter', {
+      participantId: this.message.from?.id
+    })
   }
 }
 

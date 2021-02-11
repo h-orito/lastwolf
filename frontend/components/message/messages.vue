@@ -40,7 +40,11 @@
       >
         <message-input />
         <hr class="m-t-5 m-b-5" />
-        <day-messages :day="day" :filtering-id="filteringId" />
+        <day-messages
+          :day="day"
+          :filtering-id="filteringId"
+          @filter="filteringOrCancel"
+        />
       </b-tab-item>
     </b-tabs>
     <b-modal
@@ -134,6 +138,14 @@ export default class Messages extends Vue {
 
   private refreshFilter(): void {
     this.filteringId = null
+  }
+
+  private filteringOrCancel({ participantId }): void {
+    if (this.filteringId === participantId) this.refreshFilter()
+    else
+      this.filtering({
+        participantId
+      })
   }
 }
 </script>

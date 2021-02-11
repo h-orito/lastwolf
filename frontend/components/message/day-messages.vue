@@ -8,6 +8,7 @@
       :is-prologue="isPrologue"
       :is-epilogue="day.epilogue"
       :color="color(m)"
+      @filter="filter($event)"
     />
   </div>
 </template>
@@ -72,6 +73,12 @@ export default class Messages extends Vue {
     // エピ以外の夜は色をつけない
     if (!this.day.epilogue && this.isNight) return null
     return getColorClass(this.village!, message.from)
+  }
+
+  private filter({ participantId }): void {
+    this.$emit('filter', {
+      participantId
+    })
   }
 }
 </script>
