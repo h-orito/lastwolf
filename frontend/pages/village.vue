@@ -341,6 +341,29 @@ const shouldReloadMessage = (
   .village-message-area-wrapper {
     .village-message-area {
       .messages {
+        .alive-participants {
+          margin-bottom: 10px;
+
+          .alive-participant {
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+
+            img {
+              vertical-align: top;
+            }
+            p {
+              position: absolute;
+              color: white;
+              background-color: $dark;
+              opacity: 0.7;
+              bottom: 0;
+              width: 100%;
+              text-align: center;
+            }
+          }
+        }
+
         .message-area {
           max-height: 80vh;
           overflow-y: auto;
@@ -360,6 +383,7 @@ const shouldReloadMessage = (
               cursor: pointer;
 
               img {
+                vertical-align: top;
                 border-radius: 5px;
               }
             }
