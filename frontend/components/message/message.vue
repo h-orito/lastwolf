@@ -92,6 +92,8 @@ export default class MessageV extends Vue {
       case MESSAGE_TYPE.PRIVATE_MASON:
       case MESSAGE_TYPE.MASON_SAY:
         return '[共]'
+      case MESSAGE_TYPE.PRIVATE_FOX:
+        return '[狐]'
       case MESSAGE_TYPE.GRAVE_SAY:
         return '[墓]'
       default:
