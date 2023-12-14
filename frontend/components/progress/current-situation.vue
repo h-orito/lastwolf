@@ -45,7 +45,7 @@ export default class Progress extends Vue {
   private get currentDay(): string {
     if (!this.village) return ''
     const latestDay: VillageDay = this.$store.getters.latestDay!!
-    if (latestDay.epilogue) {
+    if (latestDay.is_epilogue) {
       return `現在 <strong class="is-size-6"> エピローグ </strong>です。\n`
     } else {
       return `現在 <strong class="is-size-6"> ${latestDay.day}日目${latestDay.noon_night.name} </strong>です。\n`

@@ -6,7 +6,7 @@
       :message="m"
       :start="day.start_datetime"
       :is-prologue="isPrologue"
-      :is-epilogue="day.epilogue"
+      :is-epilogue="day.is_epilogue"
       :color="color(m)"
       @filter="filter($event)"
     />
@@ -44,7 +44,7 @@ export default class Messages extends Vue {
 
   private get messages(): Message[] {
     let messages: Message[] = []
-    if (!this.day.epilogue && this.isNight) {
+    if (!this.day.is_epilogue && this.isNight) {
       messages = this.$store.getters.nightMessages.filter(
         m => m.time.village_day_id === this.day.id
       )
@@ -71,7 +71,7 @@ export default class Messages extends Vue {
     // シスメは色をつけない
     if (!message.from) return null
     // エピ以外の夜は色をつけない
-    if (!this.day.epilogue && this.isNight) return null
+    if (!this.day.is_epilogue && this.isNight) return null
     return getColorClass(this.village!, message.from)
   }
 

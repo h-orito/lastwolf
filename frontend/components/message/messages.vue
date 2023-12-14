@@ -69,9 +69,9 @@ export default class Messages extends Vue {
   }
 
   private dayLabel(day: VillageDay): string {
-    if (day.epilogue) return 'エピローグ'
-    if (!!this.village && this.village.days.list.some(d => d.epilogue)) {
-      const epilogueDayId = this.village.days.list.find(d => d.epilogue)!!.id
+    if (day.is_epilogue) return 'エピローグ'
+    if (!!this.village && this.village.days.list.some(d => d.is_epilogue)) {
+      const epilogueDayId = this.village.days.list.find(d => d.is_epilogue)!!.id
       if (day.id > epilogueDayId) return '終了'
     }
 

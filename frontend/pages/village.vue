@@ -254,7 +254,7 @@ const shouldReloadMessage = (
   myself: VillageParticipant | null
 ): boolean => {
   // 日付変更後がエピローグだった場合、夜時間のメッセージが読めるようになるので読み込み直す
-  if (latestDay.epilogue) return true
+  if (latestDay.is_epilogue) return true
   // 死亡した場合、呻きが読めるようになるので読み込み直す
   if (!!myself && !!myself.dead && myself.dead.village_day.id === latestDay.id)
     return true

@@ -47,7 +47,7 @@ export default class AliveParticipantsV extends Vue {
         return p.id === this.filteringId
       })
     }
-    if (this.day.epilogue) {
+    if (this.day.is_epilogue) {
       // エピローグは全員
       return this.village.participants.member_list
     }
@@ -66,7 +66,7 @@ export default class AliveParticipantsV extends Vue {
 
   private get dayMessages(): Message[] {
     let messages: Message[] = []
-    if (!this.day.epilogue && this.isNight) {
+    if (!this.day.is_epilogue && this.isNight) {
       messages = this.$store.getters.nightMessages.filter(
         m => m.time.village_day_id === this.day.id
       )

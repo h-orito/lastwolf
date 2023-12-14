@@ -4,7 +4,7 @@ interface VillageDay {
   id: number
   day: number
   noon_night: NoonNight
-  epilogue: boolean
+  is_epilogue: boolean
   start_datetime: string
   end_datetime: string
 }
