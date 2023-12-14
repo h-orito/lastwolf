@@ -224,7 +224,8 @@ export default class VillageV extends Vue {
   private reloadMessageIfNeeded(): void {
     const latestDay: VillageDay = this.$store.getters.latestDay
     const myself: VillageParticipant | null = this.$store.getters.situation
-      .participate.myself
+      ? this.$store.getters.situation.participate.myself
+      : null
     // 日付変更後がエピローグだった場合、夜時間のメッセージが読めるようになるので読み込み直す
     if (!shouldReloadMessage(latestDay, myself)) return
     this.$store.dispatch(actionTypes.INIT_MESSAGE, {
