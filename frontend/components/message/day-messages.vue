@@ -32,6 +32,9 @@ export default class Messages extends Vue {
   @Prop({ type: Number })
   private filteringId!: number | null
 
+  @Prop({ type: Boolean })
+  private shouldFilterByStrong!: boolean
+
   private get isNight(): boolean {
     return this.day.noon_night.code === 'NIGHT'
   }
@@ -58,6 +61,10 @@ export default class Messages extends Vue {
       messages = messages.filter(
         m => !!m.from && m.from.id === this.filteringId
       )
+    }
+
+    if (this.shouldFilterByStrong) {
+      messages = messages.filter(m => m.content.strong)
     }
 
     return messages

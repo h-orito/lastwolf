@@ -27,10 +27,20 @@
           :day="day"
           :filtering-id="filteringId"
         />
+        <div>
+          <form-switch
+            rules="required"
+            label-message=""
+            description="強調発言のみ表示"
+            :input-value.sync="shouldFilterByStrong"
+          />
+        </div>
+        <hr class="m-t-10 m-b-10" />
         <message-input />
         <day-messages
           :day="day"
           :filtering-id="filteringId"
+          :should-filter-by-strong="shouldFilterByStrong"
           @filter="filteringOrCancel"
         />
       </b-tab-item>
@@ -50,7 +60,8 @@ import VillageDay from '~/@types/village-day'
   components: {
     messageInput,
     dayMessages,
-    aliveParticipants
+    aliveParticipants,
+    formSwitch: () => import('~/components/form/validation/form-switch.vue')
   }
 })
 export default class Messages extends Vue {
@@ -89,6 +100,7 @@ export default class Messages extends Vue {
   }
 
   private filteringId: number | null = null
+  private shouldFilterByStrong: boolean = false
   private filtering({ participantId }): void {
     this.filteringId = participantId
   }
