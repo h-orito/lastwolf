@@ -89,6 +89,8 @@ export default class MessageV extends Vue {
       case MESSAGE_TYPE.PRIVATE_WEREWOLF:
       case MESSAGE_TYPE.WEREWOLF_SAY:
         return '[狼]'
+      case MESSAGE_TYPE.PRIVATE_FANATIC:
+        return '[信]'
       case MESSAGE_TYPE.PRIVATE_MASON:
       case MESSAGE_TYPE.MASON_SAY:
         return '[共]'
@@ -130,9 +132,11 @@ export default class MessageV extends Vue {
 
 const isWolfMessage = (message: Message): boolean => {
   const messageTypeCode: string = message.content.type.code
-  return [MESSAGE_TYPE.PRIVATE_WEREWOLF, MESSAGE_TYPE.WEREWOLF_SAY].some(
-    code => code === messageTypeCode
-  )
+  return [
+    MESSAGE_TYPE.PRIVATE_WEREWOLF,
+    MESSAGE_TYPE.WEREWOLF_SAY,
+    MESSAGE_TYPE.PRIVATE_FANATIC
+  ].some(code => code === messageTypeCode)
 }
 
 const isMasonMessage = (message: Message): boolean => {

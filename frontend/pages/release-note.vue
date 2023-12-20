@@ -4,6 +4,7 @@
       <h1 class="title is-5">更新情報</h1>
       <div class="content">
         <ul class="has-text-left is-size-7">
+          <li>2023/12/20 役職「C国狂人」「狂信者」を追加</li>
           <li>
             2021/02/11
             死亡後リロードするまで過去の墓ログを見られなかった不具合を修正
