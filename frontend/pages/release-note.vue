@@ -4,6 +4,7 @@
       <h1 class="title is-5">更新情報</h1>
       <div class="content">
         <ul class="has-text-left is-size-7">
+          <li>2023/12/20 スマホは残り時間を画面上部に表示するよう変更</li>
           <li>2023/12/20 役職「C国狂人」「狂信者」を追加</li>
           <li>
             2021/02/11

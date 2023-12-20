@@ -529,20 +529,21 @@ const shouldReloadMessage = (
 
 @media screen and (max-width: 767px) {
   .village-wrapper {
-    padding-bottom: 100px;
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    padding-top: 50px;
+    padding-top: calc(50px + env(safe-area-inset-bottom));
+    padding-bottom: 50px;
+    padding-bottom: calc(50px + env(safe-area-inset-bottom));
 
     .progress-bar {
       position: fixed;
       z-index: 100;
-      bottom: 40px;
-      bottom: calc(40px + env(safe-area-inset-bottom));
+      top: 0px;
       left: 0;
       margin-bottom: 0 !important;
       padding: 10px;
       width: 100vw;
       background-color: #fff;
-      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
     }
 
     .footer-button-area {
