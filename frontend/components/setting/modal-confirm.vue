@@ -71,10 +71,7 @@
 import { Component, Vue, Prop } from 'nuxt-property-decorator'
 // component
 // type
-import Village from '~/@types/village'
-import VillageTime from '~/@types/village-time'
-import Chara from '~/@types/chara'
-import { VILLAGE_STATUS, MESSAGE_TYPE } from '~/consts/consts'
+import { MESSAGE_TYPE } from '~/consts/consts'
 
 interface Settings {
   name: string
@@ -230,6 +227,14 @@ export default class ModalVillageInfo extends Vue {
       value: rules.first_divine_nowolf ? 'あり' : 'なし',
       description:
         '「あり」の場合、1日目夜の占いは人狼と妖狐以外からランダムで選択・行使されます。\n「なし」の場合、1日目夜も占い師が対象を選択して占うことができます。'
+    })
+    // 昼沈黙時間
+    settings.push({
+      name: '昼沈黙時間',
+      value:
+        rules.silent_seconds != null ? `${rules.silent_seconds}秒` : 'なし',
+      description:
+        '設定した場合、昼時間の開始数秒間は発言できない状態になります。'
     })
   }
 

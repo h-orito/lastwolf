@@ -28,6 +28,7 @@
         :available-skill-request.sync="availableSkillRequest"
         :available-same-target-guard.sync="availableSameTargetGuard"
         :first-divine-nowolf.sync="firstDivineNowolf"
+        :silent-seconds.sync="silentSeconds"
         :join-password.sync="joinPassword"
         save-label="設定を変更する"
         :modifiable-chara="false"
@@ -81,6 +82,7 @@ export default class VillageSetting extends Vue {
   private availableSkillRequest: boolean = true
   private availableSameTargetGuard: boolean = true
   private firstDivineNowolf: boolean = false
+  private silentSeconds: string = '0'
   private joinPassword: string = ''
 
   /** computed */
@@ -121,6 +123,8 @@ export default class VillageSetting extends Vue {
     this.availableSkillRequest = rules.available_skill_request
     this.availableSameTargetGuard = rules.available_same_target_guard
     this.firstDivineNowolf = rules.first_divine_nowolf
+    this.silentSeconds =
+      rules.silent_seconds == null ? '0' : rules.silent_seconds.toString()
     this.joinPassword = ''
   }
 

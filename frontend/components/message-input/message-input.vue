@@ -29,11 +29,10 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import * as actionType from '~/store/action-types'
+import dayjs from 'dayjs'
 import Village from '~/@types/village'
 import SituationAsParticipant from '~/@types/situation-as-participant'
-import VillageDay from '~/@types/village-day'
-import { NOONNIGHT_CODE, MESSAGE_TYPE } from '~/consts/consts'
+import { VILLAGE_STATUS, NOONNIGHT_CODE, MESSAGE_TYPE } from '~/consts/consts'
 
 @Component({
   components: {}
@@ -98,6 +97,9 @@ export default class MessageInput extends Vue {
   }
 
   private get placeholder(): string {
+    if (this.isSilentTime) {
+      return '沈黙時間中です。'
+    }
     const type = this.messageType
     switch (type) {
       case MESSAGE_TYPE.WEREWOLF_SAY:
@@ -117,8 +119,38 @@ export default class MessageInput extends Vue {
     if (!this.situation) return false
     return (
       this.situation.say.available_say &&
-      this.situation.say.selectable_message_type_list.length > 0
+      this.situation.say.selectable_message_type_list.length > 0 &&
+      !this.isSilentTime
     )
+  }
+
+  private timer: any = null
+  private mounted(): void {
+    this.timer = setInterval(this.refreshTimer, 1000)
+  }
+
+  private destroyed(): void {
+    clearInterval(this.timer)
+  }
+
+  private isSilentTime: boolean = false
+  private refreshTimer(): void {
+    if (!this.village || this.village.status.code !== VILLAGE_STATUS.PROGRESS)
+      return
+
+    const latestDay = this.$store.getters.latestDay!!
+    const silentSeconds = this.village.setting.rules.silent_seconds
+    if (
+      silentSeconds == null ||
+      latestDay.noon_night.code !== NOONNIGHT_CODE.NOON
+    ) {
+      this.isSilentTime = false
+      return
+    }
+    const start = dayjs(latestDay.start_datetime, 'YYYY/MM/DD HH:mm:ss')
+    const now = dayjs()
+    const silentEnd = start.add(silentSeconds, 'second')
+    this.isSilentTime = now.isBefore(silentEnd)
   }
 
   private keypressEnter(): void {

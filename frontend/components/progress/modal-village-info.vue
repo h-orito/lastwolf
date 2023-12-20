@@ -229,6 +229,14 @@ export default class ModalVillageInfo extends Vue {
       description:
         '「あり」の場合、1日目夜の占いは人狼と妖狐以外からランダムで選択・行使されます。\n「なし」の場合、1日目夜も占い師が対象を選択して占うことができます。'
     })
+    // 昼沈黙時間
+    settings.push({
+      name: '昼沈黙時間',
+      value:
+        rules.silent_seconds != null ? `${rules.silent_seconds}秒` : 'なし',
+      description:
+        '設定した場合、昼時間の開始数秒間は発言できない状態になります。'
+    })
   }
 
   private addPasswordSetting(settings: Settings[]): void {

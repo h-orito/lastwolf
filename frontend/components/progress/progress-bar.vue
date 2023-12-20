@@ -3,7 +3,15 @@
     <strong>{{ timeName }}</strong>
     <b-progress
       size="is-small"
-      :type="left > 60 ? 'is-success' : left > 30 ? 'is-warning' : 'is-danger'"
+      :type="
+        isSilentTime
+          ? 'is-secondary'
+          : left > 60
+          ? 'is-success'
+          : left > 30
+          ? 'is-warning'
+          : 'is-danger'
+      "
       :value="left"
       :max="interval"
       show-value
@@ -25,6 +33,7 @@ import SituationAsParticipant from '~/@types/situation-as-participant'
 export default class Progress extends Vue {
   private interval: number = 0
   private left: number = 0
+  private isSilentTime: boolean = false
 
   private get village(): Village | null {
     return this.$store.getters.village
@@ -40,7 +49,7 @@ export default class Progress extends Vue {
     if (!this.village) return ''
     const code = this.$store.getters.latestDay.noon_night.code
     if (code === NOONNIGHT_CODE.NOON) {
-      return '議論時間'
+      return this.isSilentTime ? '議論時間（沈黙時間中）' : '議論時間'
     } else if (code === NOONNIGHT_CODE.NIGHT) {
       return '夜時間'
     } else {
@@ -59,6 +68,16 @@ export default class Progress extends Vue {
     const now = dayjs()
     const diff = end.diff(now, 'second') // ミリ秒を秒に変換
     this.left = diff < 0 ? 0 : diff
+
+    this.isSilentTime = false
+    const silentSeconds = this.village.setting.rules.silent_seconds
+    if (
+      silentSeconds != null &&
+      latestDay.noon_night.code === NOONNIGHT_CODE.NOON
+    ) {
+      const silentEnd = start.add(silentSeconds, 'second')
+      this.isSilentTime = now.isBefore(silentEnd)
+    }
 
     // 残り0秒を切っていたら定期的に更新チェック
     this.checkDaychangeIfNeeded(diff)

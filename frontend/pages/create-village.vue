@@ -17,6 +17,7 @@
         :available-same-target-guard.sync="availableSameTargetGuard"
         :first-divine-nowolf.sync="firstDivineNowolf"
         :join-password.sync="joinPassword"
+        :silent-seconds.sync="silentSeconds"
         save-label="村を作成する"
         @confirm="confirmVillage"
         @save="createVillage"
@@ -27,9 +28,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import dayjs from 'dayjs'
 import setting from '~/components/setting/setting.vue'
-import Villages from '~/@types/village'
 
 @Component({
   components: { setting }
@@ -58,6 +57,7 @@ export default class CreateVillage extends Vue {
   private availableSkillRequest: boolean = true
   private availableSameTargetGuard: boolean = true
   private firstDivineNowolf: boolean = false
+  private silentSeconds: string = '0'
 
   private joinPassword: string = ''
 

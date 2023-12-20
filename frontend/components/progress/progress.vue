@@ -26,10 +26,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import dayjs from 'dayjs'
-import Village from '~/@types/village'
-import VillageDay from '~/@types/village-day'
-import { VILLAGE_STATUS, NOONNIGHT_CODE } from '~/consts/consts'
 
 @Component({
   components: {

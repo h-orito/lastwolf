@@ -132,6 +132,15 @@
         "
         :input-value.sync="firstDivineNowolfModel"
       />
+      <form-number
+        rules="max_value:20|min_value:0"
+        label-message="昼沈黙時間（秒）"
+        max="20"
+        min="0"
+        step="1"
+        :input-value.sync="silentSecondsModel"
+        class="m-b-5"
+      />
       <hr />
       <h2 class="title is-6">参加パスワード</h2>
       <join-password :input-value.sync="joinPasswordModel" />
@@ -334,6 +343,18 @@ export default class Setting extends Vue {
     this.$emit('update:firstDivineNowolf', val)
   }
 
+  /** silentSeconds */
+  @Prop({ type: String, required: false })
+  private silentSeconds!: string
+
+  private get silentSecondsModel(): string {
+    return this.silentSeconds
+  }
+
+  private set silentSecondsModel(val: string) {
+    this.$emit('update:silentSeconds', val)
+  }
+
   /** joinPassword */
   @Prop({ type: String, required: true })
   private joinPassword!: string
@@ -479,6 +500,8 @@ export default class Setting extends Vue {
           available_dummy_skill: this.availableDummySkill,
           available_same_target_guard: this.availableSameTargetGuard,
           first_divine_nowolf: this.firstDivineNowolf,
+          silent_seconds:
+            this.silentSeconds === '0' ? null : parseInt(this.silentSeconds),
           join_password: this.joinPassword
         }
       }
