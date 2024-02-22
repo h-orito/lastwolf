@@ -4,6 +4,7 @@
       <h1 class="title is-5">更新情報</h1>
       <div class="content">
         <ul class="has-text-left is-size-7">
+          <li>2024/02/23 設定「GM制」追加</li>
           <li>2023/12/20 設定「昼沈黙時間」追加</li>
           <li>2023/12/20 強調発言のみ表示する機能を追加</li>
           <li>2023/12/20 スマホは残り時間を画面上部に表示するよう変更</li>

@@ -6,6 +6,7 @@ interface VillageRules {
   available_dummy_skill: boolean
   available_same_target_guard: boolean
   first_divine_nowolf: boolean
+  creator_game_master: boolean
   silent_seconds: number | null
 }
 

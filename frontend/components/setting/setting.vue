@@ -132,6 +132,18 @@
         "
         :input-value.sync="firstDivineNowolfModel"
       />
+      <form-switch
+        rules="required"
+        label-message="GM制"
+        :description="
+          `${
+            creatorGameMasterModel
+              ? '村建てが神視点（全発言/役職確認可能）'
+              : '村建てが一般視点で、自身も参加可能'
+          }`
+        "
+        :input-value.sync="creatorGameMasterModel"
+      />
       <form-number
         rules="max_value:20|min_value:0"
         label-message="昼沈黙時間（秒）"
@@ -343,6 +355,18 @@ export default class Setting extends Vue {
     this.$emit('update:firstDivineNowolf', val)
   }
 
+  /** creatorGameMaster */
+  @Prop({ type: Boolean, required: true })
+  private creatorGameMaster!: boolean
+
+  private get creatorGameMasterModel(): boolean {
+    return this.creatorGameMaster
+  }
+
+  private set creatorGameMasterModel(val: boolean) {
+    this.$emit('update:creatorGameMaster', val)
+  }
+
   /** silentSeconds */
   @Prop({ type: String, required: false })
   private silentSeconds!: string
@@ -500,6 +524,7 @@ export default class Setting extends Vue {
           available_dummy_skill: this.availableDummySkill,
           available_same_target_guard: this.availableSameTargetGuard,
           first_divine_nowolf: this.firstDivineNowolf,
+          creator_game_master: this.creatorGameMaster,
           silent_seconds:
             this.silentSeconds === '0' ? null : parseInt(this.silentSeconds),
           join_password: this.joinPassword

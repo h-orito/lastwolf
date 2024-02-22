@@ -7,6 +7,7 @@ interface VillageCreatorSituation {
   available_modify_setting: boolean
   available_start_roll_call: boolean
   available_cancel_roll_call: boolean
+  viewable_spoiler: boolean
 }
 
 export default VillageCreatorSituation

@@ -16,6 +16,7 @@
         :available-skill-request.sync="availableSkillRequest"
         :available-same-target-guard.sync="availableSameTargetGuard"
         :first-divine-nowolf.sync="firstDivineNowolf"
+        :creator-game-master.sync="creatorGameMaster"
         :join-password.sync="joinPassword"
         :silent-seconds.sync="silentSeconds"
         save-label="村を作成する"
@@ -57,6 +58,7 @@ export default class CreateVillage extends Vue {
   private availableSkillRequest: boolean = true
   private availableSameTargetGuard: boolean = true
   private firstDivineNowolf: boolean = false
+  private creatorGameMaster: boolean = false
   private silentSeconds: string = '0'
 
   private joinPassword: string = ''

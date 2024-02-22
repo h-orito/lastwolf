@@ -12,7 +12,7 @@
       :participant="p"
       :is-disp-player="isDispPlayer"
     />
-    <div v-if="isSolved">
+    <div v-if="isViewablePlayerInfo">
       <hr class="m-t-10 m-b-10" />
       <b-button
         type="is-primary"
@@ -30,6 +30,7 @@ import participant from '~/components/participants/participant.vue'
 import Village from '~/@types/village'
 import VillageParticipant from '~/@types/village-participant'
 import { VILLAGE_STATUS } from '~/consts/consts'
+import SituationAsParticipant from '~/@types/situation-as-participant'
 
 interface Participant {
   name: string
@@ -63,6 +64,17 @@ export default class Participants extends Vue {
         VILLAGE_STATUS.COMPLETE,
         VILLAGE_STATUS.CANCEL
       ].some(s => s === this.village!!.status.code)
+    )
+  }
+
+  private get situation(): SituationAsParticipant {
+    return this.$store.getters.situation
+  }
+
+  private get isViewablePlayerInfo(): boolean {
+    return (
+      this.isSolved ||
+      (!!this.situation && this.situation.creator.viewable_spoiler)
     )
   }
 

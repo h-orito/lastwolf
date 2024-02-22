@@ -229,6 +229,13 @@ export default class ModalVillageInfo extends Vue {
       description:
         '「あり」の場合、1日目夜の占いは人狼と妖狐以外からランダムで選択・行使されます。\n「なし」の場合、1日目夜も占い師が対象を選択して占うことができます。'
     })
+    // GM制
+    settings.push({
+      name: 'GM制',
+      value: rules.creator_game_master ? 'あり' : 'なし',
+      description:
+        '「あり」の場合、村作成者がGMとなり、進行中もプレイヤー情報、役職、発言を見ることができます。\n「なし」の場合、村作成者も一般視点となり、プレイヤーとして参加可能となります。'
+    })
     // 昼沈黙時間
     settings.push({
       name: '昼沈黙時間',
