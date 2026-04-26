@@ -89,3 +89,4 @@ sw.*
 # Claude
 .claude/settings.local.json
 .serena
+.playwright-mcp
