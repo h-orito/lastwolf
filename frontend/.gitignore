@@ -82,3 +82,10 @@ dist
 
 # Service worker
 sw.*
+
+# reference project
+.reference
+
+# Claude
+.claude/settings.local.json
+.serena
