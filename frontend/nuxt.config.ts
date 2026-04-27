@@ -4,6 +4,8 @@ import { visualizer } from "rollup-plugin-visualizer";
 const isAnalyze = process.env.ANALYZE === "true";
 const isDev = process.env.NODE_ENV === "development";
 const isProduction = process.env.NUXT_PUBLIC_ENV === "production";
+const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://lastwolf.netlify.app";
+const gaId = process.env.NUXT_PUBLIC_GA_ID || "";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-08-24",
@@ -31,10 +33,12 @@ export default defineNuxtConfig({
         { name: "description", content: "短期人狼ゲームが無料で遊べるサービスです。" },
         { name: "keywords", content: "人狼,人狼ゲーム,短期人狼" },
         { property: "og:site_name", content: "LASTWOLF" },
-        {
-          property: "og:image",
-          content: `${process.env.NUXT_PUBLIC_SITE_URL || "https://lastwolf.netlify.app"}/image/ogp/top.jpg`,
-        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: siteUrl },
+        { property: "og:title", content: "LASTWOLF" },
+        { property: "og:description", content: "短期人狼ゲームが無料で遊べるサービスです。" },
+        { property: "og:image", content: `${siteUrl}/image/ogp/top.jpg` },
+        { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:site", content: "@ort_dev" },
         ...(!isProduction ? [{ name: "robots", content: "noindex,noarchive,nofollow" }] : []),
       ],
@@ -49,7 +53,22 @@ export default defineNuxtConfig({
         { rel: "preconnect", href: "https://apis.google.com" },
         { rel: "preconnect", href: "https://www.googleapis.com" },
         { rel: "preconnect", href: "https://identitytoolkit.googleapis.com" },
+        ...(isProduction && gaId
+          ? [{ rel: "preconnect", href: "https://www.googletagmanager.com" }]
+          : []),
       ],
+      script:
+        isProduction && gaId
+          ? [
+              {
+                src: `https://www.googletagmanager.com/gtag/js?id=${gaId}`,
+                async: true,
+              },
+              {
+                innerHTML: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`,
+              },
+            ]
+          : [],
     },
   },
 
@@ -270,6 +289,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:8088/lastwolf",
+      siteUrl,
+      gaId,
     },
   },
   nitro: {
