@@ -1,0 +1,1856 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Lastwolf API",
+    "description": "人狼ゲームのバックエンドAPI",
+    "contact": { "name": "Lastwolf API Support" },
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "/", "description": "Current Server" }],
+  "paths": {
+    "/village": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "registerVillage",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageRegisterBody" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/VillageRegisterView" } }
+            }
+          }
+        }
+      }
+    },
+    "/village/{villageId}/vote": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "vote",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageVoteBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/setting": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "setting",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageRegisterBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/setting/confirm": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "settingConfirm",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageRegisterBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/say": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "say",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageSayBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/say-confirm": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "sayConfirm",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageSayBody" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/MessageView" } } }
+          }
+        }
+      }
+    },
+    "/village/{villageId}/rollcall": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "rollcall",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageRollcallBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/participate": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "participateVillage",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VillageParticipateBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/participate-confirm": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "participateConfirm",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VillageParticipateBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/leave": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "leave",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/daychange-check": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "checkDaychange",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/commit": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "commit",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageCommitBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/comingout": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "comingout",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VillageComingOutBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/change-skill": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "changeSkill",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VillageChangeSkillBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}/ability": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "ability",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageAbilityBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/confirm": {
+      "post": {
+        "tags": ["village-controller"],
+        "operationId": "confirmRegisterVillage",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/VillageRegisterBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/player/nickname": {
+      "post": {
+        "tags": ["player-controller"],
+        "operationId": "updateNickname",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PlayerUpdateNicknameBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/creator/village/{villageId}/start-village": {
+      "post": {
+        "tags": ["creator-controller"],
+        "operationId": "startVillage",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/creator/village/{villageId}/start-rollcall": {
+      "post": {
+        "tags": ["creator-controller"],
+        "operationId": "startRollCall",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/creator/village/{villageId}/say": {
+      "post": {
+        "tags": ["creator-controller"],
+        "operationId": "say_1",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreatorSayBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/creator/village/{villageId}/say-confirm": {
+      "post": {
+        "tags": ["creator-controller"],
+        "operationId": "sayConfirm_1",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreatorSayBody" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/MessageView" } } }
+          }
+        }
+      }
+    },
+    "/creator/village/{villageId}/kick": {
+      "post": {
+        "tags": ["creator-controller"],
+        "operationId": "kick",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreatorKickBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/creator/village/{villageId}/cancel": {
+      "post": {
+        "tags": ["creator-controller"],
+        "operationId": "cancel",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/creator/village/{villageId}/cancel-rollcall": {
+      "post": {
+        "tags": ["creator-controller"],
+        "operationId": "cancelRollCall",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/participate": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "participateVillage_1",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AdminParticipateBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/no-suddenly-death": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "setNoSuddenlyDeath",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/multiple-say": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "multiSay",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/dummy-login": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "dummyLogin",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AdminDummyLoginBody" } }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/change-day": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "changeDay",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/all-vote/{participantId}": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "allRandomVote",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "participantId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/all-rollcall": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "allRollcall",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/all-random-vote": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "allRandomVote_1",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/admin/village/{villageId}/all-draw-vote": {
+      "post": {
+        "tags": ["debug-controller"],
+        "operationId": "allDrawVote",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/village/{villageId}": {
+      "get": {
+        "tags": ["village-controller"],
+        "operationId": "village",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/VillageView" } } }
+          }
+        }
+      }
+    },
+    "/village/{villageId}/situation": {
+      "get": {
+        "tags": ["village-controller"],
+        "operationId": "getParticipateSituation",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SituationAsParticipantView" } }
+            }
+          }
+        }
+      }
+    },
+    "/village/{villageId}/message-list": {
+      "get": {
+        "tags": ["village-controller"],
+        "operationId": "message",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "form",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/VillageMessageForm" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/MessagesView" } } }
+          }
+        }
+      }
+    },
+    "/village/list": {
+      "get": {
+        "tags": ["village-controller"],
+        "operationId": "villageList",
+        "parameters": [
+          {
+            "name": "form",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/VillageListForm" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/VillagesView" } } }
+          }
+        }
+      }
+    },
+    "/version": {
+      "get": {
+        "tags": ["version-controller"],
+        "operationId": "version",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/Version" } } }
+          }
+        }
+      }
+    },
+    "/skill/list": {
+      "get": {
+        "tags": ["skill-controller"],
+        "operationId": "charachipList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/SkillsView" } } }
+          }
+        }
+      }
+    },
+    "/recruiting-village-list": {
+      "get": {
+        "tags": ["external-controller"],
+        "operationId": "recruitingVillageList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/RecruitingVillagesView" } }
+            }
+          }
+        }
+      }
+    },
+    "/player/{playerId}/record": {
+      "get": {
+        "tags": ["player-controller"],
+        "operationId": "stats",
+        "parameters": [
+          {
+            "name": "playerId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/PlayerRecordsView" } } }
+          }
+        }
+      }
+    },
+    "/my-player": {
+      "get": {
+        "tags": ["player-controller"],
+        "operationId": "myPlayer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/MyselfPlayerView" } } }
+          }
+        }
+      }
+    },
+    "/charachip/{charaChipId}": {
+      "get": {
+        "tags": ["charachip-controller"],
+        "operationId": "charachip",
+        "parameters": [
+          {
+            "name": "charaChipId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/CharachipView" } } }
+          }
+        }
+      }
+    },
+    "/charachip/{charaChipId}/dummychara": {
+      "get": {
+        "tags": ["charachip-controller"],
+        "operationId": "dummyChara",
+        "parameters": [
+          {
+            "name": "charaChipId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/Chara" } } }
+          }
+        }
+      }
+    },
+    "/charachip/list": {
+      "get": {
+        "tags": ["charachip-controller"],
+        "operationId": "charachipList_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/CharachipsView" } } }
+          }
+        }
+      }
+    },
+    "/chara/{charaId}": {
+      "get": {
+        "tags": ["charachip-controller"],
+        "operationId": "chara",
+        "parameters": [
+          {
+            "name": "charaId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/Chara" } } }
+          }
+        }
+      }
+    },
+    "/admin/village/{villageId}": {
+      "get": {
+        "tags": ["debug-controller"],
+        "operationId": "village_1",
+        "parameters": [
+          {
+            "name": "villageId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/DebugVillageView" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "VillageCharachipCreateBody": {
+        "properties": {
+          "dummy_chara_id": { "type": "integer", "format": "int32" },
+          "charachip_id": { "type": "integer", "format": "int32" }
+        },
+        "required": ["charachip_id", "dummy_chara_id"]
+      },
+      "VillageOrganizationCreateBody": {
+        "properties": { "organization": { "type": "string" } },
+        "required": ["organization"]
+      },
+      "VillageRegisterBody": {
+        "properties": {
+          "village_name": { "type": "string", "maxLength": 40, "minLength": 0 },
+          "setting": { "$ref": "#/components/schemas/VillageSettingRegisterBody" }
+        },
+        "required": ["setting", "village_name"]
+      },
+      "VillageRuleCreateBody": {
+        "properties": {
+          "available_skill_request": { "type": "boolean" },
+          "open_skill_in_grave": { "type": "boolean" },
+          "visible_grave_message": { "type": "boolean" },
+          "available_suddenly_death": { "type": "boolean" },
+          "available_commit": { "type": "boolean" },
+          "available_dummy_skill": { "type": "boolean" },
+          "available_same_target_guard": { "type": "boolean" },
+          "first_divine_nowolf": { "type": "boolean" },
+          "silent_seconds": { "type": "integer", "format": "int32" },
+          "creator_game_master": { "type": "boolean" },
+          "join_password": { "type": "string", "maxLength": 20, "minLength": 0 }
+        },
+        "required": [
+          "available_commit",
+          "available_dummy_skill",
+          "available_same_target_guard",
+          "available_skill_request",
+          "available_suddenly_death",
+          "creator_game_master",
+          "first_divine_nowolf",
+          "open_skill_in_grave",
+          "visible_grave_message"
+        ]
+      },
+      "VillageSettingRegisterBody": {
+        "properties": {
+          "time": { "$ref": "#/components/schemas/VillageTimeCreateBody" },
+          "organization": { "$ref": "#/components/schemas/VillageOrganizationCreateBody" },
+          "charachip": { "$ref": "#/components/schemas/VillageCharachipCreateBody" },
+          "rule": { "$ref": "#/components/schemas/VillageRuleCreateBody" }
+        },
+        "required": ["charachip", "organization", "rule", "time"]
+      },
+      "VillageTimeCreateBody": {
+        "properties": {
+          "start_datetime": { "type": "string", "format": "date-time" },
+          "noon_seconds": { "type": "integer", "format": "int32" },
+          "vote_seconds": { "type": "integer", "format": "int32" },
+          "night_seconds": { "type": "integer", "format": "int32" }
+        },
+        "required": ["night_seconds", "noon_seconds", "start_datetime", "vote_seconds"]
+      },
+      "VillageRegisterView": {
+        "properties": { "village_id": { "type": "integer", "format": "int32" } },
+        "required": ["village_id"]
+      },
+      "VillageVoteBody": {
+        "properties": { "target_id": { "type": "integer", "format": "int32" } },
+        "required": ["target_id"]
+      },
+      "VillageSayBody": {
+        "properties": {
+          "message": { "type": "string" },
+          "message_type": { "type": "string" },
+          "strong": { "type": "boolean" }
+        },
+        "required": ["message", "message_type", "strong"]
+      },
+      "AbilityType": {
+        "properties": { "code": { "type": "string" }, "name": { "type": "string" } },
+        "required": ["code", "name"]
+      },
+      "AbilityTypes": {
+        "properties": {
+          "list": { "type": "array", "items": { "$ref": "#/components/schemas/AbilityType" } }
+        },
+        "required": ["list"]
+      },
+      "Camp": {
+        "properties": { "code": { "type": "string" }, "name": { "type": "string" } },
+        "required": ["code", "name"]
+      },
+      "CharaImage": {
+        "properties": {
+          "width": { "type": "integer", "format": "int32" },
+          "height": { "type": "integer", "format": "int32" },
+          "image_url": { "type": "string" }
+        },
+        "required": ["height", "image_url", "width"]
+      },
+      "CharaNameView": {
+        "properties": {
+          "name": { "type": "string" },
+          "short_name": { "type": "string" },
+          "full_name": { "type": "string" }
+        },
+        "required": ["full_name", "name", "short_name"]
+      },
+      "CharaView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "$ref": "#/components/schemas/CharaNameView" },
+          "charachip_id": { "type": "integer", "format": "int32" },
+          "image": { "$ref": "#/components/schemas/CharaImage" }
+        },
+        "required": ["charachip_id", "id", "image", "name"]
+      },
+      "ComingOut": {
+        "properties": { "skill": { "$ref": "#/components/schemas/Skill" } },
+        "required": ["skill"]
+      },
+      "DeadView": {
+        "properties": {
+          "code": { "type": "string" },
+          "reason": { "type": "string" },
+          "village_day": { "$ref": "#/components/schemas/VillageDay" }
+        },
+        "required": ["code", "reason", "village_day"]
+      },
+      "MessageContent": {
+        "properties": {
+          "type": { "$ref": "#/components/schemas/MessageType" },
+          "text": { "type": "string" },
+          "is_strong": { "type": "boolean" }
+        },
+        "required": ["is_strong", "text", "type"]
+      },
+      "MessageTimeView": {
+        "properties": {
+          "village_day_id": { "type": "integer", "format": "int32" },
+          "day": { "type": "integer", "format": "int32" },
+          "datetime": { "type": "string", "format": "date-time" },
+          "unix_time_milli": { "type": "integer", "format": "int64" }
+        },
+        "required": ["datetime", "day", "unix_time_milli", "village_day_id"]
+      },
+      "MessageType": {
+        "properties": { "code": { "type": "string" }, "name": { "type": "string" } },
+        "required": ["code", "name"]
+      },
+      "MessageView": {
+        "properties": {
+          "from": { "$ref": "#/components/schemas/VillageParticipantView" },
+          "time": { "$ref": "#/components/schemas/MessageTimeView" },
+          "content": { "$ref": "#/components/schemas/MessageContent" }
+        },
+        "required": ["content", "time"]
+      },
+      "NoonNight": {
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "is_night_time": { "type": "boolean" },
+          "is_vote_time": { "type": "boolean" },
+          "is_noon_time": { "type": "boolean" }
+        },
+        "required": ["code", "is_night_time", "is_noon_time", "is_vote_time", "name"]
+      },
+      "PlayerView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nickname": { "type": "string" },
+          "twitter_user_name": { "type": "string" }
+        },
+        "required": ["id", "nickname", "twitter_user_name"]
+      },
+      "Skill": {
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "short_name": { "type": "string" },
+          "win_judge_camp": { "$ref": "#/components/schemas/Camp" },
+          "ability_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AbilityType" }
+          },
+          "manual_ability_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AbilityType" }
+          },
+          "divine_result_wolf": { "type": "boolean" },
+          "psychic_result_wolf": { "type": "boolean" },
+          "sayable_skill_message_type_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MessageType" }
+          },
+          "viewable_skill_message_type_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MessageType" }
+          },
+          "count_camp": { "$ref": "#/components/schemas/Camp" },
+          "description": { "type": "string" },
+          "abilities": { "$ref": "#/components/schemas/AbilityTypes" },
+          "is_fox_count": { "type": "boolean" }
+        },
+        "required": [
+          "abilities",
+          "ability_list",
+          "code",
+          "description",
+          "divine_result_wolf",
+          "is_fox_count",
+          "manual_ability_list",
+          "name",
+          "psychic_result_wolf",
+          "sayable_skill_message_type_list",
+          "short_name",
+          "viewable_skill_message_type_list",
+          "win_judge_camp"
+        ]
+      },
+      "SkillRequest": {
+        "properties": {
+          "first": { "$ref": "#/components/schemas/Skill" },
+          "second": { "$ref": "#/components/schemas/Skill" }
+        },
+        "required": ["first", "second"]
+      },
+      "VillageDay": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "day": { "type": "integer", "format": "int32" },
+          "noon_night": { "$ref": "#/components/schemas/NoonNight" },
+          "is_epilogue": { "type": "boolean" },
+          "start_datetime": { "type": "string", "format": "date-time" },
+          "end_datetime": { "type": "string", "format": "date-time" },
+          "is_night_time": { "type": "boolean" },
+          "is_vote_time": { "type": "boolean" },
+          "is_noon_time": { "type": "boolean" }
+        },
+        "required": [
+          "day",
+          "end_datetime",
+          "id",
+          "is_epilogue",
+          "is_night_time",
+          "is_noon_time",
+          "is_vote_time",
+          "noon_night",
+          "start_datetime"
+        ]
+      },
+      "VillageParticipantView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "chara": { "$ref": "#/components/schemas/CharaView" },
+          "player": { "$ref": "#/components/schemas/PlayerView" },
+          "dead": { "$ref": "#/components/schemas/DeadView" },
+          "skill": { "$ref": "#/components/schemas/Skill" },
+          "skill_request": { "$ref": "#/components/schemas/SkillRequest" },
+          "winlose": { "$ref": "#/components/schemas/WinLose" },
+          "coming_out": { "$ref": "#/components/schemas/ComingOut" },
+          "done_roll_call": { "type": "boolean" }
+        },
+        "required": ["chara", "done_roll_call", "id"]
+      },
+      "WinLose": {
+        "properties": { "code": { "type": "string" }, "name": { "type": "string" } },
+        "required": ["code", "name"]
+      },
+      "VillageRollcallBody": {
+        "properties": { "rollcall": { "type": "boolean" } },
+        "required": ["rollcall"]
+      },
+      "VillageParticipateBody": {
+        "properties": {
+          "chara_id": { "type": "integer", "format": "int32" },
+          "first_request_skill": { "type": "string" },
+          "second_request_skill": { "type": "string" },
+          "join_password": { "type": "string" }
+        },
+        "required": ["chara_id", "first_request_skill", "second_request_skill"]
+      },
+      "VillageCommitBody": {
+        "properties": { "commit": { "type": "boolean" } },
+        "required": ["commit"]
+      },
+      "VillageComingOutBody": { "properties": { "skill_code": { "type": "string" } } },
+      "VillageChangeSkillBody": {
+        "properties": {
+          "first_request_skill": { "type": "string" },
+          "second_request_skill": { "type": "string" }
+        },
+        "required": ["first_request_skill", "second_request_skill"]
+      },
+      "VillageAbilityBody": {
+        "properties": {
+          "target_id": { "type": "integer", "format": "int32" },
+          "ability_type": { "type": "string" }
+        },
+        "required": ["ability_type"]
+      },
+      "PlayerUpdateNicknameBody": {
+        "properties": {
+          "nickname": { "type": "string" },
+          "twitter_user_name": { "type": "string" }
+        },
+        "required": ["nickname", "twitter_user_name"]
+      },
+      "CreatorSayBody": {
+        "properties": { "message": { "type": "string" } },
+        "required": ["message"]
+      },
+      "CreatorKickBody": {
+        "properties": { "target_id": { "type": "integer", "format": "int32" } },
+        "required": ["target_id"]
+      },
+      "AdminParticipateBody": {
+        "properties": { "participate_count": { "type": "integer", "format": "int32" } },
+        "required": ["participate_count"]
+      },
+      "AdminDummyLoginBody": {
+        "properties": { "target_id": { "type": "integer", "format": "int32" } },
+        "required": ["target_id"]
+      },
+      "PersonCapacity": {
+        "properties": {
+          "min": { "type": "integer", "format": "int32" },
+          "max": { "type": "integer", "format": "int32" }
+        },
+        "required": ["max", "min"]
+      },
+      "VillageCharachip": {
+        "properties": {
+          "dummy_chara_id": { "type": "integer", "format": "int32" },
+          "charachip_id": { "type": "integer", "format": "int32" }
+        },
+        "required": ["charachip_id", "dummy_chara_id"]
+      },
+      "VillageDays": {
+        "properties": {
+          "list": { "type": "array", "items": { "$ref": "#/components/schemas/VillageDay" } }
+        },
+        "required": ["list"]
+      },
+      "VillageOrganizations": {
+        "properties": {
+          "organization": { "type": "object", "additionalProperties": { "type": "string" } }
+        },
+        "required": ["organization"]
+      },
+      "VillageParticipantsView": {
+        "properties": {
+          "count": { "type": "integer", "format": "int32" },
+          "member_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VillageParticipantView" }
+          }
+        },
+        "required": ["count", "member_list"]
+      },
+      "VillagePasswordView": {
+        "properties": { "join_password_required": { "type": "boolean" } },
+        "required": ["join_password_required"]
+      },
+      "VillageRules": {
+        "properties": {
+          "available_skill_request": { "type": "boolean" },
+          "open_skill_in_grave": { "type": "boolean" },
+          "available_suddenly_death": { "type": "boolean" },
+          "available_commit": { "type": "boolean" },
+          "available_dummy_skill": { "type": "boolean" },
+          "available_same_target_guard": { "type": "boolean" },
+          "first_divine_nowolf": { "type": "boolean" },
+          "silent_seconds": { "type": "integer", "format": "int32" },
+          "creator_game_master": { "type": "boolean" }
+        },
+        "required": [
+          "available_commit",
+          "available_dummy_skill",
+          "available_same_target_guard",
+          "available_skill_request",
+          "available_suddenly_death",
+          "creator_game_master",
+          "first_divine_nowolf",
+          "open_skill_in_grave"
+        ]
+      },
+      "VillageSettingsView": {
+        "properties": {
+          "capacity": { "$ref": "#/components/schemas/PersonCapacity" },
+          "time": { "$ref": "#/components/schemas/VillageTimeView" },
+          "charachip": { "$ref": "#/components/schemas/VillageCharachip" },
+          "organizations": { "$ref": "#/components/schemas/VillageOrganizations" },
+          "rules": { "$ref": "#/components/schemas/VillageRules" },
+          "password": { "$ref": "#/components/schemas/VillagePasswordView" }
+        },
+        "required": ["capacity", "charachip", "organizations", "password", "rules", "time"]
+      },
+      "VillageStatus": {
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "is_finished": { "type": "boolean" },
+          "is_progress": { "type": "boolean" },
+          "is_recruiting": { "type": "boolean" },
+          "is_roll_calling": { "type": "boolean" },
+          "is_settled": { "type": "boolean" },
+          "is_solved": { "type": "boolean" }
+        },
+        "required": [
+          "code",
+          "is_finished",
+          "is_progress",
+          "is_recruiting",
+          "is_roll_calling",
+          "is_settled",
+          "is_solved",
+          "name"
+        ]
+      },
+      "VillageTimeView": {
+        "properties": {
+          "start_datetime": { "type": "string", "format": "date-time" },
+          "noon_seconds": { "type": "integer", "format": "int32" },
+          "vote_seconds": { "type": "integer", "format": "int32" },
+          "night_seconds": { "type": "integer", "format": "int32" }
+        },
+        "required": ["night_seconds", "noon_seconds", "start_datetime", "vote_seconds"]
+      },
+      "VillageView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "creator_player": { "$ref": "#/components/schemas/PlayerView" },
+          "status": { "$ref": "#/components/schemas/VillageStatus" },
+          "win_camp": { "$ref": "#/components/schemas/Camp" },
+          "setting": { "$ref": "#/components/schemas/VillageSettingsView" },
+          "participants": { "$ref": "#/components/schemas/VillageParticipantsView" },
+          "days": { "$ref": "#/components/schemas/VillageDays" }
+        },
+        "required": ["creator_player", "days", "id", "name", "participants", "setting", "status"]
+      },
+      "Chara": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "$ref": "#/components/schemas/CharaName" },
+          "charachip_id": { "type": "integer", "format": "int32" },
+          "image": { "$ref": "#/components/schemas/CharaImage" }
+        },
+        "required": ["charachip_id", "id", "image", "name"]
+      },
+      "CharaName": {
+        "properties": { "name": { "type": "string" }, "short_name": { "type": "string" } },
+        "required": ["name", "short_name"]
+      },
+      "SituationAsParticipantView": {
+        "properties": {
+          "participate": { "$ref": "#/components/schemas/VillageParticipateSituationView" },
+          "roll_call": { "$ref": "#/components/schemas/VillageRollCallSituation" },
+          "skill_request": { "$ref": "#/components/schemas/VillageSkillRequestSituation" },
+          "commit": { "$ref": "#/components/schemas/VillageCommitSituation" },
+          "coming_out": { "$ref": "#/components/schemas/VillageComingOutSituation" },
+          "say": { "$ref": "#/components/schemas/VillageSaySituation" },
+          "ability": { "$ref": "#/components/schemas/VillageAbilitySituationsView" },
+          "vote": { "$ref": "#/components/schemas/VillageVoteSituationView" },
+          "creator": { "$ref": "#/components/schemas/VillageCreatorSituation" }
+        },
+        "required": [
+          "ability",
+          "coming_out",
+          "commit",
+          "creator",
+          "participate",
+          "roll_call",
+          "say",
+          "skill_request",
+          "vote"
+        ]
+      },
+      "VillageAbilitySituationView": {
+        "properties": {
+          "type": { "$ref": "#/components/schemas/AbilityType" },
+          "target_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VillageParticipantView" }
+          },
+          "usable": { "type": "boolean" },
+          "available_no_target": { "type": "boolean" }
+        },
+        "required": ["available_no_target", "target_list", "type", "usable"]
+      },
+      "VillageAbilitySituationsView": {
+        "properties": {
+          "list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VillageAbilitySituationView" }
+          }
+        },
+        "required": ["list"]
+      },
+      "VillageComingOutSituation": {
+        "properties": {
+          "available_coming_out": { "type": "boolean" },
+          "current_coming_out": { "$ref": "#/components/schemas/ComingOut" },
+          "selectable_skill_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Skill" }
+          }
+        },
+        "required": ["available_coming_out", "selectable_skill_list"]
+      },
+      "VillageCommitSituation": {
+        "properties": {
+          "available_commit": { "type": "boolean" },
+          "committing": { "type": "boolean" }
+        },
+        "required": ["available_commit", "committing"]
+      },
+      "VillageCreatorSituation": {
+        "properties": {
+          "available_creator_setting": { "type": "boolean" },
+          "available_creator_say": { "type": "boolean" },
+          "available_start_village": { "type": "boolean" },
+          "available_cancel_village": { "type": "boolean" },
+          "available_kick": { "type": "boolean" },
+          "available_modify_setting": { "type": "boolean" },
+          "available_start_roll_call": { "type": "boolean" },
+          "available_cancel_roll_call": { "type": "boolean" },
+          "viewable_spoiler": { "type": "boolean" }
+        },
+        "required": [
+          "available_cancel_roll_call",
+          "available_cancel_village",
+          "available_creator_say",
+          "available_creator_setting",
+          "available_kick",
+          "available_modify_setting",
+          "available_start_roll_call",
+          "available_start_village",
+          "viewable_spoiler"
+        ]
+      },
+      "VillageParticipateSituationView": {
+        "properties": {
+          "participating": { "type": "boolean" },
+          "available_participate": { "type": "boolean" },
+          "selectable_chara_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Chara" }
+          },
+          "available_leave": { "type": "boolean" },
+          "myself": { "$ref": "#/components/schemas/VillageParticipantView" }
+        },
+        "required": [
+          "available_leave",
+          "available_participate",
+          "participating",
+          "selectable_chara_list"
+        ]
+      },
+      "VillageRollCallSituation": {
+        "properties": {
+          "available_roll_call": { "type": "boolean" },
+          "done_roll_call": { "type": "boolean" }
+        },
+        "required": ["available_roll_call", "done_roll_call"]
+      },
+      "VillageSaySituation": {
+        "properties": {
+          "available_say": { "type": "boolean" },
+          "selectable_message_type_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MessageType" }
+          },
+          "default_message_type": { "$ref": "#/components/schemas/MessageType" }
+        },
+        "required": ["available_say", "selectable_message_type_list"]
+      },
+      "VillageSkillRequestSituation": {
+        "properties": {
+          "available_skill_request": { "type": "boolean" },
+          "selectable_skill_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Skill" }
+          },
+          "skill_request": { "$ref": "#/components/schemas/SkillRequest" }
+        },
+        "required": ["available_skill_request", "selectable_skill_list"]
+      },
+      "VillageVoteSituationView": {
+        "properties": {
+          "available_vote": { "type": "boolean" },
+          "target_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VillageParticipantView" }
+          },
+          "target": { "$ref": "#/components/schemas/VillageParticipantView" }
+        },
+        "required": ["available_vote", "target_list"]
+      },
+      "VillageMessageForm": {
+        "properties": {
+          "message_type_list": { "type": "array", "items": { "type": "string" } },
+          "participant_id_list": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" }
+          },
+          "from": { "type": "integer", "format": "int64" },
+          "keyword": { "type": "string" },
+          "page_size": { "type": "integer", "format": "int32" },
+          "page_num": { "type": "integer", "format": "int32" }
+        }
+      },
+      "MessagesView": {
+        "properties": {
+          "list": { "type": "array", "items": { "$ref": "#/components/schemas/MessageView" } },
+          "all_record_count": { "type": "integer", "format": "int32" },
+          "all_page_count": { "type": "integer", "format": "int32" },
+          "exist_pre_page": { "type": "boolean" },
+          "exist_next_page": { "type": "boolean" },
+          "current_page_num": { "type": "integer", "format": "int32" }
+        },
+        "required": ["list"]
+      },
+      "VillageListForm": {
+        "properties": { "village_status": { "type": "array", "items": { "type": "string" } } }
+      },
+      "Dead": {
+        "properties": {
+          "code": { "type": "string" },
+          "reason": { "type": "string" },
+          "village_day": { "$ref": "#/components/schemas/VillageDay" },
+          "is_miserable": { "type": "boolean" }
+        },
+        "required": ["code", "is_miserable", "reason", "village_day"]
+      },
+      "Player": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "uid": { "type": "string" },
+          "nickname": { "type": "string" },
+          "twitter_user_name": { "type": "string" },
+          "is_restricted_participation": { "type": "boolean" },
+          "participate_progress_village_id_list": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" }
+          },
+          "participate_finished_village_id_list": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" }
+          },
+          "create_progress_village_id_list": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" }
+          },
+          "create_finished_village_id_list": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" }
+          },
+          "is_available_participate": { "type": "boolean" }
+        },
+        "required": [
+          "create_finished_village_id_list",
+          "create_progress_village_id_list",
+          "id",
+          "is_available_participate",
+          "is_restricted_participation",
+          "nickname",
+          "participate_finished_village_id_list",
+          "participate_progress_village_id_list",
+          "twitter_user_name",
+          "uid"
+        ]
+      },
+      "SimpleVillageView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "creator_player": { "$ref": "#/components/schemas/PlayerView" },
+          "status": { "$ref": "#/components/schemas/VillageStatus" },
+          "win_camp": { "$ref": "#/components/schemas/Camp" },
+          "setting": { "$ref": "#/components/schemas/VillageSettingsView" },
+          "participants": { "$ref": "#/components/schemas/VillageParticipants" },
+          "days": { "$ref": "#/components/schemas/VillageDays" }
+        },
+        "required": ["creator_player", "days", "id", "name", "participants", "setting", "status"]
+      },
+      "VillageParticipant": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "chara": { "$ref": "#/components/schemas/Chara" },
+          "player": { "$ref": "#/components/schemas/Player" },
+          "dead": { "$ref": "#/components/schemas/Dead" },
+          "is_gone": { "type": "boolean" },
+          "skill": { "$ref": "#/components/schemas/Skill" },
+          "skill_request": { "$ref": "#/components/schemas/SkillRequest" },
+          "winlose": { "$ref": "#/components/schemas/WinLose" },
+          "coming_out": { "$ref": "#/components/schemas/ComingOut" },
+          "done_roll_call": { "type": "boolean" },
+          "is_alive": { "type": "boolean" },
+          "is_available_coming_out": { "type": "boolean" },
+          "is_viewable_fox_message": { "type": "boolean" },
+          "is_viewable_mason_message": { "type": "boolean" },
+          "is_available_roll_call": { "type": "boolean" },
+          "is_viewable_grave_say": { "type": "boolean" },
+          "is_sayable_grave_say": { "type": "boolean" },
+          "is_viewable_mason_say": { "type": "boolean" },
+          "is_sayable_mason_say": { "type": "boolean" },
+          "is_sayable_monologue_say": { "type": "boolean" },
+          "is_viewable_werewolf_say": { "type": "boolean" },
+          "is_sayable_werewolf_say": { "type": "boolean" },
+          "is_available_vote": { "type": "boolean" },
+          "is_dead": { "type": "boolean" },
+          "is_viewable_attack_message": { "type": "boolean" },
+          "is_viewable_fanatic_message": { "type": "boolean" },
+          "is_viewable_psychic_message": { "type": "boolean" },
+          "is_available_skill_request": { "type": "boolean" }
+        },
+        "required": [
+          "chara",
+          "done_roll_call",
+          "id",
+          "is_alive",
+          "is_available_coming_out",
+          "is_available_roll_call",
+          "is_available_skill_request",
+          "is_available_vote",
+          "is_dead",
+          "is_gone",
+          "is_sayable_grave_say",
+          "is_sayable_mason_say",
+          "is_sayable_monologue_say",
+          "is_sayable_werewolf_say",
+          "is_viewable_attack_message",
+          "is_viewable_fanatic_message",
+          "is_viewable_fox_message",
+          "is_viewable_grave_say",
+          "is_viewable_mason_message",
+          "is_viewable_mason_say",
+          "is_viewable_psychic_message",
+          "is_viewable_werewolf_say",
+          "player",
+          "skill_request"
+        ]
+      },
+      "VillageParticipants": {
+        "properties": {
+          "count": { "type": "integer", "format": "int32" },
+          "list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VillageParticipant" }
+          }
+        },
+        "required": ["count", "list"]
+      },
+      "VillagesView": {
+        "properties": {
+          "list": { "type": "array", "items": { "$ref": "#/components/schemas/SimpleVillageView" } }
+        },
+        "required": ["list"]
+      },
+      "Version": {
+        "properties": { "client_version": { "type": "integer", "format": "int32" } },
+        "required": ["client_version"]
+      },
+      "SkillsView": {
+        "properties": {
+          "list": { "type": "array", "items": { "$ref": "#/components/schemas/Skill" } }
+        },
+        "required": ["list"]
+      },
+      "RecruitingVillageView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "status": { "type": "string" },
+          "participant_count": { "type": "integer", "format": "int32" },
+          "participant_capacity": { "type": "integer", "format": "int32" },
+          "noon_seconds": { "type": "integer", "format": "int32" },
+          "vote_seconds": { "type": "integer", "format": "int32" },
+          "night_seconds": { "type": "integer", "format": "int32" },
+          "start_datetime": { "type": "string" },
+          "charachip_name": { "type": "string" },
+          "url": { "type": "string" },
+          "organization": { "type": "string" }
+        },
+        "required": [
+          "charachip_name",
+          "id",
+          "name",
+          "night_seconds",
+          "noon_seconds",
+          "organization",
+          "participant_capacity",
+          "participant_count",
+          "start_datetime",
+          "status",
+          "url",
+          "vote_seconds"
+        ]
+      },
+      "RecruitingVillagesView": {
+        "properties": {
+          "village_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecruitingVillageView" }
+          }
+        },
+        "required": ["village_list"]
+      },
+      "CampRecord": {
+        "properties": {
+          "camp": { "$ref": "#/components/schemas/Camp" },
+          "participate_count": { "type": "integer", "format": "int32" },
+          "win_count": { "type": "integer", "format": "int32" },
+          "win_rate": { "type": "number", "format": "float" },
+          "lose_count": { "type": "integer", "format": "int32" },
+          "lose_rate": { "type": "number", "format": "float" },
+          "draw_count": { "type": "integer", "format": "int32" },
+          "draw_rate": { "type": "number", "format": "float" }
+        },
+        "required": [
+          "camp",
+          "draw_count",
+          "draw_rate",
+          "lose_count",
+          "lose_rate",
+          "participate_count",
+          "win_count",
+          "win_rate"
+        ]
+      },
+      "ParticipateVillageView": {
+        "properties": {
+          "village": { "$ref": "#/components/schemas/VillageView" },
+          "participant": { "$ref": "#/components/schemas/VillageParticipantView" }
+        },
+        "required": ["participant", "village"]
+      },
+      "PlayerRecordsView": {
+        "properties": {
+          "player": { "$ref": "#/components/schemas/PlayerView" },
+          "whole_record": { "$ref": "#/components/schemas/Record" },
+          "camp_record_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CampRecord" }
+          },
+          "skill_record_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SkillRecord" }
+          },
+          "participate_village_list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ParticipateVillageView" }
+          }
+        },
+        "required": [
+          "camp_record_list",
+          "participate_village_list",
+          "player",
+          "skill_record_list",
+          "whole_record"
+        ]
+      },
+      "Record": {
+        "properties": {
+          "participate_count": { "type": "integer", "format": "int32" },
+          "win_count": { "type": "integer", "format": "int32" },
+          "win_rate": { "type": "number", "format": "float" },
+          "lose_count": { "type": "integer", "format": "int32" },
+          "lose_rate": { "type": "number", "format": "float" },
+          "draw_count": { "type": "integer", "format": "int32" },
+          "draw_rate": { "type": "number", "format": "float" }
+        },
+        "required": [
+          "draw_count",
+          "draw_rate",
+          "lose_count",
+          "lose_rate",
+          "participate_count",
+          "win_count",
+          "win_rate"
+        ]
+      },
+      "SkillRecord": {
+        "properties": {
+          "skill": { "$ref": "#/components/schemas/Skill" },
+          "participate_count": { "type": "integer", "format": "int32" },
+          "win_count": { "type": "integer", "format": "int32" },
+          "win_rate": { "type": "number", "format": "float" },
+          "lose_count": { "type": "integer", "format": "int32" },
+          "lose_rate": { "type": "number", "format": "float" },
+          "draw_count": { "type": "integer", "format": "int32" },
+          "draw_rate": { "type": "number", "format": "float" }
+        },
+        "required": [
+          "draw_count",
+          "draw_rate",
+          "lose_count",
+          "lose_rate",
+          "participate_count",
+          "skill",
+          "win_count",
+          "win_rate"
+        ]
+      },
+      "MyselfPlayerView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nickname": { "type": "string" },
+          "twitter_user_name": { "type": "string" },
+          "available_create_village": { "type": "boolean" },
+          "participate_progress_villages": { "$ref": "#/components/schemas/VillagesView" },
+          "participate_finished_villages": { "$ref": "#/components/schemas/VillagesView" },
+          "create_progress_villages": { "$ref": "#/components/schemas/VillagesView" },
+          "create_finished_villages": { "$ref": "#/components/schemas/VillagesView" }
+        },
+        "required": [
+          "available_create_village",
+          "create_finished_villages",
+          "create_progress_villages",
+          "id",
+          "nickname",
+          "participate_finished_villages",
+          "participate_progress_villages",
+          "twitter_user_name"
+        ]
+      },
+      "CharachipView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "designer": { "$ref": "#/components/schemas/Designer" },
+          "description_url": { "type": "string" },
+          "chara_list": { "type": "array", "items": { "$ref": "#/components/schemas/Chara" } }
+        },
+        "required": ["chara_list", "description_url", "designer", "id", "name"]
+      },
+      "Designer": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
+      "CharachipsView": {
+        "properties": {
+          "list": { "type": "array", "items": { "$ref": "#/components/schemas/CharachipView" } }
+        },
+        "required": ["list"]
+      },
+      "DebugVillageView": {
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "creator_player": { "$ref": "#/components/schemas/PlayerView" },
+          "status": { "$ref": "#/components/schemas/VillageStatus" },
+          "setting": { "$ref": "#/components/schemas/VillageSettingsView" },
+          "participants": { "$ref": "#/components/schemas/VillageParticipantsView" },
+          "days": { "$ref": "#/components/schemas/VillageDays" }
+        },
+        "required": ["creator_player", "days", "id", "name", "participants", "setting", "status"]
+      }
+    }
+  }
+}
