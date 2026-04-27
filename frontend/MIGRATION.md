@@ -14,23 +14,23 @@ UIライブラリはBuefyを廃止し、Tailwind CSS中心の実装に切り替�
 
 ## 移行方針
 
-| 項目 | 現行 (Nuxt 2) | 移行後 (Nuxt 4) |
-|------|--------------|----------------|
-| フレームワーク | Nuxt 2 + Vue 2 | Nuxt 4 + Vue 3 |
-| UIライブラリ | Buefy (Bulma) | Tailwind CSS v4 |
-| 状態管理 | Vuex 3 | Pinia |
-| コンポーネント記法 | Class-based (vue-property-decorator) | Composition API (script setup) |
-| API通信 | @nuxtjs/axios | $fetch + useApi composable |
-| Firebase | v7 (直接import) | v12 (nuxt-vuefire) |
-| フォームバリデーション | vee-validate v3 | vee-validate v4 + yup |
-| アイコン | Font Awesome | @heroicons/vue |
-| 日付処理 | dayjs (plugin) | dayjs (直接import) |
-| チャート | chart.js + vue-chartjs | chart.js + vue-chartjs (v3対応版) |
-| CSS | SCSS (Bulmaベース) | Tailwind CSS v4 |
-| パッケージマネージャ | npm | pnpm |
-| Lint/Format | ESLint v6 + Prettier | Vite+ (`vp check`) |
-| PWA | @nuxtjs/pwa | @vite-pwa/nuxt |
-| Google Analytics | @nuxtjs/google-analytics | Nuxt 4対応実装 |
+| 項目                   | 現行 (Nuxt 2)                        | 移行後 (Nuxt 4)                   |
+| ---------------------- | ------------------------------------ | --------------------------------- |
+| フレームワーク         | Nuxt 2 + Vue 2                       | Nuxt 4 + Vue 3                    |
+| UIライブラリ           | Buefy (Bulma)                        | Tailwind CSS v4                   |
+| 状態管理               | Vuex 3                               | Pinia                             |
+| コンポーネント記法     | Class-based (vue-property-decorator) | Composition API (script setup)    |
+| API通信                | @nuxtjs/axios                        | $fetch + useApi composable        |
+| Firebase               | v7 (直接import)                      | v12 (nuxt-vuefire)                |
+| フォームバリデーション | vee-validate v3                      | vee-validate v4 + yup             |
+| アイコン               | Font Awesome                         | @heroicons/vue                    |
+| 日付処理               | dayjs (plugin)                       | dayjs (直接import)                |
+| チャート               | chart.js + vue-chartjs               | chart.js + vue-chartjs (v3対応版) |
+| CSS                    | SCSS (Bulmaベース)                   | Tailwind CSS v4                   |
+| パッケージマネージャ   | npm                                  | pnpm                              |
+| Lint/Format            | ESLint v6 + Prettier                 | Vite+ (`vp check`)                |
+| PWA                    | @nuxtjs/pwa                          | @vite-pwa/nuxt                    |
+| Google Analytics       | @nuxtjs/google-analytics             | Nuxt 4対応実装                    |
 
 ---
 
@@ -172,6 +172,7 @@ ESLintの除外設定に `.old-nuxt2/**/*` を追加する（firewolf-uiに同�
 ```
 
 **廃止パッケージ**:
+
 - `nuxt-buefy`, `@fortawesome/fontawesome-free-webfonts` → Tailwind + @heroicons/vue
 - `@nuxtjs/axios` → $fetch (Nuxt組み込み)
 - `nuxt-property-decorator`, `vue-property-decorator` → Composition API
@@ -189,6 +190,7 @@ ESLintの除外設定に `.old-nuxt2/**/*` を追加する（firewolf-uiに同�
 firewolf-uiのnuxt.config.tsに準拠しつつLASTWOLF固有設定を適用。
 
 主要設定:
+
 - `ssr: false` (SPA維持)
 - `compatibilityDate: '2025-xx-xx'`
 - `vuefire` 設定 (Firebase)
@@ -198,6 +200,7 @@ firewolf-uiのnuxt.config.tsに準拠しつつLASTWOLF固有設定を適用。
 - `@pinia/nuxt`, `@nuxt/eslint`, `nuxt-vuefire`
 
 環境変数名をNuxt 4規約に合わせる:
+
 - `FIREBASE_API_KEY` → `NUXT_PUBLIC_FIREBASE_API_KEY`
 - `FIREBASE_AUTH_DOMAIN` → `NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
 - `LASTWOLF_API_BASEURL` → `NUXT_PUBLIC_API_BASE_URL`
@@ -208,11 +211,13 @@ firewolf-uiのnuxt.config.tsに準拠しつつLASTWOLF固有設定を適用。
 **Vite+** (https://viteplus.dev) はVoidZero製のWeb開発統合CLIツール。npmパッケージではなくグローバルインストールするCLI。
 
 **内部構成**:
+
 - **Oxlint** (Rust製, ESLint互換, ~50-100x高速) でlint
 - **Oxfmt** (Rust製, Prettier互換) でformat
 - **tsgo** で型チェック
 
 **インストール** (開発者が各自の環境に一度だけ実行):
+
 ```bash
 # macOS / Linux
 curl -fsSL https://vite.plus | bash
@@ -222,11 +227,13 @@ irm https://vite.plus/ps1 | iex
 ```
 
 **ローカルパッケージ**として `vite-plus` を `package.json` に追加する:
+
 ```bash
 vp add -D vite-plus
 ```
 
 **主要コマンド**:
+
 ```bash
 vp check          # format + lint + type-check を一括実行 (コミット前に実行)
 vp check --fix    # 自動修正付き
@@ -242,6 +249,7 @@ Vite+の組み込みコマンドを使うため、`lint`, `format`, `type-check`
 `dev`, `build`, `preview` も `vp` 経由で実行可能。
 
 **注意**: `@nuxt/eslint` との併用について
+
 - Vite+ のOxlintはESLint互換ルールを持つが、Nuxt固有のESLintルール (`@nuxt/eslint` が生成) との統合を確認する
 - 必要に応じて `eslint.config.js` を残し、`vp check` がそれを参照する形にする
 
@@ -250,12 +258,14 @@ Vite+の組み込みコマンドを使うため、`lint`, `format`, `type-check`
 `app/assets/css/main.css` に `@import 'tailwindcss'` を追加。
 
 firewolf-uiのCSS変数（発言色、システムメッセージ色等）をそのまま移植:
+
 - `--color-say-*` 系変数
 - `--color-system-*` 系変数
 - `--color-lovers-*` 系変数
 - `--ui-primary`, `--ui-info`, `--ui-success`, `--ui-warning`, `--ui-error`
 
 ダークモードは `.dark` クラスベース:
+
 ```css
 @custom-variant dark (&:where(.dark, .dark *));
 ```
@@ -280,17 +290,20 @@ firewolf-uiのtsconfig.jsonに準拠。
 **`app/stores/auth.ts`**  
 firewolf-uiの実装をそのまま参考に移植。  
 現行Vuex `auth` モジュールの状態・アクションを移行:
+
 - `user`, `player`, `photoUrl` → `user`, `myselfPlayer`
 - Cookie管理 (`id-token`, `id-token-check-date`)
 - `getAuthToken()` メソッド
 
 **`app/stores/village.ts`**  
 現行Vuex `village` モジュールから移行:
+
 - `village`, `situation`, `participantIdImgMap`
 - Firebase Realtime Databaseのリアルタイム購読はcomposableへ移動
 
 **`app/stores/village-message.ts`**  
 現行Vuex `messages` モジュールから移行:
+
 - `nightMessages`, `noonMessages`
 - Firebase Realtime Databaseのリアルタイム購読はcomposableへ移動
 
@@ -303,6 +316,7 @@ firewolf-uiの実装をそのまま参考に移植。
 
 `app/composables/useApi.ts`  
 firewolf-uiの実装を参考に移植:
+
 - 認証トークン自動付与
 - エラーハンドリング (status 499はビジネスエラーとして再スロー)
 - `baseURL` は `useRuntimeConfig().public.apiBaseUrl`
@@ -352,6 +366,7 @@ Buefyコンポーネントを廃止し、Tailwind CSSベースの独自コンポ
 firewolf-uiの実装を参考に移植。
 
 使用箇所:
+
 - `components/action/chara-select-modal.vue` (キャラ選択)
 - `components/action/participant-select-modal.vue` (参加者選択)
 - `components/day-change/modal-first-day.vue` (初日案内)
@@ -441,19 +456,22 @@ GoogleAds、NavBar配置。
 ### 5-3. player-record.vue
 
 プレイヤー戦績ページ。  
-チャート表示: chart.js + vue-chartjs (v4対応版)  
+チャート表示: chart.js + vue-chartjs (v4対応版)
+
 - `components/record/camp-records.vue`
 - `components/record/skill-records.vue`
 - `components/record/participate-village-list.vue`
 
 ### 5-4. village-list.vue
 
-村一覧ページ。  
+村一覧ページ。
+
 - `components/toppage/village-list.vue` → `components/pages/index/VillageCard.vue` 等
 
 ### 5-5. index.vue (トップページ)
 
-トップページ。  
+トップページ。
+
 - 村一覧、ポリシー、規約モーダル
 - カンパモーダル: firewolf-uiの `KampaModal.vue` をそのまま使用（旧Nuxt2版は使用しない）
 - Google/Twitterサインインへの導線
@@ -477,6 +495,7 @@ create-villageと類似のフォーム構成。
 最も複雑なページ。Firebase Realtime Databaseのリアルタイム購読あり。
 
 **移行方針**:
+
 - レイアウト: `app/layouts/village.vue`を活用
 - Firebase RTDB購読: Vuex actionsからcomposablesへ移行
   - `composables/village/useVillage.ts` (村情報・状況取得)
@@ -484,6 +503,7 @@ create-villageと類似のフォーム構成。
   - `composables/village/useVillagePolling.ts` (更新チェック)
 
 **コンポーネント移行**:
+
 - `components/message/` → `components/pages/village/message/`
 - `components/action/` → `components/pages/village/action/`
 - `components/participants/` → `components/pages/village/`
@@ -494,6 +514,7 @@ create-villageと類似のフォーム構成。
 - `components/complete-village-list/` → `components/pages/village/`
 
 **アクション系composables**:
+
 - `composables/village/action/useSay.ts` - 発言
 - `composables/village/action/useVote.ts` - 投票
 - `composables/village/action/useAbility.ts` - 能力
@@ -518,30 +539,30 @@ create-villageと類似のフォーム構成。
 
 SCSS (Bulmaベース) → Tailwind CSS:
 
-| SCSS変数 | Tailwind/CSS変数 |
-|---------|----------------|
-| `$primary: #3991f4` | `--ui-primary: #3991f4` |
-| `$normal-say: #ffffff` | `--color-say-normal: #ffffff` |
+| SCSS変数                 | Tailwind/CSS変数                |
+| ------------------------ | ------------------------------- |
+| `$primary: #3991f4`      | `--ui-primary: #3991f4`         |
+| `$normal-say: #ffffff`   | `--color-say-normal: #ffffff`   |
 | `$werewolf-say: #f2cece` | `--color-say-werewolf: #f2cece` |
-| ... | ... |
+| ...                      | ...                             |
 
 Bulmaのスペーシングクラス (`is-marginless` 等) → Tailwindユーティリティに置換。
 
 ### 6-3. Bulmaクラス → Tailwind置換対応表 (主なもの)
 
-| Bulma | Tailwind相当 |
-|-------|------------|
-| `container` | `max-w-5xl mx-auto px-4` |
-| `columns`, `column` | `flex`, `flex-col` 等 |
-| `is-flex` | `flex` |
-| `is-centered` | `justify-center` |
-| `has-text-centered` | `text-center` |
-| `button is-primary` | `btn-primary` (独自クラス) |
-| `card` | `rounded shadow p-4` 等 |
-| `modal` | Modal.vue |
-| `notification` | Toast.vue |
-| `tag` | `inline-flex rounded px-2 text-sm` 等 |
-| `b-tabs` | 独自TabNavigation実装 |
+| Bulma               | Tailwind相当                          |
+| ------------------- | ------------------------------------- |
+| `container`         | `max-w-5xl mx-auto px-4`              |
+| `columns`, `column` | `flex`, `flex-col` 等                 |
+| `is-flex`           | `flex`                                |
+| `is-centered`       | `justify-center`                      |
+| `has-text-centered` | `text-center`                         |
+| `button is-primary` | `btn-primary` (独自クラス)            |
+| `card`              | `rounded shadow p-4` 等               |
+| `modal`             | Modal.vue                             |
+| `notification`      | Toast.vue                             |
+| `tag`               | `inline-flex rounded px-2 text-sm` 等 |
+| `b-tabs`            | 独自TabNavigation実装                 |
 
 ---
 
@@ -562,6 +583,7 @@ vp check --fix
 ### 7-2. SEO・メタ設定
 
 nuxt.config.tsの `app.head` に移植:
+
 - OGP設定
 - サイト説明・キーワード
 - noindexルール (本番環境以外)
@@ -591,8 +613,8 @@ RTDBのリアルタイム購読は `onValue` を直接composableで使用する�
 
 ```typescript
 // composables/village/useVillage.ts
-import { ref as dbRef, onValue } from 'firebase/database'
-import { useFirebaseApp } from 'vuefire'
+import { ref as dbRef, onValue } from "firebase/database";
+import { useFirebaseApp } from "vuefire";
 ```
 
 ### vue-datetime 代替

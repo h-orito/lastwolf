@@ -90,3 +90,4 @@ sw.*
 .claude/settings.local.json
 .serena
 .playwright-mcp
+.issue
