@@ -31,32 +31,6 @@
           </tbody>
         </table>
       </div>
-
-      <!-- プロローグ発言プレビュー -->
-      <div v-if="day0MessageView" class="space-y-2">
-        <h3 class="text-lg font-semibold">プロローグ発言</h3>
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-          <SayMessage
-            :message="day0MessageView"
-            :is-disp-anchor="false"
-            :can-reply="false"
-            :can-secret="false"
-          />
-        </div>
-      </div>
-
-      <!-- 1日目発言プレビュー -->
-      <div v-if="day1MessageView" class="space-y-2">
-        <h3 class="text-lg font-semibold">1日目発言</h3>
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-          <SayMessage
-            :message="day1MessageView"
-            :is-disp-anchor="false"
-            :can-reply="false"
-            :can-secret="false"
-          />
-        </div>
-      </div>
     </div>
 
     <!-- モーダルフッターのアクションボタン -->
@@ -85,11 +59,9 @@
 
 <script setup lang="ts">
 import type { CreateVillageFormData } from "./types";
-import type { MessageView, Chara } from "~/lib/api/types";
-import { MESSAGE_TYPE } from "~/lib/api/message-constants";
+import type { Chara } from "~/lib/api/types";
 import Icon from "~/components/ui/icon/Icon.vue";
 import Modal from "~/components/ui/modal/Modal.vue";
-import SayMessage from "~/components/pages/village/message/SayMessage.vue";
 
 interface Setting {
   name: string;
@@ -121,18 +93,6 @@ const emit = defineEmits<{
 // 説明文の展開状態を管理
 const expandedDescriptions = ref<Record<number, boolean>>({});
 
-// メッセージタイプ名のマップ
-const messageNameMap: Record<string, string> = {
-  [MESSAGE_TYPE.NORMAL_SAY]: "通常発言",
-  [MESSAGE_TYPE.WEREWOLF_SAY]: "人狼の囁き",
-  [MESSAGE_TYPE.SYMPATHIZE_SAY]: "共鳴発言",
-  [MESSAGE_TYPE.MONOLOGUE_SAY]: "独り言",
-  [MESSAGE_TYPE.GRAVE_SAY]: "死者の呻き",
-  [MESSAGE_TYPE.SPECTATE_SAY]: "見学発言",
-  [MESSAGE_TYPE.ACTION]: "アクション",
-  [MESSAGE_TYPE.LOVERS_SAY]: "恋人発言",
-};
-
 // 設定一覧の生成
 const settings = computed<Setting[]>(() => {
   const result: Setting[] = [];
@@ -160,9 +120,6 @@ const settings = computed<Setting[]>(() => {
 
   // パスワード設定
   addPasswordSetting(result);
-
-  // RP設定
-  addRpSetting(result);
 
   return result;
 });
@@ -248,28 +205,12 @@ const addOrganizationSetting = (settings: Setting[]) => {
 const addRuleSetting = (settings: Setting[]) => {
   const formData = props.formData;
 
-  // 投票
-  settings.push({
-    name: "投票",
-    value: formData.openVote ? "記名投票" : "無記名投票",
-    description:
-      "「記名投票」の場合、処刑の投票結果について、誰が誰に投票したかがわかります。\n「無記名投票」の場合、誰に何票入ったかのみがわかります。",
-  });
-
   // 役職希望
   settings.push({
     name: "役職希望",
     value: formData.availableSkillRequest ? "有効" : "無効",
     description:
       "「有効」の場合、割り当てられる役職の希望を出すことができます（自分以外の希望は見られません）。\n他に誰も希望していなかった場合はその役職が割り当てられます。",
-  });
-
-  // 見学
-  settings.push({
-    name: "見学",
-    value: formData.availableSpectate ? "可能" : "不可",
-    description:
-      "「可能」の場合、見学者として参加できます。\n見学者は死亡した人とのみ会話することができます（プロローグとエピローグでは全員と会話できます）。",
   });
 
   // 突然死
@@ -296,60 +237,18 @@ const addRuleSetting = (settings: Setting[]) => {
       "「可能」の場合、同じ人を2日連続で護衛することができます。\n「不可」の場合、同じ人を2日連続で護衛することができません。",
   });
 
-  // 発言制限
-  const restricts = [
-    {
-      type: MESSAGE_TYPE.NORMAL_SAY,
-      count: formData.normalCount,
-      length: formData.normalLength,
-    },
-    {
-      type: MESSAGE_TYPE.WEREWOLF_SAY,
-      count: formData.whisperCount,
-      length: formData.whisperLength,
-    },
-    {
-      type: MESSAGE_TYPE.SYMPATHIZE_SAY,
-      count: formData.sympathizeCount,
-      length: formData.sympathizeLength,
-    },
-    {
-      type: MESSAGE_TYPE.LOVERS_SAY,
-      count: formData.loversCount,
-      length: formData.loversLength,
-    },
-    {
-      type: MESSAGE_TYPE.GRAVE_SAY,
-      count: formData.graveCount,
-      length: formData.graveLength,
-    },
-    {
-      type: MESSAGE_TYPE.MONOLOGUE_SAY,
-      count: formData.monologueCount,
-      length: formData.monologueLength,
-    },
-    {
-      type: MESSAGE_TYPE.SPECTATE_SAY,
-      count: formData.spectateCount,
-      length: formData.spectateLength,
-    },
-    {
-      type: MESSAGE_TYPE.ACTION,
-      count: formData.actionCount,
-      length: formData.actionLength,
-    },
-  ]
-    .map(
-      (restrict) =>
-        `${messageNameMap[restrict.type]}: 1発言ごとに${restrict.length}文字、1日に${restrict.count}回まで`,
-    )
-    .join("\n");
-
+  // 墓下公開
   settings.push({
-    name: "発言制限",
-    value: restricts,
-    description:
-      "発言文字数や発言回数の制限です。\n記載がない発言種別は1発言ごとに200文字20行で、1日の回数は無制限となります。",
+    name: "墓下公開",
+    value: formData.openSkillInGrave ? "あり" : "なし",
+    description: "「あり」の場合、死亡した役職が墓下で公開されます。",
+  });
+
+  // 墓下見学会話公開
+  settings.push({
+    name: "墓下見学会話公開",
+    value: formData.visibleGraveMessage ? "あり" : "なし",
+    description: "「あり」の場合、進行中に生存者が死者の呻きや見学発言を参照できます。",
   });
 
   // ダミー役欠け
@@ -372,85 +271,6 @@ const addPasswordSetting = (settings: Setting[]) => {
     description: "「あり」の場合、参加する際にパスワード入力が必要になります。",
   });
 };
-
-// RP設定の追加
-const addRpSetting = (settings: Setting[]) => {
-  const formData = props.formData;
-
-  // 年齢制限
-  settings.push({
-    name: "年齢制限",
-    value: formData.ageLimit === "ALL" ? "全年齢" : formData.ageLimit,
-    description: "「全年齢」以外の場合、村画面を開いた際、警告が表示されます。",
-  });
-
-  // 墓下見学会話公開
-  settings.push({
-    name: "墓下見学会話公開",
-    value: formData.visibleGraveMessage ? "あり" : "なし",
-    description: "「あり」の場合、進行中に生存者が死者の呻きや見学発言を参照できます。",
-  });
-
-  // 秘話
-  settings.push({
-    name: "秘話",
-    value: formData.availableSecretSay ? "あり" : "なし",
-    description: "「あり」の場合、自分とその人にしか見られない秘話ができます。",
-  });
-
-  // アクション
-  settings.push({
-    name: "アクション",
-    value: formData.availableAction ? "あり" : "なし",
-    description: "「あり」の場合、アクション発言が可能です。",
-  });
-};
-
-// MessageViewを生成（LASTWOLFスキーマ準拠）
-const createMessageView = (text: string, dayId: number, day: number): MessageView | null => {
-  if (!props.dummyChara) return null;
-  const chara = props.dummyChara;
-  const fullName = `[${chara.name.short_name}] ${chara.name.name}`;
-  return {
-    from: {
-      id: 1,
-      chara: {
-        id: chara.id,
-        name: {
-          name: chara.name.name,
-          short_name: chara.name.short_name,
-          full_name: fullName,
-        },
-        charachip_id: chara.charachip_id,
-        image: chara.image,
-      },
-      done_roll_call: false,
-    },
-    time: {
-      village_day_id: dayId,
-      day,
-      datetime: new Date().toISOString(),
-      unix_time_milli: Date.now(),
-    },
-    content: {
-      type: { code: MESSAGE_TYPE.NORMAL_SAY, name: "通常発言" },
-      text,
-      is_strong: false,
-    },
-  };
-};
-
-// プロローグ発言のプレビュー
-const day0MessageView = computed<MessageView | null>(() => {
-  if (!props.formData.day0Message || !props.dummyChara) return null;
-  return createMessageView(props.formData.day0Message, 1, 0);
-});
-
-// 1日目発言のプレビュー
-const day1MessageView = computed<MessageView | null>(() => {
-  if (!props.formData.day1Message || !props.dummyChara) return null;
-  return createMessageView(props.formData.day1Message, 2, 1);
-});
 
 // 説明文の展開/折りたたみ
 const toggleDescription = (index: number) => {

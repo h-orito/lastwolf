@@ -3,13 +3,6 @@
     <h2 class="mb-4 text-lg font-semibold">詳細ルール</h2>
 
     <div class="space-y-4">
-      <!-- 記名投票 -->
-      <FormSwitch
-        v-model="openVote"
-        label="記名投票"
-        description="投票結果に誰が誰に投票したかが表示されます"
-      />
-
       <!-- 役職希望 -->
       <FormSwitch
         v-model="availableSkillRequest"
@@ -60,13 +53,6 @@ const emit = defineEmits<{
 }>();
 
 // 各種ルール設定
-const openVote = computed({
-  get: () => props.formData.openVote,
-  set: (value: boolean) => {
-    emit("update:field", "openVote", value);
-  },
-});
-
 const availableSkillRequest = computed({
   get: () => props.formData.availableSkillRequest,
   set: (value: boolean) => {

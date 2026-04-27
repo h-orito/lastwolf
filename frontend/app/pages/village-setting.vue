@@ -44,16 +44,6 @@
           @validate:field="markFieldAsTouched"
         />
 
-        <!-- ダミーキャラ発言設定（プロローグ発言は読み取り専用） -->
-        <DummyMessageSection
-          :form-data="formData"
-          :selected-chara="selectedDummyChara"
-          :errors="visibleErrors"
-          :day0-readonly="true"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
-        />
-
         <!-- 編成設定セクション -->
         <OrganizationSection
           :form-data="formData"
@@ -70,24 +60,8 @@
           @validate:field="markFieldAsTouched"
         />
 
-        <!-- 発言制限設定 -->
-        <MessageRestrictionSection
-          :form-data="formData"
-          :errors="visibleErrors"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
-        />
-
         <!-- 参加パスワード設定 -->
         <JoinPasswordSection
-          :form-data="formData"
-          :errors="visibleErrors"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
-        />
-
-        <!-- RP設定 -->
-        <RpSection
           :form-data="formData"
           :errors="visibleErrors"
           @update:field="setFieldValue"
@@ -141,12 +115,9 @@ import type { CreateVillageFormData } from "~/components/pages/create-village/ty
 import { useVillageFormValidation } from "~/components/pages/create-village/useVillageFormValidation";
 import BasicInfoSection from "~/components/pages/create-village/BasicInfoSection.vue";
 import CharachipSection from "~/components/pages/create-village/CharachipSection.vue";
-import DummyMessageSection from "~/components/pages/create-village/DummyMessageSection.vue";
 import OrganizationSection from "~/components/pages/create-village/OrganizationSection.vue";
 import RuleSection from "~/components/pages/create-village/RuleSection.vue";
-import MessageRestrictionSection from "~/components/pages/create-village/MessageRestrictionSection.vue";
 import JoinPasswordSection from "~/components/pages/create-village/JoinPasswordSection.vue";
-import RpSection from "~/components/pages/create-village/RpSection.vue";
 import Alert from "~/components/ui/feedback/Alert.vue";
 import LoadingSpinner from "~/components/ui/feedback/LoadingSpinner.vue";
 import Icon from "~/components/ui/icon/Icon.vue";
@@ -223,12 +194,6 @@ const {
     // キャラチップ設定
     charachipIds: [1],
     dummyCharaId: 0,
-    dummyCharaName: "",
-    dummyCharaShortName: "",
-
-    // ダミーキャラ発言
-    day0Message: "",
-    day1Message: "",
 
     // 編成
     capacityMin: 10,
@@ -237,40 +202,15 @@ const {
     availableDummySkill: false,
 
     // 詳細ルール（デフォルト値）
-    openVote: false,
     availableSkillRequest: true,
-    availableSpectate: false,
     openSkillInGrave: false,
     visibleGraveMessage: false,
     availableSuddenlyDeath: true,
     availableCommit: false,
-    availableAction: false,
-    availableSecretSay: false,
     availableGuardSameTarget: true,
-
-    // 発言制限（デフォルト値）
-    normalCount: 20,
-    normalLength: 200,
-    whisperCount: 40,
-    whisperLength: 200,
-    sympathizeCount: 40,
-    sympathizeLength: 200,
-    loversCount: 40,
-    loversLength: 200,
-    graveCount: 40,
-    graveLength: 200,
-    monologueCount: 100,
-    monologueLength: 200,
-    spectateCount: 40,
-    spectateLength: 200,
-    actionCount: 40,
-    actionLength: 200,
 
     // 参加パスワード
     joinPassword: "",
-
-    // RP設定
-    ageLimit: "ALL" as const,
   },
 });
 

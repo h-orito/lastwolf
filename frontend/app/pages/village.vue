@@ -63,9 +63,6 @@
       <div v-if="isDesktop" class="h-full shrink-0">
         <VillageFilterSidebar />
       </div>
-
-      <!-- 年齢制限確認モーダル -->
-      <ModalAgeLimit v-model="isAgeLimitModalOpen" />
     </div>
   </div>
 </template>
@@ -93,11 +90,6 @@ import MessageList from "~/components/pages/village/message/MessageList.vue";
 import ActionContainer from "~/components/pages/village/action/ActionContainer.vue";
 import LoadingSpinner from "~/components/ui/feedback/LoadingSpinner.vue";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
-
-// 遅延ローディング: 年齢制限モーダルは年齢制限村の初回アクセス時のみ表示
-const ModalAgeLimit = defineAsyncComponent(
-  () => import("~/components/pages/village/ModalAgeLimit.vue"),
-);
 
 // Layout設定
 definePageMeta({
@@ -130,13 +122,7 @@ const { loadMessages, error: messageError } = useMessage();
 const { loadSituation, error: situationError } = useSituation();
 const { startPolling } = useVillagePolling();
 const { updateVillageLatest } = useVillageRefresh();
-const {
-  theme,
-  hasFixedPanel,
-  isFixedPanelOpen,
-  loadFromCookie,
-  ageLimit: ageLimitSettings,
-} = useUserSettings();
+const { theme, hasFixedPanel, isFixedPanelOpen, loadFromCookie } = useUserSettings();
 const { filterByParticipant } = useVillageMessageFilter();
 const { reset: resetSlider } = useVillageSlider();
 const { isMobile, isDesktop } = useWindowResize();
@@ -146,7 +132,6 @@ useSayInputProvider();
 
 // State
 const isInitialized = ref(false);
-const isAgeLimitModalOpen = ref(false);
 
 // ダークテーマ判定（リアクティブ）
 const isDarkTheme = computed(() => theme.value.isDark);
@@ -197,21 +182,6 @@ const handleRetry = async () => {
 /**
  * 年齢制限モーダルを表示する必要があるかチェック
  */
-const displayAgeLimitIfNeeded = () => {
-  if (!village.value) return;
-
-  // 年齢制限タグはLASTWOLFでは未対応
-  const hasAgeLimit = false;
-  if (!hasAgeLimit) return;
-
-  // 既に確認済みかチェック
-  const villageIdStr = villageId.value.toString();
-  if (ageLimitSettings.value.confirmVillageIds.includes(villageIdStr)) return;
-
-  // モーダルを表示
-  isAgeLimitModalOpen.value = true;
-};
-
 /**
  * 初期化処理
  */
@@ -246,9 +216,6 @@ const initialize = async () => {
     if (village) {
       startPolling();
     }
-
-    // 8. 年齢制限モーダルを表示する必要があるかチェック
-    displayAgeLimitIfNeeded();
 
     isInitialized.value = true;
   } catch (error) {

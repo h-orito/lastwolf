@@ -8,14 +8,10 @@
       {{ sayError }}
     </div>
 
-    <!-- 文字装飾ボタン -->
-    <MessageDecorators v-model="messageText" :textarea-ref="textareaRef" />
-
     <!-- メッセージ入力エリア -->
     <div class="mb-4">
       <FormGroup>
         <FormTextarea
-          ref="formTextareaRef"
           v-model="messageText"
           :rows="10"
           :size="messageDisplay.isCharLarge ? 'md' : 'sm'"
@@ -65,7 +61,6 @@ import ActionPanel from "../ActionPanel.vue";
 import FormGroup from "~/components/ui/form/FormGroup.vue";
 import FormTextarea from "~/components/ui/form/FormTextarea.vue";
 import UiButton from "~/components/ui/button/index.vue";
-import MessageDecorators from "../decorator/MessageDecorators.vue";
 import { useCreatorSay } from "~/composables/village/action/useCreatorSay";
 import { useUserSettings } from "~/composables/village/useUserSettings";
 import { MESSAGE_TYPE } from "~/lib/api/message-constants";
@@ -85,14 +80,6 @@ const { messageDisplay } = useUserSettings();
 const messageText = ref("");
 const showConfirmModal = ref(false);
 const previewMessage = ref<import("~/lib/api/types").MessageView | null>(null);
-
-// FormTextareaへの参照
-const formTextareaRef = ref<InstanceType<typeof FormTextarea> | null>(null);
-
-// HTMLTextAreaElementへの参照（MessageDecoratorsに渡す）
-const textareaRef = computed(() => {
-  return formTextareaRef.value?.textareaElement ?? null;
-});
 
 // 発言制限（村建て発言は固定値）
 const maxMessageLength = 400;

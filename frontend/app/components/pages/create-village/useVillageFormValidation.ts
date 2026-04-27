@@ -52,26 +52,6 @@ export const useVillageFormValidation = () => {
       .required("ダミーキャラクターは必須です")
       .min(1, "ダミーキャラクターを選択してください"),
 
-    dummyCharaName: yup
-      .string()
-      .required("ダミーキャラクター名は必須です")
-      .min(1, "ダミーキャラクター名を入力してください")
-      .max(40, "ダミーキャラクター名は40文字以内で入力してください"),
-
-    dummyCharaShortName: yup
-      .string()
-      .required("ダミーキャラクター略称は必須です")
-      .length(1, "ダミーキャラクター略称は1文字で入力してください"),
-
-    // ダミーキャラ発言
-    day0Message: yup
-      .string()
-      .required("プロローグ発言は必須です")
-      .min(1, "プロローグ発言を入力してください")
-      .max(1000, "プロローグ発言は1000文字以内で入力してください"),
-
-    day1Message: yup.string().max(1000, "1日目発言は1000文字以内で入力してください"),
-
     // 編成
     capacityMin: yup
       .number()
@@ -195,135 +175,15 @@ export const useVillageFormValidation = () => {
     availableDummySkill: yup.boolean(),
 
     // 詳細ルール
-    openVote: yup.boolean(),
     availableSkillRequest: yup.boolean(),
-    availableSpectate: yup.boolean(),
     openSkillInGrave: yup.boolean(),
     visibleGraveMessage: yup.boolean(),
     availableSuddenlyDeath: yup.boolean(),
     availableCommit: yup.boolean(),
-    availableAction: yup.boolean(),
-    availableSecretSay: yup.boolean(),
     availableGuardSameTarget: yup.boolean(),
-
-    // 発言制限
-    normalCount: yup
-      .number()
-      .required("通常発言回数は必須です")
-      .min(1, "通常発言回数は1以上で設定してください")
-      .max(1000, "通常発言回数は1000以下で設定してください"),
-
-    normalLength: yup
-      .number()
-      .required("通常発言文字数は必須です")
-      .min(1, "通常発言文字数は1以上で設定してください")
-      .max(1000, "通常発言文字数は1000以下で設定してください"),
-
-    whisperCount: yup
-      .number()
-      .required("囁き発言回数は必須です")
-      .min(0, "囁き発言回数は0以上で設定してください")
-      .max(1000, "囁き発言回数は1000以下で設定してください"),
-
-    whisperLength: yup
-      .number()
-      .required("囁き発言文字数は必須です")
-      .min(1, "囁き発言文字数は1以上で設定してください")
-      .max(1000, "囁き発言文字数は1000以下で設定してください"),
-
-    sympathizeCount: yup
-      .number()
-      .required("共鳴発言回数は必須です")
-      .min(0, "共鳴発言回数は0以上で設定してください")
-      .max(1000, "共鳴発言回数は1000以下で設定してください"),
-
-    sympathizeLength: yup
-      .number()
-      .required("共鳴発言文字数は必須です")
-      .min(1, "共鳴発言文字数は1以上で設定してください")
-      .max(1000, "共鳴発言文字数は1000以下で設定してください"),
-
-    loversCount: yup
-      .number()
-      .required("恋人発言回数は必須です")
-      .min(0, "恋人発言回数は0以上で設定してください")
-      .max(1000, "恋人発言回数は1000以下で設定してください"),
-
-    loversLength: yup
-      .number()
-      .required("恋人発言文字数は必須です")
-      .min(1, "恋人発言文字数は1以上で設定してください")
-      .max(1000, "恋人発言文字数は1000以下で設定してください"),
-
-    graveCount: yup
-      .number()
-      .required("墓下発言回数は必須です")
-      .min(0, "墓下発言回数は0以上で設定してください")
-      .max(1000, "墓下発言回数は1000以下で設定してください"),
-
-    graveLength: yup
-      .number()
-      .required("墓下発言文字数は必須です")
-      .min(1, "墓下発言文字数は1以上で設定してください")
-      .max(1000, "墓下発言文字数は1000以下で設定してください"),
-
-    monologueCount: yup
-      .number()
-      .required("独り言発言回数は必須です")
-      .min(0, "独り言発言回数は0以上で設定してください")
-      .max(1000, "独り言発言回数は1000以下で設定してください"),
-
-    monologueLength: yup
-      .number()
-      .required("独り言発言文字数は必須です")
-      .min(1, "独り言発言文字数は1以上で設定してください")
-      .max(1000, "独り言発言文字数は1000以下で設定してください"),
-
-    spectateCount: yup
-      .number()
-      .when("availableSpectate", {
-        is: true,
-        then: (schema) => schema.required("見学機能が有効な場合、見学発言回数は必須です"),
-        otherwise: (schema) => schema,
-      })
-      .min(0, "見学発言回数は0以上で設定してください")
-      .max(1000, "見学発言回数は1000以下で設定してください"),
-
-    spectateLength: yup
-      .number()
-      .when("availableSpectate", {
-        is: true,
-        then: (schema) => schema.required("見学機能が有効な場合、見学発言文字数は必須です"),
-        otherwise: (schema) => schema,
-      })
-      .min(1, "見学発言文字数は1以上で設定してください")
-      .max(1000, "見学発言文字数は1000以下で設定してください"),
-
-    actionCount: yup
-      .number()
-      .when("availableAction", {
-        is: true,
-        then: (schema) => schema.required("アクション機能が有効な場合、アクション回数は必須です"),
-        otherwise: (schema) => schema,
-      })
-      .min(0, "アクション回数は0以上で設定してください")
-      .max(1000, "アクション回数は1000以下で設定してください"),
-
-    actionLength: yup
-      .number()
-      .when("availableAction", {
-        is: true,
-        then: (schema) => schema.required("アクション機能が有効な場合、アクション文字数は必須です"),
-        otherwise: (schema) => schema,
-      })
-      .min(1, "アクション文字数は1以上で設定してください")
-      .max(1000, "アクション文字数は1000以下で設定してください"),
 
     // 参加パスワード
     joinPassword: yup.string().max(20, "パスワードは20文字以内で入力してください"),
-
-    // RP設定
-    ageLimit: yup.string().oneOf(["ALL", "R15", "R18"]),
   });
 
   return {

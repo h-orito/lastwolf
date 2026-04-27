@@ -42,7 +42,6 @@
 
     <!-- 入村発言 -->
     <FormGroup label="入村発言" required>
-      <MessageDecorators v-model="form.joinMessage" :textarea-ref="textareaRef" class="mb-2" />
       <div class="flex flex-col items-start gap-2 sm:flex-row">
         <!-- キャラ画像 -->
         <div class="shrink-0">
@@ -62,13 +61,7 @@
 
         <!-- メッセージ入力エリア -->
         <div class="w-full flex-1">
-          <FormTextarea
-            ref="formTextareaRef"
-            v-model="form.joinMessage"
-            size="sm"
-            :rows="4"
-            class="w-full"
-          />
+          <FormTextarea v-model="form.joinMessage" size="sm" :rows="4" class="w-full" />
           <div class="mt-1 text-right text-xs text-gray-500 dark:text-gray-400">
             <span :class="{ 'text-red-600 dark:text-red-400': isLineExceeded }"
               >行数: {{ lineCount }}/{{ maxLineCount }}</span
@@ -129,7 +122,6 @@ import FormInput from "~/components/ui/form/FormInput.vue";
 import FormTextarea from "~/components/ui/form/FormTextarea.vue";
 import UiButton from "~/components/ui/button/index.vue";
 import CharaImage from "~/components/pages/village/CharaImage.vue";
-import MessageDecorators from "./decorator/MessageDecorators.vue";
 import { useParticipate, type ParticipateForm } from "~/composables/village/action/useParticipate";
 import { useSituation } from "~/composables/village/useSituation";
 import { useVillage } from "~/composables/village/useVillage";
@@ -156,11 +148,6 @@ const {
   confirmParticipate,
   participate,
 } = useParticipate();
-
-// FormTextareaへのref
-const formTextareaRef = ref<InstanceType<typeof FormTextarea> | null>(null);
-// MessageDecorators用のtextarea要素への参照
-const textareaRef = computed(() => formTextareaRef.value?.textareaElement ?? null);
 
 // フォーム入力値
 const form = reactive({

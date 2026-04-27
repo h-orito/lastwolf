@@ -67,59 +67,6 @@
       </p>
     </div>
 
-    <!-- ダミーキャラ名前設定 -->
-    <div v-if="selectedDummyCharaId" class="space-y-4">
-      <div>
-        <label class="mb-2 block text-sm font-medium text-gray-700">
-          ダミーキャラ名
-          <span v-if="!props.readonlyMode" class="text-red-500">*</span>
-        </label>
-        <FormInput
-          v-model="dummyCharaName"
-          placeholder="ダミーキャラクターの名前"
-          size="md"
-          :maxlength="40"
-          :required="!props.readonlyMode"
-          :disabled="props.readonlyMode"
-          :error="!props.readonlyMode && !!errors?.dummyCharaName"
-          @blur="validateField('dummyCharaName')"
-        />
-        <p v-if="!props.readonlyMode && errors?.dummyCharaName" class="mt-1 text-xs text-red-600">
-          {{ errors.dummyCharaName }}
-        </p>
-        <p v-else-if="!props.readonlyMode" class="mt-1 text-xs text-gray-500">
-          最大40文字まで入力できます
-        </p>
-      </div>
-
-      <div>
-        <label class="mb-2 block text-sm font-medium text-gray-700">
-          1文字略称
-          <span v-if="!props.readonlyMode" class="text-red-500">*</span>
-        </label>
-        <FormInput
-          v-model="dummyCharaShortName"
-          placeholder="略"
-          size="md"
-          :maxlength="1"
-          class="w-20"
-          :required="!props.readonlyMode"
-          :disabled="props.readonlyMode"
-          :error="!props.readonlyMode && !!errors?.dummyCharaShortName"
-          @blur="validateField('dummyCharaShortName')"
-        />
-        <p
-          v-if="!props.readonlyMode && errors?.dummyCharaShortName"
-          class="mt-1 text-xs text-red-600"
-        >
-          {{ errors.dummyCharaShortName }}
-        </p>
-        <p v-else-if="!props.readonlyMode" class="mt-1 text-xs text-gray-500">
-          発言時に表示される1文字の略称です
-        </p>
-      </div>
-    </div>
-
     <!-- キャラ選択モーダル -->
     <CharaSelectModal
       v-if="!props.readonlyMode"
@@ -137,7 +84,6 @@ import UiButton from "~/components/ui/button/index.vue";
 import CharaSelectModal from "~/components/ui/chara-select/CharaSelectModal.vue";
 import FormMultiSelect from "~/components/ui/form/FormMultiSelect.vue";
 import FormSelect from "~/components/ui/form/FormSelect.vue";
-import FormInput from "~/components/ui/form/FormInput.vue";
 import type { DeepReadonly } from "vue";
 import type { CharachipView, CharachipsView, Chara } from "~/lib/api/types";
 import type { CreateVillageFormData } from "./types";
@@ -190,12 +136,6 @@ const selectedDummyCharaId = computed({
   set: (id: string | number | null | undefined) => {
     const numId = Number(id);
     emit("update:field", "dummyCharaId", numId);
-    // キャラが選択されたら名前を自動設定
-    const chara = charas.value.find((c) => c.id === numId);
-    if (chara) {
-      emit("update:field", "dummyCharaName", chara.name.name);
-      emit("update:field", "dummyCharaShortName", chara.name.short_name);
-    }
   },
 });
 
@@ -203,22 +143,6 @@ const selectedDummyCharaId = computed({
 const onDummyCharaChange = () => {
   validateField("dummyCharaId");
 };
-
-// ダミーキャラ名
-const dummyCharaName = computed({
-  get: () => props.formData.dummyCharaName,
-  set: (value: string) => {
-    emit("update:field", "dummyCharaName", value);
-  },
-});
-
-// ダミーキャラ略称
-const dummyCharaShortName = computed({
-  get: () => props.formData.dummyCharaShortName,
-  set: (value: string) => {
-    emit("update:field", "dummyCharaShortName", value);
-  },
-});
 
 // フィールドバリデーション
 const validateField = (field: keyof CreateVillageFormData) => {

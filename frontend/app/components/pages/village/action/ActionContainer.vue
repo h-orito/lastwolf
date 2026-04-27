@@ -6,9 +6,6 @@
     <!-- 入村 -->
     <Participate v-if="isDispParticipate" @complete="handleParticipateComplete" />
 
-    <!-- 見学 -->
-    <Spectate v-if="isDispSpectate" @complete="handleSpectateComplete" />
-
     <!-- 役職希望 -->
     <SkillRequest v-if="isDispSkillRequest" @complete="handleSkillRequestComplete" />
 
@@ -32,12 +29,6 @@
     <!-- 時短 -->
     <Commit v-if="isDispCommit" @complete="handleCommitComplete" />
 
-    <!-- アクション発言 -->
-    <ActionTypeSay v-if="isDispActionSay" @complete="handleActionSayComplete" />
-
-    <!-- 名前変更 -->
-    <ChangeName v-if="isDispChangeName" @complete="handleChangeNameComplete" />
-
     <!-- 村建て発言 -->
     <CreatorSay v-if="isDispCreatorSay" @complete="handleCreatorSayComplete" />
 
@@ -54,25 +45,21 @@
 
 <script setup lang="ts">
 import Ability from "./Ability.vue";
-import ActionTypeSay from "./ActionTypeSay.vue";
 import Admin from "./admin/Admin.vue";
 import Comingout from "./Comingout.vue";
 import Commit from "./Commit.vue";
 import Debug from "./admin/Debug.vue";
-import ChangeName from "./ChangeName.vue";
 import CreatorSay from "./creator/CreatorSay.vue";
 import CreatorMenu from "./creator/CreatorMenu.vue";
 import Leave from "./Leave.vue";
 import Participate from "./Participate.vue";
 import Say from "./Say.vue";
 import SkillRequest from "./SkillRequest.vue";
-import Spectate from "./Spectate.vue";
 import Vote from "./Vote.vue";
 import { useMessage } from "~/composables/village/useMessage";
 import { useSituation } from "~/composables/village/useSituation";
 import { useVillageNavigation } from "~/composables/village/useVillageNavigation";
 import { useVillageRefresh } from "~/composables/village/useVillageRefresh";
-import { MESSAGE_TYPE } from "~/lib/api/message-constants";
 import { showSuccessToast } from "~/utils/toast";
 
 // Composables
@@ -88,8 +75,6 @@ const isDispParticipate = computed(
   () => situation.value?.participate.available_participate ?? false,
 );
 
-const isDispSpectate = computed(() => false);
-
 const isDispSkillRequest = computed(
   () =>
     (situation.value?.participate.participating ?? false) &&
@@ -103,13 +88,6 @@ const isDispVote = computed(() => situation.value?.vote.available_vote ?? false)
 const isDispComingout = computed(() => situation.value?.coming_out.available_coming_out ?? false);
 
 const isDispCommit = computed(() => situation.value?.commit.available_commit ?? false);
-
-const isDispActionSay = computed(() => {
-  const selectableList = situation.value?.say.selectable_message_type_list ?? [];
-  return selectableList.some((s) => s.code === MESSAGE_TYPE.ACTION);
-});
-
-const isDispChangeName = computed(() => false);
 
 const isDispCreatorSay = computed(() => situation.value?.creator.available_creator_say ?? false);
 
@@ -139,14 +117,11 @@ const existsAction = computed(() => {
   return (
     isDispSay.value ||
     isDispParticipate.value ||
-    isDispSpectate.value ||
     isDispSkillRequest.value ||
     isDispLeave.value ||
     isDispVote.value ||
     isDispComingout.value ||
     isDispCommit.value ||
-    isDispActionSay.value ||
-    isDispChangeName.value ||
     isDispCreatorSay.value ||
     isDispCreatorMenu.value ||
     isDispAdminMenu.value ||
@@ -180,14 +155,6 @@ const handleSayComplete = async () => {
 const handleParticipateComplete = async () => {
   await refresh();
   showSuccessToast("入村しました");
-};
-
-/**
- * 見学入村完了時のハンドラ
- */
-const handleSpectateComplete = async () => {
-  await refresh();
-  showSuccessToast("見学入村しました");
 };
 
 /**
@@ -244,23 +211,6 @@ const handleCommitComplete = async (willCommit: boolean) => {
   } else {
     showSuccessToast("時短希望を取り消しました");
   }
-};
-
-/**
- * アクション発言完了時のハンドラ
- */
-const handleActionSayComplete = async () => {
-  await refresh();
-  await loadMessages();
-  scrollToBottom();
-};
-
-/**
- * 名前変更完了時のハンドラ
- */
-const handleChangeNameComplete = async () => {
-  await refresh();
-  showSuccessToast("名前を変更しました");
 };
 
 /**

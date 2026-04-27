@@ -30,26 +30,6 @@
       <FormRadioGroup v-model="selectedMessageType" :options="messageTypeOptions" />
     </div>
 
-    <!-- 秘話対象選択 -->
-    <div v-if="isSecretSay" class="mb-4">
-      <FormGroup label="秘話相手">
-        <div class="flex items-center gap-1">
-          <FormSelect
-            v-model="targetParticipantId"
-            :options="secretTargetOptions"
-            placeholder="秘話相手を選択してください"
-            class="flex-1"
-          />
-          <UiButton variant="solid" color="primary" @click="openSecretTargetModal">
-            画像で選択
-          </UiButton>
-        </div>
-      </FormGroup>
-    </div>
-
-    <!-- 文字装飾ボタン -->
-    <MessageDecorators v-model="messageText" :textarea-ref="textareaRef" />
-
     <!-- キャラクター表情選択 + メッセージ入力 -->
     <div class="mb-4 flex items-start gap-2">
       <div class="shrink-0">
@@ -145,13 +125,6 @@
       :skip-confirmation="skipSayConfirmation"
       @confirm="handleSay"
     />
-
-    <!-- 秘話相手選択モーダル -->
-    <SecretTargetSelectModal
-      v-model="showSecretTargetModal"
-      :participant-list="secretTargets"
-      @select="handleSecretTargetSelect"
-    />
   </ActionPanel>
 </template>
 
@@ -159,16 +132,12 @@
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 import ActionPanel from "./ActionPanel.vue";
 import MessageCard from "../message/MessageCard.vue";
-import SecretTargetSelectModal from "./say/SecretTargetSelectModal.vue";
 import FormGroup from "~/components/ui/form/FormGroup.vue";
-import FormSelect from "~/components/ui/form/FormSelect.vue";
 import FormTextarea from "~/components/ui/form/FormTextarea.vue";
 import FormRadioGroup from "~/components/ui/form/FormRadioGroup.vue";
-import Modal from "~/components/ui/modal/Modal.vue";
 import UiButton from "~/components/ui/button/index.vue";
 import Alert from "~/components/ui/feedback/Alert.vue";
 import CharaImage from "../CharaImage.vue";
-import MessageDecorators from "./decorator/MessageDecorators.vue";
 import { useSay } from "~/composables/village/action/useSay";
 import { useSituation } from "~/composables/village/useSituation";
 import { useUserSettings } from "~/composables/village/useUserSettings";
@@ -214,10 +183,8 @@ const sayInputRegister = useSayInputRegister();
 const selectedMessageType = ref("");
 const messageText = ref("");
 const selectedFaceType = ref("NORMAL");
-const targetParticipantId = ref("");
 const showFaceModal = ref(false);
 const showConfirmModal = ref(false);
-const showSecretTargetModal = ref(false);
 const previewMessage = ref<import("~/lib/api/types").MessageView | null>(null);
 const replyTargetMessage = ref<import("~/lib/api/types").MessageView | null>(null);
 
@@ -239,9 +206,6 @@ const availableMessageTypes = computed(() => {
   const list = situation.value?.say.selectable_message_type_list ?? [];
   return list.filter((m) => m.code !== MESSAGE_TYPE.ACTION);
 });
-
-// 秘話対象リスト（LASTWOLF APIはtarget_listなし）
-const secretTargets = computed((): import("~/lib/api/types").VillageParticipantView[] => []);
 
 // LASTWOLF APIには発言制限情報がないため固定値
 const maxMessageCount = computed((): number | null => null);
@@ -288,15 +252,6 @@ const messageTypeOptions = computed(() =>
   })),
 );
 
-const secretTargetOptions = computed(() =>
-  secretTargets.value.map((p) => ({
-    value: p.id.toString(),
-    label: p.chara.name.name,
-  })),
-);
-
-const isSecretSay = computed(() => selectedMessageType.value === MESSAGE_TYPE.SECRET_SAY);
-
 // LASTWOLF VillageStatusにis_epilogueがないためfalse固定
 const skipSayConfirmation = computed(() => false);
 
@@ -324,7 +279,6 @@ const textareaStyleClass = computed(() => {
 
 const canSubmit = computed(() => {
   if (!messageText.value.trim()) return false;
-  if (isSecretSay.value && !targetParticipantId.value) return false;
   if (submitting.value) return false;
   if (isCountExceeded.value) return false;
   if (isLineExceeded.value) return false;
@@ -346,14 +300,6 @@ const openFaceModal = () => {};
 const selectFace = (faceType: string) => {
   selectedFaceType.value = faceType;
   showFaceModal.value = false;
-};
-
-const openSecretTargetModal = () => {
-  showSecretTargetModal.value = true;
-};
-
-const handleSecretTargetSelect = (participantId: number) => {
-  targetParticipantId.value = participantId.toString();
 };
 
 /**
@@ -437,26 +383,6 @@ const insertAnchor = (anchorString: string) => {
 };
 
 /**
- * 秘話モードに切り替え、対象を設定
- */
-const switchToSecret = (targetId: number) => {
-  // 秘話が選択可能か確認
-  const hasSecretType = availableMessageTypes.value.some((m) => m.code === MESSAGE_TYPE.SECRET_SAY);
-  if (!hasSecretType) return;
-
-  // 対象が秘話対象リストにあるか確認
-  const targetExists = secretTargets.value.some((t) => t.id === targetId);
-  if (!targetExists) return;
-
-  // 秘話モードに切り替え
-  selectedMessageType.value = MESSAGE_TYPE.SECRET_SAY;
-  targetParticipantId.value = targetId.toString();
-
-  // 発言パネルにスクロール
-  scrollToSayPanel();
-};
-
-/**
  * 発言パネルへスクロール
  */
 const scrollToSayPanel = () => {
@@ -537,7 +463,7 @@ onMounted(() => {
   if (sayInputRegister) {
     sayInputRegister.registerHandlers({
       insertAnchor,
-      switchToSecret,
+      switchToSecret: () => {},
       setReplyTarget: (message) => {
         replyTargetMessage.value = message;
         // 返信対象設定時に発言パネルにスクロール
