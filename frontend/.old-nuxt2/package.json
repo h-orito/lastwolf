@@ -1,9 +1,9 @@
 {
   "name": "lastwolf-ui",
   "version": "1.0.0",
+  "private": true,
   "description": "人狼ゲームが無料で遊べるサービスです。",
   "author": "h-orito",
-  "private": true,
   "scripts": {
     "dev": "nuxt-ts",
     "build": "nuxt-ts build",

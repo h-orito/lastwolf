@@ -1,9 +1,9 @@
-import MessageType from '~/@types/message-type'
+import MessageType from "~/@types/message-type";
 
 interface MessageContent {
-  type: MessageType
-  text: string
-  strong: boolean
+  type: MessageType;
+  text: string;
+  strong: boolean;
 }
 
-export default MessageContent
+export default MessageContent;

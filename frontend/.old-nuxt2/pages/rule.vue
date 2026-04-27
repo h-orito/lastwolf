@@ -32,17 +32,13 @@
           <li>
             プレイヤーが村を作成できます。
             <ul>
-              <li>
-                参加している/作成した村の決着がついていない場合は作成できません。
-              </li>
+              <li>参加している/作成した村の決着がついていない場合は作成できません。</li>
             </ul>
           </li>
           <li>
             作成後も募集中は設定を変更することができます。
             <ul>
-              <li>
-                ただし、キャラチップとダミーキャラについては後から変更できません。
-              </li>
+              <li>ただし、キャラチップとダミーキャラについては後から変更できません。</li>
             </ul>
           </li>
         </ul>
@@ -64,18 +60,14 @@
           <li>
             点呼の中断
             <ul>
-              <li>
-                全員の「準備完了」状態が解除されます。
-              </li>
+              <li>全員の「準備完了」状態が解除されます。</li>
             </ul>
           </li>
           <li>村の開始（点呼中かつ全員が「準備完了」になった場合のみ）</li>
           <li>
             参加者のIDや役職を知ることはできないため、村建てもゲームに参加しても問題ありません。
           </li>
-          <li>
-            村建て発言（参加の有無にかかわらずいつでも使え、全員が参照できます。）
-          </li>
+          <li>村建て発言（参加の有無にかかわらずいつでも使え、全員が参照できます。）</li>
         </ul>
       </div>
 
@@ -117,21 +109,15 @@
                   </li>
                 </ul>
               </li>
-              <li>
-                規定の時間が経過するか、全員が時短を希望すると昼時間に進みます。
-              </li>
-              <li>
-                能力行使できる役職が行使しないまま次に進むと突然死します。
-              </li>
+              <li>規定の時間が経過するか、全員が時短を希望すると昼時間に進みます。</li>
+              <li>能力行使できる役職が行使しないまま次に進むと突然死します。</li>
             </ul>
           </li>
           <li>
             昼時間
             <ul>
               <li>誰を処刑するかチャットによる議論を行います。</li>
-              <li>
-                規定の時間が経過するか、全員が時短を希望すると投票時間に進みます。
-              </li>
+              <li>規定の時間が経過するか、全員が時短を希望すると投票時間に進みます。</li>
             </ul>
           </li>
           <li>
@@ -139,16 +125,12 @@
             <ul>
               <li>処刑したい人に投票を行います。</li>
               <li>会話することはできません。</li>
-              <li>
-                規定の時間が経過するか、全員が投票すると夜時間に進みます。
-              </li>
+              <li>規定の時間が経過するか、全員が投票すると夜時間に進みます。</li>
               <li>時間内に投票しないと突然死します。</li>
               <li>
                 最多票の人が処刑されますが、最多票の人が複数いる場合は再投票となります。
                 <ul>
-                  <li>
-                    3回の投票で処刑者が決定しない場合、引き分けとなります。
-                  </li>
+                  <li>3回の投票で処刑者が決定しない場合、引き分けとなります。</li>
                 </ul>
               </li>
             </ul>
@@ -173,9 +155,7 @@
               <li>
                 村の設定でダミー役欠けが「あり」となっている場合、襲撃で死亡する役職のいずれかが割り当てられます。
                 <ul>
-                  <li>
-                    例. 編成が「村村村村村村村村村占霊狩狼狼狼狂狐」の場合
-                  </li>
+                  <li>例. 編成が「村村村村村村村村村占霊狩狼狼狼狂狐」の場合</li>
                   <li>
                     村人が9/13、占い師、霊能者、狩人、狂人がそれぞれ1/13の確率で割り当てられます。
                   </li>
@@ -196,14 +176,10 @@
               <li>第1希望でおまかせ（XX陣営）を指定した人を割り当て</li>
               <li>第2希望で役職を指定した人を割り当て</li>
               <li>第2希望でおまかせ（XX陣営）を指定した人を割り当て</li>
-              <li>
-                ここまでで割り当てられなかった人とおまかせの人を割り当て
-              </li>
+              <li>ここまでで割り当てられなかった人とおまかせの人を割り当て</li>
             </ul>
           </li>
-          <li>
-            村の設定で役職希望が無効となっている場合、全員がおまかせ扱いになります。
-          </li>
+          <li>村の設定で役職希望が無効となっている場合、全員がおまかせ扱いになります。</li>
         </ul>
       </div>
       <h3 class="title is-6" id="vote">投票</h3>
@@ -211,12 +187,8 @@
         <ul>
           <li>自分以外の生存者に投票することができます。</li>
           <li>全員が投票すると、誰が誰に投票したか公開されます。</li>
-          <li>
-            最多票の人が処刑されますが、最多票の人が複数いる場合は再投票となります。
-          </li>
-          <li>
-            3回の投票で処刑者が決定しない場合、引き分けとなります。
-          </li>
+          <li>最多票の人が処刑されますが、最多票の人が複数いる場合は再投票となります。</li>
+          <li>3回の投票で処刑者が決定しない場合、引き分けとなります。</li>
           <li>規定の時間が経過するか、全員が投票すると夜時間に進みます。</li>
           <li>全員が投票するまでは投票先を変更することができます。</li>
           <li>時間内に投票しなかった場合、突然死します。</li>
@@ -235,9 +207,7 @@
       <h3 id="suddenly-death" class="title is-6">突然死</h3>
       <div class="content">
         <ul>
-          <li>
-            夜時間に能力行使をしなかった/投票時間に投票しなかった生存者は突然死します。
-          </li>
+          <li>夜時間に能力行使をしなかった/投票時間に投票しなかった生存者は突然死します。</li>
           <li>突然死者はエピローグ以外で一切の発言ができなくなります。</li>
           <li>突然死者は自陣営が勝利していても敗北となります。</li>
           <li>
@@ -300,9 +270,7 @@
           <li>
             「人間」「人狼」どちらにカウントされるかは役職欄の「勝敗判定カウント」を参照してください。
             <ul>
-              <li>
-                「勝敗判定カウント」が「-」の場合はどちらにもカウントされません。
-              </li>
+              <li>「勝敗判定カウント」が「-」の場合はどちらにもカウントされません。</li>
             </ul>
           </li>
           <li>同時に条件を満たした場合、上にあるものが優先されます。</li>
@@ -313,55 +281,55 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from "nuxt-property-decorator";
 // component
 // type
-import Skill from '~/@types/skill'
-import Skills from '~/@types/skills'
-import notification from '~/components/setting/notification.vue'
-const skill = () => import('~/components/rule/skill.vue')
-const ability = () => import('~/components/rule/ability.vue')
+import Skill from "~/@types/skill";
+import Skills from "~/@types/skills";
+import notification from "~/components/setting/notification.vue";
+const skill = () => import("~/components/rule/skill.vue");
+const ability = () => import("~/components/rule/ability.vue");
 
 interface Camp {
-  name: string
-  win_condition: string
+  name: string;
+  win_condition: string;
 }
 
 @Component({
-  components: { skill, ability, notification }
+  components: { skill, ability, notification },
 })
+
 export default class extends Vue {
   /** head */
   private head() {
-    return { title: ' | 仕様' }
+    return { title: " | 仕様" };
   }
 
   /** data */
-  private skillList: Skill[] = []
+  private skillList: Skill[] = [];
 
   /** computed */
   private get camps(): Camp[] {
     return [
       {
-        name: '狐陣営',
-        win_condition:
-          '人狼陣営または村人陣営が勝利条件を満たした状態で妖狐が生存'
+        name: "狐陣営",
+        win_condition: "人狼陣営または村人陣営が勝利条件を満たした状態で妖狐が生存",
       },
       {
-        name: '人狼陣営',
-        win_condition: '生存している「人狼」の数 ≧ 生存している「人間」の数'
+        name: "人狼陣営",
+        win_condition: "生存している「人狼」の数 ≧ 生存している「人間」の数",
       },
       {
-        name: '村人陣営',
-        win_condition: '「人狼」が全員死亡'
-      }
-    ]
+        name: "村人陣営",
+        win_condition: "「人狼」が全員死亡",
+      },
+    ];
   }
 
   /** created */
   private async created(): Promise<void> {
-    const skills: Skills = await this.$axios.$get('/skill/list')
-    this.skillList = skills.list
+    const skills: Skills = await this.$axios.$get("/skill/list");
+    this.skillList = skills.list;
   }
 
   /** method */

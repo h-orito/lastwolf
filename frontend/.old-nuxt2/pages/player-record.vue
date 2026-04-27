@@ -26,74 +26,70 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from "nuxt-property-decorator";
 // components
 // type
-import PlayerRecords from '~/@types/player-records'
-import CampRecord from '~/@types/camp-record'
-import SkillRecord from '~/@types/skill-record'
-import ParticipateVillage from '~/@types/participate-village'
-import MyselfPlayer from '~/@types/myself-player'
+import PlayerRecords from "~/@types/player-records";
+import CampRecord from "~/@types/camp-record";
+import SkillRecord from "~/@types/skill-record";
+import ParticipateVillage from "~/@types/participate-village";
+import MyselfPlayer from "~/@types/myself-player";
 
 @Component({
   components: {
-    campRecords: () => import('~/components/record/camp-records.vue'),
-    skillRecords: () => import('~/components/record/skill-records.vue'),
-    participateVillageList: () =>
-      import('~/components/record/participate-village-list.vue')
+    campRecords: () => import("~/components/record/camp-records.vue"),
+    skillRecords: () => import("~/components/record/skill-records.vue"),
+    participateVillageList: () => import("~/components/record/participate-village-list.vue"),
   },
   asyncData({ query }) {
-    return { playerId: query.id }
-  }
+    return { playerId: query.id };
+  },
 })
+
 export default class extends Vue {
   /** head */
   private head() {
-    return { title: ' | 戦績' }
+    return { title: " | 戦績" };
   }
 
   /** data */
-  private playerId: number = 0
-  private playerRecords: PlayerRecords | null = null
-  private loadingRecords: boolean = false
+  private playerId: number = 0;
+  private playerRecords: PlayerRecords | null = null;
+  private loadingRecords: boolean = false;
 
   /** computed */
   private get playerName(): string {
-    if (this.loadingRecords || !this.playerRecords) return ''
-    const player = this.playerRecords.player
-    return `${player.nickname}@${player.twitter_user_name}`
+    if (this.loadingRecords || !this.playerRecords) return "";
+    const player = this.playerRecords.player;
+    return `${player.nickname}@${player.twitter_user_name}`;
   }
 
   private get wholeResult(): string {
-    if (!this.playerRecords) return ''
-    const record = this.playerRecords.whole_record
+    if (!this.playerRecords) return "";
+    const record = this.playerRecords.whole_record;
     return `${record.win_count}勝 ${record.lose_count}負 ${
       record.draw_count
-    }分 (${percent(record.win_rate)}%/${percent(record.lose_rate)}%/${percent(
-      record.draw_rate
-    )}%)`
+    }分 (${percent(record.win_rate)}%/${percent(record.lose_rate)}%/${percent(record.draw_rate)}%)`;
   }
 
   /** created */
   private async created(): Promise<any> {
-    await this.loadRecord()
+    await this.loadRecord();
   }
 
   /** methods */
   private async loadRecord(): Promise<void> {
-    this.loadingRecords = true
+    this.loadingRecords = true;
     try {
-      this.playerRecords = await this.$axios.$get(
-        `/player/${this.playerId}/record`
-      )
+      this.playerRecords = await this.$axios.$get(`/player/${this.playerId}/record`);
     } catch (error) {}
-    this.loadingRecords = false
+    this.loadingRecords = false;
   }
 }
 
 const percent = (rate: number): number => {
-  return Math.round(rate * 1000) / 10
-}
+  return Math.round(rate * 1000) / 10;
+};
 </script>
 
 <style lang="scss" scoped>

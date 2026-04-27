@@ -1,19 +1,18 @@
 <template>
   <nav class="navbar is-dark-opacity">
     <div class="navbar-brand navbar-brand-center">
-      <nuxt-link class="navbar-item has-text-center" to="/">
-        LASTWOLF
-      </nuxt-link>
+      <nuxt-link class="navbar-item has-text-center" to="/"> LASTWOLF </nuxt-link>
     </div>
   </nav>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class Navbar extends Vue {}
 </script>
 

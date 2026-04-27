@@ -1,4 +1,4 @@
-@import '~bulma/sass/utilities/_all';
+@import "~bulma/sass/utilities/_all";
 
 // Set your colors
 $primary: #3991f4;
@@ -26,46 +26,46 @@ $creator-say-bg: #fef;
 
 // Setup $colors to use as bulma classes (e.g. 'is-twitter')
 $colors: (
-  'white': (
+  "white": (
     $white,
-    $black
-  ),
-  'black': (
     $black,
-    $white
   ),
-  'light': (
+  "black": (
+    $black,
+    $white,
+  ),
+  "light": (
     $light,
-    $light-invert
+    $light-invert,
   ),
-  'dark': (
+  "dark": (
     $dark,
-    $dark-invert
+    $dark-invert,
   ),
-  'primary': (
+  "primary": (
     $primary,
-    $primary-invert
+    $primary-invert,
   ),
-  'info': (
+  "info": (
     $info,
-    $info-invert
+    $info-invert,
   ),
-  'success': (
+  "success": (
     $success,
-    $success-invert
+    $success-invert,
   ),
-  'warning': (
+  "warning": (
     $warning,
-    $warning-invert
+    $warning-invert,
   ),
-  'danger': (
+  "danger": (
     $danger,
-    $danger-invert
+    $danger-invert,
   ),
-  'dark-opacity': (
+  "dark-opacity": (
     hsla(0, 0%, 21%, 0.9),
-    $dark-invert
-  )
+    $dark-invert,
+  ),
 );
 
 // Links
@@ -91,5 +91,5 @@ $sides: (top, bottom, left, right); // 方向性
 }
 
 // Import Bulma and Buefy styles
-@import '~bulma';
-@import '~buefy/src/scss/buefy';
+@import "~bulma";
+@import "~buefy/src/scss/buefy";

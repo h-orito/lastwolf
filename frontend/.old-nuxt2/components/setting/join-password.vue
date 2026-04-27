@@ -9,22 +9,23 @@
   />
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-const formInput = () => import('~/components/form/validation/form-input.vue')
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+const formInput = () => import("~/components/form/validation/form-input.vue");
 
 @Component({
-  components: { formInput }
+  components: { formInput },
 })
+
 export default class JoinPassword extends Vue {
   @Prop({ type: String, required: true })
-  private inputValue!: string
+  private inputValue!: string;
 
   private get inputValueModel(): string {
-    return this.inputValue
+    return this.inputValue;
   }
 
   private set inputValueModel(val: string) {
-    this.$emit('update:inputValue', val)
+    this.$emit("update:inputValue", val);
   }
 }
 </script>

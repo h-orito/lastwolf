@@ -1,6 +1,6 @@
 interface PersonCapacity {
-  min: number
-  max: number
+  min: number;
+  max: number;
 }
 
-export default PersonCapacity
+export default PersonCapacity;

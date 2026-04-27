@@ -28,168 +28,162 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import dayjs from 'dayjs'
-import Village from '~/@types/village'
-import SituationAsParticipant from '~/@types/situation-as-participant'
-import { VILLAGE_STATUS, NOONNIGHT_CODE, MESSAGE_TYPE } from '~/consts/consts'
+import { Component, Vue } from "nuxt-property-decorator";
+import dayjs from "dayjs";
+import Village from "~/@types/village";
+import SituationAsParticipant from "~/@types/situation-as-participant";
+import { VILLAGE_STATUS, NOONNIGHT_CODE, MESSAGE_TYPE } from "~/consts/consts";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class MessageInput extends Vue {
-  private canMessageSubmit: boolean = false
-  private message: string = ''
-  private strong: boolean = false
+  private canMessageSubmit: boolean = false;
+  private message: string = "";
+  private strong: boolean = false;
 
   private get canSubmit(): boolean {
-    const mes = this.message.trim()
-    return mes.length > 0 && mes.length <= 200
+    const mes = this.message.trim();
+    return mes.length > 0 && mes.length <= 200;
   }
 
   private get village(): Village | null {
-    return this.$store.getters.village
+    return this.$store.getters.village;
   }
 
   private get situation(): SituationAsParticipant | null {
-    return this.$store.getters.situation
+    return this.$store.getters.situation;
   }
 
   private get villageId(): number {
-    if (!this.village) return 0
-    return this.village!.id
+    if (!this.village) return 0;
+    return this.village!.id;
   }
 
   private get messageType(): string {
-    if (!this.village || !this.situation || !this.situation.say.available_say)
-      return ''
-    const selectable = this.situation.say.selectable_message_type_list
-    if (selectable.some(type => type.code === MESSAGE_TYPE.WEREWOLF_SAY)) {
-      return MESSAGE_TYPE.WEREWOLF_SAY
-    } else if (selectable.some(type => type.code === MESSAGE_TYPE.MASON_SAY)) {
-      return MESSAGE_TYPE.MASON_SAY
-    } else if (selectable.some(type => type.code === MESSAGE_TYPE.NORMAL_SAY)) {
-      return MESSAGE_TYPE.NORMAL_SAY
-    } else if (selectable.some(type => type.code === MESSAGE_TYPE.GRAVE_SAY)) {
-      return MESSAGE_TYPE.GRAVE_SAY
-    } else if (
-      selectable.some(type => type.code === MESSAGE_TYPE.MONOLOGUE_SAY)
-    ) {
-      return MESSAGE_TYPE.MONOLOGUE_SAY
+    if (!this.village || !this.situation || !this.situation.say.available_say) return "";
+    const selectable = this.situation.say.selectable_message_type_list;
+    if (selectable.some((type) => type.code === MESSAGE_TYPE.WEREWOLF_SAY)) {
+      return MESSAGE_TYPE.WEREWOLF_SAY;
+    } else if (selectable.some((type) => type.code === MESSAGE_TYPE.MASON_SAY)) {
+      return MESSAGE_TYPE.MASON_SAY;
+    } else if (selectable.some((type) => type.code === MESSAGE_TYPE.NORMAL_SAY)) {
+      return MESSAGE_TYPE.NORMAL_SAY;
+    } else if (selectable.some((type) => type.code === MESSAGE_TYPE.GRAVE_SAY)) {
+      return MESSAGE_TYPE.GRAVE_SAY;
+    } else if (selectable.some((type) => type.code === MESSAGE_TYPE.MONOLOGUE_SAY)) {
+      return MESSAGE_TYPE.MONOLOGUE_SAY;
     }
-    return ''
+    return "";
   }
 
   private get messageBgColorClass(): string {
-    const type = this.messageType
+    const type = this.messageType;
     switch (type) {
       case MESSAGE_TYPE.WEREWOLF_SAY:
-        return 'werewolf-message-bg'
+        return "werewolf-message-bg";
       case MESSAGE_TYPE.MASON_SAY:
-        return 'mason-message-bg'
+        return "mason-message-bg";
       case MESSAGE_TYPE.GRAVE_SAY:
-        return 'grave-message-bg'
+        return "grave-message-bg";
       case MESSAGE_TYPE.MONOLOGUE_SAY:
-        return 'monologue-message-bg'
+        return "monologue-message-bg";
       default:
-        return ''
+        return "";
     }
   }
 
   private get placeholder(): string {
     if (this.isSilentTime) {
-      return '沈黙時間中です。'
+      return "沈黙時間中です。";
     }
-    const type = this.messageType
+    const type = this.messageType;
     switch (type) {
       case MESSAGE_TYPE.WEREWOLF_SAY:
-        return '人狼同士にしか聞こえない会話が可能です。'
+        return "人狼同士にしか聞こえない会話が可能です。";
       case MESSAGE_TYPE.MASON_SAY:
-        return '共有者同士にしか聞こえない会話が可能です。'
+        return "共有者同士にしか聞こえない会話が可能です。";
       case MESSAGE_TYPE.GRAVE_SAY:
-        return '死者同士にしか聞こえない会話が可能です。'
+        return "死者同士にしか聞こえない会話が可能です。";
       case MESSAGE_TYPE.MONOLOGUE_SAY:
-        return '自分にしか見えない発言が可能です。'
+        return "自分にしか見えない発言が可能です。";
       default:
-        return 'Enterで発言、Shift+Enterで強調発言できます。'
+        return "Enterで発言、Shift+Enterで強調発言できます。";
     }
   }
 
   private get canSay(): boolean {
-    if (!this.situation) return false
+    if (!this.situation) return false;
     return (
       this.situation.say.available_say &&
       this.situation.say.selectable_message_type_list.length > 0 &&
       !this.isSilentTime
-    )
+    );
   }
 
-  private timer: any = null
+  private timer: any = null;
   private mounted(): void {
-    this.timer = setInterval(this.refreshTimer, 1000)
+    this.timer = setInterval(this.refreshTimer, 1000);
   }
 
   private destroyed(): void {
-    clearInterval(this.timer)
+    clearInterval(this.timer);
   }
 
-  private isSilentTime: boolean = false
+  private isSilentTime: boolean = false;
   private refreshTimer(): void {
-    if (!this.village || this.village.status.code !== VILLAGE_STATUS.PROGRESS)
-      return
+    if (!this.village || this.village.status.code !== VILLAGE_STATUS.PROGRESS) return;
 
-    const latestDay = this.$store.getters.latestDay!!
-    const silentSeconds = this.village.setting.rules.silent_seconds
-    if (
-      silentSeconds == null ||
-      latestDay.noon_night.code !== NOONNIGHT_CODE.NOON
-    ) {
-      this.isSilentTime = false
-      return
+    const latestDay = this.$store.getters.latestDay!!;
+    const silentSeconds = this.village.setting.rules.silent_seconds;
+    if (silentSeconds == null || latestDay.noon_night.code !== NOONNIGHT_CODE.NOON) {
+      this.isSilentTime = false;
+      return;
     }
-    const start = dayjs(latestDay.start_datetime, 'YYYY/MM/DD HH:mm:ss')
-    const now = dayjs()
-    const silentEnd = start.add(silentSeconds, 'second')
-    this.isSilentTime = now.isBefore(silentEnd)
+    const start = dayjs(latestDay.start_datetime, "YYYY/MM/DD HH:mm:ss");
+    const now = dayjs();
+    const silentEnd = start.add(silentSeconds, "second");
+    this.isSilentTime = now.isBefore(silentEnd);
   }
 
   private keypressEnter(): void {
-    this.canMessageSubmit = true
+    this.canMessageSubmit = true;
   }
 
   private keyupEnter(e: any): void {
     // 日本語確定のEnterはスキップ
     if (!this.canMessageSubmit) {
-      return
+      return;
     }
-    this.say()
-    e.preventDefault()
+    this.say();
+    e.preventDefault();
   }
 
   private async strongSay(e: any): Promise<void> {
     // 日本語確定のEnterはスキップ
     if (!this.canMessageSubmit) {
-      return
+      return;
     }
-    this.strong = true
-    await this.say()
-    e.preventDefault()
+    this.strong = true;
+    await this.say();
+    e.preventDefault();
   }
 
   private async say(): Promise<void> {
     if (!this.canSubmit) {
-      return
+      return;
     }
-    const mes = this.message.trim().substring(0, 200)
-    this.canMessageSubmit = false
-    this.message = ''
-    const isStrong = this.strong
-    this.strong = false
+    const mes = this.message.trim().substring(0, 200);
+    this.canMessageSubmit = false;
+    this.message = "";
+    const isStrong = this.strong;
+    this.strong = false;
     await this.$axios.$post(`/village/${this.villageId}/say`, {
       message: mes,
       message_type: this.messageType,
-      strong: isStrong
-    })
+      strong: isStrong,
+    });
   }
 }
 </script>

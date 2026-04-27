@@ -1,15 +1,11 @@
 <template>
-  <b-table
-    :data="villages ? villages.list : []"
-    :loading="loadingVillages"
-    :mobile-cards="false"
-  >
+  <b-table :data="villages ? villages.list : []" :loading="loadingVillages" :mobile-cards="false">
     <template slot-scope="props">
       <b-table-column field="village_name" label="村名">
         <nuxt-link
           :to="{
             path: '/village',
-            query: { id: props.row.id }
+            query: { id: props.row.id },
           }"
           >{{ `${props.row.id}. ${props.row.name}` }}</nuxt-link
         >
@@ -33,17 +29,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import Villages from '~/@types/village'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+import Villages from "~/@types/village";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class VillageList extends Vue {
   @Prop({ type: Object })
-  private villages!: Villages | null
+  private villages!: Villages | null;
 
   @Prop({ type: Boolean })
-  private loadingVillages!: boolean
+  private loadingVillages!: boolean;
 }
 </script>

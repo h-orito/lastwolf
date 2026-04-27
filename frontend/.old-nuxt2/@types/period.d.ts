@@ -1,6 +1,6 @@
 interface Period {
-  day: number
-  time: string
+  day: number;
+  time: string;
 }
 
-export default Period
+export default Period;

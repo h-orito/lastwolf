@@ -1,7 +1,7 @@
 interface CharaName {
-  name: string
-  short_name: string
-  full_name: string
+  name: string;
+  short_name: string;
+  full_name: string;
 }
 
-export default CharaName
+export default CharaName;

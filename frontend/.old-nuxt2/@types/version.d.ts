@@ -1,5 +1,5 @@
 interface Version {
-  client_version: number
+  client_version: number;
 }
 
-export default Version
+export default Version;

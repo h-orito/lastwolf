@@ -1,7 +1,7 @@
-import Message from '~/@types/message'
+import Message from "~/@types/message";
 
 interface VillageAnchorMessage {
-  message: Message | null
+  message: Message | null;
 }
 
-export default VillageAnchorMessage
+export default VillageAnchorMessage;

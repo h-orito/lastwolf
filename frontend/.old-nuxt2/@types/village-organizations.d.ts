@@ -1,5 +1,5 @@
 interface VillageOrganizations {
-  organization: Map<number, string>
+  organization: Map<number, string>;
 }
 
-export default VillageOrganizations
+export default VillageOrganizations;

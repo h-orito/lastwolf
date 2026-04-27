@@ -18,29 +18,25 @@
       size="is-small"
       >トップページへ</b-button
     >
-    <b-button
-      icon-pack="fas"
-      icon-left="redo"
-      type="is-primary"
-      size="is-small"
-      @click="reload"
+    <b-button icon-pack="fas" icon-left="redo" type="is-primary" size="is-small" @click="reload"
       >再読み込み</b-button
     >
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component
+
 export default class Error extends Vue {
   @Prop({ type: Object })
-  private error!: Object
+  private error!: object;
 
   private created(): void {}
 
   private reload(): void {
-    location.reload(true)
+    location.reload(true);
   }
 }
 </script>

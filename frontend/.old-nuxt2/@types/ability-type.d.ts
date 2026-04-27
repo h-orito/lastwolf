@@ -1,6 +1,6 @@
 interface AbilityType {
-  code: string
-  name: string
+  code: string;
+  name: string;
 }
 
-export default AbilityType
+export default AbilityType;

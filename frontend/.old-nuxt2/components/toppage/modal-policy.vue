@@ -19,9 +19,7 @@
           </p>
           <h3 class="is-size-6">第1条（プライバシー情報）</h3>
           <ol>
-            <li>
-              本サービスでは，個人情報保護法にいう「個人情報」を収集しません。
-            </li>
+            <li>本サービスでは，個人情報保護法にいう「個人情報」を収集しません。</li>
             <li>
               本サービスは，ログインに利用したTwitterアカウント名やユーザ名，他オンライン人狼サイトにおけるID，ご覧になったページや広告の履歴，ユーザが検索された検索キーワード，ご利用日時，ご利用の方法，ご利用環境，ユーザのIPアドレス，クッキー情報などのプライバシー情報を収集します。
             </li>
@@ -35,15 +33,11 @@
               本サービスは，ユーザが各ページを閲覧する際に，ご覧になったページや広告の履歴，ユーザが検索された検索キーワード，ご利用日時，ご利用の方法，ご利用環境，ユーザのIPアドレス，クッキー情報などを収集します。
             </li>
           </ol>
-          <h3 class="is-size-6">
-            第3条（プライバシー情報を収集・利用する目的）
-          </h3>
+          <h3 class="is-size-6">第3条（プライバシー情報を収集・利用する目的）</h3>
           <p>本サービスが個人情報を収集・利用する目的は，以下のとおりです。</p>
           <ol>
             <li>サービスの提供・運営のため</li>
-            <li>
-              ユーザからのお問い合わせに回答するため（本人確認を行うことを含む）
-            </li>
+            <li>ユーザからのお問い合わせに回答するため（本人確認を行うことを含む）</li>
             <li>メンテナンス，重要なお知らせなど必要に応じたご連絡のため</li>
             <li>
               利用規約に違反したユーザや，不正・不当な目的でサービスを利用しようとするユーザの特定をし，ご利用をお断りするため
@@ -77,17 +71,13 @@
                 <li>利用目的に第三者への提供を含むこと</li>
                 <li>第三者に提供されるデータの項目</li>
                 <li>第三者への提供の手段または方法</li>
-                <li>
-                  本人の求めに応じて個人情報の第三者への提供を停止すること
-                </li>
+                <li>本人の求めに応じて個人情報の第三者への提供を停止すること</li>
                 <li>本人の求めを受け付ける方法</li>
               </ol>
             </li>
           </ol>
           <h3 class="is-size-6">第6条（プライバシー情報の開示）</h3>
-          <p>
-            Twitterアカウント名やユーザ名以外の情報については，原則として開示いたしません。
-          </p>
+          <p>Twitterアカウント名やユーザ名以外の情報については，原則として開示いたしません。</p>
           <h3 class="is-size-6">第7条（プライバシー情報の訂正および削除）</h3>
           <ol>
             <li>
@@ -125,36 +115,29 @@
             </li>
           </ol>
           <h3 class="is-size-6">第10条（お問い合わせ窓口）</h3>
-          <p>
-            本ポリシーに関するお問い合わせは，Twitter
-            @ort_devまでお願いいたします。
-          </p>
+          <p>本ポリシーに関するお問い合わせは，Twitter @ort_devまでお願いいたします。</p>
         </div>
       </section>
-      <footer
-        class="modal-card-foot"
-        style="justify-content: flex-end !important;"
-      >
-        <b-button type="is-secondary" size="is-small" @click="close">
-          閉じる
-        </b-button>
+      <footer class="modal-card-foot" style="justify-content: flex-end !important">
+        <b-button type="is-secondary" size="is-small" @click="close"> 閉じる </b-button>
       </footer>
     </div>
   </b-modal>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class PolicyModal extends Vue {
   @Prop({ type: Boolean })
-  private isOpen!: boolean
+  private isOpen!: boolean;
 
   private close(): void {
-    this.$emit('close-modal')
+    this.$emit("close-modal");
   }
 }
 </script>

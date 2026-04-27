@@ -26,61 +26,60 @@
   </validation-provider>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class StartDatetime extends Vue {
   @Prop({ type: Date, required: true })
-  private inputValue!: Date
+  private inputValue!: Date;
 
   private get inputValueModel(): Date {
     // @ts-ignore
-    return this.inputValue
+    return this.inputValue;
   }
 
   private set inputValueModel(val: Date) {
     // @ts-ignore
-    this.$emit('update:inputValue', val)
+    this.$emit("update:inputValue", val);
   }
 
   private get startDatetimeMin(): Date {
     // @ts-ignore
-    return this.$dayjs().toDate()
+    return this.$dayjs().toDate();
   }
 
   private get startDatetimeMax(): Date {
     // @ts-ignore
-    return this.$dayjs()
-      .add(1, 'days')
-      .toDate()
+    return this.$dayjs().add(1, "days").toDate();
   }
 
   private get datepickerProps(): any {
     return {
       monthNames: [
-        '1月',
-        '2月',
-        '3月',
-        '4月',
-        '5月',
-        '6月',
-        '7月',
-        '8月',
-        '9月',
-        '10月',
-        '11月',
-        '12月'
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月",
       ],
-      dayNames: ['日', '月', '火', '水', '木', '金', '土']
-    }
+      dayNames: ["日", "月", "火", "水", "木", "金", "土"],
+    };
   }
 
   private get timepickerProps(): any {
     return {
-      incrementMinutes: 10
-    }
+      incrementMinutes: 10,
+    };
   }
 }
 </script>

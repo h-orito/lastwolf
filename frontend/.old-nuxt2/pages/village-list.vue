@@ -10,39 +10,40 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import qs from 'qs'
-import completeVillageList from '~/components/complete-village-list/complete-village-list.vue'
+import { Component, Vue } from "nuxt-property-decorator";
+import qs from "qs";
+import completeVillageList from "~/components/complete-village-list/complete-village-list.vue";
 // type
-import Villages from '~/@types/villages'
-import SimpleVillage from '~/@types/simple-village'
-import { VILLAGE_STATUS } from '~/consts/consts'
+import Villages from "~/@types/villages";
+import SimpleVillage from "~/@types/simple-village";
+import { VILLAGE_STATUS } from "~/consts/consts";
 
 @Component({
-  components: { completeVillageList }
+  components: { completeVillageList },
 })
+
 export default class VillageList extends Vue {
   /** head */
   private head() {
-    return { title: ' | 終了した村一覧' }
+    return { title: " | 終了した村一覧" };
   }
 
   // 村一覧
-  private villages: SimpleVillage[] | null = null
+  private villages: SimpleVillage[] | null = null;
 
   /** computed */
   private get loadingVillages(): boolean {
-    return this.villages == null
+    return this.villages == null;
   }
 
   /** created */
   async created() {
-    const villages = await this.$axios.$get('/village/list', {
+    const villages = await this.$axios.$get("/village/list", {
       params: {
-        village_status: VILLAGE_STATUS.COMPLETE
-      }
-    })
-    this.villages = (villages as Villages).list
+        village_status: VILLAGE_STATUS.COMPLETE,
+      },
+    });
+    this.villages = (villages as Villages).list;
   }
 
   /** methods */

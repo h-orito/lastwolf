@@ -1,7 +1,7 @@
-import Skill from '~/@types/skill'
+import Skill from "~/@types/skill";
 
 interface ComingOut {
-  skill: Skill
+  skill: Skill;
 }
 
-export default ComingOut
+export default ComingOut;

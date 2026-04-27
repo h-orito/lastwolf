@@ -1,7 +1,7 @@
-import Chara from '~/@types/chara'
+import Chara from "~/@types/chara";
 
 interface Charas {
-  list: Chara[]
+  list: Chara[];
 }
 
-export default Charas
+export default Charas;

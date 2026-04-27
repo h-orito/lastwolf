@@ -2,9 +2,7 @@
   <div>
     <section class="section has-background-light">
       <div class="container has-text-left">
-        <h1 class="title is-5">
-          キャラチップ: {{ charachip ? charachip.name : '' }}
-        </h1>
+        <h1 class="title is-5">キャラチップ: {{ charachip ? charachip.name : "" }}</h1>
         <div v-if="charachip" class="m-b-20">
           <p>作者: {{ charachip.designer.name }}</p>
           <a :href="charachip.description_url" target="_blank">作者HP</a>
@@ -32,42 +30,41 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import qs from 'qs'
+import { Component, Vue } from "nuxt-property-decorator";
+import qs from "qs";
 // type
-import Charachip from '~/@types/charachip'
-import Chara from '~/@types/chara'
+import Charachip from "~/@types/charachip";
+import Chara from "~/@types/chara";
 
 @Component({
   components: {},
   asyncData({ query }) {
-    return { charachipId: query.id }
-  }
+    return { charachipId: query.id };
+  },
 })
+
 export default class CharachipDetail extends Vue {
   /** head */
   private head() {
     return {
-      title: ` | キャラチップ${
-        this.charachip ? ': ' + this.charachip.name : ''
-      }`
-    }
+      title: ` | キャラチップ${this.charachip ? ": " + this.charachip.name : ""}`,
+    };
   }
 
   /** data */
   // 村一覧
-  private charachipId: number | null = null
-  private charachip: Charachip | null = null
-  private loadingCharachip: boolean = false
+  private charachipId: number | null = null;
+  private charachip: Charachip | null = null;
+  private loadingCharachip: boolean = false;
 
   /** computed */
 
   /** created */
   async created() {
     // キャラチップ
-    this.loadingCharachip = true
-    this.charachip = await this.$axios.$get(`/charachip/${this.charachipId}`)
-    this.loadingCharachip = false
+    this.loadingCharachip = true;
+    this.charachip = await this.$axios.$get(`/charachip/${this.charachipId}`);
+    this.loadingCharachip = false;
   }
 }
 </script>

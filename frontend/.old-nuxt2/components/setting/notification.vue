@@ -1,9 +1,5 @@
 <template>
-  <b-notification
-    :closable="false"
-    aria-close-label="Close notification"
-    class="is-size-7"
-  >
+  <b-notification :closable="false" aria-close-label="Close notification" class="is-size-7">
     <ul class="content">
       <slot />
     </ul>
@@ -11,11 +7,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class Notification extends Vue {}
 </script>
 

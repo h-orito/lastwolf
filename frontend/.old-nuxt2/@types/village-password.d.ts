@@ -1,5 +1,5 @@
 interface VillagePassword {
-  join_password_required: boolean
+  join_password_required: boolean;
 }
 
-export default VillagePassword
+export default VillagePassword;

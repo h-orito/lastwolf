@@ -57,9 +57,7 @@
             </li>
           </ol>
           <h3 class="is-size-6">第4条（禁止事項）</h3>
-          <p>
-            ユーザは，本サービスの利用にあたり，以下の行為をしてはなりません。
-          </p>
+          <p>ユーザは，本サービスの利用にあたり，以下の行為をしてはなりません。</p>
           <ol>
             <li>法令または公序良俗に違反する行為</li>
             <li>犯罪行為に関連する行為</li>
@@ -74,13 +72,9 @@
             <li>不正アクセスをし，またはこれを試みる行為</li>
             <li>他のユーザに関する個人情報等を収集または蓄積する行為</li>
             <li>不正な目的を持って本サービスを利用する行為</li>
-            <li>
-              本サービスの他のユーザまたはその他の第三者に不利益，損害，不快感を与える行為
-            </li>
+            <li>本サービスの他のユーザまたはその他の第三者に不利益，損害，不快感を与える行為</li>
             <li>他のユーザに成りすます行為</li>
-            <li>
-              管理人が許諾しない本サービス上での宣伝，広告，勧誘，または営業行為
-            </li>
+            <li>管理人が許諾しない本サービス上での宣伝，広告，勧誘，または営業行為</li>
             <li>面識のない異性との出会いを目的とした行為</li>
             <li>
               管理人のサービスに関連して，反社会的勢力に対して直接または間接に利益を供与する行為
@@ -92,9 +86,7 @@
             <li>
               管理人は，以下のいずれかの事由があると判断した場合，ユーザに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。
               <ol>
-                <li>
-                  本サービスにかかるコンピュータシステムの保守点検または更新を行う場合
-                </li>
+                <li>本サービスにかかるコンピュータシステムの保守点検または更新を行う場合</li>
                 <li>
                   地震，落雷，火災，停電または天災などの不可抗力により，本サービスの提供が困難となった場合
                 </li>
@@ -111,14 +103,10 @@
             <li>
               管理人は，ユーザが以下のいずれかに該当する場合には，事前の通知なく，ユーザに対して，本サービスの全部もしくは一部の利用を制限し，またはユーザとしての登録を抹消することができるものとします。
               <ol>
-                <li>
-                  本規約のいずれかの条項に違反した場合
-                </li>
+                <li>本規約のいずれかの条項に違反した場合</li>
                 <li>登録事項に虚偽の事実があることが判明した場合</li>
                 <li>管理人からの連絡に対し，一定期間返答がない場合</li>
-                <li>
-                  その他，管理人が本サービスの利用を適当でないと判断した場合
-                </li>
+                <li>その他，管理人が本サービスの利用を適当でないと判断した場合</li>
               </ol>
             </li>
             <li>
@@ -126,9 +114,7 @@
             </li>
           </ol>
           <h3 class="is-size-6">第7条（退会）</h3>
-          <p>
-            ユーザは，管理人の定める退会手続により，本サービスから退会できるものとします。
-          </p>
+          <p>ユーザは，管理人の定める退会手続により，本サービスから退会できるものとします。</p>
           <h3 class="is-size-6">第8条（保証の否認および免責事項）</h3>
           <ol>
             <li>
@@ -174,30 +160,26 @@
           <p class="is-pulled-right">以上</p>
         </div>
       </section>
-      <footer
-        class="modal-card-foot"
-        style="justify-content: flex-end !important;"
-      >
-        <b-button type="is-secondary" size="is-small" @click="close">
-          閉じる
-        </b-button>
+      <footer class="modal-card-foot" style="justify-content: flex-end !important">
+        <b-button type="is-secondary" size="is-small" @click="close"> 閉じる </b-button>
       </footer>
     </div>
   </b-modal>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class TermModal extends Vue {
   @Prop({ type: Boolean })
-  private isOpen!: boolean
+  private isOpen!: boolean;
 
   private close(): void {
-    this.$emit('close-modal')
+    this.$emit("close-modal");
   }
 }
 </script>

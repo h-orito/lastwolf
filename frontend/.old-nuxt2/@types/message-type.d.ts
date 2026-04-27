@@ -1,6 +1,6 @@
 interface MessageType {
-  code: string
-  name: string
+  code: string;
+  name: string;
 }
 
-export default MessageType
+export default MessageType;

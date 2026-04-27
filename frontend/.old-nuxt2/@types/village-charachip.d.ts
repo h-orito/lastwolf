@@ -1,6 +1,6 @@
 interface VillageCharachip {
-  dummy_chara_id: number
-  charachip_id: number
+  dummy_chara_id: number;
+  charachip_id: number;
 }
 
-export default VillageCharachip
+export default VillageCharachip;

@@ -9,12 +9,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import navbar from '~/layouts/navbar.vue'
-import googleAds from '~/components/common/google-ads.vue'
+import { Component, Vue } from "nuxt-property-decorator";
+import navbar from "~/layouts/navbar.vue";
+import googleAds from "~/components/common/google-ads.vue";
 
 @Component({
-  components: { navbar, googleAds }
+  components: { navbar, googleAds },
 })
+
 export default class Default extends Vue {}
 </script>

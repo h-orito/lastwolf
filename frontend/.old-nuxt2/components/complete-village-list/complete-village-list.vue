@@ -6,7 +6,7 @@
           <nuxt-link
             :to="{
               path: '/village',
-              query: { id: props.row.village_id }
+              query: { id: props.row.village_id },
             }"
             >{{ props.row.village_name }}</nuxt-link
           >
@@ -37,29 +37,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 // type
-import SimpleVillage from '~/@types/simple-village'
+import SimpleVillage from "~/@types/simple-village";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class CompleteVillageList extends Vue {
   // 村一覧
   @Prop({ type: Array })
-  private villages!: SimpleVillage[] | null
+  private villages!: SimpleVillage[] | null;
 
   /** computed */
   private get tableVillages(): any[] {
-    if (!this.villages) return []
+    if (!this.villages) return [];
     return this.villages.map((village: SimpleVillage) => ({
       village_id: village.id,
       village_name: village.name,
       participant_count: `${village.participants.count}人`,
-      organization:
-        village.setting.organizations.organization[village.participants.count],
-      win_camp: village.win_camp?.name || '引分'
-    }))
+      organization: village.setting.organizations.organization[village.participants.count],
+      win_camp: village.win_camp?.name || "引分",
+    }));
   }
 
   /** methods */

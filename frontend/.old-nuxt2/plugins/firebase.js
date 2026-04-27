@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import firebase from "firebase";
 
 const config = {
   databaseURL: process.env.FIREBASE_DATABASEURL,
@@ -7,11 +7,11 @@ const config = {
   projectId: process.env.FIREBASE_PROJECTID,
   storageBucket: process.env.FIREBASE_STORAGEBUCKET,
   messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID,
-  appId: process.env.FIREBASE_APPID
-}
+  appId: process.env.FIREBASE_APPID,
+};
 
 if (firebase.apps.length === 0) {
-  firebase.initializeApp(config)
+  firebase.initializeApp(config);
 }
 
-export default firebase
+export default firebase;

@@ -1,7 +1,7 @@
-import VillageVote from '~/@types/village-vote'
+import VillageVote from "~/@types/village-vote";
 
 interface VillageVotes {
-  list: VillageVote[]
+  list: VillageVote[];
 }
 
-export default VillageVotes
+export default VillageVotes;

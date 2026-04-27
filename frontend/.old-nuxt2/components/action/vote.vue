@@ -12,17 +12,12 @@
     <b-field label="対象" label-position="on-border">
       <b-select v-model="participantId" expanded size="is-small">
         <option :value="null">選択してください</option>
-        <option
-          v-for="participant in targetList"
-          :value="participant.id"
-          :key="participant.id"
-          >{{ participant.chara.name.name }}</option
-        >
+        <option v-for="participant in targetList" :value="participant.id" :key="participant.id">
+          {{ participant.chara.name.name }}
+        </option>
       </b-select>
       <p class="control">
-        <button class="button is-primary is-small" @click="openSelectModal">
-          画像で選択
-        </button>
+        <button class="button is-primary is-small" @click="openSelectModal">画像で選択</button>
       </p>
     </b-field>
     <b-button
@@ -49,81 +44,81 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import Village from '~/@types/village'
-import VillageParticipant from '~/@types/village-participant'
-import SituationAsParticipant from '~/@types/situation-as-participant'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+import Village from "~/@types/village";
+import VillageParticipant from "~/@types/village-participant";
+import SituationAsParticipant from "~/@types/situation-as-participant";
 
 @Component({
   components: {
-    participantSelectModal: () =>
-      import('~/components/action/participant-select-modal.vue')
-  }
+    participantSelectModal: () => import("~/components/action/participant-select-modal.vue"),
+  },
 })
+
 export default class VoteV extends Vue {
-  private submitting: boolean = false
+  private submitting: boolean = false;
   private participantId: number | null = this.situation.vote.target
     ? this.situation.vote.target.id
-    : null
+    : null;
 
   private get situation(): SituationAsParticipant {
-    return this.$store.getters.situation
+    return this.$store.getters.situation;
   }
 
   private get targetList(): VillageParticipant[] {
-    return this.situation.vote.target_list
+    return this.situation.vote.target_list;
   }
 
   private get villageId(): number {
-    return this.$store.getters.villageId
+    return this.$store.getters.villageId;
   }
 
   private get village(): Village {
-    return this.$store.getters.village
+    return this.$store.getters.village;
   }
 
   private get currentVoteTarget(): string {
-    if (!this.situation.vote.target) return ''
-    return this.situation.vote.target.chara.name.name
+    if (!this.situation.vote.target) return "";
+    return this.situation.vote.target.chara.name.name;
   }
 
   // 参加ボタンを押下できるか
   private get canSubmit(): boolean {
-    return this.participantId != null
+    return this.participantId != null;
   }
 
   private async setVote(): Promise<void> {
-    this.submitting = true
+    this.submitting = true;
     try {
       await this.$axios.$post(`/village/${this.villageId}/vote`, {
-        target_id: this.participantId
-      })
-      this.submitting = false
+        target_id: this.participantId,
+      });
+      this.submitting = false;
     } catch (error) {
-      const code = parseInt(error.response && error.response.status)
+      const code = parseInt(error.response && error.response.status);
       if (code === 404 && error.response.data.status === 499) {
         this.$buefy.toast.open({
           message: error.response.data.message,
-          type: 'is-danger',
-          position: 'is-top'
-        })
+          type: "is-danger",
+          position: "is-top",
+        });
       }
-      this.submitting = false
+      this.submitting = false;
     }
   }
 
-  private isOpenSelectModal: boolean = false
+  private isOpenSelectModal: boolean = false;
   private openSelectModal(): void {
-    this.isOpenSelectModal = true
+    this.isOpenSelectModal = true;
   }
 
   private closeSelectModal(): void {
-    this.isOpenSelectModal = false
+    this.isOpenSelectModal = false;
   }
 
   private selectParticipant({ participantId }): void {
-    this.participantId = participantId
-    this.closeSelectModal()
+    this.participantId = participantId;
+    this.closeSelectModal();
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <section class="section" style="padding: 10px;">
+  <section class="section" style="padding: 10px">
     <div class="container">
       <div class="is-size-7 has-text-left village-wrapper">
         <div class="columns">
@@ -54,10 +54,7 @@
             </div>
           </div>
         </div>
-        <first-day-modal
-          :is-open="isOpenFirstdayModal"
-          @close="closeFirstdayModal"
-        />
+        <first-day-modal :is-open="isOpenFirstdayModal" @close="closeFirstdayModal" />
         <div class="footer-button-area is-hidden-tablet">
           <b-button
             @click="scrollTo('#participants-area')"
@@ -90,19 +87,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import scrollTo from 'vue-scrollto'
-import dayjs from 'dayjs'
-import firebase from '~/plugins/firebase'
-import messages from '~/components/message/messages.vue'
-import creator from '~/components/creator/creator.vue'
-import villageProgress from '~/components/progress/progress.vue'
-import participants from '~/components/participants/participants.vue'
-import * as actionTypes from '~/store/action-types'
-import Village from '~/@types/village'
-import VillageDay from '~/@types/village-day'
-import VillageParticipant from '~/@types/village-participant'
-import { NOONNIGHT_CODE } from '~/consts/consts'
+import { Component, Vue } from "nuxt-property-decorator";
+import scrollTo from "vue-scrollto";
+import dayjs from "dayjs";
+import firebase from "~/plugins/firebase";
+import messages from "~/components/message/messages.vue";
+import creator from "~/components/creator/creator.vue";
+import villageProgress from "~/components/progress/progress.vue";
+import participants from "~/components/participants/participants.vue";
+import * as actionTypes from "~/store/action-types";
+import Village from "~/@types/village";
+import VillageDay from "~/@types/village-day";
+import VillageParticipant from "~/@types/village-participant";
+import { NOONNIGHT_CODE } from "~/consts/consts";
 
 @Component({
   components: {
@@ -110,157 +107,146 @@ import { NOONNIGHT_CODE } from '~/consts/consts'
     creator,
     villageProgress,
     participants,
-    debug: () => import('~/components/debug/debug.vue'),
-    linkButton: () => import('~/components/parts/link-button.vue'),
-    firstDayModal: () => import('~/components/day-change/modal-first-day.vue')
+    debug: () => import("~/components/debug/debug.vue"),
+    linkButton: () => import("~/components/parts/link-button.vue"),
+    firstDayModal: () => import("~/components/day-change/modal-first-day.vue"),
   },
   asyncData({ query }) {
-    return { villageId: query.id }
-  }
+    return { villageId: query.id };
+  },
 })
+
 export default class VillageV extends Vue {
   /** head */
   private head() {
-    return { title: this.title }
+    return { title: this.title };
   }
 
   private get title(): string {
-    if (!this.village) return ''
-    return ` | ${this.village.name}`
+    if (!this.village) return "";
+    return ` | ${this.village.name}`;
   }
 
-  private villageId: number = 0
-  private timer: any | null = null
+  private villageId: number = 0;
+  private timer: any | null = null;
 
   /** ローカル環境か */
   private get isDebug(): boolean {
-    return (process.env as any).ENV === 'local'
+    return (process.env as any).ENV === "local";
   }
 
   private get village(): Village | null {
-    return this.$store.getters.village
+    return this.$store.getters.village;
   }
 
   private get isAlreadyAuthenticated(): boolean {
-    return this.$store.getters.isAuthenticated
+    return this.$store.getters.isAuthenticated;
   }
 
   private get isCreator(): boolean {
-    const player = this.$store.getters.player
-    return (
-      !!this.village && !!player && this.village.creator_player.id === player.id
-    )
+    const player = this.$store.getters.player;
+    return !!this.village && !!player && this.village.creator_player.id === player.id;
   }
 
   private async mounted(): Promise<void> {
-    await this.auth()
-    const self = this
+    await this.auth();
+    const self = this;
     await Promise.all([
       this.$store.dispatch(actionTypes.INIT_VILLAGE, {
         villageId: this.villageId,
         uid: this.$store.getters.user?.uid,
         dayChangeCallback: () => {
-          self.openLatestday()
-          self.openFirstdayModalIfNeeded()
-          self.reloadMessageIfNeeded()
-        }
+          self.openLatestday();
+          self.openFirstdayModalIfNeeded();
+          self.reloadMessageIfNeeded();
+        },
       }),
       this.$store.dispatch(actionTypes.INIT_MESSAGE, {
         villageId: this.villageId,
-        uid: this.$store.getters.user?.uid
-      })
-    ])
-    this.timer = this.setTimer()
+        uid: this.$store.getters.user?.uid,
+      }),
+    ]);
+    this.timer = this.setTimer();
   }
 
   private destroyed(): void {
-    this.$store.dispatch(actionTypes.TERMINATE_VILLAGE)
-    this.$store.dispatch(actionTypes.TERMINATE_MESSAGE)
-    clearInterval(this.timer)
+    this.$store.dispatch(actionTypes.TERMINATE_VILLAGE);
+    this.$store.dispatch(actionTypes.TERMINATE_MESSAGE);
+    clearInterval(this.timer);
   }
 
   private async auth(): Promise<void> {
     // 認証済みなら何もしない
-    if (this.isAlreadyAuthenticated) return
+    if (this.isAlreadyAuthenticated) return;
     const user = await new Promise((resolve, reject) => {
-      firebase.auth().onAuthStateChanged(user => resolve(user))
-    })
-    await this.$store.dispatch('LOGINOUT', {
-      user
-    })
+      firebase.auth().onAuthStateChanged((user) => resolve(user));
+    });
+    await this.$store.dispatch("LOGINOUT", {
+      user,
+    });
   }
 
   // 最新日を開く
   private openLatestday(): void {
     // @ts-ignore
-    this.$refs.messages.openLatestday()
+    this.$refs.messages.openLatestday();
   }
 
   // 役職確認モーダル
-  private isOpenFirstdayModal = false
+  private isOpenFirstdayModal = false;
   private openFirstdayModalIfNeeded(): void {
-    const latestDay = this.$store.getters.latestDay
+    const latestDay = this.$store.getters.latestDay;
     // 1日目夜のみ
-    if (
-      latestDay.day !== 1 ||
-      latestDay.noon_night.code !== NOONNIGHT_CODE.NIGHT
-    ) {
-      return
+    if (latestDay.day !== 1 || latestDay.noon_night.code !== NOONNIGHT_CODE.NIGHT) {
+      return;
     }
     // 参加している場合のみ
-    if (
-      !!this.$store.getters.situation &&
-      !this.$store.getters.situation.participate.myself
-    ) {
-      return
+    if (!!this.$store.getters.situation && !this.$store.getters.situation.participate.myself) {
+      return;
     }
-    this.isOpenFirstdayModal = true
+    this.isOpenFirstdayModal = true;
   }
 
   private closeFirstdayModal(): void {
-    this.isOpenFirstdayModal = false
+    this.isOpenFirstdayModal = false;
   }
 
   private reloadMessageIfNeeded(): void {
-    const latestDay: VillageDay = this.$store.getters.latestDay
+    const latestDay: VillageDay = this.$store.getters.latestDay;
     const myself: VillageParticipant | null = this.$store.getters.situation
       ? this.$store.getters.situation.participate.myself
-      : null
+      : null;
     // 日付変更後がエピローグだった場合、夜時間のメッセージが読めるようになるので読み込み直す
-    if (!shouldReloadMessage(latestDay, myself)) return
+    if (!shouldReloadMessage(latestDay, myself)) return;
     this.$store.dispatch(actionTypes.INIT_MESSAGE, {
       villageId: this.villageId,
-      uid: this.$store.getters.user?.uid
-    })
+      uid: this.$store.getters.user?.uid,
+    });
   }
 
   // タイマー
   private setTimer(): any {
-    return setInterval(this.updateDaychangeTimer, 1000)
+    return setInterval(this.updateDaychangeTimer, 1000);
   }
 
   private updateDaychangeTimer(): void {
     // @ts-ignore
-    this.$refs.progress.refreshTimer()
+    this.$refs.progress.refreshTimer();
   }
 
   private scrollTo(to: string): void {
-    this.$scrollTo(to)
+    this.$scrollTo(to);
   }
 }
 
-const shouldReloadMessage = (
-  latestDay: VillageDay,
-  myself: VillageParticipant | null
-): boolean => {
+const shouldReloadMessage = (latestDay: VillageDay, myself: VillageParticipant | null): boolean => {
   // 日付変更後がエピローグだった場合、夜時間のメッセージが読めるようになるので読み込み直す
-  if (latestDay.is_epilogue) return true
+  if (latestDay.is_epilogue) return true;
   // 死亡した場合、呻きが読めるようになるので読み込み直す
-  if (!!myself && !!myself.dead && myself.dead.village_day.id === latestDay.id)
-    return true
+  if (!!myself && !!myself.dead && myself.dead.village_day.id === latestDay.id) return true;
 
-  return false
-}
+  return false;
+};
 </script>
 
 <style lang="scss">

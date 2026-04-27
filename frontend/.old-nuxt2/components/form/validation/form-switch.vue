@@ -7,39 +7,38 @@
         :type="errors.length ? 'is-danger' : ''"
         horizontal
       >
-        <b-switch v-model="inputValueModel" size="is-small" expanded>{{
-          description
-        }}</b-switch>
+        <b-switch v-model="inputValueModel" size="is-small" expanded>{{ description }}</b-switch>
       </b-field>
       <slot :inputValue="inputValue" />
     </div>
   </validation-provider>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class FormInput extends Vue {
   @Prop({ type: String, required: true })
-  private rules!: string
+  private rules!: string;
 
   @Prop({ type: String, required: true })
-  private labelMessage!: string
+  private labelMessage!: string;
 
   @Prop({ type: String, required: true })
-  private description!: string
+  private description!: string;
 
   @Prop({ type: Boolean, required: true })
-  private inputValue!: boolean
+  private inputValue!: boolean;
 
   private get inputValueModel(): boolean {
-    return this.inputValue
+    return this.inputValue;
   }
 
   private set inputValueModel(val: boolean) {
-    this.$emit('update:inputValue', val)
+    this.$emit("update:inputValue", val);
   }
 }
 </script>

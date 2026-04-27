@@ -29,28 +29,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import Village from '~/@types/village'
-import VillageParticipant from '~/@types/village-participant'
-import { getColorClass } from '~/components/message/message-color'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+import Village from "~/@types/village";
+import VillageParticipant from "~/@types/village-participant";
+import { getColorClass } from "~/components/message/message-color";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class ParticipantSelectModal extends Vue {
   @Prop({ type: Array })
-  private participants!: VillageParticipant[]
+  private participants!: VillageParticipant[];
 
   private get village(): Village {
-    return this.$store.getters.village
+    return this.$store.getters.village;
   }
 
   private charaNameClass(participant: VillageParticipant): string {
-    return getColorClass(this.village, participant) || ''
+    return getColorClass(this.village, participant) || "";
   }
 
   private selected(participantId: number): void {
-    this.$emit('participant-select', { participantId })
+    this.$emit("participant-select", { participantId });
   }
 }
 </script>

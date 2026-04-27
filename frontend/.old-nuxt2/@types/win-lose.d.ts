@@ -1,6 +1,6 @@
 interface WinLose {
-  code: string
-  name: string
+  code: string;
+  name: string;
 }
 
-export default WinLose
+export default WinLose;

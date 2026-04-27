@@ -1,7 +1,7 @@
-import VillageAbility from '~/@types/village-ability'
+import VillageAbility from "~/@types/village-ability";
 
 interface VillageAbilities {
-  list: VillageAbility[]
+  list: VillageAbility[];
 }
 
-export default VillageAbilities
+export default VillageAbilities;

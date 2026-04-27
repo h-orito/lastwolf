@@ -1,7 +1,7 @@
-import SimpleVillage from '~/@types/simple-village'
+import SimpleVillage from "~/@types/simple-village";
 
 interface Villages {
-  list: SimpleVillage[]
+  list: SimpleVillage[];
 }
 
-export default Villages
+export default Villages;

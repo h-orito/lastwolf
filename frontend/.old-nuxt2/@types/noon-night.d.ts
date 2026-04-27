@@ -1,6 +1,6 @@
 interface NoonNight {
-  code: string
-  name: string
+  code: string;
+  name: string;
 }
 
-export default NoonNight
+export default NoonNight;

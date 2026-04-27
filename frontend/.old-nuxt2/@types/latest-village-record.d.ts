@@ -1,5 +1,5 @@
 interface LatestVillageRecord {
-  vid: number
+  vid: number;
 }
 
-export default LatestVillageRecord
+export default LatestVillageRecord;

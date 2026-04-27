@@ -1,10 +1,6 @@
 <template>
   <div>
-    <validation-provider
-      v-slot="{ errors }"
-      :rules="rules"
-      :name="labelMessage"
-    >
+    <validation-provider v-slot="{ errors }" :rules="rules" :name="labelMessage">
       <b-field
         :label="labelMessage"
         :message="errors.length ? errors[0] : ''"
@@ -25,36 +21,37 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class FormNumber extends Vue {
   @Prop({ type: String, required: true })
-  private rules!: string
+  private rules!: string;
 
   @Prop({ type: String, required: true })
-  private labelMessage!: string
+  private labelMessage!: string;
 
   @Prop({ type: String, required: true })
-  private max!: string
+  private max!: string;
 
   @Prop({ type: String, required: true })
-  private min!: string
+  private min!: string;
 
   @Prop({ type: String, required: true })
-  private step!: string
+  private step!: string;
 
   @Prop({ type: String, required: true })
-  private inputValue!: string
+  private inputValue!: string;
 
   private get inputValueModel(): string {
-    return this.inputValue
+    return this.inputValue;
   }
 
   private set inputValueModel(val: string) {
-    this.$emit('update:inputValue', val)
+    this.$emit("update:inputValue", val);
   }
 }
 </script>

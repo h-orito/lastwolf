@@ -1,6 +1,6 @@
 interface Camp {
-  code: string
-  name: string
+  code: string;
+  name: string;
 }
 
-export default Camp
+export default Camp;

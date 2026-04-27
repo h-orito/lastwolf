@@ -9,13 +9,12 @@
           v-for="chara in situation.participate.selectable_chara_list"
           :value="chara.id.toString()"
           :key="chara.id.toString()"
-          >{{ chara.name.name }}</option
         >
+          {{ chara.name.name }}
+        </option>
       </b-select>
       <p class="control">
-        <button class="button is-primary is-small" @click="openModal">
-          画像で選択
-        </button>
+        <button class="button is-primary is-small" @click="openModal">画像で選択</button>
       </p>
     </b-field>
     <b-field
@@ -29,8 +28,9 @@
           v-for="skill in situation.skill_request.selectable_skill_list"
           :value="skill.code"
           :key="skill.code"
-          >{{ skill.name }}</option
         >
+          {{ skill.name }}
+        </option>
       </b-select>
     </b-field>
     <b-field
@@ -44,8 +44,9 @@
           v-for="skill in situation.skill_request.selectable_skill_list"
           :value="skill.code"
           :key="skill.code"
-          >{{ skill.name }}</option
         >
+          {{ skill.name }}
+        </option>
       </b-select>
     </b-field>
     <b-field
@@ -79,46 +80,47 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import Village from '~/@types/village'
-import SituationAsParticipant from '~/@types/situation-as-participant'
+import { Component, Vue } from "nuxt-property-decorator";
+import Village from "~/@types/village";
+import SituationAsParticipant from "~/@types/situation-as-participant";
 
 @Component({
   components: {
-    charaSelectModal: () => import('~/components/action/chara-select-modal.vue')
-  }
+    charaSelectModal: () => import("~/components/action/chara-select-modal.vue"),
+  },
 })
+
 export default class Participate extends Vue {
-  private submitting: boolean = false
-  private charaId: number | null = null
+  private submitting: boolean = false;
+  private charaId: number | null = null;
   private firstRequestSkillCode: string | null =
     this.situation.skill_request.skill_request == null
-      ? 'LEFTOVER'
-      : this.situation.skill_request.skill_request.first.code
+      ? "LEFTOVER"
+      : this.situation.skill_request.skill_request.first.code;
 
   private secondRequestSkillCode: string | null =
     this.situation.skill_request.skill_request == null
-      ? 'LEFTOVER'
-      : this.situation.skill_request.skill_request.second.code
+      ? "LEFTOVER"
+      : this.situation.skill_request.skill_request.second.code;
 
-  private joinPassword: string = ''
+  private joinPassword: string = "";
 
-  private isCharaSelectModalOpen = false
+  private isCharaSelectModalOpen = false;
 
   private get situation(): SituationAsParticipant {
-    return this.$store.getters.situation
+    return this.$store.getters.situation;
   }
 
   private get villageId(): number {
-    return this.$store.getters.villageId
+    return this.$store.getters.villageId;
   }
 
   private get village(): Village {
-    return this.$store.getters.village
+    return this.$store.getters.village;
   }
 
   private get requiredJoinPassword(): boolean {
-    return this.village.setting.password.join_password_required
+    return this.village.setting.password.join_password_required;
   }
 
   // 参加ボタンを押下できるか
@@ -127,40 +129,40 @@ export default class Participate extends Vue {
       this.charaId != null &&
       this.firstRequestSkillCode != null &&
       this.secondRequestSkillCode != null
-    )
+    );
   }
 
   private async participate(): Promise<void> {
-    this.submitting = true
+    this.submitting = true;
     try {
       await this.$axios.$post(`/village/${this.villageId}/participate`, {
         chara_id: this.charaId,
         first_request_skill: this.firstRequestSkillCode!,
         second_request_skill: this.secondRequestSkillCode!,
-        join_password: this.joinPassword
-      })
-      this.submitting = false
-      location.reload()
+        join_password: this.joinPassword,
+      });
+      this.submitting = false;
+      location.reload();
     } catch (error) {
-      const code = parseInt(error.response && error.response.status)
+      const code = parseInt(error.response && error.response.status);
       if (code === 404 && error.response.data.status === 499) {
         this.$buefy.toast.open({
           message: error.response.data.message,
-          type: 'is-danger',
-          position: 'is-top'
-        })
+          type: "is-danger",
+          position: "is-top",
+        });
       }
-      this.submitting = false
+      this.submitting = false;
     }
   }
 
   private openModal(): void {
-    this.isCharaSelectModalOpen = true
+    this.isCharaSelectModalOpen = true;
   }
 
   private charaSelect({ charaId }): void {
-    this.charaId = charaId
-    this.isCharaSelectModalOpen = false
+    this.charaId = charaId;
+    this.isCharaSelectModalOpen = false;
   }
 }
 </script>

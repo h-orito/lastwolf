@@ -1,7 +1,7 @@
-import Player from '~/@types/player'
+import Player from "~/@types/player";
 
 interface Players {
-  list: Player[]
+  list: Player[];
 }
 
-export default Players
+export default Players;

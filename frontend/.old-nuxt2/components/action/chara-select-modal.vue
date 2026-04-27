@@ -25,18 +25,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import Chara from '~/@types/chara'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+import Chara from "~/@types/chara";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class CharaSelectModal extends Vue {
   @Prop({ type: Array })
-  private charaList!: Chara[]
+  private charaList!: Chara[];
 
   private selected(charaId: number): void {
-    this.$emit('chara-select', { charaId })
+    this.$emit("chara-select", { charaId });
   }
 }
 </script>

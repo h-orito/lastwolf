@@ -4,10 +4,9 @@
       <b-table :data="tableVillages" :mobile-cards="false">
         <template slot-scope="props">
           <b-table-column field="village_name" label="村名">
-            <nuxt-link
-              :to="{ path: 'village', query: { id: props.row.village_id } }"
-              >{{ props.row.village_name }}</nuxt-link
-            >
+            <nuxt-link :to="{ path: 'village', query: { id: props.row.village_id } }">{{
+              props.row.village_name
+            }}</nuxt-link>
           </b-table-column>
 
           <b-table-column field="participant_count" label="人数">
@@ -48,71 +47,70 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 // component
 // type
-import ParticipateVillage from '~/@types/participate-village'
-import Village from '~/@types/village'
-import VillageParticipant from '~/@types/village-participant'
+import ParticipateVillage from "~/@types/participate-village";
+import Village from "~/@types/village";
+import VillageParticipant from "~/@types/village-participant";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class ParticipateVillageList extends Vue {
   @Prop({ type: Array })
-  private participateVillageList!: ParticipateVillage[]
+  private participateVillageList!: ParticipateVillage[];
 
   /** data */
 
   /** computed */
   private get tableVillages(): any[] {
-    return this.participateVillageList.map(
-      (participateVillage: ParticipateVillage) => ({
-        village_id: participateVillage.village.id,
-        village_name: participateVillage.village.name,
-        participant_count: this.participantCount(participateVillage.village),
-        organization:
-          participateVillage.village.setting.organizations.organization[
-            participateVillage.village.participants.count
-          ],
-        chara: participateVillage.participant.chara,
-        status: this.status(participateVillage.participant),
-        skill: this.skillName(participateVillage.participant),
-        camp: this.campName(participateVillage.participant),
-        win_status: this.winStatus(participateVillage.participant)
-      })
-    )
+    return this.participateVillageList.map((participateVillage: ParticipateVillage) => ({
+      village_id: participateVillage.village.id,
+      village_name: participateVillage.village.name,
+      participant_count: this.participantCount(participateVillage.village),
+      organization:
+        participateVillage.village.setting.organizations.organization[
+          participateVillage.village.participants.count
+        ],
+      chara: participateVillage.participant.chara,
+      status: this.status(participateVillage.participant),
+      skill: this.skillName(participateVillage.participant),
+      camp: this.campName(participateVillage.participant),
+      win_status: this.winStatus(participateVillage.participant),
+    }));
   }
 
   /** methods */
   private participantCount(village: Village): string {
-    return `${village.participants.count}人`
+    return `${village.participants.count}人`;
   }
 
   private skillName(participant: VillageParticipant): string {
-    return participant.skill!.name
+    return participant.skill!.name;
   }
 
   private campName(participant: VillageParticipant): string {
-    return participant.skill!.win_judge_camp.name
+    return participant.skill!.win_judge_camp.name;
   }
 
   private winStatus(participant: VillageParticipant): string {
     switch (participant.winlose?.code) {
-      case 'WIN':
-        return '勝利'
-      case 'LOSE':
-        return '敗北'
+      case "WIN":
+        return "勝利";
+      case "LOSE":
+        return "敗北";
       default:
-        return '引分'
+        return "引分";
     }
   }
 
   private status(participant: VillageParticipant): string {
-    if (!participant.dead) return '生存'
-    const deadDay = participant.dead.village_day.day
-    const reason = participant.dead.reason
-    return `${deadDay}d ${reason}死`
+    if (!participant.dead) return "生存";
+    const deadDay = participant.dead.village_day.day;
+    const reason = participant.dead.reason;
+    return `${deadDay}d ${reason}死`;
   }
 }
 </script>

@@ -1,6 +1,6 @@
 interface VillageRollCallSituation {
-  available_roll_call: boolean
-  done_roll_call: boolean
+  available_roll_call: boolean;
+  done_roll_call: boolean;
 }
 
-export default VillageRollCallSituation
+export default VillageRollCallSituation;

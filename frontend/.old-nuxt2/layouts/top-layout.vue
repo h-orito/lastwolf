@@ -8,11 +8,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import googleAds from '~/components/common/google-ads.vue'
+import { Component, Vue } from "nuxt-property-decorator";
+import googleAds from "~/components/common/google-ads.vue";
 
 @Component({
-  components: { googleAds }
+  components: { googleAds },
 })
+
 export default class TopLayout extends Vue {}
 </script>

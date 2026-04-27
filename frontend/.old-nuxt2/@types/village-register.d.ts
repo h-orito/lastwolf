@@ -1,5 +1,5 @@
 interface VillageRegister {
-  village_id: number
+  village_id: number;
 }
 
-export default VillageRegister
+export default VillageRegister;

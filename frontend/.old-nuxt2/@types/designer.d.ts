@@ -1,6 +1,6 @@
 interface Designer {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
-export default Designer
+export default Designer;

@@ -3,9 +3,7 @@
     <div class="spotlight-area">
       <img src="~/static/image/top.jpg" alt="top_image" width="100%" />
       <div class="spotlight has-text-left">
-        <p class="spotlight-intro spotlight-shadow is-size-3 has-text-white">
-          LASTWOLF
-        </p>
+        <p class="spotlight-intro spotlight-shadow is-size-3 has-text-white">LASTWOLF</p>
       </div>
     </div>
     <section class="section">
@@ -28,9 +26,7 @@
             {{ `${player.nickname}@${player.twitter_user_name} さん` }}
           </p>
         </div>
-        <b-button icon-pack="fab" icon-left="twitter" @click="logout"
-          >ログアウト</b-button
-        >
+        <b-button icon-pack="fab" icon-left="twitter" @click="logout">ログアウト</b-button>
       </div>
     </section>
     <section class="section has-background-light" v-if="!isLogin">
@@ -39,11 +35,7 @@
         <div class="content is-size-6">
           <p class="is-size-7">名前とユーザ名がエピローグで表示されます</p>
         </div>
-        <b-button
-          type="is-primary"
-          icon-pack="fab"
-          icon-left="twitter"
-          @click="signin"
+        <b-button type="is-primary" icon-pack="fab" icon-left="twitter" @click="signin"
           >連携する</b-button
         >
       </div>
@@ -52,10 +44,7 @@
       <div class="container">
         <h1 class="title is-5">村一覧</h1>
         <div class="content is-size-7">
-          <village-list
-            :villages="villages"
-            :loading-villages="loadingVillages"
-          />
+          <village-list :villages="villages" :loading-villages="loadingVillages" />
           <link-button
             :disabled="!canCreateVillage"
             class="m-t-10 m-r-10"
@@ -85,150 +74,146 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import qs from 'qs'
-import cookies from 'cookie-universal-nuxt'
-import firebase from '~/plugins/firebase'
-import Villages from '~/@types/villages'
-import SimpleVillage from '~/@types/simple-village'
-import MyselfPlayer from '~/@types/myself-player'
-import linkButton from '~/components/parts/link-button.vue'
-import completeVillageList from '~/components/complete-village-list/complete-village-list.vue'
-import { VILLAGE_STATUS } from '~/consts/consts'
+import { Component, Vue } from "nuxt-property-decorator";
+import qs from "qs";
+import cookies from "cookie-universal-nuxt";
+import firebase from "~/plugins/firebase";
+import Villages from "~/@types/villages";
+import SimpleVillage from "~/@types/simple-village";
+import MyselfPlayer from "~/@types/myself-player";
+import linkButton from "~/components/parts/link-button.vue";
+import completeVillageList from "~/components/complete-village-list/complete-village-list.vue";
+import { VILLAGE_STATUS } from "~/consts/consts";
 
 @Component({
   components: {
     linkButton,
     completeVillageList,
-    villageList: () => import('~/components/toppage/village-list.vue'),
-    toppageFooter: () => import('~/components/toppage/footer.vue')
-  }
+    villageList: () => import("~/components/toppage/village-list.vue"),
+    toppageFooter: () => import("~/components/toppage/footer.vue"),
+  },
 })
+
 export default class TopPage extends Vue {
   /** head */
   private head() {
-    return { title: '' }
+    return { title: "" };
   }
 
   private layout() {
-    return 'top-layout'
+    return "top-layout";
   }
 
   /** data */
-  private villages: Villages | null = null
-  private completeVillages: SimpleVillage[] | null = null
-  private loadingVillages: boolean = false
+  private villages: Villages | null = null;
+  private completeVillages: SimpleVillage[] | null = null;
+  private loadingVillages: boolean = false;
 
   private get player(): MyselfPlayer | null {
-    return this.$store.getters.player
+    return this.$store.getters.player;
   }
 
   private get isLogin(): boolean {
-    return this.$store.getters.isLogin
+    return this.$store.getters.isLogin;
   }
 
   private get isAlreadyAuthenticated(): boolean {
-    return this.$store.getters.isAuthenticated
+    return this.$store.getters.isAuthenticated;
   }
 
   private get canCreateVillage(): boolean {
-    if (!this.player) return false
-    return this.player.available_create_village
+    if (!this.player) return false;
+    return this.player.available_create_village;
   }
 
   /** created */
   private async created(): Promise<void> {
-    this.loadingVillages = true
-    this.villages = await this.loadVillages()
-    this.loadingVillages = false
-    await this.auth()
+    this.loadingVillages = true;
+    this.villages = await this.loadVillages();
+    this.loadingVillages = false;
+    await this.auth();
     // ログイン後のリダイレクトの際、ユーザ情報をサーバに保存
-    this.registerUserIfNeeded()
+    this.registerUserIfNeeded();
     // 進行中の村がない場合は最近終了した村を表示
     if (!this.villages || this.villages.list.length === 0) {
-      const completeVillages: Villages = await this.loadCompleteVillages()
-      this.completeVillages = completeVillages.list.slice(0, 3)
+      const completeVillages: Villages = await this.loadCompleteVillages();
+      this.completeVillages = completeVillages.list.slice(0, 3);
     }
   }
 
   private async loadVillages(): Promise<Villages> {
-    return await this.$axios.$get('/village/list', {
+    return await this.$axios.$get("/village/list", {
       params: {
         village_status: [
           VILLAGE_STATUS.PROLOGUE,
           VILLAGE_STATUS.ROLLCALLING,
           VILLAGE_STATUS.PROGRESS,
-          VILLAGE_STATUS.EPILOGUE
-        ]
+          VILLAGE_STATUS.EPILOGUE,
+        ],
       },
-      paramsSerializer: params =>
-        qs.stringify(params, { arrayFormat: 'repeat' })
-    })
+      paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
+    });
   }
 
   private async loadCompleteVillages(): Promise<Villages> {
-    return await this.$axios.$get('/village/list', {
+    return await this.$axios.$get("/village/list", {
       params: {
-        village_status: VILLAGE_STATUS.COMPLETE
-      }
-    })
+        village_status: VILLAGE_STATUS.COMPLETE,
+      },
+    });
   }
 
   private async auth(): Promise<void> {
     // 認証済みなら何もしない
-    if (this.isAlreadyAuthenticated) return
+    if (this.isAlreadyAuthenticated) return;
     const user = await new Promise((resolve, reject) => {
-      firebase.auth().onAuthStateChanged(user => resolve(user))
-    })
-    await this.$store.dispatch('LOGINOUT', {
-      user
-    })
+      firebase.auth().onAuthStateChanged((user) => resolve(user));
+    });
+    await this.$store.dispatch("LOGINOUT", {
+      user,
+    });
   }
 
   private async registerUserIfNeeded(): Promise<void> {
-    const redirectResult = await firebase.auth().getRedirectResult()
+    const redirectResult = await firebase.auth().getRedirectResult();
     if (!redirectResult.additionalUserInfo || !redirectResult.user) {
-      return
+      return;
     }
-    const twitterUsername = redirectResult.additionalUserInfo.username
-    const user = redirectResult.user
-    const idToken = await user.getIdToken(false)
-    this.$cookies.set('id-token', idToken, {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30
-    })
+    const twitterUsername = redirectResult.additionalUserInfo.username;
+    const user = redirectResult.user;
+    const idToken = await user.getIdToken(false);
+    this.$cookies.set("id-token", idToken, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
     // 1時間で有効期限が切れるので50分後に再取得させる
-    const now = new Date()
-    this.$cookies.set(
-      'id-token-check-date',
-      now.setMinutes(now.getMinutes() + 50),
-      {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 30
-      }
-    )
+    const now = new Date();
+    this.$cookies.set("id-token-check-date", now.setMinutes(now.getMinutes() + 50), {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
     // 変更しても古いままなので取得できたら無理やりとる
-    let displayName = user.displayName
+    let displayName = user.displayName;
     if (
       redirectResult.additionalUserInfo.profile != null &&
       (redirectResult.additionalUserInfo.profile as any).name != null
     ) {
-      displayName = (redirectResult.additionalUserInfo.profile as any).name
+      displayName = (redirectResult.additionalUserInfo.profile as any).name;
     }
-    return this.$axios.$post('/player/nickname', {
+    return this.$axios.$post("/player/nickname", {
       nickname: displayName,
-      twitter_user_name: twitterUsername
-    })
+      twitter_user_name: twitterUsername,
+    });
   }
 
   private async signin(): Promise<void> {
-    const provider = new firebase.auth.TwitterAuthProvider()
-    await firebase.auth().signInWithRedirect(provider)
+    const provider = new firebase.auth.TwitterAuthProvider();
+    await firebase.auth().signInWithRedirect(provider);
   }
 
   private async logout(): Promise<void> {
-    await firebase.auth().signOut()
-    location.reload()
+    await firebase.auth().signOut();
+    location.reload();
   }
 }
 </script>
@@ -244,14 +229,16 @@ export default class TopPage extends Vue {
   }
 
   .spotlight-intro {
-    font-family: '游明朝', YuMincho, 'Hiragino Mincho ProN W3',
-      'ヒラギノ明朝 ProN W3', 'Hiragino Mincho ProN', 'HG明朝E', 'ＭＳ Ｐ明朝',
-      'ＭＳ 明朝', serif;
+    font-family:
+      "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN",
+      "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
   }
 
   .spotlight-shadow {
-    text-shadow: 2px 2px 5px rgba(69, 97, 133, 1),
-      -2px 2px 5px rgba(69, 97, 133, 1), 2px -2px 5px rgba(69, 97, 133, 1),
+    text-shadow:
+      2px 2px 5px rgba(69, 97, 133, 1),
+      -2px 2px 5px rgba(69, 97, 133, 1),
+      2px -2px 5px rgba(69, 97, 133, 1),
       -2px -2px 5px rgba(69, 97, 133, 1);
   }
 }

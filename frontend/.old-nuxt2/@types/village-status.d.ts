@@ -1,6 +1,6 @@
 interface VillageStatus {
-  code: string
-  name: string
+  code: string;
+  name: string;
 }
 
-export default VillageStatus
+export default VillageStatus;

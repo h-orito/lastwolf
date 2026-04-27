@@ -4,20 +4,14 @@
       <div class="container">
         <h1 class="title is-5">キャラチップ一覧</h1>
         <div class="content is-size-7">
-          <p>
-            キャラ画像は以下の方々に提供いただいています。ありがとうございます。
-          </p>
-          <b-table
-            :data="tableCharachips"
-            :loading="loadingCharachips"
-            :mobile-cards="false"
-          >
+          <p>キャラ画像は以下の方々に提供いただいています。ありがとうございます。</p>
+          <b-table :data="tableCharachips" :loading="loadingCharachips" :mobile-cards="false">
             <template slot-scope="props">
               <b-table-column field="charachip_name" label="キャラチップ名">
                 <nuxt-link
                   :to="{
                     path: '/charachip',
-                    query: { id: props.row.charachip_id }
+                    query: { id: props.row.charachip_id },
                   }"
                   >{{ props.row.charachip_name }}</nuxt-link
                 >
@@ -52,45 +46,46 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import qs from 'qs'
+import { Component, Vue } from "nuxt-property-decorator";
+import qs from "qs";
 // type
-import Charachips from '~/@types/charachips'
-import Charachip from '~/@types/charachip'
-import Chara from '~/@types/chara'
+import Charachips from "~/@types/charachips";
+import Charachip from "~/@types/charachip";
+import Chara from "~/@types/chara";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class CharachipList extends Vue {
   /** head */
   private head() {
-    return { title: ' | キャラチップ一覧' }
+    return { title: " | キャラチップ一覧" };
   }
 
   /** data */
   // 村一覧
-  private charachips: Charachip[] | null = null
-  private loadingCharachips: boolean = false
+  private charachips: Charachip[] | null = null;
+  private loadingCharachips: boolean = false;
 
   /** computed */
   private get tableCharachips(): any[] {
-    if (this.charachips == null) return []
+    if (this.charachips == null) return [];
     return this.charachips.map((charachip: Charachip) => ({
       charachip_id: charachip.id,
       charachip_name: charachip.name,
       designer_name: charachip.designer.name,
-      chara: charachip.chara_list[0]
-    }))
+      chara: charachip.chara_list[0],
+    }));
   }
 
   /** created */
   async created() {
     // キャラチップ一覧
-    this.loadingCharachips = true
-    const charachips: Charachips = await this.$axios.$get('/charachip/list')
-    this.charachips = charachips.list
-    this.loadingCharachips = false
+    this.loadingCharachips = true;
+    const charachips: Charachips = await this.$axios.$get("/charachip/list");
+    this.charachips = charachips.list;
+    this.loadingCharachips = false;
   }
 
   /** methods */

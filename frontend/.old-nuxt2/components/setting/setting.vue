@@ -1,28 +1,16 @@
 <template>
   <div>
-    <b-notification
-      v-if="errors"
-      type="is-danger"
-      :closable="false"
-      class="is-size-7"
-    >
+    <b-notification v-if="errors" type="is-danger" :closable="false" class="is-size-7">
       <ul>
         <li v-for="err in errors.split('\n')" :key="err">{{ err }}</li>
       </ul>
     </b-notification>
-    <validation-observer
-      ref="observer"
-      v-slot="{ invalid }"
-      tag="form"
-      class="is-size-7"
-    >
+    <validation-observer ref="observer" v-slot="{ invalid }" tag="form" class="is-size-7">
       <village-name :input-value.sync="villageNameModel" />
       <hr />
       <h2 class="title is-6">時間</h2>
       <notification :closable="false">
-        <li>
-          開始は村建てによる操作でしか行えないため、開始予定日時は参加者への案内用です。
-        </li>
+        <li>開始は村建てによる操作でしか行えないため、開始予定日時は参加者への案内用です。</li>
       </notification>
       <start-datetime :input-value.sync="startDatetimeModel" />
       <form-number
@@ -70,16 +58,11 @@
       <h2 class="title is-6">編成</h2>
       <notification>
         <li>
-          役職1文字略称は<nuxt-link
-            :to="{ path: '/rule#skill' }"
-            target="_blank"
-            >仕様</nuxt-link
+          役職1文字略称は<nuxt-link :to="{ path: '/rule#skill' }" target="_blank">仕様</nuxt-link
           >を参照してください。
         </li>
         <li>ダミー役欠けなしの場合、村人を1名以上含めてください。</li>
-        <li>
-          ダミー役欠けありの場合、噛まれて死亡する役職を1名以上含めてください。
-        </li>
+        <li>ダミー役欠けありの場合、噛まれて死亡する役職を1名以上含めてください。</li>
         <li>狼系役職を1名以上含めてください。</li>
         <li>狼系役職が過半数を超えないようにしてください。</li>
         <li>最小で5人、最大で999人設定することができます。</li>
@@ -111,37 +94,27 @@
       <form-switch
         rules="required"
         label-message="連続護衛"
-        :description="
-          `${
-            availableSameTargetGuardModel
-              ? '2日連続同一対象を護衛可能'
-              : '前日護衛した人は護衛できない'
-          }`
-        "
+        :description="`${
+          availableSameTargetGuardModel
+            ? '2日連続同一対象を護衛可能'
+            : '前日護衛した人は護衛できない'
+        }`"
         :input-value.sync="availableSameTargetGuardModel"
       />
       <form-switch
         rules="required"
         label-message="初日白通知"
-        :description="
-          `${
-            firstDivineNowolfModel
-              ? '初日ランダム白占い'
-              : '初日から占い対象を選択'
-          }`
-        "
+        :description="`${firstDivineNowolfModel ? '初日ランダム白占い' : '初日から占い対象を選択'}`"
         :input-value.sync="firstDivineNowolfModel"
       />
       <form-switch
         rules="required"
         label-message="GM制"
-        :description="
-          `${
-            creatorGameMasterModel
-              ? '村建てが神視点（全発言/役職確認可能）'
-              : '村建てが一般視点で、自身も参加可能'
-          }`
-        "
+        :description="`${
+          creatorGameMasterModel
+            ? '村建てが神視点（全発言/役職確認可能）'
+            : '村建てが一般視点で、自身も参加可能'
+        }`"
         :input-value.sync="creatorGameMasterModel"
       />
       <form-number
@@ -180,323 +153,320 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import dayjs from 'dayjs'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+import dayjs from "dayjs";
 // type
-import Charachips from '~/@types/charachips'
-import Charachip from '~/@types/charachip'
-import Charas from '~/@types/charas'
-import Chara from '~/@types/chara'
-import Skills from '~/@types/skills'
-import Skill from '~/@types/skill'
-import FormOption from '~/components/form/validation/option'
+import Charachips from "~/@types/charachips";
+import Charachip from "~/@types/charachip";
+import Charas from "~/@types/charas";
+import Chara from "~/@types/chara";
+import Skills from "~/@types/skills";
+import Skill from "~/@types/skill";
+import FormOption from "~/components/form/validation/option";
 // component
-import organization from '~/components/setting/organization.vue'
-import toast from '~/components/parts/toast'
+import organization from "~/components/setting/organization.vue";
+import toast from "~/components/parts/toast";
 
 @Component({
   components: {
-    formNumber: () => import('~/components/form/validation/form-number.vue'),
-    formSwitch: () => import('~/components/form/validation/form-switch.vue'),
-    notification: () => import('~/components/setting/notification.vue'),
-    villageName: () => import('~/components/setting/village-name.vue'),
-    startDatetime: () => import('~/components/setting/start-datetime.vue'),
-    charachip: () => import('~/components/setting/charachip.vue'),
-    dummyChara: () => import('~/components/setting/dummy-chara.vue'),
+    formNumber: () => import("~/components/form/validation/form-number.vue"),
+    formSwitch: () => import("~/components/form/validation/form-switch.vue"),
+    notification: () => import("~/components/setting/notification.vue"),
+    villageName: () => import("~/components/setting/village-name.vue"),
+    startDatetime: () => import("~/components/setting/start-datetime.vue"),
+    charachip: () => import("~/components/setting/charachip.vue"),
+    dummyChara: () => import("~/components/setting/dummy-chara.vue"),
     organization,
-    joinPassword: () => import('~/components/setting/join-password.vue'),
-    modalConfirm: () => import('~/components/setting/modal-confirm.vue')
-  }
+    joinPassword: () => import("~/components/setting/join-password.vue"),
+    modalConfirm: () => import("~/components/setting/modal-confirm.vue"),
+  },
 })
+
 export default class Setting extends Vue {
   // form data ------------------------------------
 
   /** villageName */
   @Prop({ type: String, required: true })
-  private villageName!: string
+  private villageName!: string;
 
   private get villageNameModel(): string {
-    return this.villageName
+    return this.villageName;
   }
 
   private set villageNameModel(val: string) {
-    this.$emit('update:villageName', val)
+    this.$emit("update:villageName", val);
   }
 
   /** startDatetime */
   @Prop({ type: Date, required: true })
-  private startDatetime!: Date
+  private startDatetime!: Date;
 
   private get startDatetimeModel(): Date {
-    return this.startDatetime
+    return this.startDatetime;
   }
 
   private set startDatetimeModel(val: Date) {
-    this.$emit('update:startDatetime', val)
+    this.$emit("update:startDatetime", val);
   }
 
   /** noonSeconds */
   @Prop({ type: String, required: true })
-  private noonSeconds!: string
+  private noonSeconds!: string;
 
   private get noonSecondsModel(): string {
-    return this.noonSeconds
+    return this.noonSeconds;
   }
 
   private set noonSecondsModel(val: string) {
-    this.$emit('update:noonSeconds', val)
+    this.$emit("update:noonSeconds", val);
   }
 
   /** voteSeconds */
   @Prop({ type: String, required: true })
-  private voteSeconds!: string
+  private voteSeconds!: string;
 
   private get voteSecondsModel(): string {
-    return this.voteSeconds
+    return this.voteSeconds;
   }
 
   private set voteSecondsModel(val: string) {
-    this.$emit('update:voteSeconds', val)
+    this.$emit("update:voteSeconds", val);
   }
 
   /** nightSeconds */
   @Prop({ type: String, required: true })
-  private nightSeconds!: string
+  private nightSeconds!: string;
 
   private get nightSecondsModel(): string {
-    return this.nightSeconds
+    return this.nightSeconds;
   }
 
   private set nightSecondsModel(val: string) {
-    this.$emit('update:nightSeconds', val)
+    this.$emit("update:nightSeconds", val);
   }
 
   /** charachipId */
   @Prop({ type: String, required: true })
-  private charachipId!: string
+  private charachipId!: string;
 
   private get charachipIdModel(): string {
-    return this.charachipId
+    return this.charachipId;
   }
 
   private set charachipIdModel(val: string) {
-    this.$emit('update:charachipId', val)
+    this.$emit("update:charachipId", val);
   }
 
   /** dummyCharaId */
   @Prop({ type: String, required: true })
-  private dummyCharaId!: string
+  private dummyCharaId!: string;
 
   private get dummyCharaIdModel(): string {
-    return this.dummyCharaId
+    return this.dummyCharaId;
   }
 
   private set dummyCharaIdModel(val: string) {
-    this.$emit('update:dummyCharaId', val)
+    this.$emit("update:dummyCharaId", val);
   }
 
   /** organization */
   @Prop({ type: String, required: true })
-  private organization!: string
+  private organization!: string;
 
   private get organizationModel(): string {
-    return this.organization
+    return this.organization;
   }
 
   private set organizationModel(val: string) {
-    this.$emit('update:organization', val)
+    this.$emit("update:organization", val);
   }
 
   /** availableDummySkill */
   @Prop({ type: Boolean, required: true })
-  private availableDummySkill!: boolean
+  private availableDummySkill!: boolean;
 
   private get availableDummySkillModel(): boolean {
-    return this.availableDummySkill
+    return this.availableDummySkill;
   }
 
   private set availableDummySkillModel(val: boolean) {
-    this.$emit('update:availableDummySkill', val)
+    this.$emit("update:availableDummySkill", val);
   }
 
   /** availableSkillRequest */
   @Prop({ type: Boolean, required: true })
-  private availableSkillRequest!: boolean
+  private availableSkillRequest!: boolean;
 
   private get availableSkillRequestModel(): boolean {
-    return this.availableSkillRequest
+    return this.availableSkillRequest;
   }
 
   private set availableSkillRequestModel(val: boolean) {
-    this.$emit('update:availableSkillRequest', val)
+    this.$emit("update:availableSkillRequest", val);
   }
 
   /** availableSameTargetGuard */
   @Prop({ type: Boolean, required: true })
-  private availableSameTargetGuard!: boolean
+  private availableSameTargetGuard!: boolean;
 
   private get availableSameTargetGuardModel(): boolean {
-    return this.availableSameTargetGuard
+    return this.availableSameTargetGuard;
   }
 
   private set availableSameTargetGuardModel(val: boolean) {
-    this.$emit('update:availableSameTargetGuard', val)
+    this.$emit("update:availableSameTargetGuard", val);
   }
 
   /** firstDivineNowolf */
   @Prop({ type: Boolean, required: true })
-  private firstDivineNowolf!: boolean
+  private firstDivineNowolf!: boolean;
 
   private get firstDivineNowolfModel(): boolean {
-    return this.firstDivineNowolf
+    return this.firstDivineNowolf;
   }
 
   private set firstDivineNowolfModel(val: boolean) {
-    this.$emit('update:firstDivineNowolf', val)
+    this.$emit("update:firstDivineNowolf", val);
   }
 
   /** creatorGameMaster */
   @Prop({ type: Boolean, required: true })
-  private creatorGameMaster!: boolean
+  private creatorGameMaster!: boolean;
 
   private get creatorGameMasterModel(): boolean {
-    return this.creatorGameMaster
+    return this.creatorGameMaster;
   }
 
   private set creatorGameMasterModel(val: boolean) {
-    this.$emit('update:creatorGameMaster', val)
+    this.$emit("update:creatorGameMaster", val);
   }
 
   /** silentSeconds */
   @Prop({ type: String, required: false })
-  private silentSeconds!: string
+  private silentSeconds!: string;
 
   private get silentSecondsModel(): string {
-    return this.silentSeconds
+    return this.silentSeconds;
   }
 
   private set silentSecondsModel(val: string) {
-    this.$emit('update:silentSeconds', val)
+    this.$emit("update:silentSeconds", val);
   }
 
   /** joinPassword */
   @Prop({ type: String, required: true })
-  private joinPassword!: string
+  private joinPassword!: string;
 
   private get joinPasswordModel(): string {
-    return this.joinPassword
+    return this.joinPassword;
   }
 
   private set joinPasswordModel(val: string) {
-    this.$emit('update:joinPassword', val)
+    this.$emit("update:joinPassword", val);
   }
 
   @Prop({ type: String, required: true })
-  private saveLabel!: string
+  private saveLabel!: string;
 
   @Prop({ type: Boolean, required: false, default: true })
-  private modifiableChara!: boolean
+  private modifiableChara!: boolean;
 
   /** data */
-  private errors: string = ''
-  private confirming: boolean = false
-  private isOpenConfirmModal: boolean = false
-  private charachips: FormOption[] = []
-  private charas: Chara[] = []
-  private skills: Skill[] = []
+  private errors: string = "";
+  private confirming: boolean = false;
+  private isOpenConfirmModal: boolean = false;
+  private charachips: FormOption[] = [];
+  private charas: Chara[] = [];
+  private skills: Skill[] = [];
 
   /** computed */
   private get charachipName(): string {
-    const charachip = this.charachips.find(c => c.value === this.charachipId)
-    return charachip ? charachip.label : ''
+    const charachip = this.charachips.find((c) => c.value === this.charachipId);
+    return charachip ? charachip.label : "";
   }
 
   private get dummyCharaName(): string {
-    const chara = this.charas.find(c => c.id.toString() === this.dummyCharaId)
-    return chara ? chara.name.name : ''
+    const chara = this.charas.find((c) => c.id.toString() === this.dummyCharaId);
+    return chara ? chara.name.name : "";
   }
 
   /** methods */
   private async loadCharachips(): Promise<void> {
-    const charachips: Charachips = await this.$axios.$get('/charachip/list')
+    const charachips: Charachips = await this.$axios.$get("/charachip/list");
     this.charachips = charachips.list.map((charachip: Charachip) => ({
       key: charachip.id.toString(),
       label: charachip.name,
-      value: charachip.id.toString()
-    }))
+      value: charachip.id.toString(),
+    }));
   }
 
   private loadCharas(): void {
-    this.loadCharasByCharachipId(this.charachipId)
+    this.loadCharasByCharachipId(this.charachipId);
   }
 
   private async loadCharasByCharachipId(charachipId: string): Promise<void> {
-    const charachip: Charachip = await this.$axios.$get(
-      `/charachip/${charachipId}`
-    )
-    this.charas = charachip.chara_list
-    this.dummyCharaIdModel = charachip.chara_list[0].id.toString()
+    const charachip: Charachip = await this.$axios.$get(`/charachip/${charachipId}`);
+    this.charas = charachip.chara_list;
+    this.dummyCharaIdModel = charachip.chara_list[0].id.toString();
   }
 
   private async loadSkills(): Promise<void> {
-    const skills: Skills = await this.$axios.$get('/skill/list')
-    this.skills = skills.list
+    const skills: Skills = await this.$axios.$get("/skill/list");
+    this.skills = skills.list;
   }
 
   private charaSelect({ charaId }): void {
-    this.dummyCharaIdModel = charaId.toString()
+    this.dummyCharaIdModel = charaId.toString();
   }
 
   private async confirm() {
-    this.confirming = true
-    this.errors = ''
-    const self = this
-    await this.$emit('confirm', {
+    this.confirming = true;
+    this.errors = "";
+    const self = this;
+    await this.$emit("confirm", {
       param: this.registerParam,
-      errCb: err => {
-        toast.danger(self, 'エラーが発生しました。設定を確認してください。')
+      errCb: (err) => {
+        toast.danger(self, "エラーが発生しました。設定を確認してください。");
         if (self.isBusinessError(err)) {
-          self.errors = err.response.data.message
+          self.errors = err.response.data.message;
           window.scrollTo({
             top: 0,
-            behavior: 'smooth'
-          })
+            behavior: "smooth",
+          });
         }
-        self.confirming = false
+        self.confirming = false;
       },
       successCb: () => {
-        self.isOpenConfirmModal = true
-        self.confirming = false
-      }
-    })
+        self.isOpenConfirmModal = true;
+        self.confirming = false;
+      },
+    });
   }
 
   private async save() {
-    const self = this
-    await this.$emit('save', {
+    const self = this;
+    await this.$emit("save", {
       param: this.registerParam,
-      errCb: err => {
-        toast.danger(self, 'エラーが発生しました。設定を確認してください。')
-        console.log(err)
-      }
-    })
+      errCb: (err) => {
+        toast.danger(self, "エラーが発生しました。設定を確認してください。");
+        console.log(err);
+      },
+    });
   }
 
   private isBusinessError(err: any): boolean {
-    const code = parseInt(err.response && err.response.status)
+    const code = parseInt(err.response && err.response.status);
     return (
       code === 404 &&
       err.response.data.status === 499 &&
       err.response.data.message &&
       err.response.data.message.length > 0
-    )
+    );
   }
 
-  private get registerParam(): Object {
+  private get registerParam(): object {
     // @ts-ignore
-    const startDatetime = this.$dayjs(this.startDatetime).format(
-      'YYYY-MM-DDTHH:mm:ss'
-    )
+    const startDatetime = this.$dayjs(this.startDatetime).format("YYYY-MM-DDTHH:mm:ss");
 
     return {
       village_name: this.villageName,
@@ -505,14 +475,14 @@ export default class Setting extends Vue {
           start_datetime: startDatetime,
           noon_seconds: this.noonSeconds,
           vote_seconds: this.voteSeconds,
-          night_seconds: this.nightSeconds
+          night_seconds: this.nightSeconds,
         },
         organization: {
-          organization: this.organization
+          organization: this.organization,
         },
         charachip: {
           dummy_chara_id: parseInt(this.dummyCharaId),
-          charachip_id: parseInt(this.charachipId)
+          charachip_id: parseInt(this.charachipId),
         },
         rule: {
           open_vote: true, // 固定
@@ -525,12 +495,11 @@ export default class Setting extends Vue {
           available_same_target_guard: this.availableSameTargetGuard,
           first_divine_nowolf: this.firstDivineNowolf,
           creator_game_master: this.creatorGameMaster,
-          silent_seconds:
-            this.silentSeconds === '0' ? null : parseInt(this.silentSeconds),
-          join_password: this.joinPassword
-        }
-      }
-    }
+          silent_seconds: this.silentSeconds === "0" ? null : parseInt(this.silentSeconds),
+          join_password: this.joinPassword,
+        },
+      },
+    };
   }
 }
 </script>

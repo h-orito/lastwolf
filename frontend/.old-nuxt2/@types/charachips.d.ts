@@ -1,7 +1,7 @@
-import Charachip from '~/@types/charachip'
+import Charachip from "~/@types/charachip";
 
 interface Charachips {
-  list: Charachip[]
+  list: Charachip[];
 }
 
-export default Charachips
+export default Charachips;

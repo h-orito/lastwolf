@@ -1,7 +1,7 @@
-import AbilityType from '~/@types/ability-type'
+import AbilityType from "~/@types/ability-type";
 
 interface AbilityTypes {
-  list: AbilityType[]
+  list: AbilityType[];
 }
 
-export default AbilityTypes
+export default AbilityTypes;

@@ -1,7 +1,7 @@
-import VillageDay from '~/@types/village-day'
+import VillageDay from "~/@types/village-day";
 
 interface VillageDays {
-  list: VillageDay[]
+  list: VillageDay[];
 }
 
-export default VillageDays
+export default VillageDays;

@@ -1,7 +1,7 @@
-import Commit from '~/@types/commit'
+import Commit from "~/@types/commit";
 
 interface Commits {
-  list: Commit[]
+  list: Commit[];
 }
 
-export default Commits
+export default Commits;

@@ -9,40 +9,41 @@
   />
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import Skill from '~/@types/skill'
-import { contain_skills } from '~/components/form/validation/organization-rules'
-const formInput = () => import('~/components/form/validation/form-input.vue')
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+import Skill from "~/@types/skill";
+import { contain_skills } from "~/components/form/validation/organization-rules";
+const formInput = () => import("~/components/form/validation/form-input.vue");
 
 @Component({
-  components: { formInput }
+  components: { formInput },
 })
+
 export default class Organization extends Vue {
   @Prop({ type: String, required: true })
-  private inputValue!: string
+  private inputValue!: string;
 
   @Prop({ type: Boolean, required: true })
-  private availableDummySkill!: boolean
+  private availableDummySkill!: boolean;
 
   @Prop({ type: Array, required: true })
-  private skills!: Skill[]
+  private skills!: Skill[];
 
   private get inputValueModel(): string {
-    return this.inputValue
+    return this.inputValue;
   }
 
   private set inputValueModel(val: string) {
-    this.$emit('update:inputValue', val)
+    this.$emit("update:inputValue", val);
   }
 
-  private get validationRules(): Object {
+  private get validationRules(): object {
     return {
       required: true,
       max: 999,
       contain_skills: this.skills,
       dummy_skill: this.availableDummySkill ? 1 : 0,
-      person_minmax: true
-    }
+      person_minmax: true,
+    };
   }
 }
 </script>

@@ -29,22 +29,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-import CampRecord from '~/@types/camp-record'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
+import CampRecord from "~/@types/camp-record";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class CampRecords extends Vue {
   @Prop({ type: Array })
-  private campRecords!: CampRecord[]
+  private campRecords!: CampRecord[];
 
   private percent(rate: number): number {
-    return percent(rate)
+    return percent(rate);
   }
 }
 
 const percent = (rate: number): number => {
-  return Math.round(rate * 1000) / 10
-}
+  return Math.round(rate * 1000) / 10;
+};
 </script>

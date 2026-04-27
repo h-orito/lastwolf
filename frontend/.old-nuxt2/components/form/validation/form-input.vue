@@ -19,36 +19,37 @@
   </validation-provider>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class FormInput extends Vue {
   @Prop({ required: true })
-  private rules!: any
+  private rules!: any;
 
   @Prop({ type: String, required: true })
-  private labelMessage!: string
+  private labelMessage!: string;
 
   @Prop({ type: String, required: true })
-  private inputType!: string
+  private inputType!: string;
 
   @Prop({ type: String, required: true })
-  private maxLength!: string
+  private maxLength!: string;
 
   @Prop({ type: String, required: true })
-  private placeHolderMessage!: string
+  private placeHolderMessage!: string;
 
   @Prop({ type: String, required: true })
-  private inputValue!: string
+  private inputValue!: string;
 
   private get inputValueModel(): string {
-    return this.inputValue
+    return this.inputValue;
   }
 
   private set inputValueModel(val: string) {
-    this.$emit('update:inputValue', val)
+    this.$emit("update:inputValue", val);
   }
 }
 </script>

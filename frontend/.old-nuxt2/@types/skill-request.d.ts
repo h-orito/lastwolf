@@ -1,8 +1,8 @@
-import Skill from '~/@types/skill'
+import Skill from "~/@types/skill";
 
 interface SkillRequest {
-  first: Skill
-  second: Skill
+  first: Skill;
+  second: Skill;
 }
 
-export default SkillRequest
+export default SkillRequest;

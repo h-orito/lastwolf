@@ -1,7 +1,7 @@
-import Skill from '~/@types/skill'
+import Skill from "~/@types/skill";
 
 interface Skills {
-  list: Skill[]
+  list: Skill[];
 }
 
-export default Skills
+export default Skills;

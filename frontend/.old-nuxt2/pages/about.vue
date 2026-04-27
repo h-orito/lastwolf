@@ -6,9 +6,7 @@
         <ul>
           <li>LASTWOLFは、オンラインで短期人狼が遊べるサイトです。</li>
           <li>ユーザが自分で好きな設定の村を作成することができます。</li>
-          <li>
-            機能の豊富さよりもわかりやすさを優先し、シンプルにしています。
-          </li>
+          <li>機能の豊富さよりもわかりやすさを優先し、シンプルにしています。</li>
         </ul>
       </div>
       <h2 class="title is-5">注意事項</h2>
@@ -20,15 +18,9 @@
           <li>
             正常な運営を妨げる行為がなされた場合、管理人の裁量によりアクセス禁止措置等が取られる可能性があります。
           </li>
-          <li>
-            参加如何に関わらず、進行中の村の情報を別の場所でやり取りしないでください。
-          </li>
-          <li>
-            決着を迎えるまでは、自身が希望した役職について言及しないでください。
-          </li>
-          <li>
-            勝利を目指してください。
-          </li>
+          <li>参加如何に関わらず、進行中の村の情報を別の場所でやり取りしないでください。</li>
+          <li>決着を迎えるまでは、自身が希望した役職について言及しないでください。</li>
+          <li>勝利を目指してください。</li>
         </ul>
       </div>
       <h2 class="title is-5">キャラチップについて</h2>
@@ -52,18 +44,14 @@
             <a href="https://howling-wolf.com" target="_blank">HOWLING WOLF</a>
             <ul>
               <li>長期人狼が遊べるサイトです。</li>
-              <li>
-                システムにより自動で村が作成されるため、知らない人同士で遊べます。
-              </li>
+              <li>システムにより自動で村が作成されるため、知らない人同士で遊べます。</li>
             </ul>
           </li>
           <li>
             <a href="https://firewolf.netlify.app" target="_blank">FIREWOLF</a>
             <ul>
               <li>長期人狼が遊べるサイトです。</li>
-              <li>
-                当サイト同様、好きな設定の村を作成して遊ぶことができます。
-              </li>
+              <li>当サイト同様、好きな設定の村を作成して遊ぶことができます。</li>
             </ul>
           </li>
         </ul>
@@ -73,16 +61,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from "nuxt-property-decorator";
 // type
 
 @Component({
-  components: {}
+  components: {},
 })
+
 export default class About extends Vue {
   /** head */
   private head() {
-    return { title: ' | このサイトは' }
+    return { title: " | このサイトは" };
   }
 }
 </script>
