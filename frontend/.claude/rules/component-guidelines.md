@@ -124,12 +124,12 @@ paths: app/components/**/*.{ts,vue}
 
 ```typescript
 // 推奨
-import TextField from '~/components/ui/form/TextField.vue'
-import ConfirmModal from '~/components/ui/modal/ConfirmModal.vue'
-import VillageCard from '~/components/ui/card/VillageCard.vue'
+import TextField from "~/components/ui/form/TextField.vue";
+import ConfirmModal from "~/components/ui/modal/ConfirmModal.vue";
+import VillageCard from "~/components/ui/card/VillageCard.vue";
 
 // 非推奨（相対パス）
-import TextField from '../../../components/ui/form/TextField.vue'
+import TextField from "../../../components/ui/form/TextField.vue";
 ```
 
 ## 重要事項

@@ -91,22 +91,22 @@ pnpm type-check
 
 ```typescript
 // ❌ 悪い例
-const data = response as any
-const data2 = response as unknown
-const props = defineProps<any>()
+const data = response as any;
+const data2 = response as unknown;
+const props = defineProps<any>();
 
 // ✅ 良い例
 interface ApiResponse {
-  data: VillageView
+  data: VillageView;
 }
-const data = response as ApiResponse
+const data = response as ApiResponse;
 
 // 具体的な型定義を作成
 interface CustomProps {
-  villageId: string
-  isActive: boolean
+  villageId: string;
+  isActive: boolean;
 }
-const props = defineProps<CustomProps>()
+const props = defineProps<CustomProps>();
 ```
 
 ## API 通信
