@@ -1,0 +1,6 @@
+{
+  "ignorePatterns": [".old-nuxt2/**/*"],
+  "rules": {
+    "unicorn/no-thenable": "off"
+  }
+}
