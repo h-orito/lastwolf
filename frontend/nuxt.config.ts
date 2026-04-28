@@ -5,7 +5,6 @@ const isAnalyze = process.env.ANALYZE === "true";
 const isDev = process.env.NODE_ENV === "development";
 const isProduction = process.env.NUXT_PUBLIC_ENV === "production";
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://lastwolf.netlify.app";
-const gaId = process.env.NUXT_PUBLIC_GA_ID || "";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-08-24",
@@ -53,22 +52,7 @@ export default defineNuxtConfig({
         { rel: "preconnect", href: "https://apis.google.com" },
         { rel: "preconnect", href: "https://www.googleapis.com" },
         { rel: "preconnect", href: "https://identitytoolkit.googleapis.com" },
-        ...(isProduction && gaId
-          ? [{ rel: "preconnect", href: "https://www.googletagmanager.com" }]
-          : []),
       ],
-      script:
-        isProduction && gaId
-          ? [
-              {
-                src: `https://www.googletagmanager.com/gtag/js?id=${gaId}`,
-                async: true,
-              },
-              {
-                innerHTML: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`,
-              },
-            ]
-          : [],
     },
   },
 
@@ -290,7 +274,6 @@ export default defineNuxtConfig({
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:8088/lastwolf",
       siteUrl,
-      gaId,
     },
   },
   nitro: {
