@@ -8,6 +8,7 @@ const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://lastwolf.netlify.ap
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-08-24",
+  telemetry: false,
   devtools: { enabled: true },
   devServer: {
     port: 3000,
@@ -199,6 +200,9 @@ export default defineNuxtConfig({
   },
   css: ["~/assets/css/main.css"],
   vite: {
+    optimizeDeps: {
+      include: ["firebase/app", "firebase/auth", "@firebase/app", "@firebase/auth"],
+    },
     plugins: [
       tailwindcss(),
       ...(isAnalyze
