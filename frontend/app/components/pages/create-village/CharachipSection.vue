@@ -16,16 +16,34 @@
     </UiFormFormGroup>
 
     <!-- ダミーキャラ選択 -->
-    <UiFormFormGroup label="ダミーキャラ" required>
-      <UiFormFormSelect
-        v-model="form.dummyCharaId"
-        :options="charaOptions"
-        :error="!!errors.dummyCharaId"
-      />
-      <template v-if="errors.dummyCharaId" #error>
-        {{ errors.dummyCharaId }}
-      </template>
-    </UiFormFormGroup>
+    <div>
+      <UiFormFormGroup label="ダミーキャラ" required>
+        <UiFormFormSelect
+          v-model="form.dummyCharaId"
+          :options="charaOptions"
+          :error="!!errors.dummyCharaId"
+        />
+        <template v-if="errors.dummyCharaId" #error>
+          {{ errors.dummyCharaId }}
+        </template>
+      </UiFormFormGroup>
+      <div class="mt-2 flex justify-end">
+        <UiButtonIndex
+          button-type="secondary"
+          :disabled="charas.length === 0"
+          @click="isCharaSelectModalOpen = true"
+        >
+          画像から選ぶ
+        </UiButtonIndex>
+      </div>
+    </div>
+
+    <!-- キャラ選択モーダル -->
+    <UiCharaSelectCharaSelectModal
+      v-model="isCharaSelectModalOpen"
+      :charas="charas"
+      @select="onCharaSelect"
+    />
   </div>
 </template>
 
@@ -33,6 +51,8 @@
 import type { components } from "~/lib/api/schema";
 import UiFormFormGroup from "~/components/ui/form/FormGroup.vue";
 import UiFormFormSelect from "~/components/ui/form/FormSelect.vue";
+import UiButtonIndex from "~/components/ui/button/index.vue";
+import UiCharaSelectCharaSelectModal from "~/components/ui/chara-select/CharaSelectModal.vue";
 
 type CharachipView = components["schemas"]["CharachipView"];
 type Chara = components["schemas"]["Chara"];
@@ -64,6 +84,8 @@ const emit = defineEmits<{
   "load-charas": [charachipId: number];
 }>();
 
+const isCharaSelectModalOpen = ref(false);
+
 const charachipOptions = computed<CharachipOption[]>(() => {
   return props.charachips.map((c: CharachipView) => ({
     label: c.name,
@@ -80,5 +102,9 @@ const charaOptions = computed<CharaOption[]>(() => {
 
 const onCharachipChange = () => {
   emit("load-charas", props.form.charachipId);
+};
+
+const onCharaSelect = (chara: Chara) => {
+  props.form.dummyCharaId = chara.id;
 };
 </script>
