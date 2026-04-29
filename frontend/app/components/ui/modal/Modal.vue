@@ -11,7 +11,6 @@
       <div
         v-if="isModalOpen"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4"
-        :class="{ dark: isDarkTheme }"
         @click.self="handleOverlayClick"
       >
         <Transition
@@ -25,48 +24,60 @@
           <div
             v-if="isModalOpen"
             ref="modalRef"
-            class="relative flex w-full max-w-full flex-col rounded-lg bg-white shadow-xl sm:max-w-lg md:max-w-[80vw] dark:bg-gray-800"
+            class="relative flex w-full max-w-full flex-col rounded-lg bg-white shadow-xl sm:max-w-lg md:max-w-[80vw]"
             :style="{ maxHeight: 'calc(100dvh - 6.5rem)' }"
             role="dialog"
             aria-modal="true"
             :aria-labelledby="title ? 'modal-title' : undefined"
             tabindex="-1"
           >
-            <!-- Header -->
+            <!-- ヘッダー -->
             <div
               v-if="title || $slots.title"
-              class="shrink-0 rounded-t-lg border-b border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900"
+              class="shrink-0 rounded-t-lg border-b border-gray-200 bg-gray-50 px-6 py-4"
             >
               <div class="flex items-center justify-between">
                 <h3
                   id="modal-title"
-                  class="m-0 text-left text-lg leading-tight font-semibold dark:text-gray-200"
+                  class="m-0 text-left text-lg font-semibold leading-tight text-gray-800"
                 >
                   <slot name="title">{{ title }}</slot>
                 </h3>
-                <UiButton
+                <button
                   v-if="showCloseButton"
-                  color="secondary"
-                  variant="outline"
-                  icon="i-heroicons-x-mark-20-solid"
-                  class="-my-1"
+                  type="button"
+                  class="rounded p-1 text-gray-500 hover:bg-gray-200 hover:text-gray-700 focus:outline-none"
                   aria-label="閉じる"
                   @click="closeModal"
-                />
+                >
+                  <svg
+                    class="h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
 
-            <!-- Body -->
+            <!-- ボディ -->
             <div
-              class="flex-1 overflow-y-auto bg-white px-4 py-4 text-left font-sans text-gray-700 sm:px-6 dark:bg-gray-800 dark:text-gray-200"
+              class="flex-1 overflow-y-auto bg-white px-4 py-4 text-left font-sans text-gray-700 sm:px-6"
             >
               <slot />
             </div>
 
-            <!-- Footer -->
+            <!-- フッター -->
             <div
               v-if="$slots.footer"
-              class="flex shrink-0 justify-end gap-2 rounded-b-lg border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-6 dark:border-gray-700 dark:bg-gray-900"
+              class="flex shrink-0 justify-end gap-2 rounded-b-lg border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-6"
             >
               <slot name="footer" />
             </div>
@@ -78,9 +89,6 @@
 </template>
 
 <script setup lang="ts">
-import UiButton from "~/components/ui/button/index.vue";
-import { useUserSettings } from "~/composables/village/useUserSettings";
-
 interface Props {
   modelValue: boolean;
   title?: string;
@@ -105,10 +113,6 @@ const emit = defineEmits<Emits>();
 
 const modalRef = ref<HTMLElement | null>(null);
 
-// ダークテーマ判定
-const { theme } = useUserSettings();
-const isDarkTheme = computed(() => theme.value.isDark);
-
 const isModalOpen = computed({
   get: () => props.modelValue,
   set: (value: boolean) => {
@@ -130,14 +134,12 @@ const handleOverlayClick = () => {
   }
 };
 
-// ESCキーでモーダルを閉じる
 const handleEscKey = (e: KeyboardEvent) => {
   if (e.key === "Escape" && props.closeOnEscape) {
     closeModal();
   }
 };
 
-// Body scroll lock and ESC key listener
 watch(isModalOpen, (isOpen) => {
   if (isOpen) {
     document.body.style.overflow = "hidden";
@@ -151,7 +153,6 @@ watch(isModalOpen, (isOpen) => {
   }
 });
 
-// Cleanup on unmount
 onUnmounted(() => {
   document.body.style.overflow = "";
   document.removeEventListener("keydown", handleEscKey);

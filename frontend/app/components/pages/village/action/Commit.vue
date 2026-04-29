@@ -1,62 +1,58 @@
 <template>
-  <ActionPanel title="コミット" panel-key="commit">
-    <!-- 現在の状態 -->
-    <p class="text-sm text-gray-700 dark:text-gray-300">
-      {{ isCommitting ? "あなたは時短希望しています。" : "あなたは時短希望していません。" }}
+  <div>
+    <hr class="border-gray-500 my-2" />
+    <p class="mb-2 font-bold">時短希望</p>
+    <p class="mb-1">
+      全員が時短希望すると残り時間が残っていても{{ nextNoonnight }}に進行できます。<br />
+      全員が時短希望する前なら取り消す事もできます。
     </p>
-
-    <!-- エラーメッセージ -->
-    <div
-      v-if="commitError"
-      class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
-    >
-      {{ commitError }}
-    </div>
-
-    <!-- コミットボタン -->
-    <div class="flex justify-end">
-      <UiButton :disabled="submitting" :loading="submitting" @click="handleCommit">
-        {{ isCommitting ? "時短希望を取り消す" : "時短希望する" }}
-      </UiButton>
-    </div>
-  </ActionPanel>
+    <p class="mb-2">
+      あなたは時短を希望<strong>{{ isCurrentCommitting ? "しています" : "していません" }}</strong
+      >。
+    </p>
+    <UiButtonIndex button-type="primary" :disabled="submitting" @click="setCommit">
+      {{ isCurrentCommitting ? "時短希望を取り消す" : "時短希望する" }}
+    </UiButtonIndex>
+  </div>
 </template>
 
 <script setup lang="ts">
-import ActionPanel from "./ActionPanel.vue";
-import UiButton from "~/components/ui/button/index.vue";
-import { useCommit } from "~/composables/village/action/useCommit";
-import { useActionReset } from "~/composables/village/action/useActionReset";
-import { useSituation } from "~/composables/village/useSituation";
+import type { components } from "~/lib/api/schema";
 
-const emit = defineEmits<{
-  complete: [willCommit: boolean];
-}>();
+type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
+type VillageDay = components["schemas"]["VillageDay"];
 
-// Composables
-const { submitting, error: commitError, commitRequest, clearError } = useCommit();
-const { onReset } = useActionReset();
-const { situation } = useSituation();
+const villageStore = useVillageStore();
+const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
+const latestDay = computed(() => villageStore.latestDay as VillageDay | null);
+const { apiCall } = useApi();
+const toast = useToast();
 
-// コミット状況を取得
-const commitSituation = computed(() => situation.value?.commit ?? null);
+const submitting = ref(false);
 
-// 現在時短希望中かどうか
-const isCommitting = computed(() => commitSituation.value?.committing ?? false);
+const nextNoonnight = computed(() => {
+  const code = latestDay.value?.noon_night.code;
+  return code === "NOON" ? "投票時間" : "議論時間";
+});
 
-// コミット実行
-const handleCommit = async () => {
-  clearError();
-  // 現在の状態と逆の値を送信（希望中なら取り消し、していなければ希望）
-  const willCommit = !isCommitting.value;
-  const success = await commitRequest(willCommit);
-  if (success) {
-    emit("complete", willCommit);
+const isCurrentCommitting = computed(() => {
+  return situation.value?.commit.committing ?? false;
+});
+
+const setCommit = async () => {
+  submitting.value = true;
+  try {
+    await apiCall(`/village/${villageStore.villageId}/commit`, {
+      method: "POST",
+      body: { commit: !isCurrentCommitting.value },
+    });
+  } catch (error: unknown) {
+    const fetchError = error as { status?: number; data?: { message?: string } };
+    if (fetchError.status === 404 && fetchError.data) {
+      toast.add({ message: fetchError.data.message ?? "エラーが発生しました", type: "error" });
+    }
+  } finally {
+    submitting.value = false;
   }
 };
-
-// リセット処理を登録
-onReset(() => {
-  clearError();
-});
 </script>

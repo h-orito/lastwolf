@@ -1,16 +1,16 @@
 <template>
   <div v-bind="$attrs">
-    <label v-if="label" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+    <label v-if="label" class="mb-1 block text-sm font-medium text-gray-700">
       {{ label }}
       <span v-if="required" class="ml-0.5 text-red-500">*</span>
     </label>
     <div>
       <slot />
     </div>
-    <div v-if="$slots.help" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+    <div v-if="$slots.help" class="mt-1 text-sm text-gray-500">
       <slot name="help" />
     </div>
-    <div v-if="$slots.error" class="mt-1 text-sm text-red-500 dark:text-red-400">
+    <div v-if="$slots.error" class="mt-1 text-sm text-red-500">
       <slot name="error" />
     </div>
   </div>

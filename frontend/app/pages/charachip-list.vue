@@ -1,53 +1,57 @@
 <template>
   <div>
-    <section class="bg-gray-50 py-8">
-      <div class="container mx-auto px-4">
-        <h1 class="mb-4 text-xl font-semibold">キャラチップ一覧</h1>
+    <section class="py-8 px-4 bg-gray-100">
+      <div class="max-w-5xl mx-auto">
+        <h1 class="text-lg font-bold mb-4">キャラチップ一覧</h1>
         <div class="text-sm">
-          <!-- ローディング表示 -->
-          <LoadingSpinner v-if="loadingCharachips" :message="'キャラチップ一覧を読み込み中...'" />
+          <p class="mb-4">キャラ画像は以下の方々に提供いただいています。ありがとうございます。</p>
 
-          <!-- テーブル表示 -->
-          <div
-            v-else-if="displayCharachips.length > 0"
-            class="overflow-hidden rounded-lg bg-white shadow"
-          >
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    キャラチップ名
-                  </th>
-                  <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">作者</th>
-                  <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">例</th>
+          <!-- ローディング中 -->
+          <div v-if="loading" class="text-center py-8 text-gray-500">読み込み中...</div>
+
+          <!-- データなし -->
+          <div v-else-if="tableCharachips.length === 0" class="text-center py-8 text-gray-500">
+            <p>キャラチップがありません</p>
+          </div>
+
+          <!-- テーブル -->
+          <div v-else class="overflow-x-auto">
+            <table class="w-full border-collapse bg-white">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="border border-gray-300 px-3 py-2 text-left">キャラチップ名</th>
+                  <th class="border border-gray-300 px-3 py-2 text-left">作者</th>
+                  <th class="border border-gray-300 px-3 py-2 text-left">例</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200 bg-white">
-                <tr v-for="charachip in displayCharachips" :key="charachip.id">
-                  <td class="p-2 text-left text-sm whitespace-nowrap text-gray-900">
+              <tbody>
+                <tr
+                  v-for="item in tableCharachips"
+                  :key="item.charachip_id"
+                  class="odd:bg-white even:bg-gray-50"
+                >
+                  <td class="border border-gray-300 px-3 py-1">
                     <NuxtLink
-                      :to="`/charachip?id=${charachip.id}`"
-                      class="text-blue-600 hover:text-blue-800 hover:underline"
+                      :to="{ path: '/charachip', query: { id: item.charachip_id } }"
+                      class="text-blue-600 hover:text-blue-800 underline"
                     >
-                      {{ charachip.name }}
+                      {{ item.charachip_name }}
                     </NuxtLink>
                   </td>
-                  <td class="p-2 text-left text-sm whitespace-nowrap text-gray-900">
-                    {{ charachip.designer.name }}
-                  </td>
-                  <td class="p-2 whitespace-nowrap">
-                    <VillageCharaImage :chara="charachip.chara_list[0]!" />
+                  <td class="border border-gray-300 px-3 py-1">{{ item.designer_name }}</td>
+                  <td class="border border-gray-300 px-3 py-1 text-center">
+                    <img
+                      v-if="item.chara"
+                      :src="item.chara.image.image_url"
+                      :alt="item.chara.name.name"
+                      :width="item.chara.image.width"
+                      :height="item.chara.image.height"
+                      class="inline-block"
+                    />
                   </td>
                 </tr>
               </tbody>
             </table>
-          </div>
-
-          <!-- 空の状態 -->
-          <div v-else class="rounded-lg bg-white p-8 shadow">
-            <div class="text-center text-gray-500">
-              <p>キャラチップがありません</p>
-            </div>
           </div>
         </div>
       </div>
@@ -56,44 +60,44 @@
 </template>
 
 <script setup lang="ts">
-import LoadingSpinner from "~/components/ui/feedback/LoadingSpinner.vue";
-import type { CharachipsView, CharachipView } from "~/lib/api/types";
-import VillageCharaImage from "~/components/pages/village/CharaImage.vue";
+import type { components } from "~/lib/api/schema";
 
-// SEO設定
-useHead({
-  title: "キャラチップ一覧",
+type CharachipView = components["schemas"]["CharachipView"];
+type CharachipsView = components["schemas"]["CharachipsView"];
+type Chara = components["schemas"]["Chara"];
+
+interface TableCharachip {
+  charachip_id: number;
+  charachip_name: string;
+  designer_name: string;
+  chara: Chara | undefined;
+}
+
+const meta = buildPageMeta({ title: "キャラチップ一覧" });
+useSeoMeta(meta);
+
+const { apiCall } = useApi();
+
+const charachips = ref<CharachipView[]>([]);
+const loading = ref(true);
+
+const tableCharachips = computed<TableCharachip[]>(() => {
+  return charachips.value.map((charachip: CharachipView) => ({
+    charachip_id: charachip.id,
+    charachip_name: charachip.name,
+    designer_name: charachip.designer.name,
+    chara: charachip.chara_list[0],
+  }));
 });
 
-// キャッシュ付きAPI
-const { fetchMasterWithCache } = useCachedApi();
-
-// データ
-const charachipsData = ref<CharachipsView | null>(null);
-const loadingCharachips = ref(true);
-
-// キャッシュを使用したデータ取得（マスターデータとして30分キャッシュ）
 onMounted(async () => {
   try {
-    const response = await fetchMasterWithCache<CharachipsView>(
-      "charachip-list",
-      "/charachip/list",
-    );
-    charachipsData.value = response;
+    const data = await apiCall<CharachipsView>("/charachip/list");
+    charachips.value = data.list;
   } catch (error) {
     console.error("キャラチップ一覧の取得に失敗しました:", error);
   } finally {
-    loadingCharachips.value = false;
+    loading.value = false;
   }
-});
-
-// データ
-const charachips = computed<CharachipView[]>(() => charachipsData.value?.list || []);
-
-// キャラが存在するキャラチップのみ表示
-const displayCharachips = computed(() => {
-  return charachips.value.filter(
-    (charachip) => charachip.chara_list && charachip.chara_list.length > 0,
-  );
 });
 </script>

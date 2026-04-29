@@ -1,128 +1,78 @@
 <template>
-  <ActionPanel title="役職希望" panel-key="skill-request">
-    <!-- 現在の希望表示 -->
-    <p class="mb-3 text-sm">現在の希望: {{ currentRequest }}</p>
+  <div>
+    <hr class="border-gray-500 my-2" />
+    <p class="mb-2 font-bold">役職希望</p>
+    <p class="mb-2">
+      役職希望を変更することができます。<br />現在の希望は<strong> {{ currentRequest }} </strong
+      >です。
+    </p>
 
-    <!-- エラーメッセージ -->
-    <div
-      v-if="error"
-      class="mb-3 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
-    >
-      {{ error }}
+    <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
+      <label class="block text-xs mb-1">役職第1希望</label>
+      <UiFormFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
+    </div>
+    <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
+      <label class="block text-xs mb-1">役職第2希望</label>
+      <UiFormFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
     </div>
 
-    <!-- 役職第1希望 -->
-    <FormGroup label="役職第1希望" class="mb-3">
-      <FormSelect
-        v-model="form.firstRequestSkillCode"
-        :options="skillOptions"
-        placeholder="選択してください"
-        size="sm"
-      />
-    </FormGroup>
-
-    <!-- 役職第2希望 -->
-    <FormGroup label="役職第2希望" class="mb-3">
-      <FormSelect
-        v-model="form.secondRequestSkillCode"
-        :options="skillOptions"
-        placeholder="選択してください"
-        size="sm"
-      />
-    </FormGroup>
-
-    <!-- 変更ボタン -->
-    <div class="flex justify-end">
-      <UiButton
-        :disabled="!canSubmit"
-        :loading="submitting"
-        color="primary"
-        block
-        @click="handleChangeSkill"
-      >
-        役職希望変更する
-      </UiButton>
-    </div>
-  </ActionPanel>
+    <UiButtonIndex button-type="primary" :disabled="!canSubmit || submitting" @click="change">
+      変更する
+    </UiButtonIndex>
+  </div>
 </template>
 
 <script setup lang="ts">
-import ActionPanel from "./ActionPanel.vue";
-import FormGroup from "~/components/ui/form/FormGroup.vue";
-import FormSelect from "~/components/ui/form/FormSelect.vue";
-import UiButton from "~/components/ui/button/index.vue";
-import { useSkillRequest } from "~/composables/village/action/useSkillRequest";
-import { useActionReset } from "~/composables/village/action/useActionReset";
-import { useSituation } from "~/composables/village/useSituation";
+import type { components } from "~/lib/api/schema";
 
-const emit = defineEmits<{
-  complete: [];
-}>();
+type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
 
-// Composables
-const { situation } = useSituation();
-const { onReset } = useActionReset();
-const { submitting, error, requestSkill, clearError } = useSkillRequest();
+const villageStore = useVillageStore();
+const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
+const { apiCall } = useApi();
 
-// フォーム状態
-const form = reactive({
-  firstRequestSkillCode: "",
-  secondRequestSkillCode: "",
-});
-
-// 初期化済みフラグ
-const isInitialized = ref(false);
-
-// 現在の役職希望を初期値として設定（一度だけ）
-watchEffect(() => {
-  if (isInitialized.value) return;
-
-  const skillRequest = situation.value?.skill_request?.skill_request;
-  if (skillRequest) {
-    form.firstRequestSkillCode = skillRequest.first.code;
-    form.secondRequestSkillCode = skillRequest.second.code;
-    isInitialized.value = true;
-  }
-});
-
-// 選択可能な役職リスト
-const selectableSkillList = computed(
-  () => situation.value?.skill_request?.selectable_skill_list ?? [],
+const submitting = ref(false);
+const firstRequestSkillCode = ref<string>(
+  situation.value?.skill_request.skill_request?.first.code ?? "LEFTOVER",
+);
+const secondRequestSkillCode = ref<string>(
+  situation.value?.skill_request.skill_request?.second.code ?? "LEFTOVER",
 );
 
-// セレクトボックスのオプション
-const skillOptions = computed(() =>
-  selectableSkillList.value.map((skill) => ({
-    label: skill.name,
-    value: skill.code,
-  })),
-);
-
-// 現在の希望表示
-const currentRequest = computed(() => {
-  const skillRequest = situation.value?.skill_request?.skill_request;
-  if (!skillRequest) return "-";
-  return `${skillRequest.first.name} / ${skillRequest.second.name}`;
-});
-
-// 変更ボタンを押下できるか
-const canSubmit = computed(() => {
-  return form.firstRequestSkillCode !== "" && form.secondRequestSkillCode !== "";
-});
-
-// 役職希望変更
-const handleChangeSkill = async () => {
-  const success = await requestSkill(
-    String(form.firstRequestSkillCode),
-    String(form.secondRequestSkillCode),
+const skillOptions = computed(() => {
+  return (
+    situation.value?.skill_request.selectable_skill_list.map((s) => ({
+      label: s.name,
+      value: s.code,
+    })) ?? []
   );
-  if (success) {
-    emit("complete");
+});
+
+const canSubmit = computed(() => {
+  return firstRequestSkillCode.value != null && secondRequestSkillCode.value != null;
+});
+
+const currentRequest = computed(() => {
+  const req = situation.value?.skill_request.skill_request;
+  if (!req) return "";
+  return `${req.first.name} / ${req.second.name}`;
+});
+
+const change = async () => {
+  submitting.value = true;
+  try {
+    await apiCall(`/village/${villageStore.villageId}/change-skill`, {
+      method: "POST",
+      body: {
+        first_request_skill: firstRequestSkillCode.value,
+        second_request_skill: secondRequestSkillCode.value,
+      },
+    });
+    location.reload();
+  } catch {
+    // エラーは無視
+  } finally {
+    submitting.value = false;
   }
 };
-
-// リセット処理を登録
-onReset(() => {
-  clearError();
-});
 </script>

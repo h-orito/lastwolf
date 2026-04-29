@@ -28,7 +28,7 @@ export const useToast = () => {
 
     toasts.value.push(toast);
 
-    // 自動で削除
+    // 指定時間後に自動削除
     setTimeout(() => {
       remove(id);
     }, toast.duration);

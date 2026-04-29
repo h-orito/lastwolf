@@ -1,173 +1,161 @@
 <template>
-  <div class="content">
-    <div v-if="!props.skillList || props.skillList.length === 0">
-      <p>役職データを読み込み中...</p>
-    </div>
-    <div v-else class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-300">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">役職</th>
-            <th class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">略称</th>
-            <th class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">所属陣営</th>
-            <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">能力</th>
-            <th class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">占い結果</th>
-            <th class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">霊視結果</th>
-            <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">発言可能</th>
-            <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">可視</th>
-            <th class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">勝敗判定</th>
+  <div class="text-sm overflow-x-auto">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">役職</th>
+          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap w-16">略称</th>
+          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">所属陣営</th>
+          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">能力</th>
+          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">占い結果</th>
+          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">霊視結果</th>
+          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">発言可能</th>
+          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">
+            勝敗判定カウント
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <template v-for="skill in tableSkills" :key="skill.name">
+          <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50">
+            <td class="border border-gray-300 px-3 py-1">
+              <button
+                v-if="skill.description"
+                class="text-blue-600 hover:text-blue-800 underline text-left"
+                @click="toggleDetail(skill.name)"
+              >
+                {{ skill.name }}
+              </button>
+              <span v-else>{{ skill.name }}</span>
+            </td>
+            <td class="border border-gray-300 px-3 py-1 text-center">{{ skill.short_name }}</td>
+            <td
+              class="border border-gray-300 px-3 py-1 text-center"
+              :class="skill.camp === '人狼陣営' ? 'text-red-600' : ''"
+            >
+              {{ skill.camp }}
+            </td>
+            <td class="border border-gray-300 px-3 py-1">
+              <span v-for="(ability, index) in skill.abilities" :key="ability.name">
+                {{ index !== 0 ? "," : "" }}
+                <a :href="'#' + ability.link" class="text-blue-600 hover:text-blue-800 underline">{{
+                  ability.name
+                }}</a>
+              </span>
+            </td>
+            <td
+              class="border border-gray-300 px-3 py-1"
+              :class="skill.divine_result === '人狼' ? 'text-red-600' : ''"
+            >
+              {{ skill.divine_result }}
+            </td>
+            <td
+              class="border border-gray-300 px-3 py-1"
+              :class="skill.psychic_result === '人狼' ? 'text-red-600' : ''"
+            >
+              {{ skill.psychic_result }}
+            </td>
+            <td class="border border-gray-300 px-3 py-1 text-center">
+              <span
+                v-for="(messageType, index) in skill.sayable_message_types"
+                :key="messageType.name"
+              >
+                {{ index !== 0 ? "," : "" }}
+                {{ messageType.name }}
+              </span>
+            </td>
+            <td
+              class="border border-gray-300 px-3 py-1 text-center"
+              :class="skill.count_camp === '人狼' ? 'text-red-600' : ''"
+            >
+              {{ skill.count_camp }}
+            </td>
           </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200 bg-white">
-          <template v-for="skill in tableSkills" :key="skill.name">
-            <tr>
-              <td class="p-2 text-sm whitespace-nowrap text-gray-900">
-                <button
-                  v-if="skill.description"
-                  class="text-left text-blue-600 hover:text-blue-800 hover:underline"
-                  @click="toggleDetail(skill)"
-                >
-                  {{ skill.name }}
-                </button>
-                <span v-else>{{ skill.name }}</span>
-              </td>
-              <td class="p-2 text-center text-sm whitespace-nowrap text-gray-900">
-                {{ skill.short_name }}
-              </td>
-              <td class="p-2 text-center text-sm whitespace-nowrap text-gray-900">
-                {{ skill.camp }}
-              </td>
-              <td class="p-2 text-sm text-gray-900">
-                <template v-if="skill.ability_list && skill.ability_list.length > 0">
-                  <span v-for="(ability, index) in skill.ability_list" :key="index">
-                    <span v-if="index > 0">, </span>
-                    <a
-                      :href="'#' + ability.code"
-                      class="text-blue-600 hover:text-blue-800 hover:underline"
-                    >
-                      {{ ability.name }}
-                    </a>
-                  </span>
-                </template>
-                <span v-else>-</span>
-              </td>
-              <td
-                class="p-2 text-center text-sm whitespace-nowrap"
-                :class="
-                  skill.divine_result === '人狼' ? 'font-semibold text-red-600' : 'text-gray-900'
-                "
-              >
-                {{ skill.divine_result }}
-              </td>
-              <td
-                class="p-2 text-center text-sm whitespace-nowrap"
-                :class="
-                  skill.psychic_result === '人狼' ? 'font-semibold text-red-600' : 'text-gray-900'
-                "
-              >
-                {{ skill.psychic_result }}
-              </td>
-              <td class="p-2 text-sm text-gray-900">
-                {{ skill.sayable_message_types }}
-              </td>
-              <td class="p-2 text-sm text-gray-900">
-                {{ skill.visible_message_types }}
-              </td>
-              <td
-                class="p-2 text-center text-sm whitespace-nowrap"
-                :class="
-                  skill.count_camp === '人狼' ? 'font-semibold text-red-600' : 'text-gray-900'
-                "
-              >
-                {{ skill.count_camp }}
-              </td>
-            </tr>
-            <tr v-if="expandedSkills.has(skill.name)">
-              <td colspan="9" class="bg-gray-50 p-2">
-                <div class="text-sm whitespace-pre-wrap text-gray-700">
-                  {{ skill.description }}
-                </div>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
+          <tr v-if="expandedSkills.has(skill.name)" :key="skill.name + '-detail'">
+            <td colspan="8" class="border border-gray-300 px-4 py-2 bg-gray-50 text-sm">
+              <p v-html="skill.description.replace(/\n/g, '<br />')"></p>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Skill } from "~/lib/api/types";
+import type { components } from "~/lib/api/schema";
+
+type Skill = components["schemas"]["Skill"];
+type Camp = components["schemas"]["Camp"];
+type AbilityType = components["schemas"]["AbilityType"];
+type MessageType = components["schemas"]["MessageType"];
+
+interface TableAbility {
+  name: string;
+  link: string;
+}
+
+interface TableMessageType {
+  name: string;
+}
+
+interface TableSkill {
+  name: string;
+  short_name: string;
+  camp: string;
+  abilities: TableAbility[];
+  divine_result: string;
+  psychic_result: string;
+  sayable_message_types: TableMessageType[];
+  count_camp: string;
+  description: string;
+}
 
 const props = defineProps<{
   skillList: Skill[];
 }>();
 
-interface AbilityLink {
-  name: string;
-  code: string;
-}
+const expandedSkills = ref<Set<string>>(new Set());
 
-interface SkillTableRow {
-  name: string;
-  short_name: string;
-  camp: string;
-  abilities: string;
-  ability_list?: AbilityLink[];
-  divine_result: string;
-  psychic_result: string;
-  sayable_message_types: string;
-  visible_message_types: string;
-  count_camp: string;
-  description?: string;
-}
-
-const expandedSkills = ref(new Set<string>());
-
-const tableSkills = computed<SkillTableRow[]>(() => {
-  if (!props.skillList || props.skillList.length === 0) {
-    return [];
-  }
-
-  return props.skillList.map((skill: Skill): SkillTableRow => {
-    // 勝敗判定カウントの変換
-    let countCamp = "-";
-    if (skill.count_camp) {
-      if (skill.count_camp.name === "村人陣営" || skill.count_camp.name === "恋人陣営") {
-        countCamp = "人間";
-      } else if (skill.count_camp.name === "人狼陣営") {
-        countCamp = "人狼";
-      } else {
-        countCamp = "-";
-      }
-    }
-
-    return {
-      name: skill.name,
-      short_name: skill.short_name,
-      camp: skill.win_judge_camp?.name || "-",
-      abilities: skill.manual_ability_list?.map((ability) => ability.name).join(", ") || "-",
-      ability_list: skill.manual_ability_list?.map((ability) => ({
-        name: ability.name,
-        code: ability.code?.toLowerCase() || "",
-      })),
-      divine_result: skill.divine_result_wolf ? "人狼" : "人狼でない",
-      psychic_result: skill.psychic_result_wolf ? "人狼" : "人狼でない",
-      sayable_message_types:
-        skill.sayable_skill_message_type_list?.map((type) => type.name).join(", ") || "-",
-      visible_message_types:
-        skill.viewable_skill_message_type_list?.map((type) => type.name).join(", ") || "-",
-      count_camp: countCamp,
-      description: skill.description,
-    };
-  });
+const tableSkills = computed<TableSkill[]>(() => {
+  if (props.skillList.length === 0) return [];
+  return props.skillList.map((skill: Skill) => ({
+    name: skill.name,
+    short_name: skill.short_name,
+    camp: skill.win_judge_camp == null ? "-" : skill.win_judge_camp.name,
+    abilities: skill.manual_ability_list.map((ability: AbilityType) => ({
+      name: ability.name,
+      link: ability.code.toLowerCase(),
+    })),
+    divine_result: skill.divine_result_wolf ? "人狼" : "人狼でない",
+    psychic_result: skill.psychic_result_wolf ? "人狼" : "人狼でない",
+    sayable_message_types: skill.sayable_skill_message_type_list.map(
+      (messageType: MessageType) => ({
+        name: messageType.name,
+      }),
+    ),
+    count_camp: countCamp(skill.count_camp),
+    description: skill.description,
+  }));
 });
 
-const toggleDetail = (skill: SkillTableRow) => {
-  if (expandedSkills.value.has(skill.name)) {
-    expandedSkills.value.delete(skill.name);
+function countCamp(camp: Camp | undefined): string {
+  if (camp == null) {
+    return "-";
+  } else if (camp.name === "村人陣営") {
+    return "人間";
+  } else if (camp.name === "人狼陣営") {
+    return "人狼";
   } else {
-    expandedSkills.value.add(skill.name);
+    return "-";
   }
-};
+}
+
+function toggleDetail(skillName: string): void {
+  if (expandedSkills.value.has(skillName)) {
+    expandedSkills.value.delete(skillName);
+  } else {
+    expandedSkills.value.add(skillName);
+  }
+}
 </script>

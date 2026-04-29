@@ -1,18 +1,17 @@
 <template>
-  <section class="section px-6 py-12 md:px-12">
-    <div class="container mx-auto text-left text-sm">
-      <h1 class="mb-4 text-xl font-bold">このサイトは</h1>
-      <div class="content">
-        <ul class="list-inside list-disc space-y-2">
+  <section class="py-8 px-4">
+    <div class="max-w-5xl mx-auto text-left text-sm">
+      <h1 class="text-lg font-bold mb-4">このサイトは</h1>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
           <li>LASTWOLFは、オンラインで短期人狼が遊べるサイトです。</li>
           <li>ユーザが自分で好きな設定の村を作成することができます。</li>
           <li>機能の豊富さよりもわかりやすさを優先し、シンプルにしています。</li>
         </ul>
       </div>
-
-      <h2 class="mt-6 mb-3 text-xl font-bold">注意事項</h2>
-      <div class="content">
-        <ul class="list-inside list-disc space-y-2">
+      <h2 class="text-lg font-bold mb-4">注意事項</h2>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
           <li>
             同村しているプレイヤーの画面の向こうにはあなたと同様人間がいます。<br />他者を思いやり、迷惑をかけないプレイを心がけるようお願いします。
           </li>
@@ -24,10 +23,9 @@
           <li>勝利を目指してください。</li>
         </ul>
       </div>
-
-      <h2 class="mt-6 mb-3 text-xl font-bold">キャラチップについて</h2>
-      <div class="content">
-        <ul class="list-inside list-disc space-y-2">
+      <h2 class="text-lg font-bold mb-4">キャラチップについて</h2>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
           <li>
             村で各プレイヤーが使用するキャラクターの画像については、著作権は作者様にあります。
           </li>
@@ -39,16 +37,18 @@
           </li>
         </ul>
       </div>
-
-      <h2 class="mt-6 mb-3 text-xl font-bold">姉妹サイト</h2>
-      <div class="content">
-        <ul class="list-inside list-disc space-y-2">
+      <h2 class="text-lg font-bold mb-4">姉妹サイト</h2>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
           <li>
-            <a href="https://howling-wolf.com" target="_blank" class="text-blue-600 hover:underline"
+            <a
+              href="https://howling-wolf.com"
+              target="_blank"
+              class="text-blue-600 hover:text-blue-800 underline"
               >HOWLING WOLF</a
             >
-            <ul class="ml-4 mt-1 list-inside list-disc space-y-1">
-              <li>長期人狼が遊べるサイトです。</li>
+            <ul class="list-disc pl-6 mt-1 space-y-1">
+              <li>短期人狼が遊べるサイトです。</li>
               <li>システムにより自動で村が作成されるため、知らない人同士で遊べます。</li>
             </ul>
           </li>
@@ -56,11 +56,11 @@
             <a
               href="https://firewolf.netlify.app"
               target="_blank"
-              class="text-blue-600 hover:underline"
+              class="text-blue-600 hover:text-blue-800 underline"
               >FIREWOLF</a
             >
-            <ul class="ml-4 mt-1 list-inside list-disc space-y-1">
-              <li>長期人狼が遊べるサイトです。</li>
+            <ul class="list-disc pl-6 mt-1 space-y-1">
+              <li>短期人狼が遊べるサイトです。</li>
               <li>当サイト同様、好きな設定の村を作成して遊ぶことができます。</li>
             </ul>
           </li>
@@ -71,5 +71,6 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: "このサイトは | LASTWOLF" });
+const meta = buildPageMeta({ title: "このサイトは" });
+useSeoMeta(meta);
 </script>

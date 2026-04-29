@@ -57,7 +57,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@pinia/nuxt", "@nuxt/eslint", "nuxt-vuefire", "@vite-pwa/nuxt"],
+  modules: ["@pinia/nuxt", "nuxt-vuefire", "@vite-pwa/nuxt"],
 
   // PWA設定
   pwa: {

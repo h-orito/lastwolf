@@ -17,17 +17,13 @@
     <div class="ml-3 text-left">
       <label
         :id="labelId"
-        class="text-sm font-medium text-gray-700 dark:text-gray-300"
+        class="text-sm font-medium text-gray-700"
         :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
         @click="!disabled && toggle()"
       >
         {{ label }}
       </label>
-      <p
-        v-if="description"
-        :id="descriptionId"
-        class="mt-1 text-xs text-gray-500 dark:text-gray-400"
-      >
+      <p v-if="description" :id="descriptionId" class="mt-1 text-xs text-gray-500">
         {{ description }}
       </p>
     </div>
@@ -53,7 +49,6 @@ const emit = defineEmits<{
   "update:modelValue": [value: boolean];
 }>();
 
-// 一意なIDを生成（propsで渡されていなければ自動生成）
 const autoId = useId();
 const computedId = computed(() => props.id ?? autoId);
 const labelId = computed(() => `${computedId.value}-label`);
@@ -65,19 +60,17 @@ const toggle = () => {
   }
 };
 
-// スイッチ本体のクラス
 const switchClasses = computed(() => {
   const baseClasses =
-    "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--ui-primary)] focus:ring-offset-2 dark:focus:ring-offset-gray-800";
+    "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#3991f4] focus:ring-offset-2";
 
-  const stateClasses = props.modelValue ? "bg-[var(--ui-primary)]" : "bg-gray-200 dark:bg-gray-600";
+  const stateClasses = props.modelValue ? "bg-[#3991f4]" : "bg-gray-200";
 
   const disabledClasses = props.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer";
 
   return [baseClasses, stateClasses, disabledClasses].join(" ");
 });
 
-// ノブ（丸いボタン部分）のクラス
 const knobClasses = computed(() => {
   const baseClasses =
     "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out";

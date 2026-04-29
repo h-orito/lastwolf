@@ -1,7 +1,6 @@
-export const DEFAULT_SITE_NAME = "FIREWOLF";
-export const DEFAULT_SITE_DESCRIPTION =
-  "FIREWOLFはオンラインで長期人狼が無料で遊べるWebサービスです。誰でも自分で好きな設定の村を作成することができます。";
-export const DEFAULT_SITE_URL = "https://firewolf.netlify.app";
+export const DEFAULT_SITE_NAME = "LASTWOLF";
+export const DEFAULT_SITE_DESCRIPTION = "LASTWOLFは短期人狼が無料で遊べるWebサービスです。";
+export const DEFAULT_SITE_URL = "https://lastwolf.netlify.app";
 export const DEFAULT_OG_IMAGE = `${DEFAULT_SITE_URL}/image/ogp/top.jpg`;
 
 export interface SeoConfig {
@@ -14,7 +13,10 @@ export interface SeoConfig {
   noIndex?: boolean;
 }
 
-export function createSeoMeta(config: SeoConfig = {}) {
+/**
+ * ページのSEOメタ情報を生成する
+ */
+export function buildPageMeta(config: SeoConfig = {}) {
   const {
     title = "",
     description = DEFAULT_SITE_DESCRIPTION,
@@ -29,8 +31,6 @@ export function createSeoMeta(config: SeoConfig = {}) {
   const fullTitle = title ? `${title} | ${DEFAULT_SITE_NAME}` : DEFAULT_SITE_NAME;
 
   const meta: Record<string, string> = {
-    // titleはnuxt.config.tsのtitleTemplateで自動的に「| FIREWOLF」が付与される
-    // titleが空の場合はuseHeadで別途設定する（titleTemplateの上書きが必要なため）
     description,
     ogTitle: fullTitle,
     ogDescription: description,
@@ -57,17 +57,6 @@ export function createSeoMeta(config: SeoConfig = {}) {
   }
 
   return meta;
-}
-
-export function createStructuredData(type: string, data: Record<string, unknown>) {
-  return {
-    type: "application/ld+json",
-    innerHTML: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": type,
-      ...data,
-    }),
-  };
 }
 
 /**

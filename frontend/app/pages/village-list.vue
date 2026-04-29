@@ -1,73 +1,55 @@
 <template>
   <div>
-    <section class="bg-gray-100 py-8 dark:bg-gray-900">
-      <div class="container mx-auto px-4">
-        <h1 class="mb-6 text-2xl font-bold text-gray-800 dark:text-gray-100">終了した村一覧</h1>
+    <section class="py-8 px-4 bg-gray-100">
+      <div class="max-w-5xl mx-auto text-left">
+        <h1 class="text-lg font-bold mb-4">終了した村一覧</h1>
 
-        <!-- フィルター -->
-        <div class="mb-6 flex justify-center">
-          <label class="flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              v-model="includeCancelVillage"
-              type="checkbox"
-              class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-              @change="handleIncludeCancelChange"
-            />
-            <span class="text-gray-700 dark:text-gray-300">廃村も表示する</span>
-          </label>
-        </div>
+        <!-- ローディング中 -->
+        <div v-if="loading" class="py-8 text-center text-gray-500 text-sm">読み込み中...</div>
 
-        <!-- ローディング -->
-        <div v-if="loading" class="flex justify-center py-12">
-          <div class="text-center">
-            <Icon name="i-heroicons-arrow-path" class="h-8 w-8 animate-spin text-gray-500" />
-            <p class="mt-2 text-gray-600 dark:text-gray-400">村一覧を読み込み中...</p>
-          </div>
+        <!-- データなし -->
+        <div
+          v-else-if="!villages || villages.length === 0"
+          class="py-8 text-center text-gray-500 text-sm"
+        >
+          <p>村がありません</p>
         </div>
 
         <!-- テーブル -->
-        <div v-if="!loading && tableVillages.length > 0">
-          <table class="min-w-full divide-y divide-gray-300">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">村名</th>
-                <th class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">人数</th>
-                <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">編成</th>
-                <th class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">勝利</th>
+        <div v-else class="overflow-x-auto">
+          <table class="w-full border-collapse bg-white text-sm">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="border border-gray-300 px-3 py-2 text-left">村名</th>
+                <th class="border border-gray-300 px-3 py-2 text-left">人数</th>
+                <th class="border border-gray-300 px-3 py-2 text-left">勝利陣営</th>
+                <th class="border border-gray-300 px-3 py-2 text-left">作成者</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="village in tableVillages" :key="village.village_id">
-                <td class="p-2 text-left text-sm text-gray-900">
+            <tbody>
+              <tr
+                v-for="village in villages"
+                :key="village.id"
+                class="odd:bg-white even:bg-gray-50"
+              >
+                <td class="border border-gray-300 px-3 py-1">
                   <NuxtLink
-                    :to="`/village?id=${village.village_id}`"
-                    class="text-blue-600 hover:text-blue-800 hover:underline"
+                    :to="{ path: '/village', query: { id: village.id } }"
+                    class="text-blue-600 hover:text-blue-800 underline"
                   >
-                    {{ village.village_name }}
+                    {{ `${village.id}. ${village.name}` }}
                   </NuxtLink>
                 </td>
-                <td class="p-2 text-center text-sm text-gray-900">
-                  {{ village.participant_count }}
+                <td class="border border-gray-300 px-3 py-1">{{ village.participants.count }}人</td>
+                <td class="border border-gray-300 px-3 py-1">
+                  {{ village.win_camp ? village.win_camp.name : "-" }}
                 </td>
-                <td class="p-2 text-left text-sm text-gray-900">
-                  {{ village.organization }}
-                </td>
-                <td class="p-2 text-center text-sm text-gray-900">
-                  {{ village.win_camp }}
+                <td class="border border-gray-300 px-3 py-1">
+                  {{ village.creator_player.nickname }}
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <!-- 空の状態 -->
-        <div
-          v-else-if="!loading && tableVillages.length === 0"
-          class="rounded-lg bg-white p-12 shadow-md dark:bg-gray-800"
-        >
-          <div class="text-center text-gray-500 dark:text-gray-400">
-            <p>終了した村はありません</p>
-          </div>
         </div>
       </div>
     </section>
@@ -75,70 +57,32 @@
 </template>
 
 <script setup lang="ts">
-import type { VillagesView, SimpleVillageView } from "~/lib/api/types";
+import type { components } from "~/lib/api/schema";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
-import { createSeoMeta } from "~/utils/seo";
-import Icon from "~/components/ui/icon/Icon.vue";
 
-// メタデータ
-useSeoMeta(
-  createSeoMeta({
-    title: "終了した村一覧",
-    description: "FIREWOLFで終了した人狼ゲーム村の一覧を表示します。",
-  }),
-);
+type SimpleVillageView = components["schemas"]["SimpleVillageView"];
+type VillagesView = components["schemas"]["VillagesView"];
 
-// 状態
-const villages = ref<SimpleVillageView[]>([]);
-const loading = ref(false);
-const includeCancelVillage = ref(false);
+const meta = buildPageMeta({ title: "終了した村一覧" });
+useSeoMeta(meta);
 
-// テーブル用のデータ変換
-const tableVillages = computed(() => {
-  return villages.value.map((village) => ({
-    village_id: village.id,
-    village_name: village.name,
-    participant_count: `${village.participants.count}人`,
-    organization:
-      village.status.code === VILLAGE_STATUS.CANCEL
-        ? village.setting.organizations.organization[village.setting.capacity.max]
-        : village.setting.organizations.organization[village.participants.count],
-    win_camp: village.win_camp?.name || "廃村",
-  }));
-});
+const { apiCall } = useApi();
 
-// メソッド
-const loadVillages = async () => {
-  loading.value = true;
+const villages = ref<SimpleVillageView[] | null>(null);
+const loading = ref(true);
+
+onMounted(async () => {
   try {
-    const { apiCall } = useApi();
-
-    // VillageListFormの村ステータス配列を構築
-    const villageStatusList = [VILLAGE_STATUS.COMPLETED] as string[];
-    if (includeCancelVillage.value) {
-      villageStatusList.push(VILLAGE_STATUS.CANCEL);
-    }
-
-    const response = await apiCall<VillagesView>("/village/list", {
+    const data = await apiCall<VillagesView>("/village/list", {
       params: {
-        village_status: villageStatusList,
+        village_status: [VILLAGE_STATUS.COMPLETED],
       },
     });
-
-    villages.value = response.list;
-  } catch (error) {
-    console.error("Failed to fetch villages:", error);
+    villages.value = data.list;
+  } catch {
+    villages.value = [];
   } finally {
     loading.value = false;
   }
-};
-
-const handleIncludeCancelChange = async () => {
-  await loadVillages();
-};
-
-// 初期データ取得
-onMounted(async () => {
-  await loadVillages();
 });
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <section class="py-8">
-    <div class="container mx-auto px-4">
-      <h1 class="mb-6 text-xl font-bold">更新情報</h1>
-      <div class="rounded-lg bg-white p-4 shadow">
-        <ul class="list-disc space-y-1 pl-6 text-left text-sm">
+  <section class="py-8 px-4">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="text-lg font-bold mb-4">更新情報</h1>
+      <div>
+        <ul class="text-left text-sm list-disc pl-6 space-y-1">
           <li>2024/02/23 設定「GM制」追加</li>
           <li>2023/12/20 設定「昼沈黙時間」追加</li>
           <li>2023/12/20 強調発言のみ表示する機能を追加</li>
@@ -23,5 +23,6 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: "更新情報 | LASTWOLF" });
+const meta = buildPageMeta({ title: "更新情報" });
+useSeoMeta(meta);
 </script>

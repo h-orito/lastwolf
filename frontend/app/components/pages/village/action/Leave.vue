@@ -1,52 +1,45 @@
 <template>
-  <ActionPanel title="退村" panel-key="leave">
-    <!-- エラーメッセージ -->
-    <div
-      v-if="leaveError"
-      class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
-    >
-      {{ leaveError }}
-    </div>
+  <div>
+    <hr class="border-gray-500 my-2" />
+    <p class="mb-2 font-bold">退村</p>
+    <p class="mb-2">参加を取りやめたい場合は退村することができます。</p>
+    <UiButtonIndex button-type="danger" @click="confirmLeave">退村する</UiButtonIndex>
 
-    <!-- 退村ボタン -->
-    <div class="flex justify-end">
-      <UiButton color="error" @click="openConfirmModal"> 退村する </UiButton>
-    </div>
-
-    <!-- 確認モーダル -->
-    <LeaveConfirmModal v-model="isConfirmModalOpen" :submitting="submitting" @leave="handleLeave" />
-  </ActionPanel>
+    <!-- 確認ダイアログ -->
+    <UiModalModal v-model="isConfirmOpen" title="退村確認">
+      <p>本当に退村しますか？</p>
+      <template #footer>
+        <button
+          class="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          @click="isConfirmOpen = false"
+        >
+          キャンセル
+        </button>
+        <UiButtonIndex button-type="danger" @click="leave">退村する</UiButtonIndex>
+      </template>
+    </UiModalModal>
+  </div>
 </template>
 
 <script setup lang="ts">
-import ActionPanel from "./ActionPanel.vue";
-import UiButton from "~/components/ui/button/index.vue";
-import { useLeave } from "~/composables/village/action/useLeave";
+const villageStore = useVillageStore();
+const { apiCall } = useApi();
+const toast = useToast();
 
-// 遅延ローディング: 確認モーダルはボタンクリック時まで不要
-const LeaveConfirmModal = defineAsyncComponent(() => import("./leave/LeaveConfirmModal.vue"));
+const isConfirmOpen = ref(false);
 
-const emit = defineEmits<{
-  complete: [];
-}>();
-
-// Composables
-const { submitting, error: leaveError, leave } = useLeave();
-
-// UI状態
-const isConfirmModalOpen = ref(false);
-
-// 確認モーダルを開く
-const openConfirmModal = () => {
-  isConfirmModalOpen.value = true;
+const confirmLeave = () => {
+  isConfirmOpen.value = true;
 };
 
-// 退村実行
-const handleLeave = async () => {
-  const success = await leave();
-  if (success) {
-    isConfirmModalOpen.value = false;
-    emit("complete");
+const leave = async () => {
+  try {
+    await apiCall(`/village/${villageStore.villageId}/leave`, { method: "POST" });
+    toast.add({ message: "退村しました", type: "info" });
+    isConfirmOpen.value = false;
+    location.reload();
+  } catch {
+    // エラーは無視
   }
 };
 </script>

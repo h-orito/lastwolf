@@ -27,6 +27,7 @@
         {{ option.label }}
       </option>
     </select>
+    <!-- ドロップダウン矢印アイコン -->
     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
       <svg
         class="h-4 w-4 text-gray-400"
@@ -46,8 +47,6 @@
 </template>
 
 <script setup lang="ts">
-type SelectSize = "xs" | "sm" | "md" | "lg" | "xl";
-
 type SelectOption =
   | {
       label: string;
@@ -63,13 +62,10 @@ interface Props {
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
-  size?: SelectSize;
   error?: boolean;
   id?: string;
   name?: string;
-  /** オプションのラベルを取得するためのキー（オブジェクト配列の場合） */
   labelAttribute?: string;
-  /** オプションの値を取得するためのキー（オブジェクト配列の場合） */
   valueAttribute?: string;
 }
 
@@ -77,7 +73,6 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: "",
   disabled: false,
   required: false,
-  size: "md",
   error: false,
   id: undefined,
   name: undefined,
@@ -95,13 +90,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-// オプションを正規化
 const normalizedOptions = computed(() => {
   return props.options.map((option) => {
     if (typeof option === "string" || typeof option === "number") {
       return { label: String(option), value: option, disabled: false };
     }
-    // オブジェクトの場合、labelAttribute と valueAttribute を使用
     const optionObj = option as Record<string, unknown>;
     return {
       label: String(optionObj[props.labelAttribute] ?? optionObj.label ?? ""),
@@ -111,62 +104,40 @@ const normalizedOptions = computed(() => {
   });
 });
 
-// サイズに応じたクラス
-const sizeClasses = computed(() => {
-  const sizes: Record<SelectSize, string> = {
-    xs: "px-2 py-1 pr-7 text-xs",
-    sm: "px-2.5 py-1.5 pr-8 text-xs",
-    md: "px-3 py-2 pr-9 text-sm",
-    lg: "px-4 py-2.5 pr-10 text-base",
-    xl: "px-5 py-3 pr-11 text-lg",
-  };
-  return sizes[props.size];
-});
-
-// 基本クラス
 const baseClasses =
-  "block w-full appearance-none rounded-md bg-white text-gray-900 focus:outline-none transition-colors duration-150 dark:bg-gray-800 dark:text-white cursor-pointer";
+  "block w-full appearance-none rounded border px-3 py-2 pr-9 text-sm text-gray-900 bg-white focus:outline-none transition-colors duration-150 cursor-pointer";
 
-// ボーダーとフォーカス時のクラス（error propに応じて変更）
 const borderClasses = computed(() => {
   if (props.error) {
-    return "border border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 dark:border-red-500";
+    return "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
   }
-  return "border border-gray-300 focus:border-[var(--ui-primary)] focus:ring-2 focus:ring-[var(--ui-primary)]/20 dark:border-gray-600";
+  return "border-gray-300 focus:border-[#3991f4] focus:ring-2 focus:ring-[#3991f4]/20";
 });
 
-// disabled時のクラス
 const disabledClasses = computed(() => {
   if (props.disabled) {
-    return "opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-700";
+    return "opacity-50 cursor-not-allowed bg-gray-100";
   }
   return "";
 });
 
-// 結合クラス
-const selectClasses = computed(() => {
-  return [baseClasses, borderClasses.value, sizeClasses.value, disabledClasses.value]
-    .filter(Boolean)
-    .join(" ");
-});
+const selectClasses = computed(() =>
+  [baseClasses, borderClasses.value, disabledClasses.value].filter(Boolean).join(" "),
+);
 
-// changeハンドラ
 const handleChange = (event: Event) => {
   const target = event.target as HTMLSelectElement;
   const value = target.value;
-  // 空文字列の場合はそのまま返す
   if (value === "") {
     emit("update:modelValue", value);
     emit("change", event);
     return;
   }
-  // 数値の可能性がある場合は変換を試みる
   const numValue = Number(value);
   emit("update:modelValue", isNaN(numValue) ? value : numValue);
   emit("change", event);
 };
 
-// blurハンドラ
 const handleBlur = (event: FocusEvent) => {
   emit("blur", event);
 };

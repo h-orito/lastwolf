@@ -40,9 +40,10 @@ withDefaults(defineProps<Props>(), {
 
 .loading-fixed {
   position: fixed;
-  top: 3.25rem;
+  top: 0;
   left: 0;
-  height: calc(100dvh - 3.25rem);
+  width: 100%;
+  height: 100dvh;
 }
 
 .loading-content {

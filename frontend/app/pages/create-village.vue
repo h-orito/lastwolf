@@ -1,400 +1,266 @@
 <template>
-  <section class="py-8">
-    <div class="container mx-auto max-w-4xl px-4">
-      <h1 class="mb-8 text-2xl font-bold">村を作成</h1>
+  <section class="py-8 px-4">
+    <div class="max-w-5xl mx-auto text-left">
+      <h1 class="text-lg font-bold mt-8 mb-6">村を作成</h1>
 
-      <!-- エラー表示 -->
-      <Alert v-if="errors" type="error" class="mb-6" @close="errors = null">
-        {{ errors }}
-      </Alert>
+      <!-- バリデーションエラー -->
+      <div
+        v-if="validationErrors.length > 0"
+        class="mb-4 bg-red-50 border border-red-200 rounded p-3 text-xs text-red-700"
+      >
+        <ul class="list-disc pl-4 space-y-1">
+          <li v-for="err in validationErrors" :key="err">{{ err }}</li>
+        </ul>
+      </div>
 
-      <!-- フォームセクション -->
-      <form class="space-y-8" @submit.prevent="handleSubmit">
-        <!-- 基本情報セクション -->
-        <BasicInfoSection
-          :form-data="formData"
-          :errors="visibleErrors"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
-        />
+      <div class="text-sm space-y-6">
+        <!-- 基本情報 -->
+        <BasicInfoSection :form="basicForm" :errors="basicErrors" />
 
-        <!-- キャラチップセクション -->
+        <hr class="border-gray-200" />
+
+        <!-- キャラチップ -->
         <CharachipSection
-          :form-data="formData"
-          :errors="visibleErrors"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
+          :form="charachipForm"
+          :errors="charachipErrors"
+          :charachips="charachips"
+          :charas="charas"
+          @load-charas="loadCharasByCharachipId"
         />
 
-        <!-- 編成設定セクション -->
-        <OrganizationSection
-          :form-data="formData"
-          :errors="visibleErrors"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
-        />
+        <hr class="border-gray-200" />
 
-        <!-- 詳細ルール設定 -->
-        <RuleSection
-          :form-data="formData"
-          :errors="visibleErrors"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
-        />
+        <!-- 編成 -->
+        <OrganizationSection :form="organizationForm" :errors="organizationErrors" />
 
-        <!-- 参加パスワード設定 -->
-        <JoinPasswordSection
-          :form-data="formData"
-          :errors="visibleErrors"
-          @update:field="setFieldValue"
-          @validate:field="markFieldAsTouched"
-        />
+        <hr class="border-gray-200" />
 
-        <!-- 送信ボタン -->
-        <div class="flex justify-end gap-4">
-          <button
-            type="button"
-            :disabled="isConfirming || !meta.valid"
-            class="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-400"
-            @click="handleConfirm"
+        <!-- ルール -->
+        <RuleSection :form="ruleForm" :errors="ruleErrors" />
+
+        <hr class="border-gray-200" />
+
+        <!-- 参加パスワード -->
+        <JoinPasswordSection :form="joinPasswordForm" :errors="joinPasswordErrors" />
+
+        <hr class="border-gray-200" />
+
+        <!-- 確認ボタン -->
+        <div class="flex justify-end">
+          <UiButtonIndex
+            button-type="primary"
+            :disabled="confirming"
+            :loading="confirming"
+            @click="confirm"
           >
-            <span v-if="isConfirming">確認中...</span>
-            <span v-else>確認画面へ</span>
-          </button>
+            確認画面へ
+          </UiButtonIndex>
         </div>
-      </form>
 
-      <!-- プレビューモーダル -->
-      <PreviewModal
-        :is-open="isPreviewModalOpen"
-        :form-data="formData"
-        :charachip-name="selectedCharachipName"
-        :dummy-chara="selectedDummyChara"
-        :is-submitting="isLoading"
-        @close="closePreviewModal"
-        @create="handleSubmit"
-      />
+        <!-- プレビューモーダル -->
+        <PreviewModal
+          v-model="isOpenConfirmModal"
+          :param="registerParam"
+          :charachip-name="charachipName"
+          :dummy-chara-name="dummyCharaName"
+          save-label="村を作成する"
+          @create="createVillage"
+        />
+      </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/yup";
-import type {
-  VillageRegisterBody,
-  VillageSettingRegisterBody,
-  VillageTimeCreateBody,
-  VillageOrganizationCreateBody,
-  VillageCharachipCreateBody,
-  VillageRuleCreateBody,
-  Chara,
-} from "~/lib/api/types";
-import type { CreateVillageFormData } from "~/components/pages/create-village/types";
-import { useVillageFormValidation } from "~/components/pages/create-village/useVillageFormValidation";
 import BasicInfoSection from "~/components/pages/create-village/BasicInfoSection.vue";
 import CharachipSection from "~/components/pages/create-village/CharachipSection.vue";
 import OrganizationSection from "~/components/pages/create-village/OrganizationSection.vue";
 import RuleSection from "~/components/pages/create-village/RuleSection.vue";
 import JoinPasswordSection from "~/components/pages/create-village/JoinPasswordSection.vue";
-import Alert from "~/components/ui/feedback/Alert.vue";
+import PreviewModal from "~/components/pages/create-village/PreviewModal.vue";
+import type { components } from "~/lib/api/schema";
+import UiButtonIndex from "~/components/ui/button/index.vue";
 
-// 遅延ローディング: プレビューモーダルは確認ボタン押下時まで不要
-const PreviewModal = defineAsyncComponent(
-  () => import("~/components/pages/create-village/PreviewModal.vue"),
-);
+type CharachipView = components["schemas"]["CharachipView"];
+type CharachipsView = components["schemas"]["CharachipsView"];
+type Chara = components["schemas"]["Chara"];
 
-// SEO設定
-useHead({
-  title: "村作成",
+const meta = buildPageMeta({ title: "村作成" });
+useSeoMeta(meta);
+
+const { apiCall } = useApi();
+const { add: addToast } = useToast();
+
+// ローディング状態
+const confirming = ref(false);
+const isOpenConfirmModal = ref(false);
+const validationErrors = ref<string[]>([]);
+
+// キャラチップデータ
+const charachips = ref<CharachipView[]>([]);
+const charas = ref<Chara[]>([]);
+
+// フォームデータ
+const basicForm = reactive({
+  villageName: "",
+  startDatetime: (() => {
+    const d = new Date();
+    d.setHours(d.getHours() + 2);
+    d.setMinutes(0, 0, 0);
+    return d.toISOString().slice(0, 16);
+  })(),
+  noonSeconds: 480,
+  voteSeconds: 120,
+  nightSeconds: 240,
 });
 
-// Router
-const router = useRouter();
-
-// API呼び出し用のステート
-const isLoading = ref(false);
-const errors = ref<string | null>(null);
-
-// プレビューモーダルの状態
-const isPreviewModalOpen = ref(false);
-const isConfirming = ref(false);
-const selectedCharachipName = ref("");
-const selectedDummyChara = ref<Chara | null>(null);
-
-// vee-validate設定
-const { validationSchema, loadSkills } = useVillageFormValidation();
-
-// touched状態の管理
-const touchedFields = ref<Set<string>>(new Set());
-const isSubmitted = ref(false);
-
-// vee-validateフォーム初期化
-const {
-  values: formData,
-  errors: fieldErrors,
-  meta,
-  handleSubmit: veeHandleSubmit,
-  setFieldValue,
-  setFieldTouched,
-} = useForm<CreateVillageFormData>({
-  validationSchema: toTypedSchema(validationSchema),
-  initialValues: {
-    // 基本情報
-    villageName: "",
-
-    // 時間設定（デフォルト: 7日後の0時）
-    startDatetime: (() => {
-      const date = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-      date.setHours(0, 0, 0, 0);
-      return date;
-    })(),
-    noonSeconds: 86400,
-    voteSeconds: 3600,
-    nightSeconds: 86400,
-    silentHours: 0,
-
-    // キャラチップ設定
-    charachipIds: [1],
-    dummyCharaId: 0,
-
-    // 編成
-    capacityMin: 10,
-    capacityMax: 16,
-    organization: "",
-    availableDummySkill: false,
-
-    // 詳細ルール（デフォルト値）
-    availableSkillRequest: true,
-    openSkillInGrave: false,
-    visibleGraveMessage: false,
-    availableSuddenlyDeath: true,
-    availableCommit: false,
-    availableGuardSameTarget: true,
-
-    // 参加パスワード
-    joinPassword: "",
-  },
+const charachipForm = reactive({
+  charachipId: 1,
+  dummyCharaId: 1,
 });
 
-// 日時をローカル形式(YYYY-MM-DDTHH:mm:ss)にフォーマット
-// サーバー側がLocalDateTimeで受け取っているため、タイムゾーン情報なしで送信
-const formatLocalDateTime = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-};
+const organizationForm = reactive({
+  organization: "狼狼狼狂狐占霊狩共共村村村村村村村",
+  availableDummySkill: true,
+  availableSkillRequest: true,
+});
 
-// API送信用のデータ形式に変換
-const createRequestBody = (): VillageRegisterBody => {
-  // startDatetimeをJSTのローカル日時形式に変換（タイムゾーン情報なし）
-  const formattedStartDatetime = formatLocalDateTime(formData.startDatetime);
+const ruleForm = reactive({
+  availableSameTargetGuard: true,
+  firstDivineNowolf: false,
+  creatorGameMaster: false,
+  silentSeconds: 0,
+});
 
-  // 編成データから人数部分を除去（例: "10人：狼狼占霊狩狂村村村村" → "狼狼占霊狩狂村村村村"）
-  const formatOrganization = (org: string): string => {
-    return org
-      .split("\n")
-      .map((line) => line.replace(/^\d+人[：:]\s*/, ""))
-      .join("\n");
-  };
+const joinPasswordForm = reactive({
+  joinPassword: "",
+});
 
+// エラー状態
+const basicErrors = reactive<Partial<Record<string, string>>>({});
+const charachipErrors = reactive<Partial<Record<string, string>>>({});
+const organizationErrors = reactive<Partial<Record<string, string>>>({});
+const ruleErrors = reactive<Partial<Record<string, string>>>({});
+const joinPasswordErrors = reactive<Partial<Record<string, string>>>({});
+
+// キャラチップ名（プレビュー用）
+const charachipName = computed(() => {
+  const c = charachips.value.find((ch: CharachipView) => ch.id === charachipForm.charachipId);
+  return c ? c.name : "";
+});
+
+// ダミーキャラ名（プレビュー用）
+const dummyCharaName = computed(() => {
+  const c = charas.value.find((ch: Chara) => ch.id === charachipForm.dummyCharaId);
+  return c ? c.name.name : "";
+});
+
+// APIリクエストパラメータ
+const registerParam = computed(() => {
+  const startDatetime = basicForm.startDatetime.replace("T", "T") + ":00";
   return {
-    village_name: formData.villageName,
+    village_name: basicForm.villageName,
     setting: {
       time: {
-        start_datetime: formattedStartDatetime,
-        noon_seconds: formData.noonSeconds,
-        vote_seconds: formData.voteSeconds,
-        night_seconds: formData.nightSeconds,
-      } as VillageTimeCreateBody,
+        start_datetime: startDatetime,
+        noon_seconds: basicForm.noonSeconds,
+        vote_seconds: basicForm.voteSeconds,
+        night_seconds: basicForm.nightSeconds,
+      },
       organization: {
-        organization: formatOrganization(formData.organization),
-      } as VillageOrganizationCreateBody,
+        organization: organizationForm.organization,
+      },
       charachip: {
-        charachip_id: formData.charachipIds[0],
-        dummy_chara_id: formData.dummyCharaId,
-      } as VillageCharachipCreateBody,
+        dummy_chara_id: charachipForm.dummyCharaId,
+        charachip_id: charachipForm.charachipId,
+      },
       rule: {
-        available_skill_request: formData.availableSkillRequest,
-        open_skill_in_grave: formData.openSkillInGrave,
-        visible_grave_message: formData.visibleGraveMessage,
-        available_suddenly_death: formData.availableSuddenlyDeath,
-        available_commit: formData.availableCommit,
-        available_dummy_skill: formData.availableDummySkill,
-        available_same_target_guard: formData.availableGuardSameTarget,
-        first_divine_nowolf: false,
-        silent_seconds: formData.silentHours > 0 ? formData.silentHours * 3600 : undefined,
-        creator_game_master: false,
-        join_password: formData.joinPassword || undefined,
-      } as VillageRuleCreateBody,
-    } as VillageSettingRegisterBody,
+        open_vote: true,
+        available_skill_request: organizationForm.availableSkillRequest,
+        open_skill_in_grave: false,
+        visible_grave_message: false,
+        available_suddenly_death: true,
+        available_commit: true,
+        available_dummy_skill: organizationForm.availableDummySkill,
+        available_same_target_guard: ruleForm.availableSameTargetGuard,
+        first_divine_nowolf: ruleForm.firstDivineNowolf,
+        creator_game_master: ruleForm.creatorGameMaster,
+        silent_seconds: ruleForm.silentSeconds === 0 ? null : ruleForm.silentSeconds,
+        join_password: joinPasswordForm.joinPassword,
+      },
+    },
   };
-};
+});
 
-// フォーム送信処理
-const handleSubmit = veeHandleSubmit(async (_values) => {
-  isLoading.value = true;
-  errors.value = null;
-
+// キャラチップ一覧を取得
+const loadCharachips = async () => {
   try {
-    const requestBody = createRequestBody();
-    const { apiCall } = useApi();
-    const response = await apiCall<{ village_id: number }>("/village", {
-      method: "POST",
-      body: requestBody,
-    });
-
-    // 成功時は村ページにリダイレクト
-    await router.push(`/village?id=${response?.village_id}`);
-  } catch (error) {
-    console.error("Failed to create village:", error);
-    errors.value = error instanceof Error ? error.message : "村の作成に失敗しました";
-  } finally {
-    isLoading.value = false;
+    const data = await apiCall<CharachipsView>("/charachip/list");
+    charachips.value = data.list;
+    const firstCharachip = data.list[0];
+    if (firstCharachip) {
+      charachipForm.charachipId = firstCharachip.id;
+      await loadCharasByCharachipId(firstCharachip.id);
+    }
+  } catch {
+    console.error("キャラチップ一覧の取得に失敗しました");
   }
-});
-
-// フィールドをtouchedにする
-const markFieldAsTouched = (fieldName: string) => {
-  touchedFields.value.add(fieldName);
-  // vee-validateのsetFieldTouchedは文字列を受け付けるため、型アサーションが必要
-  setFieldTouched(fieldName as keyof CreateVillageFormData, true);
 };
 
-// 全フィールドをtouchedにする
-const markAllFieldsAsTouched = () => {
-  const allFieldNames = Object.keys(formData) as Array<keyof CreateVillageFormData>;
-  allFieldNames.forEach((fieldName) => {
-    setFieldTouched(fieldName, true);
-  });
-  isSubmitted.value = true;
-};
-
-// エラーを表示すべきかどうかを判断
-const shouldShowError = (fieldName: string): boolean => {
-  return isSubmitted.value || touchedFields.value.has(fieldName);
-};
-
-// 表示用のエラーオブジェクトを計算
-const visibleErrors = computed(() => {
-  const result: Record<string, string> = {};
-  const errorEntries = Object.entries(fieldErrors.value);
-  errorEntries.forEach(([key, value]) => {
-    if (shouldShowError(key) && value) {
-      result[key] = value as string;
+// キャラ一覧をキャラチップIDで取得
+const loadCharasByCharachipId = async (charachipId: number) => {
+  try {
+    const data = await apiCall<CharachipView>(`/charachip/${charachipId}`);
+    charas.value = data.chara_list;
+    const firstChara = data.chara_list[0];
+    if (firstChara) {
+      charachipForm.dummyCharaId = firstChara.id;
     }
-  });
-  return result;
-});
+  } catch {
+    console.error("キャラ一覧の取得に失敗しました");
+  }
+};
 
-// 確認ボタンの処理
-const handleConfirm = async () => {
-  isConfirming.value = true;
-  errors.value = null;
-
-  // 全フィールドをtouchedにする
-  markAllFieldsAsTouched();
+// 確認（バリデーション）
+const confirm = async () => {
+  confirming.value = true;
+  validationErrors.value = [];
 
   try {
-    // バリデーションチェック
-    const isValid = await meta.value.valid;
-    if (!isValid) {
-      errors.value = "入力内容に誤りがあります。各項目を確認してください。";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-
-    // サーバー側バリデーションチェック
-    const requestBody = createRequestBody();
-    const { apiCall } = useApi();
     await apiCall("/village/confirm", {
       method: "POST",
-      body: requestBody,
+      body: registerParam.value,
     });
-
-    // キャラチップ名を取得
-    await loadCharachipName();
-
-    // ダミーキャラ情報を取得
-    await loadDummyCharaInfo();
-
-    // プレビューモーダルを開く
-    isPreviewModalOpen.value = true;
+    isOpenConfirmModal.value = true;
   } catch (error) {
-    console.error("Failed to confirm village settings:", error);
-    // FetchErrorからビジネスエラーメッセージを取得
-    const fetchError = error as { data?: { status?: number; message?: string } };
-    if (fetchError.data?.status === 499 && fetchError.data?.message) {
-      errors.value = fetchError.data.message;
-    } else {
-      errors.value =
-        error instanceof Error
-          ? error.message
-          : "入力内容の確認に失敗しました。入力内容を確認してください。";
+    const fetchError = error as {
+      status?: number;
+      data?: { status?: number; message?: string };
+    };
+    if (fetchError.data?.message) {
+      validationErrors.value = fetchError.data.message.split("\n").filter((s) => s.length > 0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    addToast({ message: "エラーが発生しました。設定を確認してください。", type: "error" });
   } finally {
-    isConfirming.value = false;
+    confirming.value = false;
   }
 };
 
-// キャラチップ名を取得
-const loadCharachipName = async () => {
+// 村を作成
+const createVillage = async () => {
   try {
-    const { apiCall } = useApi();
-    if (formData.charachipIds && formData.charachipIds.length > 0) {
-      const charachipId = formData.charachipIds[0];
-      const response = await apiCall<{ name: string }>(`/charachips/${charachipId}`, {
-        method: "GET",
-      });
-      selectedCharachipName.value = response?.name || "";
-    }
-  } catch (error) {
-    console.error("Failed to load charachip name:", error);
+    const res = await apiCall<{ village_id: number }>("/village", {
+      method: "POST",
+      body: registerParam.value,
+    });
+    window.location.href = `/village?id=${res.village_id}`;
+  } catch {
+    addToast({ message: "エラーが発生しました。設定を確認してください。", type: "error" });
   }
 };
 
-// ダミーキャラ情報を取得
-const loadDummyCharaInfo = async () => {
-  try {
-    const { apiCall } = useApi();
-    if (formData.dummyCharaId) {
-      const response = await apiCall<Chara>(`/chara/${formData.dummyCharaId}`, {
-        method: "GET",
-      });
-
-      if (response) {
-        selectedDummyChara.value = response;
-      }
-    }
-  } catch (error) {
-    console.error("Failed to load dummy chara info:", error);
-  }
-};
-
-// プレビューモーダルを閉じる
-const closePreviewModal = () => {
-  isPreviewModalOpen.value = false;
-};
-
-// ダミーキャラIDが変更されたら情報を取得
-watch(
-  () => formData.dummyCharaId,
-  async (newId) => {
-    if (newId) {
-      await loadDummyCharaInfo();
-    } else {
-      selectedDummyChara.value = null;
-    }
-  },
-);
-
-// 初期化時に役職情報を取得
-onMounted(() => {
-  loadSkills();
+onMounted(async () => {
+  await loadCharachips();
 });
 </script>

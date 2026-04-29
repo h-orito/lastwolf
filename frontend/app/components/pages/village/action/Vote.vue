@@ -1,108 +1,117 @@
 <template>
-  <ActionPanel title="投票" panel-key="vote">
-    <!-- 現在のセット先 -->
-    <p class="text-sm text-gray-700 dark:text-gray-300">現在のセット先: {{ currentTargetName }}</p>
+  <div>
+    <hr class="border-gray-500 my-2" />
+    <p class="mb-2 font-bold">投票</p>
+    <p class="mb-2">
+      投票対象を選択してください。<br />全員が投票する前なら投票し直す事もできます。<br />投票しないと突然死するため、必ず投票してください。
+    </p>
+    <p v-if="currentVoteTarget" class="mb-2">
+      <strong>{{ currentVoteTarget }}</strong
+      >に投票しています。
+    </p>
 
-    <!-- エラーメッセージ -->
-    <div
-      v-if="voteError"
-      class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
-    >
-      {{ voteError }}
+    <div class="mb-2">
+      <label class="block text-xs mb-1">対象</label>
+      <div class="flex gap-1">
+        <UiFormFormSelect
+          v-model="participantId"
+          :options="targetOptions"
+          placeholder="選択してください"
+          class="flex-1"
+        />
+        <button
+          class="px-2 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
+          @click="openSelectModal"
+        >
+          画像で選択
+        </button>
+      </div>
     </div>
 
-    <!-- 投票対象選択 -->
-    <FormGroup label="対象">
-      <FormSelect
-        v-model="selectedTargetId"
-        :options="targetOptions"
-        :disabled="!canVote"
-        placeholder="選択してください"
-        size="sm"
-      />
-    </FormGroup>
+    <UiButtonIndex button-type="primary" :disabled="!canSubmit || submitting" @click="setVote">
+      投票する
+    </UiButtonIndex>
 
-    <!-- 投票ボタン -->
-    <div class="flex justify-end">
-      <UiButton :disabled="!canSubmit" :loading="submitting" @click="handleVote">
-        投票する
-      </UiButton>
-    </div>
-  </ActionPanel>
+    <!-- 参加者選択モーダル -->
+    <UiModalModal v-model="isOpenSelectModal" title="画像から選択">
+      <div class="flex flex-wrap">
+        <div
+          v-for="p in targetList"
+          :key="p.id"
+          class="text-center border border-gray-200 rounded-2xl p-1 m-1 w-40 cursor-pointer hover:border-[#3991f4] hover:font-bold text-xs"
+          @click="selectParticipant(p.id)"
+        >
+          <img
+            :src="p.chara.image.image_url"
+            :alt="p.chara.name.name"
+            :class="p.dead ? 'opacity-30' : ''"
+            class="mx-auto"
+          />
+          <p>{{ p.chara.name.name }}</p>
+          <p v-if="p.dead" class="text-red-600">
+            {{ `${p.dead.village_day.day}d${p.dead.reason}` }}
+          </p>
+        </div>
+      </div>
+    </UiModalModal>
+  </div>
 </template>
 
 <script setup lang="ts">
-import ActionPanel from "./ActionPanel.vue";
-import FormGroup from "~/components/ui/form/FormGroup.vue";
-import FormSelect from "~/components/ui/form/FormSelect.vue";
-import UiButton from "~/components/ui/button/index.vue";
-import { useVote } from "~/composables/village/action/useVote";
-import { useActionReset } from "~/composables/village/action/useActionReset";
-import { useSituation } from "~/composables/village/useSituation";
+import type { components } from "~/lib/api/schema";
 
-const emit = defineEmits<{
-  complete: [];
-}>();
+type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
+type VillageParticipantView = components["schemas"]["VillageParticipantView"];
 
-// Composables
-const { submitting, error: voteError, vote, clearError } = useVote();
-const { onReset } = useActionReset();
-const { situation } = useSituation();
+const villageStore = useVillageStore();
+const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
+const { apiCall } = useApi();
+const toast = useToast();
 
-// 投票状況を取得
-const voteSituation = computed(() => situation.value?.vote ?? null);
+const submitting = ref(false);
+const participantId = ref<number | null>(situation.value?.vote.target?.id ?? null);
+const isOpenSelectModal = ref(false);
 
-// 投票可能かどうか
-const canVote = computed(() => voteSituation.value?.available_vote ?? false);
-
-// 現在のセット先の名前
-const currentTargetName = computed(() => {
-  if (!voteSituation.value?.target) return "なし";
-  return voteSituation.value.target.chara.name.name;
+const targetList = computed((): VillageParticipantView[] => {
+  return situation.value?.vote.target_list ?? [];
 });
 
-// 投票対象リスト（セレクトボックス用）
 const targetOptions = computed(() => {
-  if (!voteSituation.value?.target_list) return [];
-  return voteSituation.value.target_list.map((p) => ({
+  return targetList.value.map((p) => ({
     label: p.chara.name.name,
     value: p.id,
   }));
 });
 
-// 選択された投票対象ID（初期値は現在のセット先）
-const selectedTargetId = ref<number | null>(voteSituation.value?.target?.id ?? null);
+const canSubmit = computed(() => participantId.value != null);
 
-// 投票状況が変わったら選択をリセット
-watch(
-  () => voteSituation.value?.target?.id,
-  (newTargetId) => {
-    selectedTargetId.value = newTargetId ?? null;
-  },
-);
-
-// 送信可能かどうか
-const canSubmit = computed(() => {
-  if (submitting.value) return false;
-  if (!canVote.value) return false;
-  if (selectedTargetId.value == null) return false;
-  return true;
+const currentVoteTarget = computed(() => {
+  return situation.value?.vote.target?.chara.name.name ?? "";
 });
 
-// 投票実行
-const handleVote = async () => {
-  if (!canSubmit.value || selectedTargetId.value == null) return;
-
-  clearError();
-  const success = await vote(selectedTargetId.value);
-  if (success) {
-    emit("complete");
-  }
+const openSelectModal = () => {
+  isOpenSelectModal.value = true;
 };
 
-// リセット処理を登録
-onReset(() => {
-  clearError();
-  selectedTargetId.value = voteSituation.value?.target?.id ?? null;
-});
+const selectParticipant = (id: number) => {
+  participantId.value = id;
+  isOpenSelectModal.value = false;
+};
+
+const setVote = async () => {
+  submitting.value = true;
+  try {
+    await apiCall(`/village/${villageStore.villageId}/vote`, {
+      method: "POST",
+      body: { target_id: participantId.value },
+    });
+  } catch (error: unknown) {
+    const fetchError = error as { status?: number; data?: { message?: string } };
+    if (fetchError.status === 404 && fetchError.data) {
+      toast.add({ message: fetchError.data.message ?? "エラーが発生しました", type: "error" });
+    }
+  } finally {
+    submitting.value = false;
+  }
+};
 </script>

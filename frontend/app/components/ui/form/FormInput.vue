@@ -1,6 +1,22 @@
 <template>
   <div v-bind="$attrs">
+    <textarea
+      v-if="type === 'textarea'"
+      :id="id"
+      :name="name"
+      :value="modelValue"
+      :placeholder="placeholder"
+      :required="required"
+      :disabled="disabled"
+      :readonly="readonly"
+      :maxlength="maxlength"
+      :rows="rows"
+      :class="inputClasses"
+      @input="handleInput"
+      @blur="handleBlur"
+    />
     <input
+      v-else
       :id="id"
       :name="name"
       :type="type"
@@ -21,25 +37,21 @@
 </template>
 
 <script setup lang="ts">
-type InputSize = "xs" | "sm" | "md" | "lg" | "xl";
-
 interface Props {
   modelValue: string;
-  type?: "text" | "password" | "number";
+  type?: "text" | "password" | "email" | "number" | "textarea";
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
-  size?: InputSize;
   maxlength?: number;
+  rows?: number;
   error?: boolean;
   id?: string;
   name?: string;
-  // number type用
   min?: number;
   max?: number;
   step?: number;
-  /** input要素に直接適用するクラス */
   inputClass?: string;
 }
 
@@ -49,8 +61,8 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
   disabled: false,
   readonly: false,
-  size: "md",
   maxlength: undefined,
+  rows: 3,
   error: false,
   id: undefined,
   name: undefined,
@@ -69,61 +81,37 @@ defineOptions({
   inheritAttrs: false,
 });
 
-// サイズに応じたクラス
-const sizeClasses = computed(() => {
-  const sizes: Record<InputSize, string> = {
-    xs: "px-2 py-1 text-xs",
-    sm: "px-2.5 py-1.5 text-xs",
-    md: "px-3 py-2 text-sm",
-    lg: "px-4 py-2.5 text-base",
-    xl: "px-5 py-3 text-lg",
-  };
-  return sizes[props.size];
-});
-
-// 基本クラス（border以外）
 const baseClasses =
-  "block w-full rounded-md bg-white text-gray-900 placeholder-gray-400 focus:outline-none transition-colors duration-150 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500";
+  "block w-full rounded border px-3 py-2 text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none transition-colors duration-150";
 
-// ボーダーとフォーカス時のクラス（error propに応じて変更）
 const borderClasses = computed(() => {
   if (props.error) {
-    return "border border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 dark:border-red-500";
+    return "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
   }
-  return "border border-gray-300 focus:border-[var(--ui-primary)] focus:ring-2 focus:ring-[var(--ui-primary)]/20 dark:border-gray-600";
+  return "border-gray-300 focus:border-[#3991f4] focus:ring-2 focus:ring-[#3991f4]/20";
 });
 
-// disabled/readonly時のクラス
 const disabledClasses = computed(() => {
   if (props.disabled) {
-    return "opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-700";
+    return "opacity-50 cursor-not-allowed bg-gray-100";
   }
   if (props.readonly) {
-    return "bg-gray-50 dark:bg-gray-700";
+    return "bg-gray-50";
   }
   return "";
 });
 
-// 結合クラス
-const inputClasses = computed(() => {
-  return [
-    baseClasses,
-    borderClasses.value,
-    sizeClasses.value,
-    disabledClasses.value,
-    props.inputClass,
-  ]
+const inputClasses = computed(() =>
+  [baseClasses, borderClasses.value, disabledClasses.value, props.inputClass]
     .filter(Boolean)
-    .join(" ");
-});
+    .join(" "),
+);
 
-// 入力ハンドラ
 const handleInput = (event: Event) => {
-  const target = event.target as HTMLInputElement;
+  const target = event.target as HTMLInputElement | HTMLTextAreaElement;
   emit("update:modelValue", target.value);
 };
 
-// blurハンドラ
 const handleBlur = (event: FocusEvent) => {
   emit("blur", event);
 };

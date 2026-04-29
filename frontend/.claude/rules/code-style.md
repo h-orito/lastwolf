@@ -1,5 +1,5 @@
 ---
-paths: app/**/*.{ts,vue}
+paths: ["app/**/*.{ts,vue}"]
 ---
 
 # コードスタイルガイドライン
@@ -21,18 +21,21 @@ paths: app/**/*.{ts,vue}
 
 ### コードフォーマット
 
-- **`.prettierrc`**: Prettierによる自動フォーマット設定
-  - セミコロン: なし
-  - クォート: シングルクォート
-  - トレイリングカンマ: なし
-  - 括弧のスペース: なし
+- **oxfmt**: Rust製フォーマッター（`vp fmt` が内部的に使用）
+  - 設定ファイル: `.oxfmtrc.json`（存在しない場合はデフォルト設定）
 
 ### リンティング
 
-- **`eslint.config.js`**: ESLintによるコード品質チェック
-  - TypeScript strict mode対応
-  - Vue 3 Composition API対応
-  - Nuxt 4推奨ルール適用
+- **oxlint**: Rust製リンター（`vp check` が内部的に使用）
+  - 設定ファイル: **`.oxlintrc.json`**
+  - ESLint の代替（`eslint.config.js` は不使用）
+
+### コマンドランナー
+
+- **`vite-plus`** (`vp`): lint/format のラッパーCLI
+  - `vp check` = oxlint 実行
+  - `vp check --fix` = oxlint 自動修正
+  - `vp fmt` = oxfmt 実行
 
 ## コマンド
 
@@ -41,7 +44,7 @@ paths: app/**/*.{ts,vue}
 pnpm lint
 
 # 自動修正付きリント
-pnpm lint --fix
+pnpm lint:fix
 
 # フォーマット実行
 pnpm format
@@ -55,11 +58,11 @@ pnpm type-check
 - **コミット前には必ず以下を実行**:
 
   ```bash
-  pnpm lint && pnpm format && pnpm type-check
+  pnpm lint:fix && pnpm format && pnpm type-check
   ```
 
 - 設定ファイルの内容を直接変更する場合は、チーム全体での合意が必要です
-- VSCode使用時は、推奨拡張機能（ESLint、Prettier、EditorConfig）をインストールしてください
+- VSCode使用時は、推奨拡張機能（oxlint、EditorConfig）をインストールしてください
 
 # 実装ガイドライン
 
@@ -83,8 +86,8 @@ pnpm type-check
    - 適切な型を定義して使用
    - API レスポンスなどは適切に型定義する
 
-5. **`// eslint-disable` の使用禁止**
-   - ESLint ルールは遵守する
+5. **`// eslint-disable` / `// oxlint-disable` の使用禁止**
+   - lint ルールは遵守する
    - ルールの例外を設ける場合は、必ずユーザーに確認を取ること
 
 ### 推奨される型対応方法
@@ -109,19 +112,11 @@ interface CustomProps {
 const props = defineProps<CustomProps>();
 ```
 
-## API 通信
-
-詳細は[API使用ガイドライン](docs/guidelines/api-usage-guidelines.md)を参照
-
-## API 型定義
-
-詳細は[API型定義ガイドライン](docs/guidelines/api-types-guidelines.md)を参照
-
 ## 開発サーバー
 
-- **ポート**: 3011
+- **ポート**: 3000
 - **起動コマンド**: `pnpm dev`
-- **URL**: http://localhost:3011
+- **URL**: http://localhost:3000
 
 ## storeを直接使用しない
 

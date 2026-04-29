@@ -1,67 +1,34 @@
 <template>
-  <div class="rounded-lg bg-white p-6 shadow">
-    <h2 class="mb-4 text-lg font-semibold">参加パスワード設定</h2>
+  <div class="space-y-4">
+    <h2 class="text-base font-semibold">参加パスワード</h2>
 
-    <div>
-      <label class="mb-2 block text-center text-sm font-medium text-gray-700">
-        参加パスワード
-      </label>
-      <FormInput
-        v-model="joinPassword"
+    <UiFormFormGroup label="参加パスワード（任意）">
+      <UiFormFormInput
+        v-model="form.joinPassword"
         type="text"
-        placeholder="パスワードを入力（任意）"
-        :maxlength="12"
-        size="md"
-        class="mx-auto w-full max-w-xs"
-        :error="!!props.errors?.joinPassword"
-        @blur="validateField('joinPassword')"
+        placeholder="参加パスワード（任意）"
+        :maxlength="20"
+        :error="!!errors.joinPassword"
       />
-      <p v-if="props.errors?.joinPassword" class="mt-1 text-center text-xs text-red-600">
-        {{ props.errors.joinPassword }}
-      </p>
-      <p v-else class="mt-1 text-center text-xs text-gray-500">
-        設定すると、パスワードを知っている人のみ参加できます（最大12文字）
-      </p>
-    </div>
+      <template v-if="errors.joinPassword" #error>
+        {{ errors.joinPassword }}
+      </template>
+    </UiFormFormGroup>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { CreateVillageFormData } from "./types";
-import FormInput from "~/components/ui/form/FormInput.vue";
+import UiFormFormGroup from "~/components/ui/form/FormGroup.vue";
+import UiFormFormInput from "~/components/ui/form/FormInput.vue";
 
-// Props & Emits
-const props = defineProps<{
-  formData: CreateVillageFormData;
-  errors?: Record<string, string | undefined>;
-}>();
+interface FormData {
+  joinPassword: string;
+}
 
-const emit = defineEmits<{
-  "update:field": [
-    field: keyof CreateVillageFormData,
-    value: CreateVillageFormData[keyof CreateVillageFormData],
-  ];
-  "validate:field": [field: keyof CreateVillageFormData];
-}>();
+interface Props {
+  form: FormData;
+  errors: Partial<Record<keyof FormData, string>>;
+}
 
-// フィールド更新処理
-const updateField = <K extends keyof CreateVillageFormData>(
-  field: K,
-  value: CreateVillageFormData[K],
-) => {
-  emit("update:field", field, value);
-};
-
-// フィールドバリデーション
-const validateField = (field: keyof CreateVillageFormData) => {
-  emit("validate:field", field);
-};
-
-// 参加パスワード
-const joinPassword = computed({
-  get: () => props.formData.joinPassword,
-  set: (value: string) => {
-    updateField("joinPassword", value);
-  },
-});
+defineProps<Props>();
 </script>

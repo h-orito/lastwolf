@@ -1,320 +1,151 @@
 <template>
-  <ActionPanel title="入村" panel-key="participate">
-    <!-- キャラ選択 -->
-    <FormGroup label="キャラ" required>
-      <div class="flex gap-2">
-        <FormSelect
-          v-model="form.charaId"
+  <div>
+    <hr class="border-gray-500 my-2" />
+    <p class="mb-2 font-bold">参加</p>
+    <p class="mb-2">あなたはこの村に参加できます。</p>
+
+    <!-- キャラクター選択 -->
+    <div class="mb-2">
+      <label class="block text-xs mb-1">キャラクター</label>
+      <div class="flex gap-1">
+        <UiFormFormSelect
+          v-model="charaId"
           :options="charaOptions"
-          class="flex-1"
-          size="sm"
           placeholder="選択してください"
-          @change="onCharaChange"
+          class="flex-1"
         />
-        <UiButton size="sm" @click="openCharaSelectModal"> 画像で選択 </UiButton>
+        <button
+          class="px-2 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
+          @click="openCharaModal"
+        >
+          画像で選択
+        </button>
       </div>
-    </FormGroup>
+    </div>
 
-    <!-- キャラ名 -->
-    <FormGroup label="キャラ名" required>
-      <FormInput v-model="form.charaName" :maxlength="40" :disabled="!canChangeName" size="sm" />
-    </FormGroup>
+    <!-- 役職希望 -->
+    <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
+      <label class="block text-xs mb-1">役職第1希望</label>
+      <UiFormFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
+    </div>
+    <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
+      <label class="block text-xs mb-1">役職第2希望</label>
+      <UiFormFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
+    </div>
 
-    <!-- 1文字略称 -->
-    <FormGroup label="キャラ名1文字略称" required>
-      <FormInput
-        v-model="form.charaShortName"
-        :maxlength="1"
-        :disabled="!canChangeName"
-        size="sm"
+    <!-- 入村パスワード -->
+    <div v-if="requiredJoinPassword" class="mb-2">
+      <label class="block text-xs mb-1">入村パスワード</label>
+      <input
+        v-model="joinPassword"
+        type="text"
+        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4]"
       />
-    </FormGroup>
-
-    <!-- 役職希望（available_skill_request時のみ） -->
-    <template v-if="availableSkillRequest">
-      <FormGroup label="役職第1希望" required>
-        <FormSelect v-model="form.firstRequestSkill" :options="skillOptions" size="sm" />
-      </FormGroup>
-      <FormGroup label="役職第2希望" required>
-        <FormSelect v-model="form.secondRequestSkill" :options="skillOptions" size="sm" />
-      </FormGroup>
-    </template>
-
-    <!-- 入村発言 -->
-    <FormGroup label="入村発言" required>
-      <div class="flex flex-col items-start gap-2 sm:flex-row">
-        <!-- キャラ画像 -->
-        <div class="shrink-0">
-          <CharaImage
-            v-if="selectedChara"
-            :chara="selectedChara"
-            face-type="NORMAL"
-            :is-small="false"
-          />
-          <div
-            v-else
-            class="flex h-20 w-16 items-center justify-center rounded-md bg-gray-200 text-xs text-gray-500 dark:bg-gray-600 dark:text-gray-400"
-          >
-            未選択
-          </div>
-        </div>
-
-        <!-- メッセージ入力エリア -->
-        <div class="w-full flex-1">
-          <FormTextarea v-model="form.joinMessage" size="sm" :rows="4" class="w-full" />
-          <div class="mt-1 text-right text-xs text-gray-500 dark:text-gray-400">
-            <span :class="{ 'text-red-600 dark:text-red-400': isLineExceeded }"
-              >行数: {{ lineCount }}/{{ maxLineCount }}</span
-            >,
-            <span :class="{ 'text-red-600 dark:text-red-400': isCharExceeded }"
-              >文字数: {{ charCountWithoutNewlines }}/{{ maxMessageLength }}</span
-            >
-          </div>
-        </div>
-      </div>
-    </FormGroup>
-
-    <!-- 入村パスワード（必要時のみ） -->
-    <FormGroup v-if="requiredJoinPassword" label="入村パスワード" required>
-      <FormInput v-model="form.joinPassword" type="text" size="sm" />
-    </FormGroup>
-
-    <!-- エラーメッセージ -->
-    <div
-      v-if="participateError"
-      class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
-    >
-      {{ participateError }}
     </div>
 
-    <!-- 入村確認ボタン -->
-    <div class="flex justify-end">
-      <UiButton :disabled="!canSubmit || confirming" :loading="confirming" @click="handleConfirm">
-        入村確認
-      </UiButton>
-    </div>
+    <UiButtonIndex button-type="primary" :disabled="!canSubmit || submitting" @click="participate">
+      入村する
+    </UiButtonIndex>
 
     <!-- キャラ選択モーダル -->
-    <CharaSelectModal
-      :is-open="isCharaSelectModalOpen"
-      :charas="selectableCharaList"
-      @select="onCharaSelect"
-      @close="isCharaSelectModalOpen = false"
-    />
-
-    <!-- 入村確認モーダル -->
-    <ParticipateConfirmModal
-      v-model="isConfirmModalOpen"
-      :confirm-message="confirmMessage"
-      :submitting="submitting"
-      @participate="handleParticipate"
-    />
-  </ActionPanel>
+    <UiModalModal v-model="isCharaSelectModalOpen" title="画像から選択">
+      <div class="flex flex-wrap">
+        <div
+          v-for="chara in situation?.participate.selectable_chara_list"
+          :key="chara.id"
+          class="text-center border border-gray-200 rounded-2xl p-1 m-1 w-40 cursor-pointer hover:border-[#3991f4] hover:font-bold"
+          @click="charaSelect(chara.id)"
+        >
+          <img :src="chara.image.image_url" :alt="chara.name.name" class="mx-auto" />
+          <p class="text-xs">{{ chara.name.name }}</p>
+        </div>
+      </div>
+    </UiModalModal>
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { DeepReadonly } from "vue";
-import type { MessageView, Chara } from "~/lib/api/types";
-import ActionPanel from "./ActionPanel.vue";
-import FormGroup from "~/components/ui/form/FormGroup.vue";
-import FormSelect from "~/components/ui/form/FormSelect.vue";
-import FormInput from "~/components/ui/form/FormInput.vue";
-import FormTextarea from "~/components/ui/form/FormTextarea.vue";
-import UiButton from "~/components/ui/button/index.vue";
-import CharaImage from "~/components/pages/village/CharaImage.vue";
-import { useParticipate, type ParticipateForm } from "~/composables/village/action/useParticipate";
-import { useSituation } from "~/composables/village/useSituation";
-import { useVillage } from "~/composables/village/useVillage";
+import type { components } from "~/lib/api/schema";
 
-// 遅延ローディング: モーダルはボタンクリック時まで不要
-const CharaSelectModal = defineAsyncComponent(
-  () => import("~/components/ui/chara-select/CharaSelectModal.vue"),
+type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
+type VillageView = components["schemas"]["VillageView"];
+
+const villageStore = useVillageStore();
+const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
+const village = computed(() => villageStore.village as VillageView | null);
+const { apiCall } = useApi();
+const toast = useToast();
+
+const submitting = ref(false);
+const charaId = ref<number | null>(null);
+const firstRequestSkillCode = ref<string>(
+  situation.value?.skill_request.skill_request?.first.code ?? "LEFTOVER",
 );
-const ParticipateConfirmModal = defineAsyncComponent(
-  () => import("./participate/ParticipateConfirmModal.vue"),
+const secondRequestSkillCode = ref<string>(
+  situation.value?.skill_request.skill_request?.second.code ?? "LEFTOVER",
 );
-
-const emit = defineEmits<{
-  complete: [];
-}>();
-
-// Composables
-const { situation } = useSituation();
-const { village, charachips } = useVillage();
-const {
-  confirming,
-  submitting,
-  error: participateError,
-  confirmParticipate,
-  participate,
-} = useParticipate();
-
-// フォーム入力値
-const form = reactive({
-  charaId: null as number | null,
-  charaName: "",
-  charaShortName: "",
-  firstRequestSkill: "LEFTOVER",
-  secondRequestSkill: "LEFTOVER",
-  joinMessage: "",
-  joinPassword: "",
-});
-
-// UI状態
+const joinPassword = ref("");
 const isCharaSelectModalOpen = ref(false);
-const isConfirmModalOpen = ref(false);
-const confirmMessage = ref<MessageView | null>(null);
 
-// 選択可能なキャラリスト
-const selectableCharaList = computed(
-  () => situation.value?.participate.selectable_chara_list ?? [],
-);
-
-// 選択中のキャラ
-const selectedChara = computed(() => {
-  if (!form.charaId) return null;
-  return selectableCharaList.value.find((c) => c.id === form.charaId) ?? null;
+const charaOptions = computed(() => {
+  return (
+    situation.value?.participate.selectable_chara_list.map((c) => ({
+      label: c.name.name,
+      value: c.id,
+    })) ?? []
+  );
 });
 
-// LASTWOLF APIには発言制限情報がないため固定値
-const maxMessageLength = computed(() => 400);
-const maxLineCount = computed(() => 20);
-
-// 改行を除いた文字数
-const charCountWithoutNewlines = computed(() => {
-  return form.joinMessage.replace(/\n/g, "").length;
+const skillOptions = computed(() => {
+  return (
+    situation.value?.skill_request.selectable_skill_list.map((s) => ({
+      label: s.name,
+      value: s.code,
+    })) ?? []
+  );
 });
 
-// 行数（改行数 + 1）
-const lineCount = computed(() => {
-  if (!form.joinMessage) return 0;
-  return form.joinMessage.split("\n").length;
+const requiredJoinPassword = computed(() => {
+  return village.value?.setting.password.join_password_required ?? false;
 });
 
-// 行数超過判定
-const isLineExceeded = computed(() => lineCount.value > maxLineCount.value);
-
-// 文字数超過判定
-const isCharExceeded = computed(() => charCountWithoutNewlines.value > maxMessageLength.value);
-
-// キャラ選択用オプション
-const charaOptions = computed(() =>
-  selectableCharaList.value.map((chara) => ({
-    label: chara.name.name,
-    value: chara.id,
-  })),
-);
-
-// 選択可能な役職リスト
-const selectableSkillList = computed(
-  () => situation.value?.skill_request.selectable_skill_list ?? [],
-);
-
-// 役職選択用オプション
-const skillOptions = computed(() =>
-  selectableSkillList.value.map((skill) => ({
-    label: skill.name,
-    value: skill.code,
-  })),
-);
-
-// 役職希望が可能か
-const availableSkillRequest = computed(
-  () => situation.value?.skill_request.available_skill_request ?? false,
-);
-
-// 入村パスワードが必要か
-const requiredJoinPassword = computed(
-  () => village.value?.setting.password.join_password_required ?? false,
-);
-
-// キャラ名変更が可能か
-const canChangeName = computed(() => {
-  if (!form.charaId) return false;
-  const chara = selectableCharaList.value.find((c) => c.id === form.charaId);
-  if (!chara) return false;
-  const charachip = charachips.value?.find((c) => c.id === chara.charachip_id);
-  return false;
-});
-
-// 参加ボタンを押下できるか
 const canSubmit = computed(() => {
-  if (form.charaId === null) return false;
-  if (form.charaName.length < 1 || form.charaName.length > 40) return false;
-  if (form.charaShortName.length !== 1) return false;
-  if (!form.firstRequestSkill) return false;
-  if (!form.secondRequestSkill) return false;
-  if (!form.joinMessage || form.joinMessage.length < 1) return false;
-  if (isLineExceeded.value) return false;
-  if (isCharExceeded.value) return false;
-  if (requiredJoinPassword.value && !form.joinPassword) return false;
-  return true;
+  return (
+    charaId.value != null &&
+    firstRequestSkillCode.value != null &&
+    secondRequestSkillCode.value != null
+  );
 });
 
-// キャラ選択モーダルを開く
-const openCharaSelectModal = () => {
+const participate = async () => {
+  submitting.value = true;
+  try {
+    await apiCall(`/village/${villageStore.villageId}/participate`, {
+      method: "POST",
+      body: {
+        chara_id: charaId.value,
+        first_request_skill: firstRequestSkillCode.value,
+        second_request_skill: secondRequestSkillCode.value,
+        join_password: joinPassword.value,
+      },
+    });
+    location.reload();
+  } catch (error: unknown) {
+    const fetchError = error as { status?: number; data?: { message?: string } };
+    if (fetchError.status === 404 && fetchError.data) {
+      toast.add({ message: fetchError.data.message ?? "エラーが発生しました", type: "error" });
+    }
+  } finally {
+    submitting.value = false;
+  }
+};
+
+const openCharaModal = () => {
   isCharaSelectModalOpen.value = true;
 };
 
-// キャラ選択時（モーダルから）
-const onCharaSelect = (chara: DeepReadonly<Chara> | Chara) => {
-  form.charaId = chara.id;
-  form.charaName = chara.name.name;
-  form.charaShortName = chara.name.short_name;
+const charaSelect = (id: number) => {
+  charaId.value = id;
   isCharaSelectModalOpen.value = false;
-};
-
-// キャラ変更時（セレクトボックスから）
-const onCharaChange = () => {
-  const chara = selectableCharaList.value.find((c) => c.id === form.charaId);
-  if (chara) {
-    form.charaName = chara.name.name;
-    form.charaShortName = chara.name.short_name;
-  }
-};
-
-// 入村確認
-const handleConfirm = async () => {
-  if (!canSubmit.value || form.charaId === null) return;
-
-  const formData: ParticipateForm = {
-    charaId: form.charaId,
-    charaName: form.charaName,
-    charaShortName: form.charaShortName,
-    firstRequestSkill: form.firstRequestSkill,
-    secondRequestSkill: form.secondRequestSkill,
-    joinMessage: form.joinMessage,
-    joinPassword: form.joinPassword,
-    spectator: false,
-  };
-
-  const message = await confirmParticipate(formData);
-  if (message) {
-    confirmMessage.value = message;
-    isConfirmModalOpen.value = true;
-  }
-};
-
-// 入村実行
-const handleParticipate = async () => {
-  if (form.charaId === null) return;
-
-  const formData: ParticipateForm = {
-    charaId: form.charaId,
-    charaName: form.charaName,
-    charaShortName: form.charaShortName,
-    firstRequestSkill: form.firstRequestSkill,
-    secondRequestSkill: form.secondRequestSkill,
-    joinMessage: form.joinMessage,
-    joinPassword: form.joinPassword,
-    spectator: false,
-  };
-
-  const success = await participate(formData);
-  if (success) {
-    isConfirmModalOpen.value = false;
-    // refreshはActionContainer側で行うため、ここではemitのみ
-    emit("complete");
-  }
 };
 </script>

@@ -1,6 +1,8 @@
 import type { User, UserCredential } from "firebase/auth";
-import type { MyselfPlayerView } from "~/lib/api/types";
+import type { components } from "~/lib/api/schema";
 import * as firebaseAuth from "~/lib/firebase/auth";
+
+type MyselfPlayerView = components["schemas"]["MyselfPlayerView"];
 
 /**
  * 認証操作を提供するComposable
@@ -12,6 +14,7 @@ export const useAuth = () => {
 
   /**
    * 認証状態の初期化
+   * Firebase認証状態の変更を監視し、Storeを更新する
    */
   const initializeAuth = () => {
     firebaseAuth.onAuthStateChanged((firebaseUser) => {
@@ -35,23 +38,15 @@ export const useAuth = () => {
   };
 
   /**
-   * Googleアカウントをリンク
-   */
-  const linkWithGoogle = async (): Promise<UserCredential> => {
-    return await firebaseAuth.linkWithGoogle();
-  };
-
-  /**
-   * Twitterアカウントをリンク
-   */
-  const linkWithTwitter = async (): Promise<UserCredential> => {
-    return await firebaseAuth.linkWithTwitter();
-  };
-
-  /**
    * ログアウト
    */
   const logout = async () => {
+    // Cookieを削除
+    const tokenCookie = useCookie("id-token");
+    const checkDateCookie = useCookie("id-token-check-date");
+    tokenCookie.value = null;
+    checkDateCookie.value = null;
+
     await firebaseAuth.signOut();
     authStore.setUser(null);
     authStore.setMyselfPlayer(null);
@@ -70,51 +65,30 @@ export const useAuth = () => {
   };
 
   /**
-   * ユーザー登録処理（必要に応じて）
+   * ログイン後のトークン・プレイヤー情報の更新
+   * 旧nuxt2のLOGINOUTアクションに相当
    */
-  const registerUserIfNeeded = async (result: UserCredential) => {
-    if (!result?.user) return;
-
-    const firebaseUser = result.user;
-    let twitterUsername: string | null = null;
-
-    // Twitter usernameを取得
-    type FirebaseUserWithReloadInfo = typeof firebaseUser & {
-      reloadUserInfo?: {
-        providerUserInfo?: Array<{
-          providerId: string;
-          screenName?: string;
-        }>;
-      };
-    };
-    const firebaseUserWithInfo = firebaseUser as FirebaseUserWithReloadInfo;
-    twitterUsername =
-      firebaseUserWithInfo.reloadUserInfo?.providerUserInfo?.find(
-        (providerUserInfo) => providerUserInfo.providerId === "twitter.com",
-      )?.screenName ?? null;
-
-    // APIでユーザー登録
-    if (twitterUsername || firebaseUser.uid) {
-      try {
-        await apiCall("/player", {
-          method: "POST",
-          body: {
-            uid: firebaseUser.uid,
-            twitter_user_name: twitterUsername,
-          },
-        });
-      } catch (error) {
-        console.error("Failed to register user:", error);
-      }
+  const loginout = async (firebaseUser: User | null) => {
+    if (!firebaseUser) {
+      // ログアウト処理
+      const tokenCookie = useCookie("id-token");
+      const checkDateCookie = useCookie("id-token-check-date");
+      tokenCookie.value = null;
+      checkDateCookie.value = null;
+      authStore.setUser(null);
+      authStore.setMyselfPlayer(null);
+      return;
     }
 
-    // トークンをCookieに保存
-    const idToken = await firebaseUser.getIdToken(false);
-    const idTokenCookie = useCookie("id-token", {
+    // 新しいIDトークンを取得
+    const idToken = await firebaseUser.getIdToken(true);
+
+    // Cookieに保存
+    const tokenCookie = useCookie("id-token", {
       maxAge: 60 * 60 * 24 * 30,
       sameSite: "strict",
     });
-    idTokenCookie.value = idToken;
+    tokenCookie.value = idToken;
 
     // 1時間で有効期限が切れるので50分後に再取得させる
     const checkDateCookie = useCookie("id-token-check-date", {
@@ -124,12 +98,11 @@ export const useAuth = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() + 50);
     checkDateCookie.value = now.toISOString();
-  };
 
-  /**
-   * 認証情報の更新（プレイヤー情報取得）
-   */
-  const refreshAuth = async () => {
+    // まずuserをセットしてAPIが叩けるようにする
+    authStore.setUser(firebaseUser);
+
+    // プレイヤー情報を取得
     try {
       const myPlayer = await apiCall<MyselfPlayerView>("/my-player");
       authStore.setMyselfPlayer(myPlayer);
@@ -139,10 +112,15 @@ export const useAuth = () => {
   };
 
   /**
-   * 認証トークンの取得
+   * 認証情報の更新（プレイヤー情報再取得）
    */
-  const getAuthToken = async (): Promise<string | null> => {
-    return authStore.getAuthToken();
+  const refreshAuth = async () => {
+    try {
+      const myPlayer = await apiCall<MyselfPlayerView>("/my-player");
+      authStore.setMyselfPlayer(myPlayer);
+    } catch (error) {
+      console.error("Failed to fetch player:", error);
+    }
   };
 
   return {
@@ -156,12 +134,9 @@ export const useAuth = () => {
     initializeAuth,
     signInWithGoogle,
     signInWithTwitter,
-    linkWithGoogle,
-    linkWithTwitter,
     logout,
     waitForAuth,
-    registerUserIfNeeded,
+    loginout,
     refreshAuth,
-    getAuthToken,
   };
 };

@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import type { User } from "firebase/auth";
-import type { MyselfPlayerView } from "~/lib/api/types";
+import type { components } from "~/lib/api/schema";
+
+type MyselfPlayerView = components["schemas"]["MyselfPlayerView"];
 
 /**
  * 認証状態管理Store

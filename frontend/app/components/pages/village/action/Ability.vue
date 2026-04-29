@@ -1,135 +1,199 @@
 <template>
-  <ActionPanel :title="ability.type.name" :panel-key="panelKey">
-    <!-- 現在のセット先 -->
-    <p class="text-sm text-gray-700 dark:text-gray-300">
-      現在の{{ ability.type.name }}先: {{ currentTargetName }}
+  <div>
+    <hr class="border-gray-500 my-2" />
+    <p class="mb-2 font-bold">能力行使</p>
+    <p class="mb-2">
+      <span v-for="(line, idx) in abilityMessageLines" :key="idx">
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <span v-html="line" /><br />
+      </span>
     </p>
 
-    <!-- エラーメッセージ -->
-    <div
-      v-if="abilityError"
-      class="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
+    <div class="mb-2">
+      <label class="block text-xs mb-1">対象</label>
+      <div class="flex gap-1">
+        <UiFormFormSelect
+          v-model="participantId"
+          :options="targetOptions"
+          placeholder="選択してください"
+          class="flex-1"
+        />
+        <button
+          class="px-2 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
+          @click="openSelectModal"
+        >
+          画像で選択
+        </button>
+      </div>
+    </div>
+
+    <UiButtonIndex
+      button-type="primary"
+      :disabled="!canSubmit || submitting"
+      @click="confirmSetAbility"
     >
-      {{ abilityError }}
-    </div>
+      {{ abilityButtonString }}
+    </UiButtonIndex>
 
-    <!-- ターゲット選択 -->
-    <FormGroup label="対象">
-      <FormSelect
-        v-model="selectedTargetId"
-        :options="targetOptions"
-        :disabled="!canSelectTarget"
-        placeholder="選択してください"
-        size="sm"
-      />
-    </FormGroup>
+    <!-- 参加者選択モーダル -->
+    <UiModalModal v-model="isOpenSelectModal" title="画像から選択">
+      <div class="flex flex-wrap">
+        <div
+          v-for="p in targetList"
+          :key="p.id"
+          class="text-center border border-gray-200 rounded-2xl p-1 m-1 w-40 cursor-pointer hover:border-[#3991f4] hover:font-bold text-xs"
+          @click="selectParticipant(p.id)"
+        >
+          <img
+            :src="p.chara.image.image_url"
+            :alt="p.chara.name.name"
+            :class="p.dead ? 'opacity-30' : ''"
+            class="mx-auto"
+          />
+          <p :style="charaNameStyle(p)">{{ p.chara.name.name }}</p>
+          <p v-if="p.dead" class="text-red-600">
+            {{ `${p.dead.village_day.day}d${p.dead.reason}` }}
+          </p>
+        </div>
+      </div>
+    </UiModalModal>
 
-    <!-- セットボタン -->
-    <div class="flex justify-end">
-      <UiButton :disabled="!canSubmit" :loading="submitting" @click="handleSetAbility">
-        {{ ability.type.name }}セットする
-      </UiButton>
-    </div>
-  </ActionPanel>
+    <!-- 確認ダイアログ -->
+    <UiModalModal v-model="isConfirmOpen" title="確認">
+      <p>対象は{{ confirmTargetName }}でよろしいですか？</p>
+      <template #footer>
+        <button
+          class="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          @click="isConfirmOpen = false"
+        >
+          キャンセル
+        </button>
+        <UiButtonIndex button-type="primary" @click="setAbility">
+          {{ abilityButtonString }}
+        </UiButtonIndex>
+      </template>
+    </UiModalModal>
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { DeepReadonly } from "vue";
-import ActionPanel from "./ActionPanel.vue";
-import FormGroup from "~/components/ui/form/FormGroup.vue";
-import FormSelect from "~/components/ui/form/FormSelect.vue";
-import UiButton from "~/components/ui/button/index.vue";
-import { useAbility } from "~/composables/village/action/useAbility";
-import { useActionReset } from "~/composables/village/action/useActionReset";
 import type { components } from "~/lib/api/schema";
+import { getMessageColor } from "~/lib/api/message-color";
 
-type VillageAbilitySituationView = components["schemas"]["VillageAbilitySituationView"];
+type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
+type VillageView = components["schemas"]["VillageView"];
+type VillageParticipantView = components["schemas"]["VillageParticipantView"];
 
 interface Props {
-  ability: DeepReadonly<VillageAbilitySituationView> | VillageAbilitySituationView;
+  abilityType: string;
 }
 
 const props = defineProps<Props>();
 
-const emit = defineEmits<{
-  complete: [abilityName: string];
-}>();
+const villageStore = useVillageStore();
+const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
+const village = computed(() => villageStore.village as VillageView | null);
+const { apiCall } = useApi();
+const toast = useToast();
 
-// Composables
-const { submitting, error: abilityError, setAbility, clearError } = useAbility();
-const { onReset } = useActionReset();
+const submitting = ref(false);
+const participantId = ref<number | null>(null);
+const isOpenSelectModal = ref(false);
+const isConfirmOpen = ref(false);
+const confirmTargetName = ref("");
 
-// パネルキー（能力タイプコードを使用）
-const panelKey = computed(() => `ability-${props.ability.type.code}`);
-
-// 現在のターゲットの名前
-const currentTargetName = computed(() => {
-  return "なし";
+const targetList = computed((): VillageParticipantView[] => {
+  return (
+    situation.value?.ability.list.find((a) => a.type.code === props.abilityType)?.target_list ?? []
+  );
 });
 
-// ターゲットリスト（セレクトボックス用）
 const targetOptions = computed(() => {
-  const options: Array<{ label: string; value: number | string }> = [];
-
-  if (props.ability.available_no_target) {
-    options.push({ label: "なし", value: "none" });
-  }
-
-  props.ability.target_list.forEach((p) => {
-    options.push({
-      label: p.chara.name.name,
-      value: p.id,
-    });
-  });
-
-  return options;
+  return targetList.value.map((p) => ({
+    label: p.chara.name.name,
+    value: p.id,
+  }));
 });
 
-// 選択されたターゲットID
-const selectedTargetId = ref<number | string | null>(
-  props.ability.available_no_target ? "none" : null,
-);
+const canSubmit = computed(() => participantId.value != null);
 
-// ターゲット選択可能かどうか
-const canSelectTarget = computed(() => {
-  if (!props.ability.usable) return false;
-  // ターゲットリストが空の場合は選択不可（Nuxt2版と同様）
-  return props.ability.target_list.length > 0;
+const abilityMessageLines = computed(() => {
+  let message = "";
+  const type = props.abilityType;
+  if (type === "ATTACK") {
+    message = "襲撃対象を選択してください。";
+  } else if (type === "DIVINE") {
+    message = "占う対象を選択してください。";
+  } else if (type === "GUARD") {
+    message = "護衛対象を選択してください。";
+  }
+  message += "\n一度決定すると取り消すことができないため注意してください。";
+  if (type === "GUARD" && !village.value?.setting.rules.available_same_target_guard) {
+    message += "\nまた、この村では、2日連続同じ対象を護衛できないため注意してください。";
+  }
+  if (type === "ATTACK") {
+    message += "\n襲撃は誰か1人が行使すると他の人は操作不可能になります。\n";
+  }
+  message += "\n能力行使しなかった場合突然死するため、必ず能力を行使してください。";
+  if (type === "ATTACK") {
+    message += "\n襲撃は誰か1人が行使すれば全員突然死しません。";
+  }
+  return message.replace(/\n/gm, "<br>").split("<br>");
 });
 
-// 送信可能かどうか
-const canSubmit = computed(() => {
-  if (submitting.value) return false;
-  if (!props.ability.usable) return false;
-  // ターゲットリストが空の場合は送信不可（Nuxt2版と同様）
-  if (props.ability.target_list.length === 0) return false;
-  // 「なし」が許可されている場合は、ターゲット未選択でもOK
-  if (props.ability.available_no_target) {
-    return true;
+const abilityButtonString = computed(() => {
+  switch (props.abilityType) {
+    case "ATTACK":
+      return "襲う";
+    case "DIVINE":
+      return "占う";
+    case "GUARD":
+      return "護衛する";
+    default:
+      return "決定";
   }
-  // 「なし」が許可されていない場合は、ターゲットが選択されている必要がある
-  return selectedTargetId.value != null && selectedTargetId.value !== "none";
 });
 
-// 能力セット実行
-const handleSetAbility = async () => {
-  if (!canSubmit.value) return;
-
-  clearError();
-
-  // 'none'の場合はnullとして送信
-  const targetId =
-    selectedTargetId.value === "none" ? null : (selectedTargetId.value as number | null);
-  const success = await setAbility(props.ability.type.code, targetId);
-
-  if (success) {
-    emit("complete", props.ability.type.name);
-  }
+const charaNameStyle = (p: VillageParticipantView) => {
+  if (!village.value) return {};
+  const color = getMessageColor(village.value, p);
+  return color ? { color } : {};
 };
 
-// リセット処理を登録
-onReset(() => {
-  clearError();
-  selectedTargetId.value = props.ability.available_no_target ? "none" : null;
-});
+const openSelectModal = () => {
+  isOpenSelectModal.value = true;
+};
+
+const selectParticipant = (id: number) => {
+  participantId.value = id;
+  isOpenSelectModal.value = false;
+};
+
+const confirmSetAbility = () => {
+  const target = targetList.value.find((p) => p.id === participantId.value);
+  if (!target) return;
+  confirmTargetName.value = target.chara.name.name;
+  isConfirmOpen.value = true;
+};
+
+const setAbility = async () => {
+  submitting.value = true;
+  isConfirmOpen.value = false;
+  try {
+    await apiCall(`/village/${villageStore.villageId}/ability`, {
+      method: "POST",
+      body: {
+        target_id: participantId.value,
+        ability_type: props.abilityType,
+      },
+    });
+  } catch (error: unknown) {
+    const fetchError = error as { status?: number; data?: { message?: string } };
+    if (fetchError.status === 404 && fetchError.data) {
+      toast.add({ message: fetchError.data.message ?? "エラーが発生しました", type: "error" });
+    }
+  } finally {
+    submitting.value = false;
+  }
+};
 </script>

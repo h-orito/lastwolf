@@ -1,337 +1,100 @@
 <template>
-  <section class="py-8">
-    <div class="container mx-auto px-4">
-      <LoadingSpinner v-if="loadingRecords" :message="'戦績を読み込み中...'" :fixed="true" />
-      <div v-if="!loadingRecords && playerRecords">
-        <h1 v-if="playerName" class="mb-8 text-xl font-semibold">
-          {{ playerName }}
-        </h1>
+  <section class="py-8 px-4">
+    <div class="max-w-5xl mx-auto text-left">
+      <!-- ローディング中 -->
+      <div v-if="loadingRecords" class="py-8 text-center text-gray-500 text-sm">読み込み中...</div>
 
-        <!-- 自己紹介 -->
+      <!-- データ表示 -->
+      <template v-else-if="playerRecords">
+        <h1 v-if="playerName" class="text-lg font-bold mb-6">{{ playerName }}</h1>
+
+        <!-- 総合戦績 -->
         <div class="mb-8">
-          <h2 class="mb-4 text-lg font-semibold">自己紹介</h2>
-          <div class="rounded-lg bg-white p-4 shadow">
-            <p class="mb-4 text-sm text-gray-700">
-              他人狼サイトでのID: {{ otherSiteName || "未登録" }}
-            </p>
-            <div v-if="introduction" class="text-sm text-gray-700">
-              <p
-                v-for="(intro, index) in escapeAndSplitMessage(introduction)"
-                :key="index"
-                class="wrap-break-word"
-                v-html="intro"
-              ></p>
-            </div>
-            <div v-else class="text-sm text-gray-500">自己紹介が登録されていません</div>
-            <UiButton
-              v-if="isMyself"
-              class="mt-4"
-              color="primary"
-              size="sm"
-              @click="isModalOpen = true"
-            >
-              編集する
-            </UiButton>
-          </div>
+          <h2 class="text-base font-semibold mb-2">総合戦績</h2>
+          <p class="text-sm">{{ wholeResult }}</p>
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-2">
-          <!-- 総合戦績 -->
-          <div>
-            <h2 class="mb-4 text-lg font-semibold">総合戦績</h2>
-            <div class="rounded-lg bg-white p-4 shadow">
-              <div class="flex flex-col items-center">
-                <DoughnutChart
-                  :win-count="playerRecords.whole_record.win_count"
-                  :lose-count="wholeLoseCount"
-                  label="全体"
-                  :size="120"
-                />
-                <p class="mt-3 text-sm text-gray-700">{{ wholeResult }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 陣営戦績 -->
-          <div>
-            <h2 class="mb-4 text-lg font-semibold">陣営戦績</h2>
-            <div class="rounded-lg bg-white p-4 shadow">
-              <div class="grid grid-cols-2 gap-4">
-                <div
-                  v-for="campRecord in playerRecords.camp_record_list"
-                  :key="campRecord.camp.code"
-                  class="flex flex-col items-center"
-                >
-                  <DoughnutChart
-                    :win-count="campRecord.win_count"
-                    :lose-count="campLoseCount(campRecord)"
-                    :label="campRecord.camp.name"
-                    :size="100"
-                  />
-                  <p class="mt-2 text-xs text-gray-600">
-                    {{ campResult(campRecord) }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- 陣営戦績 -->
+        <div class="mb-8">
+          <h2 class="text-base font-semibold mb-2">陣営戦績</h2>
+          <CampRecords :camp-records="playerRecords.camp_record_list" />
         </div>
 
         <!-- 役職戦績 -->
-        <div class="mt-8">
-          <h2 class="mb-4 text-lg font-semibold">役職戦績</h2>
-          <div class="rounded-lg bg-white p-4 shadow">
-            <div class="grid grid-cols-4 gap-4">
-              <div
-                v-for="skillRecord in playerRecords.skill_record_list"
-                :key="skillRecord.skill.code"
-                class="flex flex-col items-center"
-              >
-                <DoughnutChart
-                  :win-count="skillRecord.win_count"
-                  :lose-count="skillLoseCount(skillRecord)"
-                  :label="skillRecord.skill.name"
-                  :size="80"
-                />
-                <p class="mt-2 text-xs text-gray-600">
-                  {{ skillResult(skillRecord) }}
-                </p>
-              </div>
-            </div>
-          </div>
+        <div class="mb-8">
+          <h2 class="text-base font-semibold mb-2">役職戦績</h2>
+          <SkillRecords :skill-records="playerRecords.skill_record_list" />
         </div>
 
         <!-- 参加した村 -->
-        <div class="mt-8">
-          <h2 class="mb-4 text-xl font-semibold">参加した村</h2>
-          <div class="overflow-hidden rounded-lg bg-white shadow">
-            <table class="min-w-full divide-y divide-gray-200 text-xs">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-2 py-2 text-left font-semibold text-gray-900">村名</th>
-                  <th class="px-2 py-2 text-left font-semibold text-gray-900">人数</th>
-                  <th class="px-2 py-2 text-left font-semibold text-gray-900">キャラ</th>
-                  <th class="px-2 py-2 text-left font-semibold text-gray-900">役職</th>
-                  <th class="px-2 py-2 text-left font-semibold text-gray-900">生死</th>
-                  <th class="px-2 py-2 text-left font-semibold text-gray-900">陣営</th>
-                  <th class="px-2 py-2 text-left font-semibold text-gray-900">勝敗</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 bg-white">
-                <tr v-for="pv in playerRecords.participate_village_list" :key="pv.village.id">
-                  <td class="px-2 py-2 text-left">
-                    <NuxtLink
-                      :to="`/village?id=${pv.village.id}`"
-                      class="text-blue-600 hover:text-blue-800 hover:underline"
-                    >
-                      {{ pv.village.name }}
-                    </NuxtLink>
-                  </td>
-                  <td class="px-2 py-2 text-gray-900">
-                    {{ getParticipantCount(pv) }}
-                  </td>
-                  <td class="px-2 py-2 text-gray-900">
-                    {{ pv.participant.chara.name.name }}
-                  </td>
-                  <td class="px-2 py-2 text-gray-900">
-                    {{ getSkillName(pv) }}
-                  </td>
-                  <td class="px-2 py-2 text-gray-900">
-                    {{ getStatus(pv) }}
-                  </td>
-                  <td class="px-2 py-2 text-gray-900">
-                    {{ getCampName(pv) }}
-                  </td>
-                  <td class="px-2 py-2">
-                    <span
-                      v-if="pv.participant.winlose?.code === 'WIN'"
-                      class="font-medium text-blue-600"
-                    >
-                      勝利
-                    </span>
-                    <span v-else-if="pv.participant.winlose" class="font-medium text-red-600">
-                      敗北
-                    </span>
-                    <span v-else class="text-gray-500">-</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="mb-8">
+          <h2 class="text-xl font-semibold mb-2">参加した村</h2>
+          <ParticipateVillageList
+            :participate-village-list="playerRecords.participate_village_list"
+          />
         </div>
-      </div>
+      </template>
 
       <!-- データなし -->
-      <div v-if="!loadingRecords && !playerRecords" class="rounded-lg bg-white p-8 shadow">
-        <div class="text-center text-gray-500">
-          <p>プレイヤー情報が見つかりませんでした</p>
-        </div>
+      <div v-else class="py-8 text-center text-gray-500 text-sm">
+        <p>戦績が見つかりませんでした</p>
       </div>
     </div>
-
-    <!-- 自己紹介編集モーダル -->
-    <ModalIntro
-      v-if="playerRecords"
-      v-model="isModalOpen"
-      :current-nickname="playerRecords.player.nickname"
-      :current-other-site-name="undefined"
-      :current-intro="undefined"
-      @refresh="refresh"
-    />
   </section>
 </template>
 
 <script setup lang="ts">
-import LoadingSpinner from "~/components/ui/feedback/LoadingSpinner.vue";
-import UiButton from "~/components/ui/button/index.vue";
-import type {
-  PlayerRecordsView,
-  CampRecord,
-  SkillRecord,
-  ParticipateVillageView,
-} from "~/lib/api/types";
+import CampRecords from "~/components/pages/record/CampRecords.vue";
+import SkillRecords from "~/components/pages/record/SkillRecords.vue";
+import ParticipateVillageList from "~/components/pages/record/ParticipateVillageList.vue";
+import type { components } from "~/lib/api/schema";
 
-// 遅延ローディング: DoughnutChartはChart.jsを使用するため重い
-const DoughnutChart = defineAsyncComponent(
-  () => import("~/components/pages/player-record/DoughnutChart.vue"),
-);
-// 遅延ローディング: ModalIntroは編集ボタンクリック時まで不要
-const ModalIntro = defineAsyncComponent(
-  () => import("~/components/pages/player-record/ModalIntro.vue"),
-);
+type PlayerRecordsView = components["schemas"]["PlayerRecordsView"];
 
-// ルートパラメータ
+const meta = buildPageMeta({ title: "戦績" });
+useSeoMeta(meta);
+
 const route = useRoute();
-const playerId = computed(() => route.query.id as string | undefined);
-
-// API
 const { apiCall } = useApi();
 
-// 認証
-const { myselfPlayer } = useAuth();
-
-// SEO設定
-useHead({
-  title: "ユーザ戦績",
+const playerId = computed(() => {
+  const id = route.query.id;
+  if (typeof id === "string") return parseInt(id, 10);
+  return 0;
 });
 
-// データ
 const playerRecords = ref<PlayerRecordsView | null>(null);
-const loadingRecords = ref(false);
-const isModalOpen = ref(false);
+const loadingRecords = ref(true);
 
-// computed
 const playerName = computed(() => {
   if (!playerRecords.value) return "";
   const player = playerRecords.value.player;
-  if (player.twitter_user_name) {
-    return `${player.nickname}@${player.twitter_user_name}`;
-  }
-  return player.nickname;
-});
-
-const otherSiteName = computed((): string | null => null);
-
-const introduction = computed((): string | null => null);
-
-const wholeLoseCount = computed(() => {
-  if (!playerRecords.value) return 0;
-  const wholeRecord = playerRecords.value.whole_record;
-  return wholeRecord.participate_count - wholeRecord.win_count;
+  return `${player.nickname}@${player.twitter_user_name}`;
 });
 
 const wholeResult = computed(() => {
   if (!playerRecords.value) return "";
-  const wholeRecord = playerRecords.value.whole_record;
-  return titleString(wholeRecord.win_count, wholeLoseCount.value, wholeRecord.win_rate);
+  const record = playerRecords.value.whole_record;
+  return `${record.win_count}勝 ${record.lose_count}負 ${record.draw_count}分 (${toPercent(record.win_rate)}%/${toPercent(record.lose_rate)}%/${toPercent(record.draw_rate)}%)`;
 });
 
-// 自分自身かどうか
-const isMyself = computed(() => {
-  if (!myselfPlayer.value || !playerRecords.value) return false;
-  return myselfPlayer.value.id === playerRecords.value.player.id;
-});
-
-// メソッド
-const titleString = (winCount: number, loseCount: number, winRate: number) => {
-  return `${winCount}勝${loseCount}負 (${Math.round(winRate * 100)}%)`;
+const toPercent = (rate: number): number => {
+  return Math.round(rate * 1000) / 10;
 };
 
-const campLoseCount = (campRecord: CampRecord) => {
-  return campRecord.participate_count - campRecord.win_count;
-};
-
-const campResult = (campRecord: CampRecord) => {
-  return titleString(campRecord.win_count, campLoseCount(campRecord), campRecord.win_rate);
-};
-
-const skillLoseCount = (skillRecord: SkillRecord) => {
-  return skillRecord.participate_count - skillRecord.win_count;
-};
-
-const skillResult = (skillRecord: SkillRecord) => {
-  return titleString(skillRecord.win_count, skillLoseCount(skillRecord), skillRecord.win_rate);
-};
-
-// 参加した村の表示用ヘルパー関数
-const getParticipantCount = (pv: ParticipateVillageView) => {
-  return `${pv.village.participants.count}人`;
-};
-
-const getSkillName = (pv: ParticipateVillageView) => {
-  return pv.participant.skill?.name ?? "-";
-};
-
-const getStatus = (pv: ParticipateVillageView) => {
-  if (!pv.participant.dead) return "生存";
-  const deadDay = pv.participant.dead.village_day.day;
-  const reason = pv.participant.dead.reason;
-  return `${deadDay}d ${reason}死`;
-};
-
-const getCampName = (pv: ParticipateVillageView) => {
-  return pv.participant.skill?.win_judge_camp?.name ?? "";
-};
-
-const escapeAndSplitMessage = (message: string): string[] => {
-  return message
-    .replace(/(\r\n|\n|\r)/gm, "<br>")
-    .split("<br>")
-    .map((item) => {
-      item = item
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-      return item;
-    });
-};
-
-const loadRecord = async () => {
+onMounted(async () => {
   if (!playerId.value) {
-    console.error("プレイヤーIDが指定されていません");
+    loadingRecords.value = false;
     return;
   }
 
   loadingRecords.value = true;
   try {
-    const response = await apiCall<PlayerRecordsView>(`/player/${playerId.value}/record`);
-    playerRecords.value = response;
-  } catch (error) {
-    console.error("プレイヤー戦績の取得に失敗しました:", error);
+    playerRecords.value = await apiCall<PlayerRecordsView>(`/player/${playerId.value}/record`);
+  } catch {
     playerRecords.value = null;
   } finally {
     loadingRecords.value = false;
   }
-};
-
-const refresh = async () => {
-  await loadRecord();
-};
-
-// データ取得
-onMounted(async () => {
-  await loadRecord();
 });
 </script>

@@ -4,12 +4,14 @@ export const VILLAGE_STATUS = {
   CANCEL: "CANCEL",
   /** 終了 */
   COMPLETED: "COMPLETED",
-  /** エピローグ */
+  /** 決着 */
   EPILOGUE: "EPILOGUE",
   /** 進行中 */
   IN_PROGRESS: "IN_PROGRESS",
-  /** プロローグ */
+  /** 募集中 */
   PROLOGUE: "PROLOGUE",
+  /** 点呼中 */
+  ROLLCALLING: "ROLLCALLING",
 } as const;
 
 export type VillageStatusCode = (typeof VILLAGE_STATUS)[keyof typeof VILLAGE_STATUS];
@@ -18,7 +20,8 @@ export type VillageStatusCode = (typeof VILLAGE_STATUS)[keyof typeof VILLAGE_STA
 export const VILLAGE_STATUS_NAME: Record<VillageStatusCode, string> = {
   [VILLAGE_STATUS.CANCEL]: "廃村",
   [VILLAGE_STATUS.COMPLETED]: "終了",
-  [VILLAGE_STATUS.EPILOGUE]: "エピローグ",
+  [VILLAGE_STATUS.EPILOGUE]: "決着",
   [VILLAGE_STATUS.IN_PROGRESS]: "進行中",
-  [VILLAGE_STATUS.PROLOGUE]: "プロローグ",
+  [VILLAGE_STATUS.PROLOGUE]: "募集中",
+  [VILLAGE_STATUS.ROLLCALLING]: "点呼中",
 };

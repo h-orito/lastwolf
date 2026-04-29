@@ -1,24 +1,19 @@
 import { defineStore } from "pinia";
-import type {
-  VillageView,
-  SituationAsParticipantView,
-  VillageLatestView,
-  VillageDayView,
-  CharachipView,
-} from "~/lib/api/types";
+import type { components } from "~/lib/api/schema";
+
+type VillageView = components["schemas"]["VillageView"];
+type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
+type CharaImage = components["schemas"]["CharaImage"];
 
 /**
  * 村の状態管理Store
  */
 export const useVillageStore = defineStore("village", () => {
   // State
-  const villageId = ref<number | null>(null);
+  const villageId = ref<number>(0);
   const village = ref<VillageView | null>(null);
   const situation = ref<SituationAsParticipantView | null>(null);
-  const villageLatest = ref<VillageLatestView | null>(null);
-  const currentVillageDay = ref<VillageDayView | null>(null);
-  const charachips = ref<CharachipView[]>([]);
-  const existsNewMessages = ref<boolean>(false);
+  const participantIdImgMap = ref<Map<number, CharaImage>>(new Map());
 
   // Computed
   const latestDay = computed(() => {
@@ -30,55 +25,31 @@ export const useVillageStore = defineStore("village", () => {
 
   // Actions
   /**
-   * 初期化
+   * 村情報を初期化
    */
-  const init = (id: number) => {
+  const initVillage = (id: number, v: VillageView) => {
     villageId.value = id;
-    village.value = null;
-    situation.value = null;
-    villageLatest.value = null;
-    currentVillageDay.value = null;
-    charachips.value = [];
-    existsNewMessages.value = false;
-  };
-
-  /**
-   * 村情報を保存
-   */
-  const saveVillage = (v: VillageView) => {
     village.value = v;
+    participantIdImgMap.value = new Map(
+      v.participants.member_list.map((p) => [p.id, p.chara.image]),
+    );
   };
 
   /**
    * 参加状況を保存
    */
-  const saveSituation = (s: SituationAsParticipantView) => {
+  const initSituation = (s: SituationAsParticipantView) => {
     situation.value = s;
   };
 
   /**
-   * 最新情報を保存
+   * 村情報をリセット
    */
-  const saveVillageLatest = (latest: VillageLatestView) => {
-    villageLatest.value = latest;
-  };
-
-  /**
-   * 現在表示中の日付を保存
-   */
-  const saveCurrentVillageDay = (day: VillageDayView | null) => {
-    currentVillageDay.value = day;
-  };
-
-  /**
-   * キャラチップ情報を保存
-   */
-  const saveCharachips = (chips: CharachipView[]) => {
-    charachips.value = chips;
-  };
-
-  const saveExistsNewMessages = (exists: boolean) => {
-    existsNewMessages.value = exists;
+  const terminateVillage = () => {
+    villageId.value = 0;
+    village.value = null;
+    situation.value = null;
+    participantIdImgMap.value = new Map();
   };
 
   return {
@@ -86,21 +57,14 @@ export const useVillageStore = defineStore("village", () => {
     villageId: readonly(villageId),
     village: readonly(village),
     situation: readonly(situation),
-    villageLatest: readonly(villageLatest),
-    currentVillageDay: readonly(currentVillageDay),
-    charachips: readonly(charachips),
-    existsNewMessages: readonly(existsNewMessages),
+    participantIdImgMap: readonly(participantIdImgMap),
 
     // Computed
     latestDay,
 
     // Actions
-    init,
-    saveVillage,
-    saveSituation,
-    saveVillageLatest,
-    saveCurrentVillageDay,
-    saveCharachips,
-    saveExistsNewMessages,
+    initVillage,
+    initSituation,
+    terminateVillage,
   };
 });

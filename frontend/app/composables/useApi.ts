@@ -1,8 +1,10 @@
 import type { FetchError } from "ofetch";
 
-// 認証付きAPI呼び出し用composable（Nuxt 4推奨パターン）
+/**
+ * 認証付きAPI呼び出し用composable（Nuxt 4推奨パターン）
+ */
 export const useApi = () => {
-  const { getAuthToken } = useAuthStore();
+  const authStore = useAuthStore();
 
   // 認証ヘッダー付きAPI呼び出し（リクエスト・レスポンスインターセプター機能含む）
   const apiCall = async <T>(
@@ -13,13 +15,15 @@ export const useApi = () => {
 
     try {
       // リクエストインターセプター: 認証トークンを取得・設定
-      const token = await getAuthToken();
+      const token = await authStore.getAuthToken();
 
       // リクエストインターセプター: 共通ヘッダーの設定
+      const method = (options?.method ?? "GET").toUpperCase();
+      const needsContentType = ["POST", "PUT", "PATCH"].includes(method);
       const fetchOptions = {
         baseURL: config.public.apiBaseUrl,
         headers: {
-          "Content-Type": "application/json",
+          ...(needsContentType && { "Content-Type": "application/json" }),
           ...options?.headers,
           ...(token && { Authorization: `Bearer ${token}` }),
         },
@@ -28,9 +32,6 @@ export const useApi = () => {
 
       // API呼び出し実行
       const response = await $fetch<T>(url, fetchOptions);
-
-      // レスポンスインターセプター: 成功時の共通処理
-      // 現在は特別な処理なし（必要に応じてログ記録、データ変換等を追加可能）
 
       return response as T;
     } catch (error: unknown) {
@@ -43,7 +44,7 @@ export const useApi = () => {
         throw error;
       }
 
-      // その他のエラーはログ出力（将来的にToast表示機能を追加予定）
+      // その他のエラーはログ出力
       console.error("API接続エラー:", {
         url,
         status,

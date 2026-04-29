@@ -1,67 +1,67 @@
 <template>
-  <Modal :model-value="isOpen" title="村作成確認" @close="handleClose">
-    <div class="space-y-6">
-      <!-- 設定一覧テーブル -->
-      <div v-if="settings.length > 0" class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <tbody class="divide-y divide-gray-200 bg-white">
-            <template v-for="(setting, index) in settings" :key="index">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-3 text-sm font-medium whitespace-nowrap text-gray-900">
-                  {{ setting.name }}
+  <UiModalModal v-model="isOpen" title="村作成確認" @close="close">
+    <div class="text-sm">
+      <div v-if="param" class="overflow-x-auto">
+        <table class="w-full border-collapse bg-white">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="border border-gray-300 px-3 py-2 text-left">設定</th>
+              <th class="border border-gray-300 px-3 py-2 text-left"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="setting in settings"
+              :key="setting.name"
+              class="odd:bg-white even:bg-gray-50"
+            >
+              <td class="border border-gray-300 px-3 py-1 align-top font-medium">
+                <div class="flex items-start gap-1">
+                  <span>{{ setting.name }}</span>
                   <button
                     v-if="setting.description"
-                    class="ml-1 text-blue-600 hover:text-blue-800"
-                    @click="toggleDescription(index)"
+                    type="button"
+                    class="text-gray-400 hover:text-gray-600 text-xs mt-0.5"
+                    :title="setting.description"
+                    @click="toggleDescription(setting.name)"
                   >
-                    <Icon name="i-heroicons-question-mark-circle" />
+                    ?
                   </button>
-                </td>
-                <td
-                  class="px-4 py-3 text-sm text-gray-700"
-                  v-html="setting.value.replace(/\n/g, '<br />')"
-                />
-              </tr>
-              <tr v-show="expandedDescriptions[index]">
-                <td colspan="2" class="bg-gray-50 px-4 py-3 text-sm text-gray-600">
-                  <p v-html="setting.description?.replace(/\n/g, '<br />')"></p>
-                </td>
-              </tr>
-            </template>
+                </div>
+                <div
+                  v-if="openDescriptions.has(setting.name) && setting.description"
+                  class="mt-1 text-xs text-gray-500 whitespace-pre-line"
+                >
+                  {{ setting.description }}
+                </div>
+              </td>
+              <td
+                class="border border-gray-300 px-3 py-1"
+                v-html="setting.value.replace(/\n/g, '<br />')"
+              />
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- モーダルフッターのアクションボタン -->
     <template #footer>
-      <div class="flex justify-end gap-3">
-        <button
-          type="button"
-          class="rounded-md bg-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
-          @click="handleClose"
-        >
-          戻る
-        </button>
-        <button
-          type="button"
-          :disabled="isSubmitting"
-          class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-400"
-          @click="handleCreate"
-        >
-          <span v-if="isSubmitting">作成中...</span>
-          <span v-else>{{ saveLabel }}</span>
-        </button>
-      </div>
+      <UiButtonIndex button-type="secondary" @click="close">戻る</UiButtonIndex>
+      <UiButtonIndex
+        button-type="primary"
+        :disabled="submitting"
+        :loading="submitting"
+        @click="create"
+      >
+        {{ saveLabel }}
+      </UiButtonIndex>
     </template>
-  </Modal>
+  </UiModalModal>
 </template>
 
 <script setup lang="ts">
-import type { CreateVillageFormData } from "./types";
-import type { Chara } from "~/lib/api/types";
-import Icon from "~/components/ui/icon/Icon.vue";
-import Modal from "~/components/ui/modal/Modal.vue";
+import UiModalModal from "~/components/ui/modal/Modal.vue";
+import UiButtonIndex from "~/components/ui/button/index.vue";
 
 interface Setting {
   name: string;
@@ -69,221 +69,177 @@ interface Setting {
   description?: string;
 }
 
-interface Props {
-  isOpen: boolean;
-  formData: CreateVillageFormData;
-  charachipName?: string;
-  dummyChara?: Chara | null;
-  saveLabel?: string;
-  isSubmitting?: boolean;
+interface VillageParam {
+  village_name: string;
+  setting: {
+    time: {
+      start_datetime: string;
+      noon_seconds: number;
+      vote_seconds: number;
+      night_seconds: number;
+    };
+    organization: {
+      organization: string;
+    };
+    charachip: {
+      dummy_chara_id: number;
+      charachip_id: number;
+    };
+    rule: {
+      open_vote: boolean;
+      available_skill_request: boolean;
+      open_skill_in_grave: boolean;
+      visible_grave_message: boolean;
+      available_suddenly_death: boolean;
+      available_commit: boolean;
+      available_dummy_skill: boolean;
+      available_same_target_guard: boolean;
+      first_divine_nowolf: boolean;
+      creator_game_master: boolean;
+      silent_seconds: number | null;
+      join_password: string;
+    };
+  };
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  charachipName: "",
-  dummyChara: null,
-  saveLabel: "村を作成する",
-  isSubmitting: false,
-});
+interface Props {
+  modelValue: boolean;
+  param: VillageParam | null;
+  charachipName: string;
+  dummyCharaName: string;
+  saveLabel: string;
+}
 
+const props = defineProps<Props>();
 const emit = defineEmits<{
-  close: [];
+  "update:modelValue": [value: boolean];
   create: [];
 }>();
 
-// 説明文の展開状態を管理
-const expandedDescriptions = ref<Record<number, boolean>>({});
-
-// 設定一覧の生成
-const settings = computed<Setting[]>(() => {
-  const result: Setting[] = [];
-
-  // 村名
-  result.push({
-    name: "村名",
-    value: props.formData.villageName,
-  });
-
-  // 定員
-  addCapacitySetting(result);
-
-  // 時間設定
-  addTimeSetting(result);
-
-  // キャラチップ設定
-  addCharachipSetting(result);
-
-  // 編成設定
-  addOrganizationSetting(result);
-
-  // ルール設定
-  addRuleSetting(result);
-
-  // パスワード設定
-  addPasswordSetting(result);
-
-  return result;
+const isOpen = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit("update:modelValue", value),
 });
 
-// 定員設定の追加
-const addCapacitySetting = (settings: Setting[]) => {
-  settings.push({
-    name: "最低人数",
-    value: `${props.formData.capacityMin}人`,
-    description:
-      "開始予定日時時点でこの人数が集まると進行中に遷移します（集まらなければ廃村となります）。\nダミーを含む人数です。",
-  });
+const submitting = ref(false);
+const openDescriptions = ref<Set<string>>(new Set());
 
-  settings.push({
-    name: "最大人数",
-    value: `${props.formData.capacityMax}人`,
-    description: "この人数まで参加することができます。\nダミーを含む人数です。",
-  });
+const toggleDescription = (name: string) => {
+  const newSet = new Set(openDescriptions.value);
+  if (newSet.has(name)) {
+    newSet.delete(name);
+  } else {
+    newSet.add(name);
+  }
+  openDescriptions.value = newSet;
 };
 
-// 時間設定の追加
-const addTimeSetting = (settings: Setting[]) => {
-  const startDate = new Date(props.formData.startDatetime);
-  const formattedDate = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, "0")}-${String(startDate.getDate()).padStart(2, "0")} ${String(startDate.getHours()).padStart(2, "0")}:${String(startDate.getMinutes()).padStart(2, "0")}`;
+const settings = computed<Setting[]>(() => {
+  if (!props.param) return [];
 
-  settings.push({
-    name: "開始日時",
-    value: formattedDate,
+  const list: Setting[] = [];
+  const p = props.param;
+
+  list.push({ name: "村名", value: p.village_name });
+
+  // 人数
+  list.push({
+    name: "人数",
+    value: `${p.setting.organization.organization.length}人`,
+    description: "この人数参加するとゲームを開始できます。\nダミーを含む人数です。",
   });
 
-  settings.push({
-    name: "更新間隔",
-    value: "24時間",
-    description: "実際にこの時間が経過すると村の1日が進行します。",
+  // 時間
+  const time = p.setting.time;
+  const start = time.start_datetime.replace("T", " ").slice(0, 16);
+  list.push({ name: "開始日時", value: start });
+  list.push({
+    name: "昼時間",
+    value: `${time.noon_seconds}秒`,
+    description: "投票先を決める議論時間です。",
+  });
+  list.push({
+    name: "投票時間",
+    value: `${time.vote_seconds}秒`,
+    description: "投票する時間です。",
+  });
+  list.push({
+    name: "夜時間",
+    value: `${time.night_seconds}秒`,
+    description: "能力者が能力を行使する時間です。",
   });
 
-  const silentHours =
-    !props.formData.silentHours || props.formData.silentHours === 0
-      ? "なし"
-      : `${props.formData.silentHours}時間`;
-
-  settings.push({
-    name: "更新後沈黙時間",
-    value: silentHours,
-    description:
-      "進行中の更新後に通常発言が不可能になる時間です。\nなしの場合はいつでも発言できます。\n通常発言以外（独り言や死者の呻き、人狼の囁き等）はいつでも発言できます。",
-  });
-};
-
-// キャラチップ設定の追加
-const addCharachipSetting = (settings: Setting[]) => {
-  if (!props.charachipName) return;
-
-  settings.push({
-    name: "キャラチップ",
-    value: props.charachipName,
-  });
-
-  if (props.dummyChara) {
-    settings.push({
+  // キャラチップ
+  if (props.charachipName) {
+    list.push({ name: "キャラチップ", value: props.charachipName });
+    list.push({
       name: "ダミーキャラ",
-      value: props.dummyChara.name.name,
+      value: props.dummyCharaName,
       description:
         "最初に人狼に襲撃されるキャラです。\n1日目の人狼の襲撃はこのキャラに固定されます。",
     });
   }
-};
 
-// 編成設定の追加
-const addOrganizationSetting = (settings: Setting[]) => {
-  const org = props.formData.organization;
-  if (!org) return;
-
-  // organizationは既に「10人：狼狼占霊狩狂村村村村」の形式で保存されているため、そのまま使用
-  settings.push({
+  // 編成
+  list.push({
     name: "編成",
-    value: org,
-    description: "人数に応じた配役です。役職詳細は仕様ページを参照ください。",
+    value: p.setting.organization.organization,
+    description: "配役です。役職詳細は仕様ページを参照ください。",
   });
-};
 
-// ルール設定の追加
-const addRuleSetting = (settings: Setting[]) => {
-  const formData = props.formData;
-
-  // 役職希望
-  settings.push({
+  // ルール
+  const rule = p.setting.rule;
+  list.push({
     name: "役職希望",
-    value: formData.availableSkillRequest ? "有効" : "無効",
+    value: rule.available_skill_request ? "有効" : "無効",
     description:
       "「有効」の場合、割り当てられる役職の希望を出すことができます（自分以外の希望は見られません）。\n他に誰も希望していなかった場合はその役職が割り当てられます。",
   });
-
-  // 突然死
-  settings.push({
-    name: "突然死",
-    value: formData.availableSuddenlyDeath ? "あり" : "なし",
-    description:
-      "「あり」の場合、日付更新のタイミングで、前日に一度も通常発言をしなかった生存者が突然死します。",
-  });
-
-  // 時短希望
-  settings.push({
-    name: "時短希望",
-    value: formData.availableCommit ? "あり" : "なし",
-    description:
-      "「あり」の場合、生存者全員が時短を希望すると、日付が更新されます。\n時短により余った時間は翌日に繰り越されます。",
-  });
-
-  // 連続護衛
-  settings.push({
-    name: "連続護衛",
-    value: formData.availableGuardSameTarget ? "可能" : "不可",
-    description:
-      "「可能」の場合、同じ人を2日連続で護衛することができます。\n「不可」の場合、同じ人を2日連続で護衛することができません。",
-  });
-
-  // 墓下公開
-  settings.push({
-    name: "墓下公開",
-    value: formData.openSkillInGrave ? "あり" : "なし",
-    description: "「あり」の場合、死亡した役職が墓下で公開されます。",
-  });
-
-  // 墓下見学会話公開
-  settings.push({
-    name: "墓下見学会話公開",
-    value: formData.visibleGraveMessage ? "あり" : "なし",
-    description: "「あり」の場合、進行中に生存者が死者の呻きや見学発言を参照できます。",
-  });
-
-  // ダミー役欠け
-  settings.push({
+  list.push({
     name: "ダミー役欠け",
-    value: formData.availableDummySkill ? "あり" : "なし",
+    value: rule.available_dummy_skill ? "あり" : "なし",
     description:
       "「あり」の場合、ダミーキャラに村人以外の役職が割り当てられる可能性があります。\n「なし」の場合、必ず村人が割り当てられます。",
   });
-};
-
-// パスワード設定の追加
-const addPasswordSetting = (settings: Setting[]) => {
-  settings.push({
+  list.push({
+    name: "連続護衛",
+    value: rule.available_same_target_guard ? "あり" : "なし",
+    description:
+      "「あり」の場合、狩人が2日連続で同じ対象を護衛できます。\n「なし」の場合、前日護衛した対象を翌日護衛することはできません。",
+  });
+  list.push({
+    name: "初日白通知",
+    value: rule.first_divine_nowolf ? "あり" : "なし",
+    description:
+      "「あり」の場合、1日目夜の占いは人狼と妖狐以外からランダムで選択・行使されます。\n「なし」の場合、1日目夜も占い師が対象を選択して占うことができます。",
+  });
+  list.push({
+    name: "GM制",
+    value: rule.creator_game_master ? "あり" : "なし",
+    description:
+      "「あり」の場合、村作成者がGMとなり、進行中もプレイヤー情報、役職、発言を見ることができます。\n「なし」の場合、村作成者も一般視点となり、プレイヤーとして参加可能となります。",
+  });
+  list.push({
+    name: "昼沈黙時間",
+    value: rule.silent_seconds != null ? `${rule.silent_seconds}秒` : "なし",
+    description: "設定した場合、昼時間の開始数秒間は発言できない状態になります。",
+  });
+  list.push({
     name: "入村パスワード",
-    value:
-      props.formData.joinPassword && props.formData.joinPassword.length > 0
-        ? props.formData.joinPassword
-        : "なし",
+    value: rule.join_password && rule.join_password.length > 0 ? rule.join_password : "なし",
     description: "「あり」の場合、参加する際にパスワード入力が必要になります。",
   });
+
+  return list;
+});
+
+const close = () => {
+  isOpen.value = false;
 };
 
-// 説明文の展開/折りたたみ
-const toggleDescription = (index: number) => {
-  expandedDescriptions.value[index] = !expandedDescriptions.value[index];
-};
-
-// モーダルを閉じる
-const handleClose = () => {
-  emit("close");
-};
-
-// 村を作成
-const handleCreate = () => {
+const create = async () => {
+  submitting.value = true;
   emit("create");
+  submitting.value = false;
 };
 </script>

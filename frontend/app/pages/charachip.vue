@@ -1,49 +1,45 @@
 <template>
   <div>
-    <section class="bg-gray-50 py-8">
-      <div class="container mx-auto px-4">
-        <h1 class="mb-4 text-xl font-semibold">
-          キャラチップ: {{ charachip ? charachip.name : "" }}
-        </h1>
+    <section class="py-8 px-4 bg-gray-100">
+      <div class="max-w-5xl mx-auto text-left">
+        <h1 class="text-lg font-bold mb-4">キャラチップ: {{ charachip ? charachip.name : "" }}</h1>
 
-        <!-- キャラチップ情報 -->
-        <div v-if="charachip" class="mb-5">
-          <p class="text-sm text-gray-700">作者: {{ charachip.designer.name }}</p>
-          <a
-            :href="charachip.description_url"
-            target="_blank"
-            class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            作者HP
-          </a>
-        </div>
+        <!-- ローディング中 -->
+        <div v-if="loading" class="text-center py-8 text-gray-500">読み込み中...</div>
 
-        <div class="text-sm">
-          <!-- ローディング表示 -->
-          <LoadingSpinner v-if="loadingCharachip" :message="'キャラチップを読み込み中...'" />
-
-          <!-- キャラクター一覧 -->
-          <div v-if="!loadingCharachip && charachip" class="flex flex-wrap justify-center gap-4">
-            <div
-              v-for="chara in charachip.chara_list"
-              :key="chara.id"
-              class="rounded-2xl border border-gray-300 bg-white p-3 text-center shadow-sm"
-              style="width: 300px"
+        <!-- データあり -->
+        <template v-else-if="charachip">
+          <div class="mb-4 text-sm">
+            <p>作者: {{ charachip.designer.name }}</p>
+            <a
+              :href="charachip.description_url"
+              target="_blank"
+              class="text-blue-600 hover:text-blue-800 underline"
+              >作者HP</a
             >
-              <!-- キャラクター画像 -->
-              <div class="mb-2 flex justify-center gap-1">
-                <VillageCharaImage :chara="chara" face-type="NORMAL" />
+          </div>
+          <div class="text-sm">
+            <div class="flex flex-wrap justify-center">
+              <div
+                v-for="chara in charachip.chara_list"
+                :key="chara.id"
+                class="text-center chara-select-box"
+              >
+                <img
+                  :src="chara.image.image_url"
+                  :alt="chara.name.name"
+                  :width="chara.image.width"
+                  :height="chara.image.height"
+                />
+                <p class="text-xs mt-1">{{ chara.name.name }}</p>
               </div>
-              <p class="text-xs">{{ chara.name.name }}</p>
             </div>
           </div>
+        </template>
 
-          <!-- エラー表示 -->
-          <div v-if="!loadingCharachip && !charachip" class="rounded-lg bg-white p-8 shadow">
-            <div class="text-center text-gray-500">
-              <p>キャラチップが見つかりませんでした</p>
-            </div>
-          </div>
+        <!-- エラー・データなし -->
+        <div v-else class="text-center py-8 text-gray-500">
+          <p>キャラチップが見つかりませんでした</p>
         </div>
       </div>
     </section>
@@ -51,47 +47,50 @@
 </template>
 
 <script setup lang="ts">
-import LoadingSpinner from "~/components/ui/feedback/LoadingSpinner.vue";
-import type { CharachipView } from "~/lib/api/types";
-import VillageCharaImage from "~/components/pages/village/CharaImage.vue";
+import type { components } from "~/lib/api/schema";
 
-// ルートパラメータからID取得
+type CharachipView = components["schemas"]["CharachipView"];
+
 const route = useRoute();
-const charachipId = computed(() => route.query.id as string | undefined);
 
-// キャッシュ付きAPI
-const { fetchMasterWithCache } = useCachedApi();
+const charachipId = computed(() => route.query.id);
 
-// データ
+const { apiCall } = useApi();
+
 const charachip = ref<CharachipView | null>(null);
-const loadingCharachip = ref(true);
+const loading = ref(true);
 
-// SEO設定
-useHead({
-  title: computed(() =>
-    charachip.value ? `キャラチップ: ${charachip.value.name}` : "キャラチップ",
-  ),
+// SEO（初期設定）
+useSeoMeta(buildPageMeta({ title: "キャラチップ" }));
+
+// キャラチップ名取得後にSEOタイトルを動的更新
+watchEffect(() => {
+  if (charachip.value) {
+    useSeoMeta(buildPageMeta({ title: `キャラチップ: ${charachip.value.name}` }));
+  }
 });
 
-// キャッシュを使用したデータ取得（マスターデータとして30分キャッシュ）
 onMounted(async () => {
   if (!charachipId.value) {
-    console.error("キャラチップIDが指定されていません");
-    loadingCharachip.value = false;
+    loading.value = false;
     return;
   }
-
   try {
-    const response = await fetchMasterWithCache<CharachipView>(
-      `charachip-${charachipId.value}`,
-      `/charachips/${charachipId.value}`,
-    );
-    charachip.value = response;
+    charachip.value = await apiCall<CharachipView>(`/charachip/${charachipId.value}`);
   } catch (error) {
     console.error("キャラチップの取得に失敗しました:", error);
-    charachip.value = null;
   } finally {
-    loadingCharachip.value = false;
+    loading.value = false;
   }
 });
 </script>
+
+<style scoped>
+.chara-select-box {
+  border: 1px solid #cccccc;
+  border-radius: 16px;
+  padding: 5px;
+  margin: 5px auto;
+  width: 100px;
+}
+</style>
