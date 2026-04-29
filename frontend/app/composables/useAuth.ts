@@ -17,8 +17,13 @@ export const useAuth = () => {
    * Firebase認証状態の変更を監視し、Storeを更新する
    */
   const initializeAuth = () => {
-    firebaseAuth.onAuthStateChanged((firebaseUser) => {
-      authStore.setUser(firebaseUser);
+    firebaseAuth.onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        await loginout(firebaseUser);
+      } else {
+        authStore.setUser(null);
+        authStore.setMyselfPlayer(null);
+      }
       authStore.setLoading(false);
     });
   };

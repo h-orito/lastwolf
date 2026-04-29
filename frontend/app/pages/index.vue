@@ -74,7 +74,7 @@ const meta = buildPageMeta({ title: "" });
 useSeoMeta(meta);
 
 const { apiCall } = useApi();
-const { isAuthenticated, myselfPlayer, loginout } = useAuth();
+const { isAuthenticated, myselfPlayer } = useAuth();
 
 const villages = ref<SimpleVillageView[] | null>(null);
 const completeVillages = ref<SimpleVillageView[] | null>(null);
@@ -110,15 +110,6 @@ const loadCompleteVillages = async (): Promise<SimpleVillageView[]> => {
   return data.list;
 };
 
-// ページロード時の認証確認（サインイン済みの場合にプレイヤー情報を取得）
-const checkAndRefreshAuth = async () => {
-  const { getCurrentUser } = await import("~/lib/firebase/auth");
-  const currentUser = getCurrentUser();
-  if (currentUser && !myselfPlayer.value) {
-    await loginout(currentUser);
-  }
-};
-
 onMounted(async () => {
   loadingVillages.value = true;
   try {
@@ -128,9 +119,6 @@ onMounted(async () => {
   } finally {
     loadingVillages.value = false;
   }
-
-  // ログイン後の認証確認
-  await checkAndRefreshAuth();
 
   // 進行中の村がない場合は最近終了した村を表示
   if (!villages.value || villages.value.length === 0) {
