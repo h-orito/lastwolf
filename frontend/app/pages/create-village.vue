@@ -105,9 +105,10 @@ const basicForm = reactive({
   villageName: "",
   startDatetime: (() => {
     const d = new Date();
-    d.setHours(d.getHours() + 2);
+    d.setHours(d.getHours() + 1);
     d.setMinutes(0, 0, 0);
-    return d.toISOString().slice(0, 16);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   })(),
   noonSeconds: 480,
   voteSeconds: 120,
