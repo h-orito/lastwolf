@@ -30,6 +30,7 @@
                   :alt="chara.name.name"
                   :width="chara.image.width"
                   :height="chara.image.height"
+                  class="mx-auto"
                 />
                 <p class="text-xs mt-1">{{ chara.name.name }}</p>
               </div>
@@ -90,7 +91,7 @@ onMounted(async () => {
   border: 1px solid #cccccc;
   border-radius: 16px;
   padding: 5px;
-  margin: 5px auto;
+  margin: 5px;
   width: 100px;
 }
 </style>
