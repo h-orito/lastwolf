@@ -21,7 +21,7 @@
                   <button
                     v-if="setting.description"
                     type="button"
-                    class="text-gray-400 hover:text-gray-600 text-xs mt-0.5"
+                    class="inline-flex items-center justify-center w-4 h-4 rounded-full border border-gray-400 text-gray-400 hover:border-gray-600 hover:text-gray-600 text-xs leading-none cursor-pointer flex-shrink-0 mt-0.5"
                     :title="setting.description"
                     @click="toggleDescription(setting.name)"
                   >
