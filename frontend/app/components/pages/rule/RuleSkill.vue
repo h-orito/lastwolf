@@ -21,7 +21,7 @@
             <td class="border border-gray-300 px-3 py-1">
               <button
                 v-if="skill.description"
-                class="text-blue-600 hover:text-blue-800 underline text-left"
+                class="text-blue-600 hover:text-blue-800 text-left"
                 @click="toggleDetail(skill.name)"
               >
                 {{ skill.name }}
@@ -38,7 +38,7 @@
             <td class="border border-gray-300 px-3 py-1">
               <span v-for="(ability, index) in skill.abilities" :key="ability.name">
                 {{ index !== 0 ? "," : "" }}
-                <a :href="'#' + ability.link" class="text-blue-600 hover:text-blue-800 underline">{{
+                <a :href="'#' + ability.link" class="text-blue-600 hover:text-blue-800">{{
                   ability.name
                 }}</a>
               </span>

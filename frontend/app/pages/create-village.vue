@@ -47,14 +47,14 @@
 
         <!-- 確認ボタン -->
         <div class="flex justify-end">
-          <UiButtonIndex
+          <UiButton
             button-type="primary"
             :disabled="confirming"
             :loading="confirming"
             @click="confirm"
           >
             確認画面へ
-          </UiButtonIndex>
+          </UiButton>
         </div>
 
         <!-- プレビューモーダル -->
@@ -72,6 +72,8 @@
 </template>
 
 <script setup lang="ts">
+import UiButton from "~/components/ui/button/index.vue";
+
 import BasicInfoSection from "~/components/pages/create-village/BasicInfoSection.vue";
 import CharachipSection from "~/components/pages/create-village/CharachipSection.vue";
 import OrganizationSection from "~/components/pages/create-village/OrganizationSection.vue";
@@ -79,7 +81,6 @@ import RuleSection from "~/components/pages/create-village/RuleSection.vue";
 import JoinPasswordSection from "~/components/pages/create-village/JoinPasswordSection.vue";
 import PreviewModal from "~/components/pages/create-village/PreviewModal.vue";
 import type { components } from "~/lib/api/schema";
-import UiButtonIndex from "~/components/ui/button/index.vue";
 
 type CharachipView = components["schemas"]["CharachipView"];
 type CharachipsView = components["schemas"]["CharachipsView"];

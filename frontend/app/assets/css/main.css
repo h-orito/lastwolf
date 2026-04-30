@@ -28,6 +28,11 @@
   --color-creator-say-bg: #ffeeff;
 }
 
+/* リンクスタイル */
+a {
+  text-decoration: none;
+}
+
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {

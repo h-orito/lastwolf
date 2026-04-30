@@ -1,5 +1,5 @@
 <template>
-  <UiModalModal v-model="isOpen" title="村作成確認" @close="close">
+  <UiModal v-model="isOpen" title="村作成確認" @close="close">
     <div class="text-sm">
       <div v-if="param" class="overflow-x-auto">
         <table class="w-full border-collapse bg-white">
@@ -46,22 +46,17 @@
     </div>
 
     <template #footer>
-      <UiButtonIndex button-type="secondary" @click="close">戻る</UiButtonIndex>
-      <UiButtonIndex
-        button-type="primary"
-        :disabled="submitting"
-        :loading="submitting"
-        @click="create"
-      >
+      <UiButton button-type="secondary" @click="close">戻る</UiButton>
+      <UiButton button-type="primary" :disabled="submitting" :loading="submitting" @click="create">
         {{ saveLabel }}
-      </UiButtonIndex>
+      </UiButton>
     </template>
-  </UiModalModal>
+  </UiModal>
 </template>
 
 <script setup lang="ts">
-import UiModalModal from "~/components/ui/modal/Modal.vue";
-import UiButtonIndex from "~/components/ui/button/index.vue";
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
 
 interface Setting {
   name: string;

@@ -1,6 +1,6 @@
 <template>
-  <div class="border border-gray-600 rounded bg-gray-700 text-white text-xs mb-2">
-    <div class="bg-gray-600 px-3 py-2 rounded-t font-bold">参加者</div>
+  <div class="rounded bg-[#fafafa] text-xs mb-2">
+    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">参加者</div>
     <div class="px-3 py-2">
       <Participant
         v-for="p in participants"
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import Participant from "~/components/pages/village/participants/Participant.vue";
 import type { components } from "~/lib/api/schema";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 

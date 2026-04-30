@@ -1,5 +1,5 @@
 <template>
-  <UiModalModal v-model="isOpen" title="村が開始されました" @close="close">
+  <UiModal v-model="isOpen" title="村が開始されました" @close="close">
     <div v-if="myself?.skill" class="text-sm">
       <p class="mb-2">
         あなたの役職は <strong>{{ myself.skill.name }}</strong> です。
@@ -9,12 +9,15 @@
       </div>
     </div>
     <template #footer>
-      <UiButtonIndex button-type="secondary" block @click="close">閉じる</UiButtonIndex>
+      <UiButton button-type="secondary" block @click="close">閉じる</UiButton>
     </template>
-  </UiModalModal>
+  </UiModal>
 </template>
 
 <script setup lang="ts">
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
+
 interface Props {
   modelValue: boolean;
 }

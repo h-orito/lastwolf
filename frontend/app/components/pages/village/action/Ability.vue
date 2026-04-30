@@ -12,7 +12,7 @@
     <div class="mb-2">
       <label class="block text-xs mb-1">対象</label>
       <div class="flex gap-1">
-        <UiFormFormSelect
+        <UiFormSelect
           v-model="participantId"
           :options="targetOptions"
           placeholder="選択してください"
@@ -27,16 +27,12 @@
       </div>
     </div>
 
-    <UiButtonIndex
-      button-type="primary"
-      :disabled="!canSubmit || submitting"
-      @click="confirmSetAbility"
-    >
+    <UiButton button-type="primary" :disabled="!canSubmit || submitting" @click="confirmSetAbility">
       {{ abilityButtonString }}
-    </UiButtonIndex>
+    </UiButton>
 
     <!-- 参加者選択モーダル -->
-    <UiModalModal v-model="isOpenSelectModal" title="画像から選択">
+    <UiModal v-model="isOpenSelectModal" title="画像から選択">
       <div class="flex flex-wrap">
         <div
           v-for="p in targetList"
@@ -56,10 +52,10 @@
           </p>
         </div>
       </div>
-    </UiModalModal>
+    </UiModal>
 
     <!-- 確認ダイアログ -->
-    <UiModalModal v-model="isConfirmOpen" title="確認">
+    <UiModal v-model="isConfirmOpen" title="確認">
       <p>対象は{{ confirmTargetName }}でよろしいですか？</p>
       <template #footer>
         <button
@@ -68,15 +64,19 @@
         >
           キャンセル
         </button>
-        <UiButtonIndex button-type="primary" @click="setAbility">
+        <UiButton button-type="primary" @click="setAbility">
           {{ abilityButtonString }}
-        </UiButtonIndex>
+        </UiButton>
       </template>
-    </UiModalModal>
+    </UiModal>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
+import UiFormSelect from "~/components/ui/form/FormSelect.vue";
+
 import type { components } from "~/lib/api/schema";
 import { getMessageColor } from "~/lib/api/message-color";
 

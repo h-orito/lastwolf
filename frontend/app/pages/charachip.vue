@@ -14,7 +14,7 @@
             <a
               :href="charachip.description_url"
               target="_blank"
-              class="text-blue-600 hover:text-blue-800 underline"
+              class="text-blue-600 hover:text-blue-800"
               >作者HP</a
             >
           </div>

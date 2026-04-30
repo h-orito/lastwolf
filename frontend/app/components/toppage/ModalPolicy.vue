@@ -1,5 +1,5 @@
 <template>
-  <UiModalModal v-model="isOpen" title="プライバシーポリシー" @close="close">
+  <UiModal v-model="isOpen" title="プライバシーポリシー" @close="close">
     <div class="text-sm space-y-4">
       <h3 class="font-semibold text-base">プライバシーポリシー</h3>
       <p>
@@ -105,14 +105,14 @@
     </div>
 
     <template #footer>
-      <UiButtonIndex button-type="secondary" @click="close">閉じる</UiButtonIndex>
+      <UiButton button-type="secondary" @click="close">閉じる</UiButton>
     </template>
-  </UiModalModal>
+  </UiModal>
 </template>
 
 <script setup lang="ts">
-import UiModalModal from "~/components/ui/modal/Modal.vue";
-import UiButtonIndex from "~/components/ui/button/index.vue";
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
 
 interface Props {
   modelValue: boolean;

@@ -61,24 +61,24 @@
       style="padding-bottom: env(safe-area-inset-bottom)"
     >
       <button
-        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex flex-col items-center gap-0.5"
+        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-center gap-1"
         @click="scrollToSection('#participants-area')"
       >
-        <span>👥</span>
+        <UsersIcon class="h-4 w-4" />
         <span>参加者</span>
       </button>
       <button
-        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex flex-col items-center gap-0.5"
+        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-center gap-1"
         @click="scrollToSection('#progress-area')"
       >
-        <span>🕐</span>
+        <ClockIcon class="h-4 w-4" />
         <span>進行</span>
       </button>
       <button
-        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex flex-col items-center gap-0.5"
+        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-center gap-1"
         @click="scrollToSection('#messages-area')"
       >
-        <span>💬</span>
+        <ChatBubbleOvalLeftEllipsisIcon class="h-4 w-4" />
         <span>チャット</span>
       </button>
     </div>
@@ -93,6 +93,7 @@ import Messages from "~/components/pages/village/message/Messages.vue";
 import Creator from "~/components/pages/village/creator/Creator.vue";
 import Debug from "~/components/pages/village/debug/Debug.vue";
 import ModalFirstDay from "~/components/pages/village/day-change/ModalFirstDay.vue";
+import { UsersIcon, ClockIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/vue/24/outline";
 import type { components } from "~/lib/api/schema";
 
 definePageMeta({ layout: "default" });

@@ -9,20 +9,23 @@
 
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
       <label class="block text-xs mb-1">役職第1希望</label>
-      <UiFormFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
+      <UiFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
     </div>
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
       <label class="block text-xs mb-1">役職第2希望</label>
-      <UiFormFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
+      <UiFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
     </div>
 
-    <UiButtonIndex button-type="primary" :disabled="!canSubmit || submitting" @click="change">
+    <UiButton button-type="primary" :disabled="!canSubmit || submitting" @click="change">
       変更する
-    </UiButtonIndex>
+    </UiButton>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiButton from "~/components/ui/button/index.vue";
+import UiFormSelect from "~/components/ui/form/FormSelect.vue";
+
 import type { components } from "~/lib/api/schema";
 
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];

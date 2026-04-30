@@ -8,7 +8,7 @@
     <div class="mb-2">
       <label class="block text-xs mb-1">キャラクター</label>
       <div class="flex gap-1">
-        <UiFormFormSelect
+        <UiFormSelect
           v-model="charaId"
           :options="charaOptions"
           placeholder="選択してください"
@@ -26,11 +26,11 @@
     <!-- 役職希望 -->
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
       <label class="block text-xs mb-1">役職第1希望</label>
-      <UiFormFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
+      <UiFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
     </div>
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
       <label class="block text-xs mb-1">役職第2希望</label>
-      <UiFormFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
+      <UiFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
     </div>
 
     <!-- 入村パスワード -->
@@ -43,12 +43,12 @@
       />
     </div>
 
-    <UiButtonIndex button-type="primary" :disabled="!canSubmit || submitting" @click="participate">
+    <UiButton button-type="primary" :disabled="!canSubmit || submitting" @click="participate">
       入村する
-    </UiButtonIndex>
+    </UiButton>
 
     <!-- キャラ選択モーダル -->
-    <UiModalModal v-model="isCharaSelectModalOpen" title="画像から選択">
+    <UiModal v-model="isCharaSelectModalOpen" title="画像から選択">
       <div class="flex flex-wrap">
         <div
           v-for="chara in situation?.participate.selectable_chara_list"
@@ -60,11 +60,15 @@
           <p class="text-xs">{{ chara.name.name }}</p>
         </div>
       </div>
-    </UiModalModal>
+    </UiModal>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
+import UiFormSelect from "~/components/ui/form/FormSelect.vue";
+
 import type { components } from "~/lib/api/schema";
 
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];

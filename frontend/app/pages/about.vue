@@ -44,7 +44,7 @@
             <a
               href="https://howling-wolf.com"
               target="_blank"
-              class="text-blue-600 hover:text-blue-800 underline"
+              class="text-blue-600 hover:text-blue-800"
               >HOWLING WOLF</a
             >
             <ul class="list-disc pl-6 mt-1 space-y-1">
@@ -56,7 +56,7 @@
             <a
               href="https://firewolf.netlify.app"
               target="_blank"
-              class="text-blue-600 hover:text-blue-800 underline"
+              class="text-blue-600 hover:text-blue-800"
               >FIREWOLF</a
             >
             <ul class="list-disc pl-6 mt-1 space-y-1">

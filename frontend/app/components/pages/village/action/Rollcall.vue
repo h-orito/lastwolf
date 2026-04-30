@@ -4,13 +4,15 @@
     <p class="mb-2 font-bold">点呼</p>
     <p v-if="!rollcalling" class="mb-2">準備ができたら準備完了を押してください。</p>
     <p v-if="rollcalling" class="mb-2">他の方が準備完了するまでお待ちください。</p>
-    <UiButtonIndex button-type="primary" @click="rollcall">
+    <UiButton button-type="primary" @click="rollcall">
       {{ rollcalling ? "準備完了を取り消す" : "準備完了" }}
-    </UiButtonIndex>
+    </UiButton>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiButton from "~/components/ui/button/index.vue";
+
 import type { components } from "~/lib/api/schema";
 
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];

@@ -1,6 +1,6 @@
 <template>
-  <div class="border border-gray-600 rounded bg-gray-700 text-white text-xs mb-2">
-    <div class="bg-gray-600 px-3 py-2 rounded-t font-bold">進行</div>
+  <div class="rounded bg-[#fafafa] text-xs mb-2">
+    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">進行</div>
     <div class="px-3 py-2">
       <ProgressBar ref="progressBarRef" />
       <CurrentSituation />

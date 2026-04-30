@@ -14,7 +14,7 @@
           <td class="border border-gray-300 px-3 py-1">
             <NuxtLink
               :to="{ path: '/village', query: { id: v.village_id } }"
-              class="text-blue-600 hover:text-blue-800 underline"
+              class="text-blue-600 hover:text-blue-800"
             >
               {{ v.village_name }}
             </NuxtLink>

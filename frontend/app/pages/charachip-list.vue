@@ -33,7 +33,7 @@
                   <td class="border border-gray-300 px-3 py-1">
                     <NuxtLink
                       :to="{ path: '/charachip', query: { id: item.charachip_id } }"
-                      class="text-blue-600 hover:text-blue-800 underline"
+                      class="text-blue-600 hover:text-blue-800"
                     >
                       {{ item.charachip_name }}
                     </NuxtLink>

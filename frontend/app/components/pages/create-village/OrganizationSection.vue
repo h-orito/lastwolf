@@ -7,10 +7,7 @@
       <ul class="list-disc pl-4 space-y-1">
         <li>
           役職1文字略称は
-          <NuxtLink
-            to="/rule#skill"
-            target="_blank"
-            class="text-blue-600 hover:text-blue-800 underline"
+          <NuxtLink to="/rule#skill" target="_blank" class="text-blue-600 hover:text-blue-800"
             >仕様</NuxtLink
           >を参照してください。
         </li>

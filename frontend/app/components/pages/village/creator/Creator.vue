@@ -1,15 +1,13 @@
 <template>
-  <div class="border border-gray-600 rounded bg-gray-700 text-white text-xs mb-2">
-    <div class="bg-gray-600 px-3 py-2 rounded-t font-bold">村建て機能</div>
+  <div class="rounded bg-[#fafafa] text-xs mb-2">
+    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">村建て機能</div>
     <div class="px-3 py-2">
       <!-- 村建て発言 -->
       <div v-if="canCreatorSay" class="mb-2">
         <strong class="block mb-1">村建て発言</strong>
         <CreatorMessageInput ref="messageInputRef" v-model="message" />
         <div class="text-right mt-1">
-          <UiButtonIndex button-type="primary" :disabled="!canSay" @click="say">
-            発言
-          </UiButtonIndex>
+          <UiButton button-type="primary" :disabled="!canSay" @click="say"> 発言 </UiButton>
         </div>
       </div>
 
@@ -30,20 +28,20 @@
         <hr class="border-gray-500 my-2" />
         <strong class="block mb-1">キック</strong>
         <div class="flex gap-1">
-          <UiFormFormSelect
+          <UiFormSelect
             v-model="participantId"
             :options="participantOptions"
             :disabled="!canKick"
             placeholder="選択してください"
             class="flex-1"
           />
-          <UiButtonIndex
+          <UiButton
             button-type="danger"
             :disabled="!canKick || !participantId"
             @click="confirmKick"
           >
             退村させる
-          </UiButtonIndex>
+          </UiButton>
         </div>
       </div>
 
@@ -53,16 +51,12 @@
         <strong class="block mb-1">点呼</strong>
         <p class="mb-1">点呼を開始し、全員が点呼すると村を開始することができます。</p>
         <div class="flex gap-1">
-          <UiButtonIndex button-type="primary" :disabled="!canStartRollcall" @click="startRollcall">
+          <UiButton button-type="primary" :disabled="!canStartRollcall" @click="startRollcall">
             点呼を開始する
-          </UiButtonIndex>
-          <UiButtonIndex
-            button-type="danger"
-            :disabled="!canCancelRollcall"
-            @click="cancelRollcall"
-          >
+          </UiButton>
+          <UiButton button-type="danger" :disabled="!canCancelRollcall" @click="cancelRollcall">
             点呼を中止する
-          </UiButtonIndex>
+          </UiButton>
         </div>
       </div>
 
@@ -72,23 +66,23 @@
         <strong class="block mb-1">村の開始/廃村</strong>
         <p v-if="isRollcalling" class="mb-1">{{ currentDoneRollcallCount }}</p>
         <div class="flex gap-1">
-          <UiButtonIndex button-type="primary" :disabled="!canStartVillage" @click="startVillage">
+          <UiButton button-type="primary" :disabled="!canStartVillage" @click="startVillage">
             村を開始する
-          </UiButtonIndex>
-          <UiButtonIndex
+          </UiButton>
+          <UiButton
             button-type="danger"
             :disabled="!canCancelVillage"
             @click="confirmCancelVillage"
           >
             廃村する（確認）
-          </UiButtonIndex>
+          </UiButton>
         </div>
       </div>
     </div>
   </div>
 
   <!-- キック確認ダイアログ -->
-  <UiModalModal v-model="isKickConfirmOpen" title="キック確認">
+  <UiModal v-model="isKickConfirmOpen" title="キック確認">
     <p>本当に退村させますか？</p>
     <template #footer>
       <button
@@ -97,12 +91,12 @@
       >
         キャンセル
       </button>
-      <UiButtonIndex button-type="danger" @click="kick">キックする</UiButtonIndex>
+      <UiButton button-type="danger" @click="kick">キックする</UiButton>
     </template>
-  </UiModalModal>
+  </UiModal>
 
   <!-- 廃村確認ダイアログ -->
-  <UiModalModal v-model="isCancelVillageConfirmOpen" title="廃村確認">
+  <UiModal v-model="isCancelVillageConfirmOpen" title="廃村確認">
     <p>本当に廃村しますか？</p>
     <template #footer>
       <button
@@ -111,12 +105,16 @@
       >
         キャンセル
       </button>
-      <UiButtonIndex button-type="danger" @click="cancelVillage">廃村する</UiButtonIndex>
+      <UiButton button-type="danger" @click="cancelVillage">廃村する</UiButton>
     </template>
-  </UiModalModal>
+  </UiModal>
 </template>
 
 <script setup lang="ts">
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
+import UiFormSelect from "~/components/ui/form/FormSelect.vue";
+
 import CreatorMessageInput from "~/components/pages/village/creator/CreatorMessageInput.vue";
 import type { components } from "~/lib/api/schema";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";

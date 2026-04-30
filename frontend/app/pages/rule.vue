@@ -7,54 +7,44 @@
       <nav class="bg-gray-100 border border-gray-200 rounded p-4 mb-6">
         <ul class="space-y-1">
           <li>
-            <a href="#create-village" class="text-blue-600 hover:text-blue-800 underline">村作成</a>
+            <a href="#create-village" class="text-blue-600 hover:text-blue-800">村作成</a>
           </li>
           <li>
-            <a href="#creator" class="text-blue-600 hover:text-blue-800 underline"
-              >村建てが行えること</a
-            >
+            <a href="#creator" class="text-blue-600 hover:text-blue-800">村建てが行えること</a>
           </li>
-          <li><a href="#overall" class="text-blue-600 hover:text-blue-800 underline">流れ</a></li>
+          <li><a href="#overall" class="text-blue-600 hover:text-blue-800">流れ</a></li>
           <li>
-            <a href="#skill-assign" class="text-blue-600 hover:text-blue-800 underline"
-              >役職割り当て</a
-            >
+            <a href="#skill-assign" class="text-blue-600 hover:text-blue-800">役職割り当て</a>
           </li>
-          <li><a href="#vote" class="text-blue-600 hover:text-blue-800 underline">投票</a></li>
+          <li><a href="#vote" class="text-blue-600 hover:text-blue-800">投票</a></li>
           <li>
-            <a href="#commit" class="text-blue-600 hover:text-blue-800 underline">時短希望</a>
+            <a href="#commit" class="text-blue-600 hover:text-blue-800">時短希望</a>
           </li>
           <li>
-            <a href="#suddenly-death" class="text-blue-600 hover:text-blue-800 underline">突然死</a>
+            <a href="#suddenly-death" class="text-blue-600 hover:text-blue-800">突然死</a>
           </li>
           <li>
-            <a href="#night-process" class="text-blue-600 hover:text-blue-800 underline"
-              >投票→夜時間の処理</a
-            >
+            <a href="#night-process" class="text-blue-600 hover:text-blue-800">投票→夜時間の処理</a>
           </li>
           <li>
-            <a href="#noon-process" class="text-blue-600 hover:text-blue-800 underline"
-              >夜→昼時間の処理</a
-            >
+            <a href="#noon-process" class="text-blue-600 hover:text-blue-800">夜→昼時間の処理</a>
           </li>
-          <li><a href="#skill" class="text-blue-600 hover:text-blue-800 underline">役職</a></li>
+          <li><a href="#skill" class="text-blue-600 hover:text-blue-800">役職</a></li>
           <li>
-            <a href="#ability" class="text-blue-600 hover:text-blue-800 underline">能力行使</a>
+            <a href="#ability" class="text-blue-600 hover:text-blue-800">能力行使</a>
             <ul class="pl-4 mt-1 space-y-1">
               <li>
-                <a href="#ability-overall" class="text-blue-600 hover:text-blue-800 underline"
-                  >全般</a
-                >
+                <a href="#ability-overall" class="text-blue-600 hover:text-blue-800">全般</a>
               </li>
               <li>
-                <a href="#divine" class="text-blue-600 hover:text-blue-800 underline">占い</a>
+                <a href="#divine" class="text-blue-600 hover:text-blue-800">占い</a>
               </li>
               <li>
-                <a href="#psychic" class="text-blue-600 hover:text-blue-800 underline">霊視</a>
+                <a href="#psychic" class="text-blue-600 hover:text-blue-800">霊視</a>
               </li>
-              <li><a href="#guard" class="text-blue-600 hover:text-blue-800 underline">護衛</a></li>
+              <li><a href="#guard" class="text-blue-600 hover:text-blue-800">護衛</a></li>
               <li>
-                <a href="#attack" class="text-blue-600 hover:text-blue-800 underline">襲撃</a>
+                <a href="#attack" class="text-blue-600 hover:text-blue-800">襲撃</a>
               </li>
             </ul>
           </li>

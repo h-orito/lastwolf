@@ -3,10 +3,10 @@
     <hr class="border-gray-500 my-2" />
     <p class="mb-2 font-bold">退村</p>
     <p class="mb-2">参加を取りやめたい場合は退村することができます。</p>
-    <UiButtonIndex button-type="danger" @click="confirmLeave">退村する</UiButtonIndex>
+    <UiButton button-type="danger" @click="confirmLeave">退村する</UiButton>
 
     <!-- 確認ダイアログ -->
-    <UiModalModal v-model="isConfirmOpen" title="退村確認">
+    <UiModal v-model="isConfirmOpen" title="退村確認">
       <p>本当に退村しますか？</p>
       <template #footer>
         <button
@@ -15,13 +15,16 @@
         >
           キャンセル
         </button>
-        <UiButtonIndex button-type="danger" @click="leave">退村する</UiButtonIndex>
+        <UiButton button-type="danger" @click="leave">退村する</UiButton>
       </template>
-    </UiModalModal>
+    </UiModal>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
+
 const villageStore = useVillageStore();
 const { apiCall } = useApi();
 const toast = useToast();

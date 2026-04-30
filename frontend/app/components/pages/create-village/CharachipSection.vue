@@ -4,7 +4,7 @@
 
     <!-- キャラチップ選択 -->
     <UiFormFormGroup label="キャラチップ" required>
-      <UiFormFormSelect
+      <UiFormSelect
         v-model="form.charachipId"
         :options="charachipOptions"
         :error="!!errors.charachipId"
@@ -18,7 +18,7 @@
     <!-- ダミーキャラ選択 -->
     <div>
       <UiFormFormGroup label="ダミーキャラ" required>
-        <UiFormFormSelect
+        <UiFormSelect
           v-model="form.dummyCharaId"
           :options="charaOptions"
           :error="!!errors.dummyCharaId"
@@ -28,13 +28,13 @@
         </template>
       </UiFormFormGroup>
       <div class="mt-2 flex justify-end">
-        <UiButtonIndex
+        <UiButton
           button-type="secondary"
           :disabled="charas.length === 0"
           @click="isCharaSelectModalOpen = true"
         >
           画像から選ぶ
-        </UiButtonIndex>
+        </UiButton>
       </div>
     </div>
 
@@ -48,10 +48,11 @@
 </template>
 
 <script setup lang="ts">
+import UiButton from "~/components/ui/button/index.vue";
+import UiFormSelect from "~/components/ui/form/FormSelect.vue";
+
 import type { components } from "~/lib/api/schema";
 import UiFormFormGroup from "~/components/ui/form/FormGroup.vue";
-import UiFormFormSelect from "~/components/ui/form/FormSelect.vue";
-import UiButtonIndex from "~/components/ui/button/index.vue";
 import UiCharaSelectCharaSelectModal from "~/components/ui/chara-select/CharaSelectModal.vue";
 
 type CharachipView = components["schemas"]["CharachipView"];

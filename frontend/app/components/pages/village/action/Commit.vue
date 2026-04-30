@@ -10,13 +10,15 @@
       あなたは時短を希望<strong>{{ isCurrentCommitting ? "しています" : "していません" }}</strong
       >。
     </p>
-    <UiButtonIndex button-type="primary" :disabled="submitting" @click="setCommit">
+    <UiButton button-type="primary" :disabled="submitting" @click="setCommit">
       {{ isCurrentCommitting ? "時短希望を取り消す" : "時短希望する" }}
-    </UiButtonIndex>
+    </UiButton>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiButton from "~/components/ui/button/index.vue";
+
 import type { components } from "~/lib/api/schema";
 
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];

@@ -13,7 +13,7 @@
     <div class="mb-2">
       <label class="block text-xs mb-1">対象</label>
       <div class="flex gap-1">
-        <UiFormFormSelect
+        <UiFormSelect
           v-model="participantId"
           :options="targetOptions"
           placeholder="選択してください"
@@ -28,12 +28,12 @@
       </div>
     </div>
 
-    <UiButtonIndex button-type="primary" :disabled="!canSubmit || submitting" @click="setVote">
+    <UiButton button-type="primary" :disabled="!canSubmit || submitting" @click="setVote">
       投票する
-    </UiButtonIndex>
+    </UiButton>
 
     <!-- 参加者選択モーダル -->
-    <UiModalModal v-model="isOpenSelectModal" title="画像から選択">
+    <UiModal v-model="isOpenSelectModal" title="画像から選択">
       <div class="flex flex-wrap">
         <div
           v-for="p in targetList"
@@ -53,11 +53,15 @@
           </p>
         </div>
       </div>
-    </UiModalModal>
+    </UiModal>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
+import UiFormSelect from "~/components/ui/form/FormSelect.vue";
+
 import type { components } from "~/lib/api/schema";
 
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];

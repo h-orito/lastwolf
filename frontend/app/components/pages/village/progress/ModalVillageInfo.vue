@@ -1,5 +1,5 @@
 <template>
-  <UiModalModal v-model="isOpen" title="村の情報" @close="close">
+  <UiModal v-model="isOpen" title="村の情報" @close="close">
     <div v-if="village" class="text-xs">
       <table class="w-full border-collapse">
         <thead>
@@ -46,10 +46,12 @@
         閉じる
       </button>
     </template>
-  </UiModalModal>
+  </UiModal>
 </template>
 
 <script setup lang="ts">
+import UiModal from "~/components/ui/modal/Modal.vue";
+
 import type { components } from "~/lib/api/schema";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 

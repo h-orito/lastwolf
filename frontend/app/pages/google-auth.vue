@@ -8,6 +8,8 @@
 </template>
 
 <script setup lang="ts">
+import UiButton from "~/components/ui/button/index.vue";
+
 const meta = buildPageMeta({ title: "Googleアカウントでログイン" });
 useSeoMeta(meta);
 

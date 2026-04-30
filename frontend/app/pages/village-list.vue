@@ -35,7 +35,7 @@
                 <td class="border border-gray-300 px-3 py-1">
                   <NuxtLink
                     :to="{ path: '/village', query: { id: village.id } }"
-                    class="text-blue-600 hover:text-blue-800 underline"
+                    class="text-blue-600 hover:text-blue-800"
                   >
                     {{ `${village.id}. ${village.name}` }}
                   </NuxtLink>

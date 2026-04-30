@@ -1,5 +1,5 @@
 <template>
-  <UiModalModal v-model="isOpen" title="投げ銭について" @close="close">
+  <UiModal v-model="isOpen" title="投げ銭について" @close="close">
     <div class="space-y-4 text-sm">
       <p>
         開発を応援してくださりありがとうございます。<br />
@@ -43,7 +43,7 @@
               href="https://twitter.com/ort_dev"
               target="_blank"
               rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-800 underline"
+              class="text-blue-600 hover:text-blue-800"
               >@ort_dev</a
             >までお願いします。
           </li>
@@ -52,14 +52,14 @@
     </div>
 
     <template #footer>
-      <UiButtonIndex button-type="secondary" @click="close">閉じる</UiButtonIndex>
+      <UiButton button-type="secondary" @click="close">閉じる</UiButton>
     </template>
-  </UiModalModal>
+  </UiModal>
 </template>
 
 <script setup lang="ts">
-import UiModalModal from "~/components/ui/modal/Modal.vue";
-import UiButtonIndex from "~/components/ui/button/index.vue";
+import UiModal from "~/components/ui/modal/Modal.vue";
+import UiButton from "~/components/ui/button/index.vue";
 
 interface Props {
   modelValue: boolean;

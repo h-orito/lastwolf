@@ -1,25 +1,25 @@
 <template>
-  <div class="border border-gray-600 rounded bg-gray-700 text-white text-xs mb-2">
-    <div class="bg-gray-600 px-3 py-2 rounded-t font-bold">デバッグ</div>
+  <div class="rounded bg-[#fafafa] text-xs mb-2">
+    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">デバッグ</div>
     <div class="px-3 py-2 space-y-2">
       <!-- 村取得 -->
       <div>
-        <UiButtonIndex button-type="primary" @click="fetchDebugVillage">村取得</UiButtonIndex>
+        <UiButton button-type="primary" @click="fetchDebugVillage">村取得</UiButton>
       </div>
 
       <!-- ダミーログイン -->
       <div>
         <label class="block text-xs mb-1">ダミーログイン</label>
         <div class="flex gap-1">
-          <UiFormFormSelect
+          <UiFormSelect
             v-model="playerId"
             :options="playerOptions"
             :disabled="!debugVillage"
             class="flex-1"
           />
-          <UiButtonIndex button-type="primary" :disabled="!debugVillage" @click="dummyLogin">
+          <UiButton button-type="primary" :disabled="!debugVillage" @click="dummyLogin">
             でログインする
-          </UiButtonIndex>
+          </UiButton>
         </div>
       </div>
 
@@ -27,68 +27,71 @@
       <div>
         <label class="block text-xs mb-1">参加させる</label>
         <div class="flex gap-1">
-          <UiFormFormSelect
+          <UiFormSelect
             v-model="participateCharaNum"
             :options="participateMemberNumOptions"
             :disabled="!isPrologue"
             class="flex-1"
           />
-          <UiButtonIndex button-type="primary" :disabled="!isPrologue" @click="debugParticipate">
+          <UiButton button-type="primary" :disabled="!isPrologue" @click="debugParticipate">
             参加させる
-          </UiButtonIndex>
+          </UiButton>
         </div>
       </div>
 
       <!-- 全員点呼 -->
       <div>
-        <UiButtonIndex button-type="primary" :disabled="!debugVillage" @click="allRollcall">
+        <UiButton button-type="primary" :disabled="!debugVillage" @click="allRollcall">
           全員点呼
-        </UiButtonIndex>
+        </UiButton>
       </div>
 
       <!-- 残り10秒 -->
       <div>
-        <UiButtonIndex button-type="primary" :disabled="!debugVillage" @click="changeDay">
+        <UiButton button-type="primary" :disabled="!debugVillage" @click="changeDay">
           残り10秒にする
-        </UiButtonIndex>
+        </UiButton>
       </div>
 
       <!-- 指定処刑 -->
       <div>
         <label class="block text-xs mb-1">指定処刑</label>
         <div class="flex gap-1">
-          <UiFormFormSelect
+          <UiFormSelect
             v-model="executionParticipantId"
             :options="voteTargetOptions"
             :disabled="!isVoteTime"
             class="flex-1"
           />
-          <UiButtonIndex
+          <UiButton
             button-type="primary"
             :disabled="!isVoteTime || !executionParticipantId"
             @click="allVote"
           >
             全員投票
-          </UiButtonIndex>
+          </UiButton>
         </div>
       </div>
 
       <!-- 引分投票 -->
       <div>
-        <UiButtonIndex button-type="primary" :disabled="!isVoteTime" @click="allDrawVote">
+        <UiButton button-type="primary" :disabled="!isVoteTime" @click="allDrawVote">
           引分投票
-        </UiButtonIndex>
+        </UiButton>
       </div>
 
       <!-- メッセージ削除 -->
       <div>
-        <UiButtonIndex button-type="danger" @click="allDelete">メッセージ削除</UiButtonIndex>
+        <UiButton button-type="danger" @click="allDelete">メッセージ削除</UiButton>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiButton from "~/components/ui/button/index.vue";
+import UiFormSelect from "~/components/ui/form/FormSelect.vue";
+
 import type { components } from "~/lib/api/schema";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 

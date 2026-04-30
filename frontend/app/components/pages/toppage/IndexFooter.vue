@@ -3,7 +3,7 @@
     <div class="max-w-5xl mx-auto text-left">
       <ul class="text-sm space-y-2">
         <li>
-          <NuxtLink to="/charachip-list" class="text-blue-600 hover:text-blue-800 underline">
+          <NuxtLink to="/charachip-list" class="text-blue-600 hover:text-blue-800">
             キャラ画像一覧
           </NuxtLink>
         </li>
@@ -13,32 +13,23 @@
             href="https://twitter.com/ort_dev"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-blue-600 hover:text-blue-800 underline"
+            class="text-blue-600 hover:text-blue-800"
             >@ort_dev</a
           >へお願いします
         </li>
         <li>
           投げ銭いただける方は
-          <a
-            href="#"
-            class="text-blue-600 hover:text-blue-800 underline"
-            @click.prevent="openKampaModal"
+          <a href="#" class="text-blue-600 hover:text-blue-800" @click.prevent="openKampaModal"
             >こちら</a
           >からお願いします
         </li>
         <li>
-          <a
-            href="#"
-            class="text-blue-600 hover:text-blue-800 underline"
-            @click.prevent="openTermModal"
+          <a href="#" class="text-blue-600 hover:text-blue-800" @click.prevent="openTermModal"
             >利用規約</a
           >
         </li>
         <li>
-          <a
-            href="#"
-            class="text-blue-600 hover:text-blue-800 underline"
-            @click.prevent="openPolicyModal"
+          <a href="#" class="text-blue-600 hover:text-blue-800" @click.prevent="openPolicyModal"
             >プライバシーポリシー</a
           >
         </li>
