@@ -6,7 +6,7 @@
       <CurrentSituation />
       <Myself />
       <Action />
-      <hr class="border-gray-500 my-2" />
+      <hr class="border-gray-200 my-2" />
       <div class="text-right">
         <button
           class="px-3 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0]"

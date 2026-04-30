@@ -105,7 +105,7 @@ const normalizedOptions = computed(() => {
 });
 
 const baseClasses =
-  "block w-full appearance-none rounded border px-3 py-2 pr-9 text-sm text-gray-900 bg-white focus:outline-none transition-colors duration-150 cursor-pointer";
+  "block w-full appearance-none rounded border px-2 py-1 pr-9 text-sm text-gray-900 bg-white focus:outline-none transition-colors duration-150 cursor-pointer";
 
 const borderClasses = computed(() => {
   if (props.error) {

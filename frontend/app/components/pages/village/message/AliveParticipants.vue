@@ -54,7 +54,11 @@ const messagesStore = useMessagesStore();
 const isNight = computed(() => props.day.noon_night.code === "NIGHT");
 
 const dayMessages = computed((): MessageView[] => {
-  const allMessages = (messagesStore.messages?.list ?? []) as MessageView[];
+  const allMessages = (
+    !props.day.is_epilogue && isNight.value
+      ? messagesStore.nightMessages
+      : messagesStore.noonMessages
+  ) as MessageView[];
   return allMessages.filter((m) => m.time.village_day_id === props.day.id);
 });
 

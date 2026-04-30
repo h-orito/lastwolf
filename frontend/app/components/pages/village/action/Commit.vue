@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr class="border-gray-500 my-2" />
+    <hr class="border-gray-200 my-2" />
     <p class="mb-2 font-bold">時短希望</p>
     <p class="mb-1">
       全員が時短希望すると残り時間が残っていても{{ nextNoonnight }}に進行できます。<br />

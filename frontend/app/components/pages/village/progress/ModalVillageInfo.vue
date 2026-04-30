@@ -40,7 +40,7 @@
     </div>
     <template #footer>
       <button
-        class="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+        class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
         @click="close"
       >
         閉じる

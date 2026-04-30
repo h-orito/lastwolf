@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr class="border-gray-500 my-2" />
+    <hr class="border-gray-200 my-2" />
     <p class="mb-2 font-bold">参加</p>
     <p class="mb-2">あなたはこの村に参加できます。</p>
 
@@ -15,7 +15,7 @@
           class="flex-1"
         />
         <button
-          class="px-2 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
+          class="px-2 py-1 text-sm bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
           @click="openCharaModal"
         >
           画像で選択

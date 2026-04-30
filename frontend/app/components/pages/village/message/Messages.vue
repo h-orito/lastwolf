@@ -7,7 +7,7 @@
         <button
           v-for="day in days"
           :key="day.id"
-          class="px-2 py-1 text-xs rounded border transition-colors"
+          class="px-2 py-1 text-xs rounded border transition-colors flex items-center gap-1"
           :class="
             tabId === day.id
               ? 'bg-gray-800 border-gray-800 text-white'
@@ -15,7 +15,8 @@
           "
           @click="tabId = day.id"
         >
-          <span class="mr-1">{{ dayIcon(day) }}</span>
+          <SunIcon v-if="day.noon_night.code === 'NOON'" class="w-3 h-3" />
+          <MoonIcon v-else class="w-3 h-3" />
           {{ dayLabel(day) }}
         </button>
       </div>
@@ -35,7 +36,7 @@
               強調発言のみ表示
             </label>
           </div>
-          <hr class="border-gray-500 my-2" />
+          <hr class="border-gray-200 my-2" />
           <!-- メッセージ入力 -->
           <MessageInput />
           <!-- メッセージ一覧 -->
@@ -52,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import { SunIcon, MoonIcon } from "@heroicons/vue/24/outline";
 import AliveParticipants from "~/components/pages/village/message/AliveParticipants.vue";
 import MessageInput from "~/components/pages/village/message-input/MessageInput.vue";
 import DayMessages from "~/components/pages/village/message/DayMessages.vue";
@@ -72,6 +74,12 @@ const tabId = ref<number>(
   days.value.length === 0 ? 0 : (days.value[days.value.length - 1]?.id ?? 0),
 );
 
+watch(days, (newDays) => {
+  if (newDays.length > 0 && tabId.value === 0) {
+    tabId.value = newDays[newDays.length - 1]?.id ?? 0;
+  }
+});
+
 const filteringId = ref<number | null>(null);
 const shouldFilterByStrong = ref(false);
 
@@ -82,10 +90,6 @@ const dayLabel = (day: VillageDay): string => {
     if (epilogueDay && day.id > epilogueDay.id) return "終了";
   }
   return `${day.day}日目${day.noon_night.name}`;
-};
-
-const dayIcon = (day: VillageDay): string => {
-  return day.noon_night.code === "NOON" ? "☀" : "🌙";
 };
 
 const filteringOrCancel = (payload: { participantId: number | undefined }) => {

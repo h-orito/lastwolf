@@ -13,7 +13,7 @@
 
       <!-- 設定変更 -->
       <div v-if="isPrologue" class="mb-2">
-        <hr class="border-gray-500 my-2" />
+        <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">設定変更</strong>
         <NuxtLink
           :to="{ path: '/village-setting', query: { id: village?.id } }"
@@ -25,7 +25,7 @@
 
       <!-- キック -->
       <div v-if="isPrologue" class="mb-2">
-        <hr class="border-gray-500 my-2" />
+        <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">キック</strong>
         <div class="flex gap-1">
           <UiFormSelect
@@ -47,7 +47,7 @@
 
       <!-- 点呼 -->
       <div v-if="isPrologue || isRollcalling" class="mb-2">
-        <hr class="border-gray-500 my-2" />
+        <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">点呼</strong>
         <p class="mb-1">点呼を開始し、全員が点呼すると村を開始することができます。</p>
         <div class="flex gap-1">
@@ -62,7 +62,7 @@
 
       <!-- 村の開始/廃村 -->
       <div v-if="isPrologue || isRollcalling">
-        <hr class="border-gray-500 my-2" />
+        <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">村の開始/廃村</strong>
         <p v-if="isRollcalling" class="mb-1">{{ currentDoneRollcallCount }}</p>
         <div class="flex gap-1">
@@ -86,7 +86,7 @@
     <p>本当に退村させますか？</p>
     <template #footer>
       <button
-        class="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+        class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
         @click="isKickConfirmOpen = false"
       >
         キャンセル
@@ -100,7 +100,7 @@
     <p>本当に廃村しますか？</p>
     <template #footer>
       <button
-        class="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+        class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
         @click="isCancelVillageConfirmOpen = false"
       >
         キャンセル

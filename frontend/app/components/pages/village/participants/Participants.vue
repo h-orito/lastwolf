@@ -9,7 +9,7 @@
         :is-disp-player="isDispPlayer"
       />
       <div v-if="isViewablePlayerInfo" class="mt-2">
-        <hr class="border-gray-500 my-2" />
+        <hr class="border-gray-200 my-2" />
         <button
           class="px-3 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0]"
           @click="toggleDisplayPlayer"

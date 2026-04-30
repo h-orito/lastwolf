@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr class="border-gray-500 my-2" />
+    <hr class="border-gray-200 my-2" />
     <p class="mb-2 font-bold">能力行使</p>
     <p class="mb-2">
       <span v-for="(line, idx) in abilityMessageLines" :key="idx">
@@ -19,7 +19,7 @@
           class="flex-1"
         />
         <button
-          class="px-2 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
+          class="px-2 py-1 text-sm bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
           @click="openSelectModal"
         >
           画像で選択
@@ -59,7 +59,7 @@
       <p>対象は{{ confirmTargetName }}でよろしいですか？</p>
       <template #footer>
         <button
-          class="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
           @click="isConfirmOpen = false"
         >
           キャンセル

@@ -46,7 +46,12 @@ const isPrologue = computed(() => {
 });
 
 const messages = computed((): MessageView[] => {
-  const allMessages = (messagesStore.messages?.list ?? []) as MessageView[];
+  // 夜（非エピローグ）はAPI取得の nightMessages、昼・エピローグは Firebase直接の noonMessages
+  const allMessages = (
+    !props.day.is_epilogue && isNight.value
+      ? messagesStore.nightMessages
+      : messagesStore.noonMessages
+  ) as MessageView[];
   return allMessages.filter((m) => m.time.village_day_id === props.day.id);
 });
 
