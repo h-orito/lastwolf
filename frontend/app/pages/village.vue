@@ -7,19 +7,22 @@
           <p class="flex-1 font-bold text-sm leading-6">{{ village.id }}. {{ village.name }}</p>
           <div>
             <a
-              :href="`https://twitter.com/share?text=${encodeURIComponent(village.name)}`"
-              class="twitter-share-button"
-              data-hashtags="人狼_LASTWOLF"
-              data-lang="ja"
-              data-show-count="false"
+              :href="xShareUrl"
               target="_blank"
               rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-black text-white rounded hover:bg-gray-800 transition-colors"
             >
-              <img
-                src="https://platform.twitter.com/widgets/tweet_button.1730a52f0bbee52abe1d0df2f82afe5e.en.html"
-                alt="Tweet"
-                style="width: 61px; height: 20px"
-              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-3 h-3"
+              >
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                />
+              </svg>
+              <span>ポスト</span>
             </a>
           </div>
         </div>
@@ -101,7 +104,13 @@
 </template>
 
 <script setup lang="ts">
-import { getDatabase, ref as dbRef, onValue, type Unsubscribe } from "firebase/database";
+import {
+  getDatabase,
+  ref as dbRef,
+  onValue,
+  onChildAdded,
+  type Unsubscribe,
+} from "firebase/database";
 import Participants from "~/components/pages/village/participants/Participants.vue";
 import Progress from "~/components/pages/village/progress/Progress.vue";
 import Messages from "~/components/pages/village/message/Messages.vue";
@@ -116,6 +125,7 @@ definePageMeta({ layout: "default" });
 type VillageView = components["schemas"]["VillageView"];
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
 type MessagesView = components["schemas"]["MessagesView"];
+type MessageView = components["schemas"]["MessageView"];
 type VillageDay = components["schemas"]["VillageDay"];
 type VillageParticipantView = components["schemas"]["VillageParticipantView"];
 
@@ -128,8 +138,20 @@ const { waitForAuth, loginout } = useAuth();
 
 // ページタイトル
 const village = computed(() => villageStore.village as VillageView | null);
-const pageTitle = computed(() => (village.value ? village.value.name : "村ページ"));
-useSeoMeta(buildPageMeta({ title: pageTitle.value }));
+
+const { origin } = useRequestURL();
+const xShareUrl = computed(() => {
+  if (!village.value) return "#";
+  const url = `${origin}/village?id=${village.value.id}`;
+  const text = `${village.value.name}\n${url}\n#人狼_LASTWOLF`;
+  return `https://twitter.com/share?text=${encodeURIComponent(text)}`;
+});
+useSeoMeta(buildPageMeta({ title: "" }));
+watchEffect(() => {
+  if (village.value) {
+    useSeoMeta(buildPageMeta({ title: village.value.name }));
+  }
+});
 
 // URLクエリから村IDを取得
 const villageId = computed(() => {
@@ -194,7 +216,7 @@ const reloadMessageIfNeeded = async () => {
   const situation = villageStore.situation as SituationAsParticipantView | null;
   const myself = situation?.participate.myself ?? null;
   if (!shouldReloadMessage(latestDay, myself)) return;
-  await fetchMessages();
+  await fetchNightMessages();
 };
 
 // タイマー
@@ -210,6 +232,7 @@ const setTimer = () => {
 let unsubscribeVillage: Unsubscribe | null = null;
 let unsubscribeAbility: Unsubscribe | null = null;
 let unsubscribeMessage: Unsubscribe | null = null;
+let unsubscribeNoonMessage: Unsubscribe | null = null;
 
 const buildVid = (id: number): string => {
   return `v${("00000" + id).slice(-5)}`;
@@ -235,11 +258,11 @@ const fetchSituation = async (): Promise<SituationAsParticipantView | null> => {
   }
 };
 
-// メッセージをAPIから取得
-const fetchMessages = async (): Promise<void> => {
+// 夜メッセージをAPIから取得（personalized: uidに基づいて見えるメッセージを取得）
+const fetchNightMessages = async (): Promise<void> => {
   try {
-    const messages = await apiCall<MessagesView>(`/village/${villageId.value}/message-list`);
-    messagesStore.saveMessages(messages);
+    const res = await apiCall<MessagesView>(`/village/${villageId.value}/message-list`);
+    messagesStore.saveNightMessages(res.list);
   } catch {
     // エラーは無視
   }
@@ -285,10 +308,28 @@ const initFirebaseListeners = () => {
     }
   });
 
-  // メッセージ最新情報リスナー
+  // 夜メッセージリスナー: message_latest/${uid} が更新されたらAPIから取得
   const messageRef = dbRef(db, `${vid}/message_latest/${uid}`);
   unsubscribeMessage = onValue(messageRef, async () => {
-    await fetchMessages();
+    await fetchNightMessages();
+  });
+
+  // 昼メッセージリスナー: v${vid}/messages/ にメッセージが追加されたらFirebaseから直接取得
+  // Firebase は 'strong' フィールド、API スキーマは 'is_strong' を使うため正規化する
+  const noonMessageRef = dbRef(db, `${vid}/messages/`);
+  unsubscribeNoonMessage = onChildAdded(noonMessageRef, (snapshot) => {
+    const raw = snapshot.val();
+    if (!raw) return;
+    const message: MessageView = {
+      from: raw.from,
+      time: raw.time,
+      content: {
+        type: raw.content.type,
+        text: raw.content.text,
+        is_strong: raw.content.strong,
+      },
+    };
+    messagesStore.addNoonMessage(message);
   });
 };
 
@@ -305,6 +346,10 @@ const terminateFirebaseListeners = () => {
   if (unsubscribeMessage) {
     unsubscribeMessage();
     unsubscribeMessage = null;
+  }
+  if (unsubscribeNoonMessage) {
+    unsubscribeNoonMessage();
+    unsubscribeNoonMessage = null;
   }
 };
 
@@ -365,8 +410,8 @@ const initialize = async () => {
     villageStore.initSituation(initSituation);
   }
 
-  // メッセージ初期取得
-  await fetchMessages();
+  // 夜メッセージ初期取得（昼メッセージは Firebase onChildAdded で自動ロード）
+  await fetchNightMessages();
 
   // Firebase リスナー開始
   initFirebaseListeners();
