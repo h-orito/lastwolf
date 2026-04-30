@@ -61,22 +61,37 @@
       style="padding-bottom: env(safe-area-inset-bottom)"
     >
       <button
-        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-center gap-1"
-        @click="scrollToSection('#participants-area')"
+        class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
+        :class="
+          activeSection === 'participants'
+            ? 'text-blue-600 border-blue-600'
+            : 'text-gray-500 border-transparent hover:bg-gray-100'
+        "
+        @click="scrollToSection('#participants-area', 'participants')"
       >
         <UsersIcon class="h-4 w-4" />
         <span>参加者</span>
       </button>
       <button
-        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-center gap-1"
-        @click="scrollToSection('#progress-area')"
+        class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
+        :class="
+          activeSection === 'progress'
+            ? 'text-blue-600 border-blue-600'
+            : 'text-gray-500 border-transparent hover:bg-gray-100'
+        "
+        @click="scrollToSection('#progress-area', 'progress')"
       >
         <ClockIcon class="h-4 w-4" />
         <span>進行</span>
       </button>
       <button
-        class="flex-1 py-2 text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-center gap-1"
-        @click="scrollToSection('#messages-area')"
+        class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
+        :class="
+          activeSection === 'messages'
+            ? 'text-blue-600 border-blue-600'
+            : 'text-gray-500 border-transparent hover:bg-gray-100'
+        "
+        @click="scrollToSection('#messages-area', 'messages')"
       >
         <ChatBubbleOvalLeftEllipsisIcon class="h-4 w-4" />
         <span>チャット</span>
@@ -293,11 +308,40 @@ const terminateFirebaseListeners = () => {
   }
 };
 
+// アクティブセクション管理
+type SectionKey = "participants" | "progress" | "messages";
+const activeSection = ref<SectionKey>("participants");
+
 // セクションへスクロール
-const scrollToSection = (hash: string) => {
+const scrollToSection = (hash: string, section: SectionKey) => {
+  activeSection.value = section;
   const el = document.querySelector(hash);
   if (el) {
     el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+// Intersection Observerでスクロール位置に応じてアクティブセクションを更新
+let sectionObserver: IntersectionObserver | null = null;
+
+const initSectionObserver = () => {
+  sectionObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          if (id === "participants-area") activeSection.value = "participants";
+          else if (id === "progress-area") activeSection.value = "progress";
+          else if (id === "messages-area") activeSection.value = "messages";
+        }
+      }
+    },
+    { threshold: 0.3, rootMargin: "0px 0px -50% 0px" },
+  );
+
+  for (const id of ["participants-area", "progress-area", "messages-area"]) {
+    const el = document.getElementById(id);
+    if (el) sectionObserver.observe(el);
   }
 };
 
@@ -333,6 +377,7 @@ const initialize = async () => {
 
 onMounted(async () => {
   await initialize();
+  initSectionObserver();
 });
 
 onUnmounted(() => {
@@ -343,6 +388,8 @@ onUnmounted(() => {
     clearInterval(timer);
     timer = null;
   }
+  sectionObserver?.disconnect();
+  sectionObserver = null;
 });
 </script>
 
