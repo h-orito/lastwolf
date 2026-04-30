@@ -31,8 +31,12 @@
           />
           <!-- 強調発言フィルタ -->
           <div class="mb-2">
-            <label class="flex items-center gap-1 cursor-pointer text-xs">
-              <input v-model="shouldFilterByStrong" type="checkbox" class="rounded" />
+            <label class="inline-flex items-center gap-1 cursor-pointer text-xs">
+              <input
+                v-model="shouldFilterByStrong"
+                type="checkbox"
+                class="rounded cursor-pointer"
+              />
               強調発言のみ表示
             </label>
           </div>
