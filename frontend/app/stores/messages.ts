@@ -19,7 +19,7 @@ export const useMessagesStore = defineStore("messages", () => {
   };
 
   const saveNightMessages = (msgs: MessageView[]) => {
-    nightMessages.value = msgs;
+    nightMessages.value = [...msgs].reverse();
   };
 
   return {
