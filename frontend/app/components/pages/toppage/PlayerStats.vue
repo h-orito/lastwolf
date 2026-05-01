@@ -43,10 +43,10 @@
 </template>
 
 <script setup lang="ts">
-const { isAuthenticated, myselfPlayer, signInWithTwitter, logout } = useAuth();
+const { isAuthenticated, myselfPlayer, loginWithTwitter, logout } = useAuth();
 
 const handleSignin = async () => {
-  await signInWithTwitter();
+  await loginWithTwitter();
 };
 
 const handleLogout = async () => {

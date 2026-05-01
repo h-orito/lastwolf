@@ -7,9 +7,8 @@
       :disabled="!canSay"
       class="flex-1 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] font-sans"
       :class="messageBgColorClass"
-      @keypress="keypressEnter"
-      @keyup.exact.enter="keyupEnter"
-      @keyup.shift.enter="strongSay"
+      @keypress.exact.enter="keypressEnter"
+      @keypress.shift.enter="keypressShiftEnter"
     />
     <label
       class="flex items-center gap-1 px-2 py-1 text-xs rounded border cursor-pointer select-none"
@@ -40,7 +39,6 @@ const village = computed(() => villageStore.village as VillageView | null);
 const latestDay = computed(() => villageStore.latestDay);
 const { apiCall } = useApi();
 
-const canMessageSubmit = ref(false);
 const message = ref("");
 const strong = ref(false);
 const isSilentTime = ref(false);
@@ -130,18 +128,12 @@ const refreshTimer = () => {
   isSilentTime.value = now.isBefore(silentEnd);
 };
 
-const keypressEnter = () => {
-  canMessageSubmit.value = true;
-};
-
-const keyupEnter = (e: KeyboardEvent) => {
-  if (!canMessageSubmit.value) return;
+const keypressEnter = (e: KeyboardEvent) => {
   say();
   e.preventDefault();
 };
 
-const strongSay = async (e: KeyboardEvent) => {
-  if (!canMessageSubmit.value) return;
+const keypressShiftEnter = async (e: KeyboardEvent) => {
   strong.value = true;
   await say();
   e.preventDefault();
@@ -150,7 +142,6 @@ const strongSay = async (e: KeyboardEvent) => {
 const say = async () => {
   if (!canSubmit.value) return;
   const mes = message.value.trim().substring(0, 200);
-  canMessageSubmit.value = false;
   message.value = "";
   const isStrong = strong.value;
   strong.value = false;

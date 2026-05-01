@@ -1,4 +1,5 @@
 import type { User, UserCredential } from "firebase/auth";
+import { getAdditionalUserInfo } from "firebase/auth";
 import type { components } from "~/lib/api/schema";
 import * as firebaseAuth from "~/lib/firebase/auth";
 
@@ -29,17 +30,40 @@ export const useAuth = () => {
   };
 
   /**
-   * Googleでサインイン
+   * 初回ログイン時にサーバーへプレイヤー情報を登録する（既存ユーザーはエラーになるが無視）
    */
-  const signInWithGoogle = async (): Promise<UserCredential> => {
-    return await firebaseAuth.signInWithGoogle();
+  const registerPlayerIfNeeded = async (credential: UserCredential): Promise<void> => {
+    const additionalInfo = getAdditionalUserInfo(credential);
+    const twitterUserName = additionalInfo?.username ?? "仮登録";
+    const nickname = credential.user.displayName ?? "仮登録";
+    try {
+      await apiCall("/player/nickname", {
+        method: "POST",
+        body: { nickname, twitter_user_name: twitterUserName },
+      });
+    } catch {
+      // 既存ユーザーの場合はサーバーがエラーを返すが正常
+    }
   };
 
   /**
-   * Twitterでサインイン
+   * Googleでログイン（サーバー登録まで含む）
    */
-  const signInWithTwitter = async (): Promise<UserCredential> => {
-    return await firebaseAuth.signInWithTwitter();
+  const loginWithGoogle = async (): Promise<void> => {
+    const credential = await firebaseAuth.signInWithGoogle();
+    await loginout(credential.user);
+    await registerPlayerIfNeeded(credential);
+    await refreshAuth();
+  };
+
+  /**
+   * Twitterでログイン（サーバー登録まで含む）
+   */
+  const loginWithTwitter = async (): Promise<void> => {
+    const credential = await firebaseAuth.signInWithTwitter();
+    await loginout(credential.user);
+    await registerPlayerIfNeeded(credential);
+    await refreshAuth();
   };
 
   /**
@@ -117,8 +141,8 @@ export const useAuth = () => {
 
     // 操作
     initializeAuth,
-    signInWithGoogle,
-    signInWithTwitter,
+    loginWithGoogle,
+    loginWithTwitter,
     logout,
     waitForAuth,
     loginout,
