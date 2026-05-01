@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row w-full leading-relaxed py-0.5 border-t border-b border-gray-100 text-gray-600 text-xs message-border"
+    class="flex flex-row w-full leading-relaxed py-0.5 border-t border-b border-gray-100 text-xs message-border"
     :class="messageClasses"
     :style="messageStyle"
   >
@@ -134,8 +134,12 @@ const messageClasses = computed(() => {
     classes.push("text-green-600");
   } else if (code === MESSAGE_TYPE.GRAVE_SAY) {
     classes.push("text-blue-600");
+  } else if (code === MESSAGE_TYPE.LOVERS_SAY) {
+    classes.push("text-pink-600");
   } else if (code === MESSAGE_TYPE.CREATOR_SAY) {
     classes.push("text-gray-900");
+  } else {
+    classes.push("text-gray-600");
   }
 
   return classes;

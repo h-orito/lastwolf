@@ -34,7 +34,7 @@
         <div class="md:w-1/2" id="participants-area">
           <Participants />
           <div id="progress-area">
-            <Progress ref="progressRef" />
+            <Progress />
           </div>
         </div>
 
@@ -58,15 +58,15 @@
       <ModalFirstDay v-model="isOpenFirstdayModal" @close="closeFirstdayModal" />
     </div>
 
-    <!-- モバイル固定フッター (md以上では非表示) -->
+    <!-- 固定フッター: PC版は残り時間バーのみ、モバイルは残り時間バー+ナビゲーション -->
     <div
-      class="fixed bottom-0 left-0 w-full bg-white z-50 md:hidden"
+      class="fixed bottom-0 left-0 w-full bg-white z-50"
       style="padding-bottom: env(safe-area-inset-bottom)"
     >
       <!-- 残り時間プログレスバー (進行中のみ表示) -->
       <ProgressBar ref="mobileProgressBarRef" class="px-2 pt-1" />
-      <!-- ナビゲーション -->
-      <div class="flex border-t border-gray-300">
+      <!-- ナビゲーション (モバイルのみ) -->
+      <div class="flex border-t border-gray-300 md:hidden">
         <button
           class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
           :class="
@@ -178,7 +178,6 @@ const isCreator = computed(() => {
 });
 
 // 子コンポーネントのref
-const progressRef = ref<{ refreshTimer: () => void } | null>(null);
 const mobileProgressBarRef = ref<{ refreshTimer: () => void } | null>(null);
 const messagesRef = ref<{ openLatestday: () => void } | null>(null);
 
@@ -236,7 +235,6 @@ let timer: ReturnType<typeof setInterval> | null = null;
 
 const setTimer = () => {
   return setInterval(() => {
-    progressRef.value?.refreshTimer();
     mobileProgressBarRef.value?.refreshTimer();
   }, 1000);
 };
@@ -459,6 +457,12 @@ onUnmounted(() => {
   /* 進行中はプログレスバー分の高さを追加 */
   .village-wrapper.village-in-progress {
     padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  }
+}
+/* PC版: 進行中はプログレスバー固定表示分の余白を追加 */
+@media (min-width: 768px) {
+  .village-wrapper.village-in-progress {
+    padding-bottom: calc(50px + env(safe-area-inset-bottom));
   }
 }
 </style>

@@ -117,7 +117,8 @@ const abilityMessageLines = computed(() => {
   if (type === "ATTACK") {
     message += "\n襲撃は誰か1人が行使すると他の人は操作不可能になります。\n";
   }
-  message += "\n能力行使しなかった場合突然死するため、必ず能力を行使してください。";
+  message +=
+    '\n<span class="text-red-600">能力行使しなかった場合突然死するため、必ず能力を行使してください。</span>';
   if (type === "ATTACK") {
     message += "\n襲撃は誰か1人が行使すれば全員突然死しません。";
   }

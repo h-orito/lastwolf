@@ -1,6 +1,10 @@
 <template>
   <div v-if="village && isInProgress" class="progress-bar mb-2">
     <strong class="text-xs">{{ timeName }}</strong>
+    <strong v-if="needsAbility" class="text-xs text-red-600 ml-2"
+      >時間内に能力行使してください</strong
+    >
+    <strong v-if="needsVote" class="text-xs text-red-600 ml-2">時間内に投票してください</strong>
     <div class="mt-1">
       <!-- プログレスバー -->
       <div class="w-full bg-gray-200 rounded h-4 relative overflow-hidden">
@@ -25,11 +29,12 @@ import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 import dayjs from "dayjs";
 
 type VillageView = components["schemas"]["VillageView"];
+type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
 
 const villageStore = useVillageStore();
 const village = computed(() => villageStore.village as VillageView | null);
 const latestDay = computed(() => villageStore.latestDay);
-const situation = computed(() => villageStore.situation);
+const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
 
 const { apiCall } = useApi();
 
@@ -43,19 +48,30 @@ const isInProgress = computed(() => {
 
 const timeName = computed(() => {
   if (!village.value || !latestDay.value) return "";
-  const code = latestDay.value.noon_night.code;
-  if (code === "NOON") {
-    return isSilentTime.value ? "議論時間（沈黙時間中）" : "議論時間";
-  } else if (code === "NIGHT") {
-    return "夜時間";
-  } else {
-    return "投票時間";
+  const day = latestDay.value;
+  const base = `${day.day}日目${day.noon_night.name}`;
+  if (day.noon_night.code === "NOON" && isSilentTime.value) {
+    return `${base}（沈黙時間中）`;
   }
+  return base;
 });
 
 const barPercent = computed(() => {
   if (interval.value <= 0) return 0;
   return Math.min(100, (left.value / interval.value) * 100);
+});
+
+const needsAbility = computed(() => {
+  if (!situation.value) return false;
+  const list = situation.value.ability.list;
+  if (list.length <= 0) return false;
+  return list[0]?.usable ?? false;
+});
+
+const needsVote = computed(() => {
+  if (!situation.value) return false;
+  const vote = situation.value.vote;
+  return vote.available_vote && vote.target == null;
 });
 
 const barColorClass = computed(() => {

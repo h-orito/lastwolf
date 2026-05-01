@@ -2,7 +2,6 @@
   <div class="rounded bg-[#fafafa] text-xs mb-2">
     <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">進行</div>
     <div class="px-3 py-2">
-      <ProgressBar ref="progressBarRef" class="hidden md:block" />
       <CurrentSituation />
       <Myself />
       <Action />
@@ -25,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import ProgressBar from "~/components/pages/village/progress/ProgressBar.vue";
 import CurrentSituation from "~/components/pages/village/progress/CurrentSituation.vue";
 import Myself from "~/components/pages/village/progress/Myself.vue";
 import Action from "~/components/pages/village/action/Action.vue";
@@ -38,7 +36,6 @@ const villageStore = useVillageStore();
 const village = computed(() => villageStore.village as VillageView | null);
 const { apiCall } = useApi();
 
-const progressBarRef = ref<{ refreshTimer: () => void } | null>(null);
 const isOpenVillageInfoModal = ref(false);
 const charachipName = ref<string | null>(null);
 
@@ -58,10 +55,4 @@ const openVillageInfoModal = async () => {
 const closeVillageInfoModal = () => {
   isOpenVillageInfoModal.value = false;
 };
-
-const refreshTimer = () => {
-  progressBarRef.value?.refreshTimer();
-};
-
-defineExpose({ refreshTimer });
 </script>

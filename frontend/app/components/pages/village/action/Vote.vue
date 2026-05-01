@@ -3,7 +3,10 @@
     <hr class="border-gray-200 my-2" />
     <p class="mb-2 font-bold">投票</p>
     <p class="mb-2">
-      投票対象を選択してください。<br />全員が投票する前なら投票し直す事もできます。<br />投票しないと突然死するため、必ず投票してください。
+      投票対象を選択してください。<br />全員が投票する前なら投票し直す事もできます。<br /><span
+        class="text-red-600"
+        >投票しないと突然死するため、必ず投票してください。</span
+      >
     </p>
     <p v-if="currentVoteTarget" class="mb-2">
       <strong>{{ currentVoteTarget }}</strong
