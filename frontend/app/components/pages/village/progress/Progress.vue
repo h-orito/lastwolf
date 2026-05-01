@@ -2,7 +2,7 @@
   <div class="rounded bg-[#fafafa] text-xs mb-2">
     <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">進行</div>
     <div class="px-3 py-2">
-      <ProgressBar ref="progressBarRef" />
+      <ProgressBar ref="progressBarRef" class="hidden md:block" />
       <CurrentSituation />
       <Myself />
       <Action />

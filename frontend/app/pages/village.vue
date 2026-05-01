@@ -1,6 +1,6 @@
 <template>
   <section class="py-2 px-2">
-    <div class="text-xs text-left village-wrapper">
+    <div class="text-xs text-left village-wrapper" :class="{ 'village-in-progress': isInProgress }">
       <!-- 村名ヘッダー -->
       <div v-if="village" class="mb-2">
         <div class="flex items-center gap-2">
@@ -58,47 +58,52 @@
       <ModalFirstDay v-model="isOpenFirstdayModal" @close="closeFirstdayModal" />
     </div>
 
-    <!-- モバイル固定フッターボタン (md以上では非表示) -->
+    <!-- モバイル固定フッター (md以上では非表示) -->
     <div
-      class="fixed bottom-0 left-0 w-full flex border-t border-gray-300 bg-white z-50 md:hidden"
+      class="fixed bottom-0 left-0 w-full bg-white z-50 md:hidden"
       style="padding-bottom: env(safe-area-inset-bottom)"
     >
-      <button
-        class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
-        :class="
-          activeSection === 'participants'
-            ? 'text-blue-600 border-blue-600'
-            : 'text-gray-500 border-transparent hover:bg-gray-100'
-        "
-        @click="scrollToSection('#participants-area', 'participants')"
-      >
-        <UsersIcon class="h-4 w-4" />
-        <span>参加者</span>
-      </button>
-      <button
-        class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
-        :class="
-          activeSection === 'progress'
-            ? 'text-blue-600 border-blue-600'
-            : 'text-gray-500 border-transparent hover:bg-gray-100'
-        "
-        @click="scrollToSection('#progress-area', 'progress')"
-      >
-        <ClockIcon class="h-4 w-4" />
-        <span>進行</span>
-      </button>
-      <button
-        class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
-        :class="
-          activeSection === 'messages'
-            ? 'text-blue-600 border-blue-600'
-            : 'text-gray-500 border-transparent hover:bg-gray-100'
-        "
-        @click="scrollToSection('#messages-area', 'messages')"
-      >
-        <ChatBubbleOvalLeftEllipsisIcon class="h-4 w-4" />
-        <span>チャット</span>
-      </button>
+      <!-- 残り時間プログレスバー (進行中のみ表示) -->
+      <ProgressBar ref="mobileProgressBarRef" class="px-2 pt-1" />
+      <!-- ナビゲーション -->
+      <div class="flex border-t border-gray-300">
+        <button
+          class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
+          :class="
+            activeSection === 'participants'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-gray-500 border-transparent hover:bg-gray-100'
+          "
+          @click="scrollToSection('#participants-area', 'participants')"
+        >
+          <UsersIcon class="h-4 w-4" />
+          <span>参加者</span>
+        </button>
+        <button
+          class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
+          :class="
+            activeSection === 'progress'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-gray-500 border-transparent hover:bg-gray-100'
+          "
+          @click="scrollToSection('#progress-area', 'progress')"
+        >
+          <ClockIcon class="h-4 w-4" />
+          <span>進行</span>
+        </button>
+        <button
+          class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
+          :class="
+            activeSection === 'messages'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-gray-500 border-transparent hover:bg-gray-100'
+          "
+          @click="scrollToSection('#messages-area', 'messages')"
+        >
+          <ChatBubbleOvalLeftEllipsisIcon class="h-4 w-4" />
+          <span>チャット</span>
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -113,11 +118,13 @@ import {
 } from "firebase/database";
 import Participants from "~/components/pages/village/participants/Participants.vue";
 import Progress from "~/components/pages/village/progress/Progress.vue";
+import ProgressBar from "~/components/pages/village/progress/ProgressBar.vue";
 import Messages from "~/components/pages/village/message/Messages.vue";
 import Creator from "~/components/pages/village/creator/Creator.vue";
 import Debug from "~/components/pages/village/debug/Debug.vue";
 import ModalFirstDay from "~/components/pages/village/day-change/ModalFirstDay.vue";
 import { UsersIcon, ClockIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/vue/24/outline";
+import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 import type { components } from "~/lib/api/schema";
 
 definePageMeta({ layout: "default" });
@@ -172,7 +179,12 @@ const isCreator = computed(() => {
 
 // 子コンポーネントのref
 const progressRef = ref<{ refreshTimer: () => void } | null>(null);
+const mobileProgressBarRef = ref<{ refreshTimer: () => void } | null>(null);
 const messagesRef = ref<{ openLatestday: () => void } | null>(null);
+
+const isInProgress = computed(() => {
+  return village.value?.status.code === VILLAGE_STATUS.IN_PROGRESS;
+});
 
 // 1日目役職確認モーダル
 const isOpenFirstdayModal = ref(false);
@@ -225,6 +237,7 @@ let timer: ReturnType<typeof setInterval> | null = null;
 const setTimer = () => {
   return setInterval(() => {
     progressRef.value?.refreshTimer();
+    mobileProgressBarRef.value?.refreshTimer();
   }, 1000);
 };
 
@@ -439,11 +452,13 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* モバイル: プログレスバーを上部固定 */
 @media (max-width: 767px) {
   .village-wrapper {
-    padding-top: calc(50px + env(safe-area-inset-top));
     padding-bottom: calc(50px + env(safe-area-inset-bottom));
+  }
+  /* 進行中はプログレスバー分の高さを追加 */
+  .village-wrapper.village-in-progress {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
   }
 }
 </style>
