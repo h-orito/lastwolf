@@ -96,6 +96,8 @@
 </template>
 
 <script setup lang="ts">
+import { getDatabase, ref as dbRef, remove } from "firebase/database";
+
 import UiButton from "~/components/ui/button/index.vue";
 import UiFormSelect from "~/components/ui/form/FormSelect.vue";
 
@@ -207,7 +209,11 @@ const changeDay = async () => {
 };
 
 const allDelete = async () => {
-  await apiCall(`/admin/village/1/message`, { method: "DELETE" });
+  const villageId = villageStore.villageId;
+  if (!villageId) return;
+  const vid = `v${("00000" + villageId).slice(-5)}`;
+  const db = getDatabase();
+  await remove(dbRef(db, `${vid}/`));
 };
 
 const allDrawVote = async () => {
