@@ -33,32 +33,16 @@
     </UiButton>
 
     <!-- 参加者選択モーダル -->
-    <UiModal v-model="isOpenSelectModal" title="画像から選択">
-      <div class="flex flex-wrap">
-        <div
-          v-for="p in targetList"
-          :key="p.id"
-          class="text-center border border-gray-200 rounded-2xl p-1 m-1 w-40 cursor-pointer hover:border-[#3991f4] hover:font-bold text-xs"
-          @click="selectParticipant(p.id)"
-        >
-          <img
-            :src="p.chara.image.image_url"
-            :alt="p.chara.name.name"
-            :class="p.dead ? 'opacity-30' : ''"
-            class="mx-auto"
-          />
-          <p>{{ p.chara.name.name }}</p>
-          <p v-if="p.dead" class="text-red-600">
-            {{ `${p.dead.village_day.day}d${p.dead.reason}` }}
-          </p>
-        </div>
-      </div>
-    </UiModal>
+    <UiParticipantSelectModal
+      v-model="isOpenSelectModal"
+      :participants="targetList"
+      @select="selectParticipant"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import UiModal from "~/components/ui/modal/Modal.vue";
+import UiParticipantSelectModal from "~/components/ui/chara-select/ParticipantSelectModal.vue";
 import UiButton from "~/components/ui/button/index.vue";
 import UiFormSelect from "~/components/ui/form/FormSelect.vue";
 
@@ -99,7 +83,6 @@ const openSelectModal = () => {
 
 const selectParticipant = (id: number) => {
   participantId.value = id;
-  isOpenSelectModal.value = false;
 };
 
 const setVote = async () => {

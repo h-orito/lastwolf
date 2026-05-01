@@ -32,27 +32,11 @@
     </UiButton>
 
     <!-- 参加者選択モーダル -->
-    <UiModal v-model="isOpenSelectModal" title="画像から選択">
-      <div class="flex flex-wrap">
-        <div
-          v-for="p in targetList"
-          :key="p.id"
-          class="text-center border border-gray-200 rounded-2xl p-1 m-1 w-40 cursor-pointer hover:border-[#3991f4] hover:font-bold text-xs"
-          @click="selectParticipant(p.id)"
-        >
-          <img
-            :src="p.chara.image.image_url"
-            :alt="p.chara.name.name"
-            :class="p.dead ? 'opacity-30' : ''"
-            class="mx-auto"
-          />
-          <p :style="charaNameStyle(p)">{{ p.chara.name.name }}</p>
-          <p v-if="p.dead" class="text-red-600">
-            {{ `${p.dead.village_day.day}d${p.dead.reason}` }}
-          </p>
-        </div>
-      </div>
-    </UiModal>
+    <UiParticipantSelectModal
+      v-model="isOpenSelectModal"
+      :participants="targetList"
+      @select="selectParticipant"
+    />
 
     <!-- 確認ダイアログ -->
     <UiModal v-model="isConfirmOpen" title="確認">
@@ -74,12 +58,11 @@
 
 <script setup lang="ts">
 import UiModal from "~/components/ui/modal/Modal.vue";
+import UiParticipantSelectModal from "~/components/ui/chara-select/ParticipantSelectModal.vue";
 import UiButton from "~/components/ui/button/index.vue";
 import UiFormSelect from "~/components/ui/form/FormSelect.vue";
 
 import type { components } from "~/lib/api/schema";
-import { getMessageColor } from "~/lib/api/message-color";
-
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
 type VillageView = components["schemas"]["VillageView"];
 type VillageParticipantView = components["schemas"]["VillageParticipantView"];
@@ -154,19 +137,12 @@ const abilityButtonString = computed(() => {
   }
 });
 
-const charaNameStyle = (p: VillageParticipantView) => {
-  if (!village.value) return {};
-  const color = getMessageColor(village.value, p);
-  return color ? { color } : {};
-};
-
 const openSelectModal = () => {
   isOpenSelectModal.value = true;
 };
 
 const selectParticipant = (id: number) => {
   participantId.value = id;
-  isOpenSelectModal.value = false;
 };
 
 const confirmSetAbility = () => {
