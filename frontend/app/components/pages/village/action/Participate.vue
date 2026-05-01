@@ -48,24 +48,16 @@
     </UiButton>
 
     <!-- キャラ選択モーダル -->
-    <UiModal v-model="isCharaSelectModalOpen" title="画像から選択">
-      <div class="flex flex-wrap">
-        <div
-          v-for="chara in situation?.participate.selectable_chara_list"
-          :key="chara.id"
-          class="text-center border border-gray-200 rounded-2xl p-1 m-1 w-40 cursor-pointer hover:border-[#3991f4] hover:font-bold"
-          @click="charaSelect(chara.id)"
-        >
-          <img :src="chara.image.image_url" :alt="chara.name.name" class="mx-auto" />
-          <p class="text-xs">{{ chara.name.name }}</p>
-        </div>
-      </div>
-    </UiModal>
+    <UiCharaSelectModal
+      v-model="isCharaSelectModalOpen"
+      :charas="situation?.participate.selectable_chara_list ?? []"
+      @select="charaSelect"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import UiModal from "~/components/ui/modal/Modal.vue";
+import UiCharaSelectModal from "~/components/ui/chara-select/CharaSelectModal.vue";
 import UiButton from "~/components/ui/button/index.vue";
 import UiFormSelect from "~/components/ui/form/FormSelect.vue";
 
@@ -73,6 +65,7 @@ import type { components } from "~/lib/api/schema";
 
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
 type VillageView = components["schemas"]["VillageView"];
+type Chara = components["schemas"]["Chara"];
 
 const villageStore = useVillageStore();
 const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
@@ -148,8 +141,7 @@ const openCharaModal = () => {
   isCharaSelectModalOpen.value = true;
 };
 
-const charaSelect = (id: number) => {
-  charaId.value = id;
-  isCharaSelectModalOpen.value = false;
+const charaSelect = (chara: Chara) => {
+  charaId.value = chara.id;
 };
 </script>

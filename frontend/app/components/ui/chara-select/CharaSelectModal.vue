@@ -13,8 +13,7 @@
           :alt="chara.name.name"
           :width="chara.image.width"
           :height="chara.image.height"
-          :style="{ width: `${chara.image.width}px`, height: `${chara.image.height}px` }"
-          class="mb-1 object-contain"
+          class="mb-1"
           loading="lazy"
         />
         <p class="text-center text-xs text-gray-700">{{ chara.name.name }}</p>
