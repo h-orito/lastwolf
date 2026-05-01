@@ -223,10 +223,68 @@ const loadCharasByCharachipId = async (charachipId: number) => {
   }
 };
 
+// クライアントサイドバリデーション
+const validateForms = (): boolean => {
+  // エラーをクリア
+  for (const key in basicErrors) delete basicErrors[key];
+  for (const key in organizationErrors) delete organizationErrors[key];
+  for (const key in ruleErrors) delete ruleErrors[key];
+  validationErrors.value = [];
+
+  let valid = true;
+
+  if (!basicForm.villageName || basicForm.villageName.trim().length === 0) {
+    basicErrors.villageName = "村名を入力してください";
+    valid = false;
+  } else if (basicForm.villageName.length > 40) {
+    basicErrors.villageName = "村名は40文字以内で入力してください";
+    valid = false;
+  }
+
+  if (!basicForm.startDatetime) {
+    validationErrors.value.push("開始予定日時を入力してください");
+    valid = false;
+  }
+
+  if (basicForm.noonSeconds < 180 || basicForm.noonSeconds > 3600) {
+    basicErrors.noonSeconds = "昼時間は180〜3600秒で入力してください";
+    valid = false;
+  }
+
+  if (basicForm.voteSeconds < 60 || basicForm.voteSeconds > 600) {
+    basicErrors.voteSeconds = "投票時間は60〜600秒で入力してください";
+    valid = false;
+  }
+
+  if (basicForm.nightSeconds < 120 || basicForm.nightSeconds > 1200) {
+    basicErrors.nightSeconds = "夜時間は120〜1200秒で入力してください";
+    valid = false;
+  }
+
+  if (!organizationForm.organization || organizationForm.organization.length < 5) {
+    organizationErrors.organization = "編成は5文字以上入力してください";
+    valid = false;
+  } else if (organizationForm.organization.length > 999) {
+    organizationErrors.organization = "編成は999文字以内で入力してください";
+    valid = false;
+  }
+
+  if (ruleForm.silentSeconds < 0 || ruleForm.silentSeconds > 20) {
+    ruleErrors.silentSeconds = "昼沈黙時間は0〜20秒で入力してください";
+    valid = false;
+  }
+
+  return valid;
+};
+
 // 確認（バリデーション）
 const confirm = async () => {
+  if (!validateForms()) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
   confirming.value = true;
-  validationErrors.value = [];
 
   try {
     await apiCall("/village/confirm", {
