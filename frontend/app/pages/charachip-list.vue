@@ -16,12 +16,14 @@
 
           <!-- テーブル -->
           <div v-else class="overflow-x-auto">
-            <table class="w-full border-collapse bg-white">
+            <table class="w-full border-collapse bg-white text-sm text-left">
               <thead>
-                <tr class="bg-gray-100">
-                  <th class="border border-gray-300 px-3 py-2 text-left">キャラチップ名</th>
-                  <th class="border border-gray-300 px-3 py-2 text-left">作者</th>
-                  <th class="border border-gray-300 px-3 py-2 text-left">例</th>
+                <tr>
+                  <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">
+                    キャラチップ名
+                  </th>
+                  <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">作者</th>
+                  <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">例</th>
                 </tr>
               </thead>
               <tbody>
@@ -30,7 +32,7 @@
                   :key="item.charachip_id"
                   class="odd:bg-white even:bg-gray-50"
                 >
-                  <td class="border border-gray-300 px-3 py-1">
+                  <td class="border-b border-gray-200 px-3 py-1">
                     <NuxtLink
                       :to="{ path: '/charachip', query: { id: item.charachip_id } }"
                       class="text-blue-600 hover:text-blue-800"
@@ -38,8 +40,8 @@
                       {{ item.charachip_name }}
                     </NuxtLink>
                   </td>
-                  <td class="border border-gray-300 px-3 py-1">{{ item.designer_name }}</td>
-                  <td class="border border-gray-300 px-3 py-1 text-center">
+                  <td class="border-b border-gray-200 px-3 py-1">{{ item.designer_name }}</td>
+                  <td class="border-b border-gray-200 px-3 py-1 text-center">
                     <img
                       v-if="item.chara"
                       :src="item.chara.image.image_url"

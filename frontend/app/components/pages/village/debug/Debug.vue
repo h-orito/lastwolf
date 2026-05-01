@@ -80,6 +80,13 @@
         </UiButton>
       </div>
 
+      <!-- 全員能力行使 -->
+      <div>
+        <UiButton button-type="primary" :disabled="!isNightTime" @click="allAbility">
+          全員能力行使
+        </UiButton>
+      </div>
+
       <!-- メッセージ削除 -->
       <div>
         <UiButton button-type="danger" @click="allDelete">メッセージ削除</UiButton>
@@ -113,6 +120,14 @@ const isVoteTime = computed(() => {
   const days = debugVillage.value.days.list;
   const lastDay = days[days.length - 1];
   return lastDay?.noon_night.code.startsWith("VOTE") ?? false;
+});
+
+const isNightTime = computed(() => {
+  if (!debugVillage.value) return false;
+  if (debugVillage.value.status.code !== VILLAGE_STATUS.IN_PROGRESS) return false;
+  const days = debugVillage.value.days.list;
+  const lastDay = days[days.length - 1];
+  return lastDay?.noon_night.is_night_time ?? false;
 });
 
 const playerOptions = computed(() => {
@@ -204,5 +219,9 @@ const allVote = async () => {
     `/admin/village/${debugVillage.value!.id}/all-vote/${executionParticipantId.value}`,
     { method: "POST" },
   );
+};
+
+const allAbility = async () => {
+  await apiCall(`/admin/village/${debugVillage.value!.id}/all-ability`, { method: "POST" });
 };
 </script>
