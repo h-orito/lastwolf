@@ -14,6 +14,10 @@ export const useAuthStore = defineStore("auth", () => {
   const myselfPlayer = ref<MyselfPlayerView | null>(null);
   const isLoading = ref(true);
 
+  // トークン in-memory (useCookie は非同期コンテキストで不安定なため直接管理)
+  const currentToken = ref<string | null>(null);
+  const tokenExpiresAt = ref<Date | null>(null);
+
   // Computed
   const isAuthenticated = computed(() => !!user.value);
 
@@ -30,49 +34,36 @@ export const useAuthStore = defineStore("auth", () => {
     isLoading.value = loading;
   };
 
+  const setCurrentToken = (token: string | null, expiresAt: Date | null = null) => {
+    currentToken.value = token;
+    tokenExpiresAt.value = expiresAt;
+  };
+
   // 認証トークンの取得
   const getAuthToken = async (): Promise<string | null> => {
-    const tokenCookie = useCookie<string | null>("id-token", {
-      default: () => null,
-      maxAge: 60 * 60 * 24 * 30, // 30日
-      sameSite: "strict",
-      secure: import.meta.env.PROD,
-    });
-    const checkDateCookie = useCookie<string | null>("id-token-check-date", {
-      default: () => null,
-      maxAge: 60 * 60 * 24 * 30, // 30日
-      sameSite: "strict",
-      secure: import.meta.env.PROD,
-    });
-
-    let token = tokenCookie.value;
     const currentUser = user.value;
 
-    if (!token || !currentUser) {
+    if (!currentToken.value || !currentUser) {
       return null;
     }
 
     // 有効期限チェック
-    const expired = checkDateCookie.value ? new Date(checkDateCookie.value) : new Date(0);
+    const expired = tokenExpiresAt.value ?? new Date(0);
     if (new Date().getTime() >= expired.getTime()) {
       // 期限切れの場合は更新
       try {
-        token = await currentUser.getIdToken(true);
-
-        // Cookieに保存
-        tokenCookie.value = token;
-
-        // 50分後に期限切れとして設定
-        const now = new Date();
-        const newExpired = new Date(now.getTime() + 50 * 60 * 1000).toISOString();
-        checkDateCookie.value = newExpired;
+        const newToken = await currentUser.getIdToken(true);
+        const newExpiresAt = new Date(Date.now() + 50 * 60 * 1000);
+        currentToken.value = newToken;
+        tokenExpiresAt.value = newExpiresAt;
+        return newToken;
       } catch (error) {
         console.error("Failed to refresh token:", error);
         return null;
       }
     }
 
-    return token;
+    return currentToken.value;
   };
 
   return {
@@ -86,6 +77,7 @@ export const useAuthStore = defineStore("auth", () => {
     setUser,
     setMyselfPlayer,
     setLoading,
+    setCurrentToken,
 
     // Token管理（API呼び出しで使用）
     getAuthToken,

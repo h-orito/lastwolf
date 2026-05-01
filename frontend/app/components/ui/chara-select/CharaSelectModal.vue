@@ -11,7 +11,10 @@
         <img
           :src="chara.image.image_url"
           :alt="chara.name.name"
-          class="mb-1 h-16 w-16 object-contain"
+          :width="chara.image.width"
+          :height="chara.image.height"
+          :style="{ width: `${chara.image.width}px`, height: `${chara.image.height}px` }"
+          class="mb-1 object-contain"
           loading="lazy"
         />
         <p class="text-center text-xs text-gray-700">{{ chara.name.name }}</p>

@@ -46,12 +46,7 @@ export const useAuth = () => {
    * ログアウト
    */
   const logout = async () => {
-    // Cookieを削除
-    const tokenCookie = useCookie("id-token");
-    const checkDateCookie = useCookie("id-token-check-date");
-    tokenCookie.value = null;
-    checkDateCookie.value = null;
-
+    authStore.setCurrentToken(null, null);
     await firebaseAuth.signOut();
     authStore.setUser(null);
     authStore.setMyselfPlayer(null);
@@ -76,10 +71,7 @@ export const useAuth = () => {
   const loginout = async (firebaseUser: User | null) => {
     if (!firebaseUser) {
       // ログアウト処理
-      const tokenCookie = useCookie("id-token");
-      const checkDateCookie = useCookie("id-token-check-date");
-      tokenCookie.value = null;
-      checkDateCookie.value = null;
+      authStore.setCurrentToken(null, null);
       authStore.setUser(null);
       authStore.setMyselfPlayer(null);
       return;
@@ -88,21 +80,9 @@ export const useAuth = () => {
     // 新しいIDトークンを取得
     const idToken = await firebaseUser.getIdToken(true);
 
-    // Cookieに保存
-    const tokenCookie = useCookie("id-token", {
-      maxAge: 60 * 60 * 24 * 30,
-      sameSite: "strict",
-    });
-    tokenCookie.value = idToken;
-
-    // 1時間で有効期限が切れるので50分後に再取得させる
-    const checkDateCookie = useCookie("id-token-check-date", {
-      maxAge: 60 * 60 * 24 * 30,
-      sameSite: "strict",
-    });
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 50);
-    checkDateCookie.value = now.toISOString();
+    // トークンをインメモリに保存（useCookie は await 後の非同期コンテキストで不安定なため）
+    const expiresAt = new Date(Date.now() + 50 * 60 * 1000);
+    authStore.setCurrentToken(idToken, expiresAt);
 
     // まずuserをセットしてAPIが叩けるようにする
     authStore.setUser(firebaseUser);
