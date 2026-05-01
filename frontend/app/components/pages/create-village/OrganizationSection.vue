@@ -27,10 +27,10 @@
         placeholder="編成"
         :maxlength="999"
         required
-        :error="!!errors.organization"
+        :error="!!displayOrganizationError"
       />
-      <template v-if="errors.organization" #error>
-        {{ errors.organization }}
+      <template v-if="displayOrganizationError" #error>
+        {{ displayOrganizationError }}
       </template>
     </UiFormFormGroup>
 
@@ -54,6 +54,10 @@
 import UiFormFormGroup from "~/components/ui/form/FormGroup.vue";
 import UiFormFormInput from "~/components/ui/form/FormInput.vue";
 import UiFormFormSwitch from "~/components/ui/form/FormSwitch.vue";
+import type { components } from "~/lib/api/schema";
+
+type Skill = components["schemas"]["Skill"];
+type SkillsView = components["schemas"]["SkillsView"];
 
 interface FormData {
   organization: string;
@@ -66,5 +70,41 @@ interface Props {
   errors: Partial<Record<keyof FormData, string>>;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const { apiCall } = useApi();
+
+const skillShortNames = ref<string[]>([]);
+
+onMounted(async () => {
+  try {
+    const data = await apiCall<SkillsView>("/skill/list");
+    skillShortNames.value = data.list.map((s: Skill) => s.short_name);
+  } catch {
+    // スキル一覧取得失敗時はクライアントバリデーションをスキップ
+  }
+});
+
+const localOrganizationError = computed(() => {
+  const org = props.form.organization;
+
+  if (!org) return "編成を入力してください";
+
+  if (org.length < 5 || org.length > 999) return "最低5人、最大999人です";
+
+  if (skillShortNames.value.length > 0) {
+    const hasInvalid = org.split("").some((c) => !skillShortNames.value.includes(c));
+    if (hasInvalid) return "不明な役職が存在しています";
+  }
+
+  if (!props.form.availableDummySkill && !org.includes("村")) {
+    return "役欠けなしの場合村人を1名以上含めてください";
+  }
+
+  return null;
+});
+
+const displayOrganizationError = computed(
+  () => localOrganizationError.value ?? props.errors.organization ?? null,
+);
 </script>

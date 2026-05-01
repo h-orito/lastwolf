@@ -33,7 +33,7 @@ interface Props {
   name?: string;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   min: undefined,
   max: undefined,
   step: 1,
@@ -56,6 +56,13 @@ const handleUpdate = (value: string) => {
 };
 
 const handleBlur = (event: FocusEvent) => {
+  const currentValue = Number(props.modelValue);
+  let clamped = currentValue;
+  if (props.min !== undefined && clamped < props.min) clamped = props.min;
+  if (props.max !== undefined && clamped > props.max) clamped = props.max;
+  if (clamped !== currentValue) {
+    emit("update:modelValue", clamped);
+  }
   emit("blur", event);
 };
 </script>
