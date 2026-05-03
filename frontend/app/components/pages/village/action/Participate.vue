@@ -39,7 +39,7 @@
       <input
         v-model="joinPassword"
         type="text"
-        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4]"
+        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] bg-white"
       />
     </div>
 
