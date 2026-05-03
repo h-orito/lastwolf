@@ -72,6 +72,7 @@ definePageMeta({ layout: "top" });
 
 const meta = buildPageMeta({ title: "" });
 useSeoMeta(meta);
+useHead({ titleTemplate: () => "LASTWOLF" });
 
 const { apiCall } = useApi();
 const { isAuthenticated, myselfPlayer } = useAuth();
