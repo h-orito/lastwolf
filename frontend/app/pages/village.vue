@@ -213,11 +213,14 @@ const openFirstdayModalIfNeeded = () => {
 const shouldReloadMessage = (
   latestDay: VillageDay,
   myself: VillageParticipantView | null,
+  isGmNotParticipating: boolean,
 ): boolean => {
   // エピローグになった場合、夜時間のメッセージが読めるようになるので再読み込み
   if (latestDay.is_epilogue) return true;
   // 死亡した場合、呻きが読めるようになるので再読み込み
   if (myself?.dead?.village_day.id === latestDay.id) return true;
+  // GM制で村建てが参加していない場合、夜時間のメッセージを再読み込み
+  if (isGmNotParticipating && latestDay.noon_night.code === "NIGHT") return true;
   return false;
 };
 
@@ -226,7 +229,8 @@ const reloadMessageIfNeeded = async () => {
   if (!latestDay) return;
   const situation = villageStore.situation as SituationAsParticipantView | null;
   const myself = situation?.participate.myself ?? null;
-  if (!shouldReloadMessage(latestDay, myself)) return;
+  const isGmNotParticipating = !myself && (situation?.creator.viewable_spoiler ?? false);
+  if (!shouldReloadMessage(latestDay, myself, isGmNotParticipating)) return;
   await fetchNightMessages();
 };
 
