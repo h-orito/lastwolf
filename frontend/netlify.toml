@@ -4,8 +4,7 @@
 
 [build]
 command = "pnpm install && pnpm exec nuxt generate"
-# Nuxt4 generate の出力先
-publish = ".output/public"
+publish = "dist"
 [build.environment]
 NODE_VERSION = "22"
 
