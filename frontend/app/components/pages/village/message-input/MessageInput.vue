@@ -58,6 +58,7 @@ const messageType = computed(() => {
 });
 
 const messageBgColorClass = computed(() => {
+  if (!canSay.value) return "";
   switch (messageType.value) {
     case MESSAGE_TYPE.WEREWOLF_SAY:
       return "bg-red-50";
@@ -68,7 +69,7 @@ const messageBgColorClass = computed(() => {
     case MESSAGE_TYPE.MONOLOGUE_SAY:
       return "bg-yellow-50";
     default:
-      return "";
+      return "bg-white";
   }
 });
 

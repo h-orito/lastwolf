@@ -23,7 +23,7 @@
           class="flex-1"
         />
         <button
-          class="px-2 py-1 text-sm bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0] whitespace-nowrap"
+          class="px-2 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300 active:bg-gray-400 whitespace-nowrap"
           @click="openSelectModal"
         >
           画像で選択

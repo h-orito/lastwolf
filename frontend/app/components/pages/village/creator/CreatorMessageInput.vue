@@ -4,7 +4,7 @@
       :value="modelValue"
       placeholder="村建て発言"
       rows="5"
-      class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] font-sans resize-y"
+      class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] font-sans resize-y"
       @input="onInput"
     />
     <p class="text-right text-xs mt-1">
