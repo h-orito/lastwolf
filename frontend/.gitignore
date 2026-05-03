@@ -82,3 +82,14 @@ dist
 
 # Service worker
 sw.*
+
+.output
+
+# reference project
+.reference
+
+# Claude
+.claude/settings.local.json
+.serena
+.playwright-mcp
+.issue
