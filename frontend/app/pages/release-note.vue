@@ -4,6 +4,8 @@
       <h1 class="text-lg font-bold mb-4">更新情報</h1>
       <div>
         <ul class="text-left text-sm list-disc pl-6 space-y-1">
+          <li>2026/05/03 残り時間と能力・投票勧告を常に最下部に表示</li>
+          <li>2026/05/03 フロントエンドのフレームワーク刷新</li>
           <li>2024/02/23 設定「GM制」追加</li>
           <li>2023/12/20 設定「昼沈黙時間」追加</li>
           <li>2023/12/20 強調発言のみ表示する機能を追加</li>
