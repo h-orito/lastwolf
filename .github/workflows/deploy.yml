@@ -42,11 +42,11 @@ jobs:
         run: docker push ghcr.io/h-orito/lastwolf
 
       - name: Setup kubeconfig
+        env:
+          KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG }}
         run: |
           mkdir -p ~/.kube
-          cat <<EOF > ~/.kube/config
-          ${{ secrets.KUBECONFIG }}
-          EOF
+          printf '%s' "$KUBECONFIG_CONTENT" > ~/.kube/config
           chmod 600 ~/.kube/config
 
       - name: Restart deployment
