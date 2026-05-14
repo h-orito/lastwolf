@@ -41,8 +41,17 @@ jobs:
       - name: Push image
         run: docker push ghcr.io/h-orito/lastwolf
 
-      - name: Release
-        run: kubectl delete pod -l app=lastwolf
+      - name: Setup kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          cat <<EOF > ~/.kube/config
+          ${{ secrets.KUBECONFIG }}
+          EOF
+          chmod 600 ~/.kube/config
+
+      - name: Restart deployment
+        run: |
+          kubectl rollout restart deployment/lastwolf -n default
 
       - name: Cleanup Docker cache
         run: docker system prune -af
