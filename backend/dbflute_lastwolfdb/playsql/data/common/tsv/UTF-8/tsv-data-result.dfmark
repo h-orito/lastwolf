@@ -1,0 +1,22 @@
+
+* * * * * * * * * *
+*                 *
+* Tsv Data Result *
+*                 *
+* * * * * * * * * *
+data-directory: playsql/data/common/tsv/UTF-8
+
+01-AUTHORITY.tsv (2)
+02-CAMP.tsv (3)
+03-VILLAGE_STATUS.tsv (6)
+04-SKILL.tsv (15)
+05-MESSAGE_TYPE.tsv (15)
+06-DEAD_REASON.tsv (5)
+07-ABILITY_TYPE.tsv (3)
+08-DESIGNER.tsv (1)
+09-CHARA_GROUP.tsv (1)
+10-VILLAGE_SETTING_ITEM.tsv (19)
+11-CHARA.tsv (56)
+12-NOONNIGHT.tsv (5)
+13-APP_VERSION.tsv (1)
+14-WINLOSE.tsv (3)
