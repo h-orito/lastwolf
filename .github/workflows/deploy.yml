@@ -10,8 +10,8 @@ on:
       - '.github/workflows/deploy.yml'
 
 jobs:
-  delivery:
-    runs-on: [self-hosted, k8s]
+  build:
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
@@ -41,17 +41,9 @@ jobs:
       - name: Push image
         run: docker push ghcr.io/h-orito/lastwolf
 
-      - name: Setup kubeconfig
-        env:
-          KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG }}
-        run: |
-          mkdir -p ~/.kube
-          printf '%s' "$KUBECONFIG_CONTENT" > ~/.kube/config
-          chmod 600 ~/.kube/config
-
+  deploy:
+    needs: build
+    runs-on: [self-hosted, k8s]
+    steps:
       - name: Restart deployment
-        run: |
-          kubectl rollout restart deployment/lastwolf -n default
-
-      - name: Cleanup Docker cache
-        run: docker system prune -af
+        run: kubectl rollout restart deployment/lastwolf -n default
