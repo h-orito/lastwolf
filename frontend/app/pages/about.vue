@@ -1,0 +1,76 @@
+<template>
+  <section class="py-8 px-4">
+    <div class="max-w-5xl mx-auto text-left text-sm">
+      <h1 class="text-lg font-bold mb-4">このサイトは</h1>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
+          <li>LASTWOLFは、オンラインで短期人狼が遊べるサイトです。</li>
+          <li>ユーザが自分で好きな設定の村を作成することができます。</li>
+          <li>機能の豊富さよりもわかりやすさを優先し、シンプルにしています。</li>
+        </ul>
+      </div>
+      <h2 class="text-lg font-bold mb-4">注意事項</h2>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
+          <li>
+            同村しているプレイヤーの画面の向こうにはあなたと同様人間がいます。<br />他者を思いやり、迷惑をかけないプレイを心がけるようお願いします。
+          </li>
+          <li>
+            正常な運営を妨げる行為がなされた場合、管理人の裁量によりアクセス禁止措置等が取られる可能性があります。
+          </li>
+          <li>参加如何に関わらず、進行中の村の情報を別の場所でやり取りしないでください。</li>
+          <li>決着を迎えるまでは、自身が希望した役職について言及しないでください。</li>
+          <li>勝利を目指してください。</li>
+        </ul>
+      </div>
+      <h2 class="text-lg font-bold mb-4">キャラチップについて</h2>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
+          <li>
+            村で各プレイヤーが使用するキャラクターの画像については、著作権は作者様にあります。
+          </li>
+          <li>
+            スクリーンショットのSNSアップロードやキャラ画像のアイコン利用などについては著作権者である作者様の意向に従ってください。
+          </li>
+          <li>
+            「実装国の規約に準ずる」とある場合は、村ログのスクリーンショットのSNSアップロードはOK、キャラ画像のみを利用するのはNGとします。
+          </li>
+        </ul>
+      </div>
+      <h2 class="text-lg font-bold mb-4">姉妹サイト</h2>
+      <div class="mb-6">
+        <ul class="list-disc pl-6 space-y-1">
+          <li>
+            <a
+              href="https://howling-wolf.com"
+              target="_blank"
+              class="text-blue-600 hover:text-blue-800"
+              >HOWLING WOLF</a
+            >
+            <ul class="list-disc pl-6 mt-1 space-y-1">
+              <li>短期人狼が遊べるサイトです。</li>
+              <li>システムにより自動で村が作成されるため、知らない人同士で遊べます。</li>
+            </ul>
+          </li>
+          <li>
+            <a
+              href="https://firewolf.netlify.app"
+              target="_blank"
+              class="text-blue-600 hover:text-blue-800"
+              >FIREWOLF</a
+            >
+            <ul class="list-disc pl-6 mt-1 space-y-1">
+              <li>短期人狼が遊べるサイトです。</li>
+              <li>当サイト同様、好きな設定の村を作成して遊ぶことができます。</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup lang="ts">
+const meta = buildPageMeta({ title: "このサイトは" });
+useSeoMeta(meta);
+</script>
