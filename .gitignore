@@ -2,3 +2,5 @@
 *.log
 .idea/
 .vscode/
+.issues/
+.reviews/
