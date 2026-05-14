@@ -43,3 +43,6 @@ jobs:
 
       - name: Release
         run: kubectl delete pod -l app=lastwolf
+
+      - name: Cleanup Docker cache
+        run: docker system prune -af
