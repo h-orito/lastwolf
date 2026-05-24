@@ -31,3 +31,9 @@ logging:
     org.seasar.dbflute: ERROR
   file:
     name: /var/log/lastwolf/tomcat.log
+firebase:
+  adminsdk:
+    secretkey:
+      path: ${FIREBASE_ADMINSDK_SECRETKEY_PATH:}
+  database:
+    url: ${FIREBASE_DATABASE_URL:}

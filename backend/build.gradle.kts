@@ -47,6 +47,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("com.google.firebase:firebase-admin:9.4.2")
+    // dotenv (load .env into Spring property sources for local development)
+    implementation("me.paulschwarz:springboot3-dotenv:5.1.0")
     // twitter
     implementation("org.twitter4j:twitter4j-core:4.0.7")
     // slack
