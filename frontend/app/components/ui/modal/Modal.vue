@@ -28,7 +28,7 @@
             :style="{ maxHeight: 'calc(100dvh - 6.5rem)' }"
             role="dialog"
             aria-modal="true"
-            :aria-labelledby="title ? titleId : undefined"
+            :aria-labelledby="title || $slots.title ? titleId : undefined"
             tabindex="-1"
           >
             <!-- 上端グラデバー -->

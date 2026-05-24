@@ -61,8 +61,10 @@ const toggle = () => {
 };
 
 const switchClasses = computed(() => {
+  // on 時の bg-steel と focus ring-steel が同色化するのを避けるため、ring-offset-base で
+  // ダーク色のギャップを挟む
   const baseClasses =
-    "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-steel";
+    "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-steel focus:ring-offset-2 focus:ring-offset-base";
 
   const stateClasses = props.modelValue ? "bg-steel" : "bg-soft";
 
