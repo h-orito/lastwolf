@@ -102,6 +102,8 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 | 墓下発言   | `#ceedf2`      | 上ボーダー dashed `role-grave`、italic |
 | 観戦発言   | `#f2f2ce`      | 上ボーダー dashed `role-seer`（淡金）  |
 
+> ⚠ 観戦発言は占い師ロールと同じ `--color-role-seer`（淡金）を流用している。視覚的に色相が近い（既存も `#f2f2ce` / 占いシステムは緑系→新方針で淡金）ため共有とした。Phase 1 で「観戦と占い師の発話が同画面に並ぶケース」がある場合は、専用トークン `--color-role-spectate` を分離すること。
+
 #### 既存実装との差分（Phase 2 着手時の注意）
 
 既存の実装は以下の構造になっており、Phase 2 で **置き換え** が必要:
