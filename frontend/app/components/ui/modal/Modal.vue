@@ -24,29 +24,35 @@
           <div
             v-if="isModalOpen"
             ref="modalRef"
-            class="relative flex w-full max-w-full flex-col rounded-lg bg-white shadow-xl sm:max-w-lg md:max-w-[80vw]"
+            class="relative flex w-full max-w-full flex-col overflow-hidden rounded-lg border border-steel bg-elev shadow-xl sm:max-w-lg md:max-w-[80vw]"
             :style="{ maxHeight: 'calc(100dvh - 6.5rem)' }"
             role="dialog"
             aria-modal="true"
             :aria-labelledby="title ? 'modal-title' : undefined"
             tabindex="-1"
           >
+            <!-- 上端グラデバー -->
+            <div
+              class="h-px shrink-0 bg-[linear-gradient(90deg,var(--color-steel-deep),var(--color-steel),var(--color-gold),var(--color-moon),var(--color-steel-deep))]"
+              aria-hidden="true"
+            />
+
             <!-- ヘッダー -->
             <div
               v-if="title || $slots.title"
-              class="shrink-0 rounded-t-lg border-b border-gray-200 bg-gray-50 px-6 py-4"
+              class="shrink-0 border-b border-line-soft bg-soft px-6 py-4"
             >
               <div class="flex items-center justify-between">
                 <h3
                   id="modal-title"
-                  class="m-0 text-left text-lg font-semibold leading-tight text-gray-800"
+                  class="m-0 text-left font-serif text-lg font-semibold leading-tight text-fg"
                 >
                   <slot name="title">{{ title }}</slot>
                 </h3>
                 <button
                   v-if="showCloseButton"
                   type="button"
-                  class="rounded p-1 text-gray-500 hover:bg-gray-200 hover:text-gray-700 focus:outline-none"
+                  class="rounded p-1 text-fg-muted hover:bg-elev hover:text-fg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-steel"
                   aria-label="閉じる"
                   @click="closeModal"
                 >
@@ -69,7 +75,7 @@
 
             <!-- ボディ -->
             <div
-              class="flex-1 overflow-y-auto bg-white px-4 py-4 text-left font-sans text-gray-700 sm:px-6"
+              class="flex-1 overflow-y-auto bg-elev px-4 py-4 text-left font-sans text-fg sm:px-6"
             >
               <slot />
             </div>
@@ -77,7 +83,7 @@
             <!-- フッター -->
             <div
               v-if="$slots.footer"
-              class="flex shrink-0 justify-end gap-2 rounded-b-lg border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-6"
+              class="flex shrink-0 justify-end gap-2 border-t border-line-soft bg-deep px-4 py-4 sm:px-6"
             >
               <slot name="footer" />
             </div>

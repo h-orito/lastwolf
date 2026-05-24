@@ -5,7 +5,7 @@
         <div v-for="toast in toasts" :key="toast.id" :class="toastClasses(toast.type)" role="alert">
           <!-- トーストタイプ別アイコン -->
           <svg
-            class="mr-2 h-5 w-5 shrink-0"
+            :class="iconClasses(toast.type)"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -64,15 +64,24 @@ const { toasts, remove } = useToast();
 
 const toastClasses = (type: "info" | "success" | "error") => {
   const baseClasses =
-    "flex items-center px-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px]";
+    "flex items-center px-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px] bg-elev text-fg border border-line-soft border-l-4";
 
   const typeClasses = {
-    info: "bg-[#ceedf2] text-gray-800",
-    success: "bg-[#cef2ce] text-gray-800",
-    error: "bg-[#f2cece] text-gray-800",
+    info: "border-l-steel",
+    success: "border-l-mason",
+    error: "border-l-wolf",
   };
 
   return `${baseClasses} ${typeClasses[type]}`;
+};
+
+const iconClasses = (type: "info" | "success" | "error") => {
+  const map = {
+    info: "text-steel",
+    success: "text-mason",
+    error: "text-wolf",
+  };
+  return `mr-2 h-5 w-5 shrink-0 ${map[type]}`;
 };
 </script>
 

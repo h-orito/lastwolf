@@ -5,7 +5,7 @@
         v-for="p in participants"
         :key="p.id"
         type="button"
-        class="flex flex-col items-center rounded-lg border border-gray-200 p-2 hover:border-blue-400 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+        class="flex flex-col items-center rounded-lg border border-line-soft bg-elev p-2 hover:border-steel hover:bg-soft focus:outline-none focus:ring-2 focus:ring-steel transition-colors"
         @click="selectParticipant(p)"
       >
         <img
@@ -17,8 +17,8 @@
           class="mb-1"
           loading="lazy"
         />
-        <p class="text-center text-xs text-gray-700">{{ p.chara.name.name }}</p>
-        <p v-if="p.dead" class="text-center text-xs text-red-600">
+        <p class="text-center text-xs text-fg">{{ p.chara.name.name }}</p>
+        <p v-if="p.dead" class="text-center text-xs text-wolf">
           {{ `${p.dead.village_day.day}d${p.dead.reason}` }}
         </p>
       </button>

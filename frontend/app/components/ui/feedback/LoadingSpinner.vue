@@ -9,7 +9,7 @@
         class="opacity-100"
         loading="eager"
       />
-      <p class="mt-2 text-sm text-gray-800">{{ message }}</p>
+      <p class="mt-2 text-sm text-fg-secondary">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -30,7 +30,7 @@ withDefaults(defineProps<Props>(), {
 .loading-bg {
   z-index: 50;
   position: relative;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(5, 6, 9, 0.6);
   top: 0;
   left: 0;
   width: 100%;

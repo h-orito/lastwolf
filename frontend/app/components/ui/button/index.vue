@@ -73,17 +73,19 @@ const componentType = computed(() => {
 const isDisabled = computed(() => props.disabled || props.loading);
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
+  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded border transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-steel";
 
 const typeClasses = computed(() => {
+  if (isDisabled.value) {
+    return "bg-soft text-fg-muted border-line-soft";
+  }
   const map: Record<ButtonType, string> = {
     primary:
-      "bg-[#3991f4] text-white hover:bg-[#2c7ae0] active:bg-[#1f63cc] focus-visible:ring-[#3991f4]",
-    secondary:
-      "bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400 focus-visible:ring-gray-400",
-    danger: "bg-red-500 text-white hover:bg-red-600 active:bg-red-700 focus-visible:ring-red-500",
-    ghost:
-      "bg-transparent text-gray-700 border border-gray-300 hover:bg-gray-100 active:bg-gray-200 focus-visible:ring-gray-300",
+      "bg-[linear-gradient(180deg,#2c4566,#15263a)] text-moon border-steel hover:brightness-110 active:brightness-95",
+    secondary: "bg-elev text-fg-secondary border-line-soft hover:bg-soft active:bg-base",
+    danger:
+      "bg-[linear-gradient(180deg,#8a2934,#4f161e)] text-[#fce4e6] border-wolf hover:brightness-110 active:brightness-95",
+    ghost: "bg-transparent text-fg-secondary border-line-soft hover:bg-elev active:bg-soft",
   };
   return map[props.buttonType];
 });
