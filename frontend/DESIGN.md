@@ -43,7 +43,7 @@ Tailwind v4 の `@theme` で定義する。これにより `bg-deep` / `text-fg`
 
   /* Accent（top.jpg 由来） */
   --color-moon: #f0eed8; /* 月の中心（温白） */
-  --color-glow: #fff8e0; /* 月のハイライト */
+  --color-glow: #fff8e0; /* 月のハイライト（重ね/グラデ専用、テキスト色禁止）*/
   --color-halo: #c4d0dc; /* 月の暈 */
   --color-steel: #6f95bd; /* 雲色（主アクセント） */
   --color-steel-deep: #456185; /* 既存テキストシャドウと同色 */
@@ -166,7 +166,7 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 - 本文テキストは bg ペアで 4.5:1 以上を確認
   - `text-fg #ecedf0` on `bg-deep #050609` ≈ 16.3:1 ✅
   - `text-fg-secondary #8a96a8` on `bg-deep #050609` ≈ 7.3:1 ✅
-  - `text-fg-muted #525c6e` on `bg-deep #050609` ≈ 3.2:1 → **本文・通常テキストには使用禁止**
+  - `text-fg-muted #525c6e` on `bg-deep #050609` ≈ 3.0:1 → **本文・通常テキストには使用禁止**
 - `text-fg-muted` の許容用途は以下に限定:
   - 区切り装飾（`·` `—` `─` `№` 等の記号）
   - disabled ボタン / disabled フィールドのラベル（インタラクション不可が自明な場合）
@@ -174,6 +174,7 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
   - 上記以外のメタ情報・補助情報はサイズに関わらず `text-fg-secondary` を使う
 - ロール色のテキスト利用時はサイズ 13px 以上 + 周囲のコントラスト確保を必須化
 - focus ring は `steel` を使用（`focus-visible:ring-[#6f95bd]`）
+- `--color-glow #fff8e0` は **月光ハイライト（box-shadow / radial-gradient の中心 等）専用**。`text-glow` / `bg-glow` のベタ塗り用途は白飛びリスクがあるため禁止
 
 ## 採用しなかった方向性（参考）
 

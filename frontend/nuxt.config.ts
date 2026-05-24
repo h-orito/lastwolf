@@ -54,7 +54,7 @@ export default defineNuxtConfig({
         { rel: "preconnect", href: "https://www.googleapis.com" },
         { rel: "preconnect", href: "https://identitytoolkit.googleapis.com" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
-        { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "anonymous" },
         // Google Fonts（Noto Sans JP / Noto Serif JP / Cinzel — DESIGN.md 参照）
         {
           rel: "stylesheet",
