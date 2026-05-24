@@ -100,6 +100,16 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 | 共有者会話 | `#cef2ce`      | 上ボーダー + リング `role-mason`       |
 | 独り言     | `#dddddd`      | 左ボーダー dotted `role-mono`、italic  |
 | 墓下発言   | `#ceedf2`      | 上ボーダー dashed `role-grave`、italic |
+| 観戦発言   | `#f2f2ce`      | 上ボーダー dashed `role-seer`（淡金）  |
+
+#### 既存実装との差分（Phase 2 着手時の注意）
+
+既存の実装は以下の構造になっており、Phase 2 で **置き換え** が必要:
+
+- `frontend/app/components/pages/village/message/Message.vue` — Tailwind の `text-red-600` / `text-green-600` / `text-blue-600` / `text-pink-600` / `text-gray-600` を直接付与（`messageClasses`）。`messageStyle` で `props.color`（個人識別カラー）をインライン適用
+- `frontend/app/components/pages/village/message/DayMessages.vue` — 上記 `Message` の親、ロールごとの分岐ロジックを保持
+- `frontend/app/lib/api/message-color.ts` — プレイヤーごとの個人識別カラー（`#f00` / `#00f` / `#000088` 等の固定 10 色）。**ダーク背景で著しく沈む色を含むため、Phase 1 で再検討必須**
+- `frontend/app/assets/css/main.css` の `--color-{normal,werewolf,mason,monologue,grave,spectate}-say` — 事実上未使用（dead config）。Phase 1 で削除し、新ロール色体系（`--color-role-*`）に統一
 
 ### システム通知
 
@@ -118,23 +128,42 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 - 背景: `linear-gradient(180deg, bg-soft, bg-base)` + 上端 1px の `gold` グラデ線
 - ロゴ: 月白テキスト + 既存テキストシャドウ色 `#456185` を継承
-- アバター: コニックグラデで月の色順を回す
+- アバター: 以下のコニックグラデで月の色順を回す（`brightness(0.75) saturate(0.8)` のフィルタを適用して落ち着かせる）
+  ```css
+  background: conic-gradient(
+    from 180deg,
+    var(--color-accent-steel-deep) 0deg,
+    var(--color-accent-steel) 90deg,
+    var(--color-accent-halo) 180deg,
+    var(--color-accent-moon) 240deg,
+    var(--color-accent-gold) 300deg,
+    var(--color-accent-steel-deep) 360deg
+  );
+  filter: brightness(0.75) saturate(0.8);
+  ```
 
 ## 影響範囲（Phase 1 以降で実装）
 
-- `frontend/app/assets/css/main.css` — CSS variables 全面更新
+- `frontend/app/assets/css/main.css` — CSS variables 全面更新。**既存の `--color-{normal,werewolf,mason,monologue,grave,spectate}-say` および `--color-{private,seer,psychic,werewolf,mason,creator}-system-*` は事実上 dead なので Phase 1 で削除**
 - `frontend/nuxt.config.ts` — `theme-color` を `#050609` に、PWA manifest の `background_color` も
-- `frontend/app/layouts/default.vue` — `background-color` を `bg-deep` に
+- `frontend/app/layouts/default.vue` / `layouts/top.vue` — `background-color` を `bg-deep` に
 - `frontend/app/components/layout/NavBar.vue` — 上記ヘッダー方針
 - `frontend/app/components/ui/**` — 上記コンポーネント方針
 - `frontend/app/components/pages/**` — ページ固有部品の刷新
+- `frontend/app/components/pages/village/message/Message.vue` / `DayMessages.vue` — ロール色を Tailwind 直書き（`text-red-600` 等）から新トークン（`role-*`）に置換（Phase 2 で対応）
+- `frontend/app/lib/api/message-color.ts` — 個人識別カラー 10 色（`#f00` / `#00f` / `#000088` 等）はダーク背景で沈む色を含むため、Phase 1 でダーク対応版に差し替え
 
 ## アクセシビリティ
 
-- すべての本文テキストは bg ペアで 4.5:1 以上を確認
+- 本文テキストは bg ペアで 4.5:1 以上を確認
   - `text-primary #ecedf0` on `bg-deep #050609` ≈ 16.3:1 ✅
   - `text-secondary #8a96a8` on `bg-deep #050609` ≈ 7.3:1 ✅
-  - `text-muted #525c6e` on `bg-deep #050609` ≈ 3.2:1 → 補助情報のみで使用
+  - `text-muted #525c6e` on `bg-deep #050609` ≈ 3.2:1 → **本文・通常テキストには使用禁止**
+- `text-muted` の許容用途は以下に限定:
+  - 区切り装飾（`·` `—` `─` `№` 等の記号）
+  - disabled ボタン / disabled フィールドのラベル（インタラクション不可が自明な場合）
+  - フォーム placeholder
+  - 上記以外のメタ情報・補助情報はサイズに関わらず `text-secondary` を使う
 - ロール色のテキスト利用時はサイズ 13px 以上 + 周囲のコントラスト確保を必須化
 - focus ring は `steel` を使用（`focus-visible:ring-[#6f95bd]`）
 
@@ -146,11 +175,11 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 ## Phase 計画
 
-| Phase | 対象                                                                  | 状態     |
-| ----- | --------------------------------------------------------------------- | -------- |
-| 0     | デザイン方針合意（本書）                                              | 完了     |
-| 1     | デザイントークン整備（CSS variables / Tailwind theme / フォント読込） | 起票予定 |
-| 2     | `components/ui/` 配下の base component 刷新                           | 起票予定 |
-| 3     | `layouts/` と `pages/index.vue` 等トップ周りの刷新 + 村画面の情報設計 | 起票予定 |
-| 4     | 各機能ページ（村一覧・キャラチップ等）の刷新                          | 起票予定 |
-| 5     | 細部のアニメーション・トランジション（任意）                          | 起票予定 |
+| Phase | 対象                                                                                                  | 状態     |
+| ----- | ----------------------------------------------------------------------------------------------------- | -------- |
+| 0     | デザイン方針合意（本書）                                                                              | 完了     |
+| 1     | デザイントークン整備（CSS variables / Tailwind theme / フォント読込 / `message-color.ts` ダーク対応） | 起票予定 |
+| 2     | `components/ui/` 配下の base component 刷新                                                           | 起票予定 |
+| 3     | `layouts/` と `pages/index.vue` 等トップ周りの刷新 + 村画面の情報設計                                 | 起票予定 |
+| 4     | 各機能ページ（村一覧・キャラチップ等）の刷新                                                          | 起票予定 |
+| 5     | 細部のアニメーション・トランジション（任意）                                                          | 起票予定 |
