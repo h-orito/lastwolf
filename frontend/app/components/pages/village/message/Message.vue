@@ -158,7 +158,9 @@ const roleVariant = computed<RoleVariant>(() => {
 });
 
 const containerClasses = computed(() => {
-  // 通常発言の上ボーダーは DESIGN.md 仕様で fg-secondary
+  // 通常発言の上ボーダーは DESIGN.md 仕様で fg-secondary。
+  // `border-dotted` / `border-dashed` は border-style を全辺にセットするが、
+  // 幅指定のない辺 (border-width: 0) では見た目に現れないため左辺/上辺のみが描画される
   const map: Record<RoleVariant, string> = {
     normal: "border-t border-fg-secondary",
     wolf: "border-t-2 border-wolf",

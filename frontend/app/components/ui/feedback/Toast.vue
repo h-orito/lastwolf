@@ -43,6 +43,7 @@
           <button
             type="button"
             class="ml-auto shrink-0 pl-3 opacity-70 transition-opacity hover:opacity-100"
+            aria-label="閉じる"
             @click="remove(toast.id)"
           >
             <svg
