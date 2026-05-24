@@ -107,8 +107,9 @@ const buttonClasses = computed(() =>
 
 const handleClick = (event: MouseEvent) => {
   if (isDisabled.value) {
-    // a / NuxtLink でも navigation を抑制
+    // a / NuxtLink でも navigation を抑制し、親のクリックハンドラへの伝播も止める
     event.preventDefault();
+    event.stopPropagation();
     return;
   }
   emit("click", event);

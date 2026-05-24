@@ -173,9 +173,12 @@ const avatarRingClass = computed(() => {
   return map[roleVariant.value];
 });
 
-// roleTag と messageType の重複表示を抑制する
-//   例: MONOLOGUE_SAY は roleTag "独白" / messageType "[独]" の両方を返すため [独] を抑制
-//   ただし PRIVATE_FANATIC は roleTag "人狼" 配下だが messageType は固有の "[信]" なので残す
+// roleTag（"人狼" "共有" "独白" "墓下" "観戦"）と messageType（"[狼]" "[共]" "[独]" ...）は
+// 意味が重複するため、roleTag が出るケースでは messageType を抑制する。
+//   例: WEREWOLF_SAY → roleTag "人狼" だけ表示し、"[狼]" は隠す
+//       MONOLOGUE_SAY → roleTag "独白" だけ表示し、"[独]" は隠す
+// 唯一の例外が PRIVATE_FANATIC: roleVariant 上は "wolf" だが messageType は固有の "[信]"
+// で別情報のため残す（人狼陣営かつ狂信者であることを伝える）
 const showMessageType = computed(() => {
   if (!messageType.value) return false;
   if (!roleTag.value) return true;
