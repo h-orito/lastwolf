@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row w-full leading-relaxed py-1 px-1 text-xs bg-elev message-border"
+    class="flex flex-row w-full leading-relaxed py-1 px-1 text-xs bg-elev"
     :class="containerClasses"
   >
     <!-- キャラ画像 -->
@@ -22,7 +22,7 @@
         <span v-if="roleTag" class="text-xs shrink-0" :class="roleTag.cls">{{
           roleTag.label
         }}</span>
-        <span v-if="messageType" class="text-fg-muted text-xs shrink-0">{{ messageType }}</span>
+        <span v-if="showMessageType" class="text-fg-muted text-xs shrink-0">{{ messageType }}</span>
         <span class="text-fg-muted text-xs shrink-0">{{ messageTime }}</span>
       </div>
       <div>
@@ -137,7 +137,11 @@ const imgHeight = computed(() => {
 
 const roleVariant = computed<RoleVariant>(() => {
   const code = props.message.content.type.code;
-  // LOVERS_SAY / SECRET_SAY は DESIGN.md でロール色未定義のため normal にフォールバック（Phase 3+ で要整理）
+  // 以下は DESIGN.md でロール色未定義のため normal にフォールバック（Phase 3+ で要整理）:
+  //   - LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系
+  //   - PRIVATE_SEER / PRIVATE_PSYCHIC / PRIVATE_GURU / PRIVATE_WISE / PRIVATE_FOX /
+  //     PRIVATE_SYMPATHIZER / PRIVATE_CORONER / PRIVATE_LOVERS: 役職限定のシステム通知
+  //     （messageType の [霊]/[狐] 等で識別できるため normal で許容）
   if (WOLF_CODES.includes(code)) return "wolf";
   if (MASON_CODES.includes(code)) return "mason";
   if (MONO_CODES.includes(code)) return "mono";
@@ -148,10 +152,9 @@ const roleVariant = computed<RoleVariant>(() => {
 });
 
 const containerClasses = computed(() => {
-  // dotted / dashed は border-style を全辺に適用するが、border-width が 0 の辺では見えないため
-  // 結果的に幅指定のある辺（mono は左、grave は上）にのみスタイルが現れる
+  // 通常発言の上ボーダーは DESIGN.md 仕様で fg-secondary
   const map: Record<RoleVariant, string> = {
-    normal: "border-t border-line-soft",
+    normal: "border-t border-fg-secondary",
     wolf: "border-t-2 border-wolf",
     mason: "border-t-2 border-mason",
     mono: "border-l-2 border-mono border-dotted italic",
@@ -173,6 +176,15 @@ const avatarRingClass = computed(() => {
     creator: "ring-1 ring-gold",
   };
   return map[roleVariant.value];
+});
+
+// roleTag と messageType の重複表示を抑制する
+//   例: MONOLOGUE_SAY は roleTag "独白" / messageType "[独]" の両方を返すため [独] を抑制
+//   ただし PRIVATE_FANATIC は roleTag "人狼" 配下だが messageType は固有の "[信]" なので残す
+const showMessageType = computed(() => {
+  if (!messageType.value) return false;
+  if (!roleTag.value) return true;
+  return props.message.content.type.code === MESSAGE_TYPE.PRIVATE_FANATIC;
 });
 
 // 小タグ（人狼/共有/独白/墓下/観戦）。normal / creator は表示しない

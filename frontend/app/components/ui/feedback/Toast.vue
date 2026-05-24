@@ -3,6 +3,12 @@
     <div class="fixed left-1/2 top-4 z-[9999] -translate-x-1/2">
       <TransitionGroup name="toast" tag="div" class="flex flex-col items-center gap-2">
         <div v-for="toast in toasts" :key="toast.id" :class="toastClasses(toast.type)" role="alert">
+          <!-- 左端アクセントバー（border ショートハンドと border-l-{color} の競合を避けるため独立要素） -->
+          <span
+            class="absolute inset-y-0 left-0 w-1 rounded-l-lg"
+            :class="accentBarClass(toast.type)"
+            aria-hidden="true"
+          />
           <!-- トーストタイプ別アイコン -->
           <svg
             :class="iconClasses(toast.type)"
@@ -62,17 +68,18 @@
 <script setup lang="ts">
 const { toasts, remove } = useToast();
 
-const toastClasses = (type: "info" | "success" | "error") => {
-  const baseClasses =
-    "flex items-center px-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px] bg-elev text-fg border border-line-soft border-l-4";
+const toastClasses = (_type: "info" | "success" | "error") => {
+  // 左端アクセントは独立要素で表現するため border-l は使わない
+  return "relative flex items-center pl-5 pr-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px] bg-elev text-fg border border-line-soft";
+};
 
-  const typeClasses = {
-    info: "border-l-steel",
-    success: "border-l-mason",
-    error: "border-l-wolf",
+const accentBarClass = (type: "info" | "success" | "error") => {
+  const map = {
+    info: "bg-steel",
+    success: "bg-mason",
+    error: "bg-wolf",
   };
-
-  return `${baseClasses} ${typeClasses[type]}`;
+  return map[type];
 };
 
 const iconClasses = (type: "info" | "success" | "error") => {
