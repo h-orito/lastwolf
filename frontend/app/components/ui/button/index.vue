@@ -75,34 +75,29 @@ const isDisabled = computed(() => props.disabled || props.loading);
 const baseClasses =
   "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded border transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-steel";
 
-const typeClasses = computed(() => {
-  if (isDisabled.value) {
-    return "bg-soft text-fg-muted border-line-soft";
-  }
+// DESIGN.md「ボタン」テーブル: disabled は bg-soft + text-fg-muted + border-line-soft + opacity 0.5
+const DISABLED_CLASSES =
+  "bg-soft text-fg-muted border-line-soft opacity-50 cursor-not-allowed pointer-events-none";
+
+const variantClasses = computed(() => {
+  if (isDisabled.value) return DISABLED_CLASSES;
   const map: Record<ButtonType, string> = {
     primary:
-      "bg-[linear-gradient(180deg,#2c4566,#15263a)] text-moon border-steel hover:brightness-110 active:brightness-95",
-    secondary: "bg-elev text-fg-secondary border-line-soft hover:bg-soft active:bg-base",
+      "bg-[linear-gradient(180deg,#2c4566,#15263a)] text-moon border-steel hover:brightness-110 active:brightness-95 cursor-pointer",
+    secondary:
+      "bg-elev text-fg-secondary border-line-soft hover:bg-soft active:bg-base cursor-pointer",
     danger:
-      "bg-[linear-gradient(180deg,#8a2934,#4f161e)] text-[#fce4e6] border-wolf hover:brightness-110 active:brightness-95",
-    ghost: "bg-transparent text-fg-secondary border-line-soft hover:bg-elev active:bg-soft",
+      "bg-[linear-gradient(180deg,#8a2934,#4f161e)] text-[#fce4e6] border-wolf hover:brightness-110 active:brightness-95 cursor-pointer",
+    ghost:
+      "bg-transparent text-fg-secondary border-line-soft hover:bg-elev active:bg-soft cursor-pointer",
   };
   return map[props.buttonType];
-});
-
-const disabledClasses = computed(() => {
-  if (isDisabled.value) {
-    return "opacity-50 cursor-not-allowed pointer-events-none";
-  }
-  return "cursor-pointer";
 });
 
 const blockClass = computed(() => (props.block ? "w-full" : ""));
 
 const buttonClasses = computed(() =>
-  [baseClasses, typeClasses.value, disabledClasses.value, blockClass.value]
-    .filter(Boolean)
-    .join(" "),
+  [baseClasses, variantClasses.value, blockClass.value].filter(Boolean).join(" "),
 );
 
 const handleClick = (event: MouseEvent) => {

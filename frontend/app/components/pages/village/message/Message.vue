@@ -19,8 +19,8 @@
         <span class="flex-1 truncate" :class="nameColorClass" :style="nameStyle">{{
           fromName
         }}</span>
-        <span v-if="roleLabel" class="text-xs shrink-0" :class="roleLabelClass">{{
-          roleLabel
+        <span v-if="roleTag" class="text-xs shrink-0" :class="roleTag.cls">{{
+          roleTag.label
         }}</span>
         <span v-if="messageType" class="text-fg-muted text-xs shrink-0">{{ messageType }}</span>
         <span class="text-fg-muted text-xs shrink-0">{{ messageTime }}</span>
@@ -60,6 +60,15 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const villageStore = useVillageStore();
+
+// メッセージコードのグルーピング（roleVariant と messageType の双方から参照）
+const WOLF_CODES: readonly string[] = [
+  MESSAGE_TYPE.PRIVATE_WEREWOLF,
+  MESSAGE_TYPE.WEREWOLF_SAY,
+  MESSAGE_TYPE.PRIVATE_FANATIC,
+];
+const MASON_CODES: readonly string[] = [MESSAGE_TYPE.PRIVATE_MASON, MESSAGE_TYPE.SYMPATHIZE_SAY];
+const MONO_CODES: readonly string[] = [MESSAGE_TYPE.MONOLOGUE_SAY, MESSAGE_TYPE.PRIVATE_ABILITY];
 
 type RoleVariant = "normal" | "wolf" | "mason" | "mono" | "grave" | "seer" | "creator";
 
@@ -128,16 +137,10 @@ const imgHeight = computed(() => {
 
 const roleVariant = computed<RoleVariant>(() => {
   const code = props.message.content.type.code;
-  const wolfCodes: string[] = [
-    MESSAGE_TYPE.PRIVATE_WEREWOLF,
-    MESSAGE_TYPE.WEREWOLF_SAY,
-    MESSAGE_TYPE.PRIVATE_FANATIC,
-  ];
-  const masonCodes: string[] = [MESSAGE_TYPE.PRIVATE_MASON, MESSAGE_TYPE.SYMPATHIZE_SAY];
-  const monoCodes: string[] = [MESSAGE_TYPE.MONOLOGUE_SAY, MESSAGE_TYPE.PRIVATE_ABILITY];
-  if (wolfCodes.includes(code)) return "wolf";
-  if (masonCodes.includes(code)) return "mason";
-  if (monoCodes.includes(code)) return "mono";
+  // LOVERS_SAY / SECRET_SAY は DESIGN.md でロール色未定義のため normal にフォールバック（Phase 3+ で要整理）
+  if (WOLF_CODES.includes(code)) return "wolf";
+  if (MASON_CODES.includes(code)) return "mason";
+  if (MONO_CODES.includes(code)) return "mono";
   if (code === MESSAGE_TYPE.GRAVE_SAY) return "grave";
   if (code === MESSAGE_TYPE.SPECTATE_SAY) return "seer";
   if (code === MESSAGE_TYPE.CREATOR_SAY) return "creator";
@@ -145,6 +148,8 @@ const roleVariant = computed<RoleVariant>(() => {
 });
 
 const containerClasses = computed(() => {
+  // dotted / dashed は border-style を全辺に適用するが、border-width が 0 の辺では見えないため
+  // 結果的に幅指定のある辺（mono は左、grave は上）にのみスタイルが現れる
   const map: Record<RoleVariant, string> = {
     normal: "border-t border-line-soft",
     wolf: "border-t-2 border-wolf",
@@ -170,34 +175,20 @@ const avatarRingClass = computed(() => {
   return map[roleVariant.value];
 });
 
-const roleLabel = computed(() => {
-  const map: Record<RoleVariant, string> = {
-    normal: "",
-    wolf: "人狼",
-    mason: "共有",
-    mono: "独白",
-    grave: "墓下",
-    seer: "観戦",
-    creator: "",
+// 小タグ（人狼/共有/独白/墓下/観戦）。normal / creator は表示しない
+const roleTag = computed<{ label: string; cls: string } | null>(() => {
+  const map: Partial<Record<RoleVariant, { label: string; cls: string }>> = {
+    wolf: { label: "人狼", cls: "text-wolf" },
+    mason: { label: "共有", cls: "text-mason" },
+    mono: { label: "独白", cls: "text-mono" },
+    grave: { label: "墓下", cls: "text-grave" },
+    seer: { label: "観戦", cls: "text-seer" },
   };
-  return map[roleVariant.value];
-});
-
-const roleLabelClass = computed(() => {
-  const map: Record<RoleVariant, string> = {
-    normal: "",
-    wolf: "text-wolf",
-    mason: "text-mason",
-    mono: "text-mono",
-    grave: "text-grave",
-    seer: "text-seer",
-    creator: "text-gold",
-  };
-  return map[roleVariant.value];
+  return map[roleVariant.value] ?? null;
 });
 
 const bodyColorClass = computed(() => {
-  // 本文色はロール色ではなく統一して fg ベース。視覚的な分類は枠線・タグで表現
+  // 本文色はロール色ではなく fg ベース。視覚的な分類は枠線・タグ・アバターリングで表現
   const map: Record<RoleVariant, string> = {
     normal: "text-fg",
     wolf: "text-fg",
