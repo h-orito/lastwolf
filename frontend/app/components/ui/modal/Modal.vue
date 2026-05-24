@@ -28,7 +28,7 @@
             :style="{ maxHeight: 'calc(100dvh - 6.5rem)' }"
             role="dialog"
             aria-modal="true"
-            :aria-labelledby="title ? 'modal-title' : undefined"
+            :aria-labelledby="title ? titleId : undefined"
             tabindex="-1"
           >
             <!-- 上端グラデバー -->
@@ -44,7 +44,7 @@
             >
               <div class="flex items-center justify-between">
                 <h3
-                  id="modal-title"
+                  :id="titleId"
                   class="m-0 text-left font-serif text-lg font-semibold leading-tight text-fg"
                 >
                   <slot name="title">{{ title }}</slot>
@@ -118,6 +118,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 const modalRef = ref<HTMLElement | null>(null);
+const titleId = useId();
 
 const isModalOpen = computed({
   get: () => props.modelValue,

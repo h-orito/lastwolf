@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div class="fixed left-1/2 top-4 z-[9999] -translate-x-1/2">
       <TransitionGroup name="toast" tag="div" class="flex flex-col items-center gap-2">
-        <div v-for="toast in toasts" :key="toast.id" :class="toastClasses(toast.type)" role="alert">
+        <div v-for="toast in toasts" :key="toast.id" :class="TOAST_BASE_CLASSES" role="alert">
           <!-- 左端アクセントバー（border ショートハンドと border-l-{color} の競合を避けるため独立要素） -->
           <span
             class="absolute inset-y-0 left-0 w-1 rounded-l-lg"
@@ -68,10 +68,9 @@
 <script setup lang="ts">
 const { toasts, remove } = useToast();
 
-const toastClasses = (_type: "info" | "success" | "error") => {
-  // 左端アクセントは独立要素で表現するため border-l は使わない
-  return "relative flex items-center pl-5 pr-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px] bg-elev text-fg border border-line-soft";
-};
+// 左端アクセントは独立要素で表現するため border-l は使わない
+const TOAST_BASE_CLASSES =
+  "relative flex items-center pl-5 pr-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px] bg-elev text-fg border border-line-soft";
 
 const accentBarClass = (type: "info" | "success" | "error") => {
   const map = {

@@ -22,8 +22,10 @@
         <span v-if="roleTag" class="text-xs shrink-0" :class="roleTag.cls">{{
           roleTag.label
         }}</span>
-        <span v-if="showMessageType" class="text-fg-muted text-xs shrink-0">{{ messageType }}</span>
-        <span class="text-fg-muted text-xs shrink-0">{{ messageTime }}</span>
+        <span v-if="showMessageType" class="text-fg-secondary text-xs shrink-0">{{
+          messageType
+        }}</span>
+        <span class="text-fg-secondary text-xs shrink-0">{{ messageTime }}</span>
       </div>
       <div>
         <span
@@ -36,9 +38,24 @@
   </div>
 </template>
 
+<script lang="ts">
+import { MESSAGE_TYPE } from "~/lib/api/message-constants";
+
+// メッセージコードのグルーピング（roleVariant と messageType の双方から参照）。
+// module scope に置くことでコンポーネントインスタンスごとの再生成を避ける
+const WOLF_CODES = new Set<string>([
+  MESSAGE_TYPE.PRIVATE_WEREWOLF,
+  MESSAGE_TYPE.WEREWOLF_SAY,
+  MESSAGE_TYPE.PRIVATE_FANATIC,
+]);
+const MASON_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_MASON, MESSAGE_TYPE.SYMPATHIZE_SAY]);
+const MONO_CODES = new Set<string>([MESSAGE_TYPE.MONOLOGUE_SAY, MESSAGE_TYPE.PRIVATE_ABILITY]);
+
+type RoleVariant = "normal" | "wolf" | "mason" | "mono" | "grave" | "seer" | "creator";
+</script>
+
 <script setup lang="ts">
 import type { components } from "~/lib/api/schema";
-import { MESSAGE_TYPE } from "~/lib/api/message-constants";
 import dayjs from "dayjs";
 
 type MessageView = components["schemas"]["MessageView"];
@@ -60,17 +77,6 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const villageStore = useVillageStore();
-
-// メッセージコードのグルーピング（roleVariant と messageType の双方から参照）
-const WOLF_CODES: readonly string[] = [
-  MESSAGE_TYPE.PRIVATE_WEREWOLF,
-  MESSAGE_TYPE.WEREWOLF_SAY,
-  MESSAGE_TYPE.PRIVATE_FANATIC,
-];
-const MASON_CODES: readonly string[] = [MESSAGE_TYPE.PRIVATE_MASON, MESSAGE_TYPE.SYMPATHIZE_SAY];
-const MONO_CODES: readonly string[] = [MESSAGE_TYPE.MONOLOGUE_SAY, MESSAGE_TYPE.PRIVATE_ABILITY];
-
-type RoleVariant = "normal" | "wolf" | "mason" | "mono" | "grave" | "seer" | "creator";
 
 const fromName = computed(() => {
   if (props.message.from) return props.message.from.chara.name.name;
@@ -142,9 +148,9 @@ const roleVariant = computed<RoleVariant>(() => {
   //   - PRIVATE_SEER / PRIVATE_PSYCHIC / PRIVATE_GURU / PRIVATE_WISE / PRIVATE_FOX /
   //     PRIVATE_SYMPATHIZER / PRIVATE_CORONER / PRIVATE_LOVERS: 役職限定のシステム通知
   //     （messageType の [霊]/[狐] 等で識別できるため normal で許容）
-  if (WOLF_CODES.includes(code)) return "wolf";
-  if (MASON_CODES.includes(code)) return "mason";
-  if (MONO_CODES.includes(code)) return "mono";
+  if (WOLF_CODES.has(code)) return "wolf";
+  if (MASON_CODES.has(code)) return "mason";
+  if (MONO_CODES.has(code)) return "mono";
   if (code === MESSAGE_TYPE.GRAVE_SAY) return "grave";
   if (code === MESSAGE_TYPE.SPECTATE_SAY) return "seer";
   if (code === MESSAGE_TYPE.CREATOR_SAY) return "creator";
