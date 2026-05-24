@@ -30,6 +30,7 @@ withDefaults(defineProps<Props>(), {
 .loading-bg {
   z-index: 50;
   position: relative;
+  /* オーバーレイの透過は rgba の alpha (0.6) で一元管理。opacity プロパティは使わない */
   background: rgba(5, 6, 9, 0.6);
   width: 100%;
   height: 100%;

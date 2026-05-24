@@ -38,24 +38,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { MESSAGE_TYPE } from "~/lib/api/message-constants";
-
-// メッセージコードのグルーピング（roleVariant と messageType の双方から参照）。
-// module scope に置くことでコンポーネントインスタンスごとの再生成を避ける
-const WOLF_CODES = new Set<string>([
-  MESSAGE_TYPE.PRIVATE_WEREWOLF,
-  MESSAGE_TYPE.WEREWOLF_SAY,
-  MESSAGE_TYPE.PRIVATE_FANATIC,
-]);
-const MASON_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_MASON, MESSAGE_TYPE.SYMPATHIZE_SAY]);
-const MONO_CODES = new Set<string>([MESSAGE_TYPE.MONOLOGUE_SAY, MESSAGE_TYPE.PRIVATE_ABILITY]);
-
-type RoleVariant = "normal" | "wolf" | "mason" | "mono" | "grave" | "seer" | "creator";
-</script>
-
 <script setup lang="ts">
 import type { components } from "~/lib/api/schema";
+import { MESSAGE_TYPE } from "~/lib/api/message-constants";
+import { WOLF_CODES, MASON_CODES, MONO_CODES, type RoleVariant } from "~/lib/api/message-role";
 import dayjs from "dayjs";
 
 type MessageView = components["schemas"]["MessageView"];

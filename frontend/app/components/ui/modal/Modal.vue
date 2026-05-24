@@ -52,7 +52,7 @@
                 <button
                   v-if="showCloseButton"
                   type="button"
-                  class="rounded p-1 text-fg-muted hover:bg-elev hover:text-fg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-steel"
+                  class="rounded p-1 text-fg-secondary hover:bg-elev hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-steel"
                   aria-label="閉じる"
                   @click="closeModal"
                 >

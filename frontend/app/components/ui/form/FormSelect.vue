@@ -30,7 +30,7 @@
     <!-- ドロップダウン矢印アイコン -->
     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
       <svg
-        class="h-4 w-4 text-fg-muted"
+        class="h-4 w-4 text-fg-secondary"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="currentColor"

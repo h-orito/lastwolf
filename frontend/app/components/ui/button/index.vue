@@ -7,6 +7,8 @@
     :to="resolvedAs === 'NuxtLink' && !isDisabled ? to : undefined"
     :target="resolvedAs !== 'button' ? target : undefined"
     :rel="resolvedAs !== 'button' && target === '_blank' ? 'noopener noreferrer' : undefined"
+    :tabindex="resolvedAs !== 'button' && isDisabled ? -1 : undefined"
+    :aria-disabled="resolvedAs !== 'button' && isDisabled ? true : undefined"
     :class="buttonClasses"
     @click="handleClick"
   >
