@@ -145,6 +145,7 @@ const roleVariant = computed<RoleVariant>(() => {
   const code = props.message.content.type.code;
   // 以下は DESIGN.md でロール色未定義のため normal にフォールバック（Phase 3+ で要整理）:
   //   - LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系
+  //   - PUBLIC_SYSTEM / PRIVATE_SYSTEM: システム通知（背景なしの fg-secondary で許容）
   //   - PRIVATE_SEER / PRIVATE_PSYCHIC / PRIVATE_GURU / PRIVATE_WISE / PRIVATE_FOX /
   //     PRIVATE_SYMPATHIZER / PRIVATE_CORONER / PRIVATE_LOVERS: 役職限定のシステム通知
   //     （messageType の [霊]/[狐] 等で識別できるため normal で許容）
