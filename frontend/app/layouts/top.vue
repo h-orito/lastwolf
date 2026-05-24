@@ -16,7 +16,8 @@ import Toast from "~/components/ui/feedback/Toast.vue";
 <style scoped>
 .site {
   min-height: 100dvh;
-  background-color: #ffffff;
+  background-color: var(--color-deep);
+  color: var(--color-fg);
 }
 
 .site-content {
