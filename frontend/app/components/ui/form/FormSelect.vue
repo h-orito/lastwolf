@@ -30,7 +30,7 @@
     <!-- ドロップダウン矢印アイコン -->
     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
       <svg
-        class="h-4 w-4 text-gray-400"
+        class="h-4 w-4 text-fg-secondary"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="currentColor"
@@ -105,18 +105,18 @@ const normalizedOptions = computed(() => {
 });
 
 const baseClasses =
-  "block w-full appearance-none rounded border px-2 py-1 pr-9 text-sm text-gray-900 bg-white focus:outline-none transition-colors duration-150 cursor-pointer";
+  "block w-full appearance-none rounded border px-2 py-1 pr-9 text-sm text-fg bg-soft focus:outline-none transition-colors duration-150 cursor-pointer";
 
 const borderClasses = computed(() => {
   if (props.error) {
-    return "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
+    return "border-wolf focus:border-wolf focus:ring-2 focus:ring-wolf/20";
   }
-  return "border-gray-300 focus:border-[#3991f4] focus:ring-2 focus:ring-[#3991f4]/20";
+  return "border-line-soft focus:border-blood focus:ring-2 focus:ring-blood/20";
 });
 
 const disabledClasses = computed(() => {
   if (props.disabled) {
-    return "opacity-50 cursor-not-allowed bg-gray-100";
+    return "opacity-50 cursor-not-allowed bg-elev";
   }
   return "";
 });

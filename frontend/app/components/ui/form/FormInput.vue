@@ -82,21 +82,21 @@ defineOptions({
 });
 
 const baseClasses =
-  "block w-full rounded border px-3 py-2 text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none transition-colors duration-150";
+  "block w-full rounded border px-3 py-2 text-sm text-fg placeholder-fg-muted bg-soft focus:outline-none transition-colors duration-150";
 
 const borderClasses = computed(() => {
   if (props.error) {
-    return "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
+    return "border-wolf focus:border-wolf focus:ring-2 focus:ring-wolf/20";
   }
-  return "border-gray-300 focus:border-[#3991f4] focus:ring-2 focus:ring-[#3991f4]/20";
+  return "border-line-soft focus:border-blood focus:ring-2 focus:ring-blood/20";
 });
 
 const disabledClasses = computed(() => {
   if (props.disabled) {
-    return "opacity-50 cursor-not-allowed bg-gray-100";
+    return "opacity-50 cursor-not-allowed bg-elev";
   }
   if (props.readonly) {
-    return "bg-gray-50";
+    return "bg-elev";
   }
   return "";
 });
