@@ -75,10 +75,10 @@ const componentType = computed(() => {
 const isDisabled = computed(() => props.disabled || props.loading);
 
 // Strategy A directional lighting:
-//   primary = 黒ベース + 右上から赤光（pill rounded-full）
-//   secondary = 黒に rim gradient
-//   danger = outline 赤（取り返しのつかない操作）
-//   ghost = text only
+//   primary = 黒ベース + 右上から赤光
+//   secondary = 黒に rim gradient（強 rim で ghost と区別）
+//   danger = 赤い base + 強 rim + 内側 blood glow（取り返しのつかない操作 / 押せそうな存在感）
+//   ghost = 透過 + text-fg
 // border は variant 側で付与
 // タイポグラフィ: Noto Sans JP の font-medium は世界観に対して「素のゴシック太字」感が出るため、
 // font-normal + tracking-wide で重さと密度を抜く（font-family は sans のまま、明朝は和文ボタンで読みづらく崩れやすいため不採用）
@@ -204,7 +204,7 @@ const handleClick = (event: MouseEvent) => {
         225deg,
         rgba(244, 241, 232, 0.55) 0%,
         rgba(224, 46, 46, 0.4) 30%,
-        rgba(60, 30, 30, 0.25) 60%,
+        rgba(58, 20, 20, 0.25) 60%,
         rgba(139, 26, 26, 0.4) 100%
       )
       border-box;
@@ -217,7 +217,7 @@ const handleClick = (event: MouseEvent) => {
         225deg,
         rgba(244, 241, 232, 0.75) 0%,
         rgba(224, 46, 46, 0.55) 30%,
-        rgba(80, 40, 40, 0.35) 60%,
+        rgba(58, 20, 20, 0.35) 60%,
         rgba(139, 26, 26, 0.55) 100%
       )
       border-box;
@@ -243,7 +243,6 @@ const handleClick = (event: MouseEvent) => {
     0 0 26px -8px rgba(224, 46, 46, 0.55);
 }
 .btn-danger-outline:hover:not(:disabled) {
-  color: #fff;
   background:
     linear-gradient(180deg, rgba(120, 24, 24, 0.92) 0%, rgba(55, 14, 14, 0.92) 100%) padding-box,
     linear-gradient(

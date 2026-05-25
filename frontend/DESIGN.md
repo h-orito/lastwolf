@@ -77,7 +77,7 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 ### ボタン (`components/ui/button/index.vue`)
 
-**Strategy A — Directional Glow（pill）**: 黒い物体に右上から赤光が当たっているように見せる。primary は塗り赤に見えるが内部は黒ベースで radial 赤を重ねる構成。danger は枠線赤（取り返しのつかない操作）。
+**Strategy A — Directional Glow**: 黒い物体に右上から赤光が当たっているように見せる。primary は塗り赤に見えるが内部は黒ベースで radial 赤を重ねる構成。danger は赤い base + 強 rim + 内側 blood glow で「取り返しのつかない操作」の存在感を示す。
 
 共通: `border-radius: 8px`（`rounded-lg`）、`border: 1px solid transparent`、focus は `ring-blood`。モバイル前提のため `:active` が主要な押下フィードバック。FormInput (10px) とほぼ同等の角丸で、ピル過剰さを避けつつコンポーネント間の調和を取る。
 
@@ -96,7 +96,7 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 primary / danger の hover では ember / blood の明度を上げ、外側の box-shadow を強める。secondary も rim と inset highlight を 1 段強める。
 
-> **2026-05-26 調整**: 初期実装の secondary / danger / ghost が「disabled っぽく見える」課題に対し、secondary の rim を 22%/18%/12% → 55%/40%/25%/40% に増強、danger の base 不透明度を 0.35 → 0.85 + inset 2 段 + 文字 `#ff8484` → `#ffb4b4` に底上げ、ghost の文字を `text-fg-secondary` → `text-fg` に引き上げ。primary を主役とした明度ヒエラルキー（primary > danger ≈ secondary > ghost > disabled）を維持しつつ、ghost 以外は「押せそう」な存在感を確保した。
+> **2026-05-26 調整**: 初期実装の secondary / danger / ghost が「disabled っぽく見える」課題に対し、secondary の rim を 22%/18%/12% → 55%/40%/25%/40% に増強、danger の base 不透明度を 0.35 → 0.85 + inset 2 段 + 文字 `#ff8484` → `#fff` に底上げ、ghost の文字を `text-fg-secondary` → `text-fg` に引き上げ。primary を主役とした明度ヒエラルキー（primary > danger ≈ secondary > ghost > disabled）を維持しつつ、ghost 以外は「押せそう」な存在感を確保した。あわせて角丸を `rounded-full` → `rounded-lg`（8px）に縮小し、`antialiased` を baseClasses に付与して明色文字 × ダーク BG の halation で太く見える現象を緩和。
 
 実装: `frontend/app/components/ui/button/index.vue` の `<style scoped>` を参照。
 
