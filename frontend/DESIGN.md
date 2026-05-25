@@ -1,22 +1,25 @@
 # LASTWOLF Design System
 
-`top.jpg`（月夜の狼）の世界観から色を抽出した、漆黒基調 × 月色アクセントのダークテーマ。
+`lastwolf.webp`（赤グローの黒い狼）の世界観をベースにした **Black & Blood** ダークテーマ。
 
-Phase 0 で方針合意済み（Issue #1）。Phase 1 以降で実装を進める。
+Phase 0 で方針合意（Issue #1）→ Phase 2 で月夜（steel-blue）系から **血赤（blood-red）系へピボット** (2026-05)。  
+旧 steel/moon トークンは廃止し、blood/ember/bone に置き換え済み。
 
 ## デザイン方針
 
-- **トーン**: ゴシック × ミステリー（"ホラー寄り" ではなく品のある重厚感）
-- **面**: 漆黒基調。色は線・縁・装飾で乗せる
-- **アクセント**: `top.jpg` から抽出した月の銀光・スチールブルー・淡金
-- **可読性**: 日本語本文を最優先。WCAG AA（テキスト 4.5:1）を維持
-- **ヒーロー画像**: `top.jpg` を残し、グラデで下端を `bg-deep` に落として本体と接続
+- **トーン**: ゴシック × ミステリー（"ホラー寄り" ではなく品のある重厚感）。月明かりよりも血の温度
+- **directional lighting**: 黒い面に **右上から赤光が差し込む** イメージ。左下にもごく薄く赤が射す
+- **rim glow**: パネル / ボタンの border は黒→赤のグラデで、上辺・右辺が「光って見える」
+- **可読性**: 日本語本文を最優先。WCAG AA（4.5:1）を維持
+- **ヒーロー画像**: `lastwolf.webp` の赤いオーラがそのままページの主光源を担う
 
 ## 色の役割
 
-- **青系 (steel)** — アクション主体（primary ボタン / "村に入る" / "確定"）
-- **金 (gold)** — 神秘・神託の限定アクセント（占い結果 / 装飾ラベル `№` / カード上端のグラデ線の一部）
-- **月白 (moon)** — 主役・名前（ロゴ / プレイヤー名 / primary テキスト）
+- **血赤 (blood)** — アクション主体（primary ボタン / "村に入る" / "投票"）
+- **燃え赤 (ember)** — rim ハイライト・glow 専用（テキスト色には使わない）
+- **深赤 (blood-deep)** — outline・danger 縁・装飾文字
+- **金 (gold)** — 神秘・神託の限定アクセント（占い結果 / 装飾ラベル `№`）
+- **骨白 (bone)** — 主役・名前（ロゴ / プレイヤー名 / primary テキスト）
 
 ## パレット
 
@@ -26,30 +29,30 @@ Tailwind v4 の `@theme` で定義する。これにより `bg-deep` / `text-fg`
 
 ```css
 @theme {
-  /* Surface（背景・面） */
-  --color-deep: #050609; /* 最暗部 */
-  --color-base: #0a0c12; /* ベース */
-  --color-elev: #10131a; /* カード等の浮き面 */
-  --color-soft: #161a24; /* もう一段浮く面（モーダル内側 等） */
+  /* Surface（背景・面）— warm-dark ベース */
+  --color-deep: #050202; /* 最暗部 / ページ bg ベース */
+  --color-base: #0a0404; /* 一段上 */
+  --color-elev: #100808; /* カード等の浮き面 */
+  --color-soft: #181010; /* もう一段浮く面 */
 
   /* Line（枠線） */
-  --color-line-soft: #1f2530;
-  --color-line-bright: #2d3848;
+  --color-line-soft: #2a1818;
+  --color-line-bright: #3a2424;
 
   /* Fg（テキスト） */
-  --color-fg: #ecedf0; /* 本文・タイトル */
-  --color-fg-secondary: #8a96a8; /* 補助テキスト */
-  --color-fg-muted: #525c6e; /* 装飾・disabled・placeholder 限定 */
+  --color-fg: #f4f1e8; /* 本文・タイトル（warm white = bone） */
+  --color-fg-secondary: #a9a4a0; /* 補助テキスト */
+  --color-fg-muted: #5a5550; /* 装飾・disabled・placeholder 限定 */
 
-  /* Accent（top.jpg 由来） */
-  --color-moon: #f0eed8; /* 月の中心（温白） */
-  --color-glow: #fff8e0; /* 月のハイライト（重ね/グラデ専用、テキスト色禁止）*/
-  --color-halo: #c4d0dc; /* 月の暈 */
-  --color-steel: #6f95bd; /* 雲色（主アクセント） */
-  --color-steel-deep: #456185; /* 既存テキストシャドウと同色 */
-  --color-gold: #c9b87a; /* 月の暖色派生（神秘・神託） */
+  /* Accent */
+  --color-bone: #f4f1e8; /* 骨白 = warm white（旧 moon） */
+  --color-blood: #e02e2e; /* 主アクセント = 血赤 */
+  --color-blood-deep: #8b1a1a; /* 深い静脈赤 / outline 用 */
+  --color-ember: #ff5b3a; /* 燃焼ハイライト（rim glow 専用） */
+  --color-wine: #3a1414; /* 赤系 surface tint */
+  --color-gold: #c9b87a; /* 神秘・神託（占い結果） */
 
-  /* Role（役職色 / 漆黒下で埋もれないよう明度を調整） */
+  /* Role（役職色 / 漆黒下で 4.5:1 以上を満たす） */
   --color-wolf: #d8606b; /* 人狼（くすんだ血） */
   --color-mason: #8dc296; /* 共有（苔緑） */
   --color-mono: #95a3b5; /* 独白（静寂の灰） */
@@ -59,7 +62,7 @@ Tailwind v4 の `@theme` で定義する。これにより `bg-deep` / `text-fg`
 }
 ```
 
-> 命名規則: Tailwind v4 慣習に合わせて CSS variable 側の prefix は最小化（`--color-deep` / `--color-fg` 等）。Tailwind utility としては `bg-deep` / `text-fg` / `border-line-soft` / `bg-moon` / `text-wolf` のように `bg-` / `text-` / `border-` prefix を付けて参照する。
+> 命名規則: Tailwind v4 慣習に合わせて CSS variable 側の prefix は最小化（`--color-deep` / `--color-fg` 等）。Tailwind utility としては `bg-deep` / `text-fg` / `border-line-soft` / `bg-bone` / `text-blood` のように `bg-` / `text-` / `border-` prefix を付けて参照する。
 
 ## タイポグラフィ
 
@@ -74,27 +77,30 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 ### ボタン (`components/ui/button/index.vue`)
 
-**Onyx Mid（フラット単色）** スタイル。グラデは "iOS Aqua" 感を残すため廃止。primary / danger は単色 + 上端 8% 白 / 下端 35% 黒のインセットで押せる感を演出。secondary だけ縁を持ち、他 variant は border なし。モバイル前提のため `:active` がメインの押下フィードバック（hover は desktop 補助）。
+**Strategy A — Directional Glow（pill）**: 黒い物体に右上から赤光が当たっているように見せる。primary は塗り赤に見えるが内部は黒ベースで radial 赤を重ねる構成。danger は枠線赤（取り返しのつかない操作）。
 
-| variant   | 背景        | 文字                                  | 縁                            | 押下フィードバック                 |
-| --------- | ----------- | ------------------------------------- | ----------------------------- | ---------------------------------- |
-| primary   | `#2c4566`   | `text-moon`                           | なし + inset shadow           | hover `#34507a` / active `#233856` |
-| secondary | `#1c2230`   | `text-fg`                             | `border-line-bright` (1px)    | hover `#232938` / active `#161b27` |
-| danger    | `#4a1f27`   | `#f4c8cc`                             | なし + inset shadow (wolf 色) | hover `#5a262f` / active `#3a1820` |
-| ghost     | transparent | `text-fg-secondary` → hover `text-fg` | なし                          | hover `bg-elev` / active `bg-soft` |
-| disabled  | `bg-soft`   | `text-fg-muted`                       | なし                          | opacity 0.5 + cursor-not-allowed   |
+共通: `border-radius: 999px`（pill）、`border: 1px solid transparent`、focus は `ring-blood`。モバイル前提のため `:active` が主要な押下フィードバック。
 
-inset shadow 値（primary）: `inset 0 1px 0 #ffffff14, inset 0 -1px 0 #00000059`
-inset shadow 値（danger）: `inset 0 1px 0 #d8606b4d, inset 0 -1px 0 #00000059`
+| variant   | 背景の構成                                                                        | 文字                | 縁 (border-box gradient)                               |
+| --------- | --------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------ |
+| primary   | 黒ベース + 右上から radial(ember→blood→透明) + 左下に弱 radial(blood) + 黒 linear | `#fff`              | 225deg: ember 0% → blood 18% → 黒 → 微 blood-deep 100% |
+| secondary | 黒の半透明 linear-gradient                                                        | `text-fg`           | 225deg: bone 22% → blood 30% → 黒 → blood-deep 100%    |
+| danger    | 微赤の半透明 linear-gradient                                                      | `#ff8484`           | 225deg: ember 0% → blood 22% → blood-deep 50% → 100%   |
+| ghost     | transparent                                                                       | `text-fg-secondary` | なし                                                   |
+| disabled  | `bg-soft`                                                                         | `text-fg-muted`     | なし、opacity 0.55 + cursor-not-allowed                |
+
+primary / danger の hover では ember / blood の明度を上げ、外側の box-shadow を強める。
+
+実装: `frontend/app/components/ui/button/index.vue` の `<style scoped>` を参照。
 
 ### モーダル (`components/ui/modal/Modal.vue`)
 
-- オーバーレイ: `bg-black/75`（既存と同じ）
-- 本体: `bg-elev` + `border-steel`
-- 上端に 4 色グラデバー（`steel-deep → steel → gold → moon → steel-deep`）
-- ヘッダー: `bg-soft`、ラテン装飾タイトル（例: `Cast vote`）
-- 本体: 日本語見出し（Noto Serif JP）+ 本文（Noto Sans JP）
+- オーバーレイ: `bg-black/75`
+- 本体: 黒ベース + 右上から radial 赤光 + border が 225deg 赤グラデの directional rim
+- 上端に細い 7 色グラデバー（`transparent → blood-deep → blood → ember → blood → blood-deep → transparent`）
+- ヘッダー: `bg-soft`、ラテン装飾タイトル可（例: `Cast vote`）
 - フッター: `bg-deep`、右寄せボタン
+- 外側 box-shadow に `rgba(224,46,46,0.4)` で halo を落とす
 
 ### チャットメッセージ
 
@@ -169,17 +175,17 @@ inset shadow 値（danger）: `inset 0 1px 0 #d8606b4d, inset 0 -1px 0 #00000059
 ## アクセシビリティ
 
 - 本文テキストは bg ペアで 4.5:1 以上を確認
-  - `text-fg #ecedf0` on `bg-deep #050609` ≈ 16.3:1 ✅
-  - `text-fg-secondary #8a96a8` on `bg-deep #050609` ≈ 7.3:1 ✅
-  - `text-fg-muted #525c6e` on `bg-deep #050609` ≈ 3.0:1 → **本文・通常テキストには使用禁止**
+  - `text-fg #f4f1e8` on `bg-deep #050202` ≈ 16:1 ✅
+  - `text-fg-secondary #a9a4a0` on `bg-deep #050202` ≈ 9:1 ✅
+  - `text-fg-muted #5a5550` on `bg-deep #050202` ≈ 3.1:1 → **本文・通常テキストには使用禁止**
 - `text-fg-muted` の許容用途は以下に限定:
   - 区切り装飾（`·` `—` `─` `№` 等の記号）
   - disabled ボタン / disabled フィールドのラベル（インタラクション不可が自明な場合）
   - フォーム placeholder
   - 上記以外のメタ情報・補助情報はサイズに関わらず `text-fg-secondary` を使う
 - ロール色のテキスト利用時はサイズ 13px 以上 + 周囲のコントラスト確保を必須化
-- focus ring は `steel` を使用（`focus-visible:ring-[#6f95bd]`）
-- `--color-glow #fff8e0` は **月光ハイライト（box-shadow / radial-gradient の中心 等）専用**。`text-glow` / `bg-glow` のベタ塗り用途は白飛びリスクがあるため禁止
+- focus ring は `blood` を使用（`focus-visible:ring-blood`）
+- `--color-ember #ff5b3a` は **rim glow / box-shadow / radial-gradient の中心 等専用**。`text-ember` のベタ塗り文字用途は彩度が高すぎて疲れるため避ける
 
 ## 採用しなかった方向性（参考）
 

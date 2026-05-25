@@ -88,7 +88,7 @@ const borderClasses = computed(() => {
   if (props.error) {
     return "border-wolf focus:border-wolf focus:ring-2 focus:ring-wolf/20";
   }
-  return "border-line-soft focus:border-steel focus:ring-2 focus:ring-steel/20";
+  return "border-line-soft focus:border-blood focus:ring-2 focus:ring-blood/20";
 });
 
 const disabledClasses = computed(() => {

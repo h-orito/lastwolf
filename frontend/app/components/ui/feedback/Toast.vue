@@ -75,18 +75,18 @@ const TOAST_BASE_CLASSES =
 
 const accentBarClass = (type: "info" | "success" | "error") => {
   const map = {
-    info: "bg-steel",
+    info: "bg-ember",
     success: "bg-mason",
-    error: "bg-wolf",
+    error: "bg-blood",
   };
   return map[type];
 };
 
 const iconClasses = (type: "info" | "success" | "error") => {
   const map = {
-    info: "text-steel",
+    info: "text-ember",
     success: "text-mason",
-    error: "text-wolf",
+    error: "text-blood",
   };
   return `mr-2 h-5 w-5 shrink-0 ${map[type]}`;
 };

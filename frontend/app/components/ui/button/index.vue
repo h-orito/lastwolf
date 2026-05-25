@@ -74,28 +74,26 @@ const componentType = computed(() => {
 
 const isDisabled = computed(() => props.disabled || props.loading);
 
-// border は variant 側で付与（フラット系の primary / danger / ghost は不要）
+// Strategy A directional lighting:
+//   primary = 黒ベース + 右上から赤光（pill rounded-full）
+//   secondary = 黒に rim gradient
+//   danger = outline 赤（取り返しのつかない操作）
+//   ghost = text only
+// border は variant 側で付与
 const baseClasses =
-  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-steel";
+  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full border border-transparent transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blood";
 
 // DESIGN.md「ボタン」テーブル: disabled は bg-soft + text-fg-muted + opacity 0.5
-// `text-fg-muted` は DESIGN.md アクセシビリティ欄の「disabled ボタンのラベル（インタラクション
-// 不可が自明な場合）」に該当するため許容（コントラスト 3.0:1 で本文用途は禁止）。
-// `pointer-events-none` は付けない: button は `:disabled` 属性でクリック抑制、a/NuxtLink は handleClick で
-// guard 済み。pointer-events-none を付けると hover が無効化されカーソル表示が壊れる
-const DISABLED_CLASSES = "bg-soft text-fg-muted opacity-50 cursor-not-allowed";
+// `text-fg-muted` は DESIGN.md アクセシビリティ欄の「disabled ボタンのラベル」許容用途に該当
+// `pointer-events-none` は付けない: button は `:disabled` 属性で抑制、a/NuxtLink は handleClick で guard 済み
+const DISABLED_CLASSES = "bg-soft text-fg-muted opacity-55 cursor-not-allowed";
 
-// Onyx Mid: フラット単色 + 上下インセットで押せる感を出す（グラデ廃止）
-// hover はモバイル無効でも害なし、active がモバイルのタップフィードバック
 const variantClasses = computed(() => {
   if (isDisabled.value) return DISABLED_CLASSES;
   const map: Record<ButtonType, string> = {
-    primary:
-      "bg-[#2c4566] text-moon shadow-[inset_0_1px_0_#ffffff14,inset_0_-1px_0_#00000059] hover:bg-[#34507a] active:bg-[#233856] cursor-pointer",
-    secondary:
-      "bg-[#1c2230] text-fg border border-line-bright hover:bg-[#232938] active:bg-[#161b27] cursor-pointer",
-    danger:
-      "bg-[#4a1f27] text-[#f4c8cc] shadow-[inset_0_1px_0_#d8606b4d,inset_0_-1px_0_#00000059] hover:bg-[#5a262f] active:bg-[#3a1820] cursor-pointer",
+    primary: "btn-primary-glow cursor-pointer",
+    secondary: "btn-secondary-rim cursor-pointer",
+    danger: "btn-danger-outline cursor-pointer",
     ghost:
       "bg-transparent text-fg-secondary hover:bg-elev hover:text-fg active:bg-soft cursor-pointer",
   };
@@ -118,3 +116,142 @@ const handleClick = (event: MouseEvent) => {
   emit("click", event);
 };
 </script>
+
+<style scoped>
+/*
+ * Strategy A directional lighting buttons.
+ * "黒の物体に右上から赤光が当たっている" 見え方:
+ *   - 内側: 右上 corner に赤の radial、左下にわずかな赤、ベースは黒
+ *   - 縁:   225deg の linear-gradient で右上ほど明るく赤、左下にわずか赤
+ */
+
+/* Primary — 黒ベース + 右上から強い赤光 */
+.btn-primary-glow {
+  color: #fff;
+  background:
+    radial-gradient(
+        ellipse 90% 160% at 95% -20%,
+        rgba(255, 120, 100, 0.95) 0%,
+        rgba(220, 50, 50, 0.65) 25%,
+        rgba(120, 22, 22, 0.32) 50%,
+        rgba(40, 8, 8, 0.1) 75%,
+        transparent 95%
+      )
+      padding-box,
+    radial-gradient(
+        ellipse 70% 130% at 0% 120%,
+        rgba(224, 46, 46, 0.4) 0%,
+        rgba(139, 26, 26, 0.15) 35%,
+        transparent 65%
+      )
+      padding-box,
+    linear-gradient(135deg, #1a0606 0%, #0a0303 60%, #050202 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 165, 135, 0.95) 0%,
+        rgba(224, 46, 46, 0.55) 18%,
+        rgba(244, 241, 232, 0.06) 40%,
+        rgba(0, 0, 0, 0) 65%,
+        rgba(139, 26, 26, 0.35) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 165, 135, 0.18),
+    0 6px 18px -6px rgba(0, 0, 0, 0.75),
+    0 0 28px -10px rgba(224, 46, 46, 0.45);
+}
+.btn-primary-glow:hover:not(:disabled) {
+  background:
+    radial-gradient(
+        ellipse 95% 175% at 95% -20%,
+        rgba(255, 145, 130, 1) 0%,
+        rgba(240, 60, 60, 0.78) 25%,
+        rgba(140, 26, 26, 0.4) 52%,
+        rgba(40, 8, 8, 0.12) 78%,
+        transparent 100%
+      )
+      padding-box,
+    radial-gradient(
+        ellipse 80% 140% at 0% 120%,
+        rgba(255, 70, 70, 0.5) 0%,
+        rgba(139, 26, 26, 0.2) 35%,
+        transparent 65%
+      )
+      padding-box,
+    linear-gradient(135deg, #220808 0%, #0e0404 60%, #060303 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 84, 84, 0.7) 18%,
+        rgba(244, 241, 232, 0.1) 40%,
+        rgba(0, 0, 0, 0) 65%,
+        rgba(224, 46, 46, 0.5) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 200, 180, 0.28),
+    0 8px 22px -6px rgba(0, 0, 0, 0.8),
+    0 0 42px -10px rgba(224, 46, 46, 0.65);
+}
+
+/* Secondary — 黒に rim gradient */
+.btn-secondary-rim {
+  color: var(--color-fg);
+  background:
+    linear-gradient(135deg, rgba(24, 14, 14, 0.85) 0%, rgba(14, 8, 8, 0.85) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(244, 241, 232, 0.22) 0%,
+        rgba(224, 46, 46, 0.18) 30%,
+        rgba(0, 0, 0, 0) 60%,
+        rgba(139, 26, 26, 0.12) 100%
+      )
+      border-box;
+}
+.btn-secondary-rim:hover:not(:disabled) {
+  background:
+    linear-gradient(135deg, rgba(36, 20, 20, 0.9) 0%, rgba(20, 12, 12, 0.9) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(244, 241, 232, 0.35) 0%,
+        rgba(224, 46, 46, 0.3) 30%,
+        rgba(0, 0, 0, 0) 60%,
+        rgba(139, 26, 26, 0.2) 100%
+      )
+      border-box;
+}
+
+/* Danger — outline 赤（取り返しのつかない操作） */
+.btn-danger-outline {
+  color: #ff8484;
+  background:
+    linear-gradient(180deg, rgba(60, 10, 10, 0.35) 0%, rgba(20, 6, 6, 0.35) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 130, 100, 0.85) 0%,
+        rgba(224, 46, 46, 0.55) 22%,
+        rgba(139, 26, 26, 0.2) 50%,
+        rgba(139, 26, 26, 0.35) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 0 16px -4px rgba(224, 46, 46, 0.18),
+    0 0 22px -10px rgba(224, 46, 46, 0.4);
+}
+.btn-danger-outline:hover:not(:disabled) {
+  color: #ffb0b0;
+  background:
+    linear-gradient(180deg, rgba(80, 14, 14, 0.5) 0%, rgba(30, 8, 8, 0.5) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 160, 130, 1) 0%,
+        rgba(255, 84, 84, 0.7) 22%,
+        rgba(180, 30, 30, 0.4) 50%,
+        rgba(180, 30, 30, 0.5) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 0 22px -4px rgba(224, 46, 46, 0.3),
+    0 0 30px -8px rgba(224, 46, 46, 0.55);
+}
+</style>

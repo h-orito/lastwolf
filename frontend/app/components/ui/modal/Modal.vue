@@ -24,16 +24,16 @@
           <div
             v-if="isModalOpen"
             ref="modalRef"
-            class="relative flex w-full max-w-full flex-col overflow-hidden rounded-lg border border-steel bg-elev shadow-xl sm:max-w-lg md:max-w-[80vw]"
+            class="modal-card relative flex w-full max-w-full flex-col overflow-hidden bg-elev shadow-xl sm:max-w-lg md:max-w-[80vw]"
             :style="{ maxHeight: 'calc(100dvh - 6.5rem)' }"
             role="dialog"
             aria-modal="true"
             :aria-labelledby="title || $slots.title ? titleId : undefined"
             tabindex="-1"
           >
-            <!-- 上端グラデバー -->
+            <!-- 上端グラデバー（黒→赤の rim light） -->
             <div
-              class="h-px shrink-0 bg-[linear-gradient(90deg,var(--color-steel-deep),var(--color-steel),var(--color-gold),var(--color-moon),var(--color-steel-deep))]"
+              class="h-px shrink-0 bg-[linear-gradient(90deg,transparent,var(--color-blood-deep),var(--color-blood),var(--color-ember),var(--color-blood),var(--color-blood-deep),transparent)]"
               aria-hidden="true"
             />
 
@@ -52,7 +52,7 @@
                 <button
                   v-if="showCloseButton"
                   type="button"
-                  class="rounded p-1 text-fg-secondary hover:bg-elev hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-steel"
+                  class="rounded p-1 text-fg-secondary hover:bg-elev hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-blood"
                   aria-label="閉じる"
                   @click="closeModal"
                 >
@@ -165,3 +165,36 @@ onUnmounted(() => {
   document.removeEventListener("keydown", handleEscKey);
 });
 </script>
+
+<style scoped>
+/* モーダル本体: 黒ベース + 右上から赤光、border は赤い rim gradient */
+.modal-card {
+  border-radius: 16px;
+  background:
+    radial-gradient(
+        ellipse 40% 55% at 100% 0%,
+        rgba(255, 91, 58, 0.14) 0%,
+        rgba(224, 46, 46, 0.06) 32%,
+        transparent 65%
+      )
+      padding-box,
+    radial-gradient(ellipse 35% 45% at 0% 100%, rgba(224, 46, 46, 0.06) 0%, transparent 60%)
+      padding-box,
+    linear-gradient(135deg, var(--color-elev) 0%, var(--color-base) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 130, 100, 0.85) 0%,
+        rgba(224, 46, 46, 0.5) 12%,
+        rgba(139, 26, 26, 0.22) 28%,
+        rgba(244, 241, 232, 0.04) 50%,
+        rgba(0, 0, 0, 0) 70%,
+        rgba(139, 26, 26, 0.14) 100%
+      )
+      border-box;
+  border: 1px solid transparent;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 91, 58, 0.05),
+    0 0 50px -12px rgba(224, 46, 46, 0.4),
+    0 30px 70px -20px rgba(0, 0, 0, 0.95);
+}
+</style>

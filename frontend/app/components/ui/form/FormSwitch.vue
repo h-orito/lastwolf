@@ -61,12 +61,12 @@ const toggle = () => {
 };
 
 const switchClasses = computed(() => {
-  // on 時の bg-steel と focus ring-steel が同色化するのを避けるため、ring-offset-base で
+  // on 時の bg-blood と focus ring-blood が同色化するのを避けるため、ring-offset-base で
   // ダーク色のギャップを挟む
   const baseClasses =
-    "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-steel focus:ring-offset-2 focus:ring-offset-base";
+    "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blood focus:ring-offset-2 focus:ring-offset-base";
 
-  const stateClasses = props.modelValue ? "bg-steel" : "bg-soft";
+  const stateClasses = props.modelValue ? "bg-blood" : "bg-soft";
 
   const disabledClasses = props.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer";
 
@@ -75,7 +75,7 @@ const switchClasses = computed(() => {
 
 const knobClasses = computed(() => {
   const baseClasses =
-    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-moon shadow ring-0 transition duration-200 ease-in-out";
+    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-bone shadow ring-0 transition duration-200 ease-in-out";
 
   const translateClasses = props.modelValue ? "translate-x-5" : "translate-x-0";
 

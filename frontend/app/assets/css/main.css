@@ -1,44 +1,44 @@
 @import "tailwindcss";
 
 /*
- * LASTWOLF Design Tokens
+ * LASTWOLF Design Tokens — Black & Blood
  *
  * Tailwind v4 @theme でトークンを定義することで、各トークンに対応する utility
  * (`bg-*`, `text-*`, `border-*`, `font-*` 等) が自動生成される。
  *
- * 設計方針は frontend/DESIGN.md（Phase 0 で合意済み）を参照。
+ * 設計方針は frontend/DESIGN.md を参照。Phase 2 で steel-blue 系から blood-red 系へピボット。
  */
 @theme {
-  /* === Surface (背景・面) === */
-  --color-deep: #050609;
-  --color-base: #0a0c12;
-  --color-elev: #10131a;
-  --color-soft: #161a24;
+  /* === Surface (背景・面) — warm-dark ベース === */
+  --color-deep: #050202; /* 最暗部 / ページ bg ベース */
+  --color-base: #0a0404; /* 一段上 */
+  --color-elev: #100808; /* カード等の浮き面 */
+  --color-soft: #181010; /* もう一段浮く面 */
 
   /* === Line (枠線) === */
-  --color-line-soft: #1f2530;
-  --color-line-bright: #2d3848;
+  --color-line-soft: #2a1818;
+  --color-line-bright: #3a2424;
 
   /* === Fg (テキスト) === */
-  --color-fg: #ecedf0;
-  --color-fg-secondary: #8a96a8;
-  --color-fg-muted: #525c6e;
+  --color-fg: #f4f1e8; /* 本文・タイトル（warm white = bone） */
+  --color-fg-secondary: #a9a4a0; /* 補助テキスト */
+  --color-fg-muted: #5a5550; /* 装飾・disabled・placeholder 限定 */
 
-  /* === Accent (top.jpg 由来) === */
-  --color-moon: #f0eed8;
-  --color-glow: #fff8e0;
-  --color-halo: #c4d0dc;
-  --color-steel: #6f95bd;
-  --color-steel-deep: #456185;
-  --color-gold: #c9b87a;
+  /* === Accent === */
+  --color-bone: #f4f1e8; /* 旧 moon。骨白 = warm white */
+  --color-blood: #e02e2e; /* 主アクセント = 血赤 */
+  --color-blood-deep: #8b1a1a; /* 深い静脈赤 / outline 用 */
+  --color-ember: #ff5b3a; /* 燃焼ハイライト（rim glow / shadow halo 専用） */
+  --color-wine: #3a1414; /* 赤系 surface tint（hover bg 等） */
+  --color-gold: #c9b87a; /* 神秘・神託（占い結果） */
 
   /* === Role (役職色 / 漆黒下で 4.5:1 以上を満たす) === */
-  --color-wolf: #d8606b;
-  --color-mason: #8dc296;
-  --color-mono: #95a3b5;
-  --color-grave: #8cc0d3;
-  --color-seer: #d4c283;
-  --color-medium: #beadde;
+  --color-wolf: #d8606b; /* 人狼（くすんだ血） */
+  --color-mason: #8dc296; /* 共有（苔緑） */
+  --color-mono: #95a3b5; /* 独白（静寂の灰） */
+  --color-grave: #8cc0d3; /* 墓下（幽霊水色） */
+  --color-seer: #d4c283; /* 占い（淡金 = gold 系） */
+  --color-medium: #beadde; /* 霊媒（青紫） */
 
   /* === Fonts === */
   --font-sans: "Noto Sans JP", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;

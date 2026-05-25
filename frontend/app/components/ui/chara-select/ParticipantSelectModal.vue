@@ -5,7 +5,7 @@
         v-for="p in participants"
         :key="p.id"
         type="button"
-        class="flex flex-col items-center rounded-lg border border-line-soft bg-elev p-2 hover:border-steel hover:bg-soft focus:outline-none focus:ring-2 focus:ring-steel transition-colors"
+        class="flex flex-col items-center rounded-lg border border-line-soft bg-elev p-2 hover:border-blood hover:bg-soft focus:outline-none focus:ring-2 focus:ring-blood transition-colors"
         @click="selectParticipant(p)"
       >
         <img
