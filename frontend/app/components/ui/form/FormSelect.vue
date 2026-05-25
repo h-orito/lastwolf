@@ -28,9 +28,9 @@
       </option>
     </select>
     <!-- ドロップダウン矢印アイコン -->
-    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5">
       <svg
-        class="h-4 w-4 text-fg-secondary"
+        :class="['h-4 w-4 transition-colors', disabled ? 'text-fg-muted' : 'text-blood/80']"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="currentColor"
@@ -105,25 +105,15 @@ const normalizedOptions = computed(() => {
 });
 
 const baseClasses =
-  "block w-full appearance-none rounded border px-2 py-1 pr-9 text-sm text-fg bg-soft focus:outline-none transition-colors duration-150 cursor-pointer";
+  "block w-full appearance-none px-3 py-1.5 pr-9 text-sm text-fg focus:outline-none transition-shadow duration-200 br-select border border-transparent cursor-pointer";
 
-const borderClasses = computed(() => {
-  if (props.error) {
-    return "border-wolf focus:border-wolf focus:ring-2 focus:ring-wolf/20";
-  }
-  return "border-line-soft focus:border-blood focus:ring-2 focus:ring-blood/20";
+const stateClasses = computed(() => {
+  if (props.disabled) return "br-select-disabled cursor-not-allowed";
+  if (props.error) return "br-select-error";
+  return "br-select-normal";
 });
 
-const disabledClasses = computed(() => {
-  if (props.disabled) {
-    return "opacity-50 cursor-not-allowed bg-elev";
-  }
-  return "";
-});
-
-const selectClasses = computed(() =>
-  [baseClasses, borderClasses.value, disabledClasses.value].filter(Boolean).join(" "),
-);
+const selectClasses = computed(() => [baseClasses, stateClasses.value].filter(Boolean).join(" "));
 
 const handleChange = (event: Event) => {
   const target = event.target as HTMLSelectElement;
@@ -142,3 +132,128 @@ const handleBlur = (event: FocusEvent) => {
   emit("blur", event);
 };
 </script>
+
+<style scoped>
+/*
+ * Black & Blood directional select.
+ * FormInput と同方針: 黒ベースに右上から赤光、focus で rim + halo が強まる。
+ */
+
+.br-select {
+  border-radius: 10px;
+  /* ネイティブ option の dark テーマ追従（chrome 119+ / safari 16.4+） */
+  color-scheme: dark;
+}
+
+/* normal: 入力欄であることが一目で分かる base + rim 明度。FormInput と揃える。 */
+.br-select-normal {
+  background:
+    linear-gradient(135deg, rgba(36, 22, 22, 0.95) 0%, rgba(20, 12, 12, 0.95) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 165, 135, 0.55) 0%,
+        rgba(224, 46, 46, 0.35) 18%,
+        rgba(244, 241, 232, 0.1) 40%,
+        rgba(139, 26, 26, 0.2) 70%,
+        rgba(139, 26, 26, 0.35) 100%
+      )
+      border-box;
+  box-shadow: inset 0 1px 0 rgba(255, 165, 135, 0.08);
+}
+
+.br-select-normal:hover:not(:focus) {
+  background:
+    linear-gradient(135deg, rgba(44, 26, 26, 0.95) 0%, rgba(24, 14, 14, 0.95) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 180, 150, 0.7) 0%,
+        rgba(224, 46, 46, 0.45) 18%,
+        rgba(244, 241, 232, 0.14) 40%,
+        rgba(139, 26, 26, 0.25) 70%,
+        rgba(139, 26, 26, 0.45) 100%
+      )
+      border-box;
+  box-shadow: inset 0 1px 0 rgba(255, 165, 135, 0.12);
+}
+
+.br-select-normal:focus {
+  background:
+    radial-gradient(
+        ellipse 60% 140% at 100% -20%,
+        rgba(255, 120, 100, 0.28) 0%,
+        rgba(224, 46, 46, 0.14) 30%,
+        transparent 60%
+      )
+      padding-box,
+    linear-gradient(135deg, rgba(50, 30, 30, 0.96) 0%, rgba(28, 16, 16, 0.96) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 84, 84, 0.7) 18%,
+        rgba(244, 241, 232, 0.18) 40%,
+        rgba(139, 26, 26, 0.3) 70%,
+        rgba(139, 26, 26, 0.55) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 200, 180, 0.2),
+    0 0 0 3px rgba(224, 46, 46, 0.2),
+    0 0 22px -6px rgba(224, 46, 46, 0.5);
+}
+
+/* error: FormInput と揃える。全周均一 blood ring + 赤い base + 常時 outer halo。 */
+.br-select-error {
+  background:
+    linear-gradient(135deg, rgba(80, 22, 22, 0.95) 0%, rgba(44, 12, 12, 0.95) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 160, 130, 1) 0%,
+        rgba(224, 46, 46, 0.95) 20%,
+        rgba(224, 46, 46, 0.85) 55%,
+        rgba(224, 46, 46, 0.9) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 0 12px rgba(224, 46, 46, 0.3),
+    0 0 0 1px rgba(224, 46, 46, 0.45),
+    0 0 18px -2px rgba(224, 46, 46, 0.6);
+}
+
+.br-select-error:focus {
+  background:
+    radial-gradient(
+        ellipse 60% 140% at 100% -20%,
+        rgba(255, 130, 110, 0.35) 0%,
+        rgba(224, 46, 46, 0.18) 30%,
+        transparent 60%
+      )
+      padding-box,
+    linear-gradient(135deg, rgba(96, 28, 28, 0.96) 0%, rgba(52, 16, 16, 0.96) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 91, 58, 0.95) 18%,
+        rgba(224, 46, 46, 0.9) 55%,
+        rgba(224, 46, 46, 0.95) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 0 16px rgba(255, 91, 58, 0.4),
+    inset 0 1px 0 rgba(255, 200, 180, 0.2),
+    0 0 0 3px rgba(224, 46, 46, 0.28),
+    0 0 26px -4px rgba(224, 46, 46, 0.75);
+}
+
+.br-select-disabled {
+  background:
+    linear-gradient(135deg, rgba(14, 8, 8, 0.7) 0%, rgba(8, 4, 4, 0.7) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(244, 241, 232, 0.06) 0%,
+        rgba(139, 26, 26, 0.04) 60%,
+        rgba(139, 26, 26, 0.04) 100%
+      )
+      border-box;
+  opacity: 0.55;
+}
+</style>

@@ -93,6 +93,42 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 実装: `frontend/app/components/ui/button/index.vue` の `<style scoped>` を参照。
 
+### フォーム (`components/ui/form/*`)
+
+ボタンと同じ **directional lighting** をフォーム要素にも展開する。複数行スタックされる場合があるため、ボタンより rim と glow は控えめに。
+
+#### FormInput / FormSelect
+
+- 形: `border-radius: 10px`、`border: 1px solid transparent`
+- 通常: ページ bg `#050202` から明確に持ち上がる base (`linear-gradient 135deg` rgba(36,22,22,.95)→rgba(20,12,12,.95)) + 視認できる強さの 225deg 赤 rim (bone 55% → blood 35% → 黒 → blood-deep 35%) + わずかな inset top highlight。**入力欄であることが一目で分かる必要があるため、focus 相当の rim 明度を baseline にしている**
+- hover: ベース・rim とも 1 段明るく（focus 中は無効化）
+- focus: 右上 corner に radial 赤光 `radial-gradient(at 100% -20%, rgba(255,120,100,.28)…)` を上乗せ、base と rim をさらに明るく、外側 `box-shadow: 0 0 0 3px rgba(224,46,46,.2), 0 0 22px -6px rgba(224,46,46,.5)` の blood halo
+- 優先順位: `disabled > error > readonly`（error は readonly と同時指定でも表示）
+- error: 「明らかに不正」と一目で分かる強さ。赤い base (`linear-gradient(135deg, rgba(80,22,22,.95), rgba(44,12,12,.95))`) + 全周ほぼ均一な blood ring (225deg を ember → blood .95 → .85 → .9 と高彩度に閉ループ) + 常時 outer halo (`0 0 0 1px rgba(224,46,46,.45)` thin rim + `0 0 18px -2px rgba(224,46,46,.6)` glow) + 強い inset blood glow。normal の rim 主張に埋もれないため彩度を一段上げる
+- error + focus: 右上から radial 赤光が上乗せ、base/rim/halo すべて一段強める
+- readonly: 通常より沈ませ、rim の bone 成分を弱める（focus rim は出さない）
+- disabled: opacity `0.55`、cursor `not-allowed`、rim ほぼ消す
+- placeholder: `placeholder-fg-muted`
+- 実装: `<style scoped>` 内に `.br-input-*` / `.br-select-*` クラスとして閉じる（BaseButton の `.btn-*-glow` と同手法）
+
+`FormSelect` のドロップダウン矢印は `disabled` で `text-fg-muted`、それ以外は `text-blood/80`（rim の主役色と統一）。ネイティブ `<option>` のドロップダウン背景は `color-scheme: dark` で OS / ブラウザに dark テーマを伝える。
+
+#### FormSwitch
+
+ボタンと同じ思想で、on 時は **黒ベース + 内側の赤 glow + rim**:
+
+- track off: `linear-gradient(135deg, rgba(20,12,12,.95), rgba(10,6,6,.95))` + 弱 bone hairline rim + 内側ドロップシャドウで沈める
+- track on: 黒ベース (`linear-gradient(135deg, #200a0a, #100404)`) + 右側から `radial-gradient` で blood/ember を差し込む + **全周クリアな blood rim**（225deg を ember 0% → blood .9 15% → .75 40% → blood-deep .7 70% → blood .75 100% と閉ループ）+ `inset 0 0 10px rgba(224,46,46,.5)` の inset blood glow + 外側 halo を 2 段に（`0 0 0 1px rgba(224,46,46,.35)` の thin rim + `0 0 18px -2px rgba(224,46,46,.75)` の近距離 + `0 0 32px -6px rgba(255,91,58,.4)` の遠距離 ember bloom）。track 内部は暗いまま、rim と halo で活性を主張する
+- knob: `bg-bone` + on 時は内側に微かな赤いリフレクション
+- focus: 既存の `ring-blood + ring-offset-base` を維持（同色化を避けるため offset で base 色のギャップを挟む）
+
+#### FormGroup
+
+- ラベル: `text-fg`
+- help: `text-fg-secondary`
+- error: `text-wolf`（既存維持）
+- required スター: **`text-blood`**（`text-wolf` は役職色、エラーマーカーには blood の方が意図が明確）
+
 ### モーダル (`components/ui/modal/Modal.vue`)
 
 - オーバーレイ: `bg-black/75`
