@@ -93,6 +93,41 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 実装: `frontend/app/components/ui/button/index.vue` の `<style scoped>` を参照。
 
+### フォーム (`components/ui/form/*`)
+
+ボタンと同じ **directional lighting** をフォーム要素にも展開する。複数行スタックされる場合があるため、ボタンより rim と glow は控えめに。
+
+#### FormInput / FormSelect
+
+- 形: `border-radius: 10px`、`border: 1px solid transparent`
+- 通常: 黒ベース (`linear-gradient 135deg` rgba(20,12,12,.85)→rgba(10,6,6,.85)) + 縁 `225deg` の bone 22% → blood 18% → 黒 → blood-deep 微弱 の rim
+- hover: ベースを 1 段明るく、rim も 1 段強める（focus 中は無効化）
+- focus: 右上 corner に radial 赤光 `radial-gradient(at 100% -20%, rgba(255,120,100,.22)…)` を上乗せ、rim 明度を強める、外側 `box-shadow: 0 0 0 3px rgba(224,46,46,.15), 0 0 18px -6px rgba(224,46,46,.4)` の blood halo
+- error: 全周 blood-deep の rim + 暗赤 base、`inset` で薄い赤グロー
+- error + focus: 上記 error rim をさらに強めて halo も拡大
+- readonly: 通常より沈ませ、rim の bone 成分を弱める
+- disabled: opacity `0.55`、cursor `not-allowed`、rim ほぼ消す
+- placeholder: `placeholder-fg-muted`
+- 実装: `<style scoped>` 内に `.br-input-*` / `.br-select-*` クラスとして閉じる（BaseButton の `.btn-*-glow` と同手法）
+
+`FormSelect` のドロップダウン矢印は `disabled` で `text-fg-muted`、それ以外は `text-blood/80`（rim の主役色と統一）。ネイティブ `<option>` のドロップダウン背景は `color-scheme: dark` で OS / ブラウザに dark テーマを伝える。
+
+#### FormSwitch
+
+ボタンと同じ思想で、on 時は **黒ベース + 内側の赤 glow + rim**:
+
+- track off: `linear-gradient(135deg, rgba(20,12,12,.95), rgba(10,6,6,.95))` + 弱 bone hairline rim + 内側ドロップシャドウで沈める
+- track on: `linear-gradient(135deg, #200a0a, #100404)` 黒ベース + 右側から `radial-gradient` で blood/ember を差し込む + 縁 225deg 赤グラデ rim + `inset 0 0 10px rgba(224,46,46,.5)` の inset blood glow + 外側 `0 0 14px -4px rgba(224,46,46,.55)` の halo
+- knob: `bg-bone` + on 時は内側に微かな赤いリフレクション
+- focus: 既存の `ring-blood + ring-offset-base` を維持（同色化を避けるため offset で base 色のギャップを挟む）
+
+#### FormGroup
+
+- ラベル: `text-fg`
+- help: `text-fg-secondary`
+- error: `text-wolf`（既存維持）
+- required スター: **`text-blood`**（`text-wolf` は役職色、エラーマーカーには blood の方が意図が明確）
+
 ### モーダル (`components/ui/modal/Modal.vue`)
 
 - オーバーレイ: `bg-black/75`
