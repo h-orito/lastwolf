@@ -74,27 +74,30 @@ const componentType = computed(() => {
 
 const isDisabled = computed(() => props.disabled || props.loading);
 
+// border は variant 側で付与（フラット系の primary / danger / ghost は不要）
 const baseClasses =
-  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded border transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-steel";
+  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-steel";
 
-// DESIGN.md「ボタン」テーブル: disabled は bg-soft + text-fg-muted + border-line-soft + opacity 0.5
+// DESIGN.md「ボタン」テーブル: disabled は bg-soft + text-fg-muted + opacity 0.5
 // `text-fg-muted` は DESIGN.md アクセシビリティ欄の「disabled ボタンのラベル（インタラクション
 // 不可が自明な場合）」に該当するため許容（コントラスト 3.0:1 で本文用途は禁止）。
 // `pointer-events-none` は付けない: button は `:disabled` 属性でクリック抑制、a/NuxtLink は handleClick で
 // guard 済み。pointer-events-none を付けると hover が無効化されカーソル表示が壊れる
-const DISABLED_CLASSES = "bg-soft text-fg-muted border-line-soft opacity-50 cursor-not-allowed";
+const DISABLED_CLASSES = "bg-soft text-fg-muted opacity-50 cursor-not-allowed";
 
+// Onyx Mid: フラット単色 + 上下インセットで押せる感を出す（グラデ廃止）
+// hover はモバイル無効でも害なし、active がモバイルのタップフィードバック
 const variantClasses = computed(() => {
   if (isDisabled.value) return DISABLED_CLASSES;
   const map: Record<ButtonType, string> = {
     primary:
-      "bg-[linear-gradient(180deg,#2c4566,#15263a)] text-moon border-steel hover:brightness-110 active:brightness-95 cursor-pointer",
+      "bg-[#2c4566] text-moon shadow-[inset_0_1px_0_#ffffff14,inset_0_-1px_0_#00000059] hover:bg-[#34507a] active:bg-[#233856] cursor-pointer",
     secondary:
-      "bg-elev text-fg-secondary border-line-soft hover:bg-soft active:bg-base cursor-pointer",
+      "bg-[#1c2230] text-fg border border-line-bright hover:bg-[#232938] active:bg-[#161b27] cursor-pointer",
     danger:
-      "bg-[linear-gradient(180deg,#8a2934,#4f161e)] text-[#fce4e6] border-wolf hover:brightness-110 active:brightness-95 cursor-pointer",
+      "bg-[#4a1f27] text-[#f4c8cc] shadow-[inset_0_1px_0_#d8606b4d,inset_0_-1px_0_#00000059] hover:bg-[#5a262f] active:bg-[#3a1820] cursor-pointer",
     ghost:
-      "bg-transparent text-fg-secondary border-line-soft hover:bg-elev active:bg-soft cursor-pointer",
+      "bg-transparent text-fg-secondary hover:bg-elev hover:text-fg active:bg-soft cursor-pointer",
   };
   return map[props.buttonType];
 });

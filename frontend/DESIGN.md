@@ -74,13 +74,18 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 ### ボタン (`components/ui/button/index.vue`)
 
-| variant   | 背景                                        | 文字                | 縁                               |
-| --------- | ------------------------------------------- | ------------------- | -------------------------------- |
-| primary   | `linear-gradient(180deg, #2c4566, #15263a)` | `text-moon`         | `border-steel`                   |
-| secondary | `bg-elev`                                   | `text-fg-secondary` | `border-line-soft`               |
-| danger    | `linear-gradient(180deg, #8a2934, #4f161e)` | `#fce4e6`           | `border-wolf`                    |
-| ghost     | transparent                                 | `text-fg-secondary` | `border-line-soft`               |
-| disabled  | `bg-soft`                                   | `text-fg-muted`     | `border-line-soft` + opacity 0.5 |
+**Onyx Mid（フラット単色）** スタイル。グラデは "iOS Aqua" 感を残すため廃止。primary / danger は単色 + 上端 8% 白 / 下端 35% 黒のインセットで押せる感を演出。secondary だけ縁を持ち、他 variant は border なし。モバイル前提のため `:active` がメインの押下フィードバック（hover は desktop 補助）。
+
+| variant   | 背景        | 文字                                  | 縁                            | 押下フィードバック                 |
+| --------- | ----------- | ------------------------------------- | ----------------------------- | ---------------------------------- |
+| primary   | `#2c4566`   | `text-moon`                           | なし + inset shadow           | hover `#34507a` / active `#233856` |
+| secondary | `#1c2230`   | `text-fg`                             | `border-line-bright` (1px)    | hover `#232938` / active `#161b27` |
+| danger    | `#4a1f27`   | `#f4c8cc`                             | なし + inset shadow (wolf 色) | hover `#5a262f` / active `#3a1820` |
+| ghost     | transparent | `text-fg-secondary` → hover `text-fg` | なし                          | hover `bg-elev` / active `bg-soft` |
+| disabled  | `bg-soft`   | `text-fg-muted`                       | なし                          | opacity 0.5 + cursor-not-allowed   |
+
+inset shadow 値（primary）: `inset 0 1px 0 #ffffff14, inset 0 -1px 0 #00000059`
+inset shadow 値（danger）: `inset 0 1px 0 #d8606b4d, inset 0 -1px 0 #00000059`
 
 ### モーダル (`components/ui/modal/Modal.vue`)
 
