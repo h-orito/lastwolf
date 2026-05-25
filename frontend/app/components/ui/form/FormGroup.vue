@@ -2,7 +2,7 @@
   <div v-bind="$attrs">
     <label v-if="label" class="mb-1 block text-sm font-medium text-fg">
       {{ label }}
-      <span v-if="required" class="ml-0.5 text-wolf">*</span>
+      <span v-if="required" class="ml-0.5 text-blood">*</span>
     </label>
     <div>
       <slot />
