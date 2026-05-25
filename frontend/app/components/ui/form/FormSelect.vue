@@ -201,44 +201,47 @@ const handleBlur = (event: FocusEvent) => {
     0 0 22px -6px rgba(224, 46, 46, 0.5);
 }
 
+/* error: FormInput と揃える。全周均一 blood ring + 赤い base + 常時 outer halo。 */
 .br-select-error {
   background:
-    linear-gradient(135deg, rgba(40, 14, 14, 0.85) 0%, rgba(20, 8, 8, 0.85) 100%) padding-box,
+    linear-gradient(135deg, rgba(80, 22, 22, 0.95) 0%, rgba(44, 12, 12, 0.95) 100%) padding-box,
     linear-gradient(
         225deg,
-        rgba(255, 130, 100, 0.7) 0%,
-        rgba(224, 46, 46, 0.5) 25%,
-        rgba(139, 26, 26, 0.35) 60%,
-        rgba(139, 26, 26, 0.45) 100%
+        rgba(255, 160, 130, 1) 0%,
+        rgba(224, 46, 46, 0.95) 20%,
+        rgba(224, 46, 46, 0.85) 55%,
+        rgba(224, 46, 46, 0.9) 100%
       )
       border-box;
   box-shadow:
-    inset 0 0 12px -4px rgba(224, 46, 46, 0.18),
-    0 0 16px -8px rgba(224, 46, 46, 0.35);
+    inset 0 0 12px rgba(224, 46, 46, 0.3),
+    0 0 0 1px rgba(224, 46, 46, 0.45),
+    0 0 18px -2px rgba(224, 46, 46, 0.6);
 }
 
 .br-select-error:focus {
   background:
     radial-gradient(
         ellipse 60% 140% at 100% -20%,
-        rgba(255, 120, 100, 0.28) 0%,
-        rgba(224, 46, 46, 0.14) 30%,
+        rgba(255, 130, 110, 0.35) 0%,
+        rgba(224, 46, 46, 0.18) 30%,
         transparent 60%
       )
       padding-box,
-    linear-gradient(135deg, rgba(50, 18, 18, 0.9) 0%, rgba(24, 10, 10, 0.9) 100%) padding-box,
+    linear-gradient(135deg, rgba(96, 28, 28, 0.96) 0%, rgba(52, 16, 16, 0.96) 100%) padding-box,
     linear-gradient(
         225deg,
-        rgba(255, 165, 135, 0.95) 0%,
-        rgba(224, 46, 46, 0.65) 22%,
-        rgba(139, 26, 26, 0.4) 60%,
-        rgba(139, 26, 26, 0.55) 100%
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 91, 58, 0.95) 18%,
+        rgba(224, 46, 46, 0.9) 55%,
+        rgba(224, 46, 46, 0.95) 100%
       )
       border-box;
   box-shadow:
-    inset 0 0 14px -3px rgba(224, 46, 46, 0.28),
-    0 0 0 3px rgba(224, 46, 46, 0.2),
-    0 0 22px -6px rgba(224, 46, 46, 0.55);
+    inset 0 0 16px rgba(255, 91, 58, 0.4),
+    inset 0 1px 0 rgba(255, 200, 180, 0.2),
+    0 0 0 3px rgba(224, 46, 46, 0.28),
+    0 0 26px -4px rgba(224, 46, 46, 0.75);
 }
 
 .br-select-disabled {

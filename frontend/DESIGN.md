@@ -104,8 +104,8 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 - hover: ベース・rim とも 1 段明るく（focus 中は無効化）
 - focus: 右上 corner に radial 赤光 `radial-gradient(at 100% -20%, rgba(255,120,100,.28)…)` を上乗せ、base と rim をさらに明るく、外側 `box-shadow: 0 0 0 3px rgba(224,46,46,.2), 0 0 22px -6px rgba(224,46,46,.5)` の blood halo
 - 優先順位: `disabled > error > readonly`（error は readonly と同時指定でも表示）
-- error: 全周 blood-deep の rim + 暗赤 base、`inset` で薄い赤グロー
-- error + focus: 上記 error rim をさらに強めて halo も拡大
+- error: 「明らかに不正」と一目で分かる強さ。赤い base (`linear-gradient(135deg, rgba(80,22,22,.95), rgba(44,12,12,.95))`) + 全周ほぼ均一な blood ring (225deg を ember → blood .95 → .85 → .9 と高彩度に閉ループ) + 常時 outer halo (`0 0 0 1px rgba(224,46,46,.45)` thin rim + `0 0 18px -2px rgba(224,46,46,.6)` glow) + 強い inset blood glow。normal の rim 主張に埋もれないため彩度を一段上げる
+- error + focus: 右上から radial 赤光が上乗せ、base/rim/halo すべて一段強める
 - readonly: 通常より沈ませ、rim の bone 成分を弱める（focus rim は出さない）
 - disabled: opacity `0.55`、cursor `not-allowed`、rim ほぼ消す
 - placeholder: `placeholder-fg-muted`
