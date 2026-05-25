@@ -62,7 +62,7 @@ const toggle = () => {
 
 const switchClasses = computed(() => {
   const base =
-    "relative inline-flex h-6 w-11 shrink-0 rounded-full border border-transparent transition-shadow duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blood focus-visible:ring-offset-2 focus-visible:ring-offset-base br-switch";
+    "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-shadow duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blood focus-visible:ring-offset-2 focus-visible:ring-offset-base";
 
   const stateClass = props.modelValue ? "br-switch-on" : "br-switch-off";
   const disabledClass = props.disabled ? "opacity-55 cursor-not-allowed" : "cursor-pointer";

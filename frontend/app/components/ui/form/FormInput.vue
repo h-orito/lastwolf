@@ -84,10 +84,13 @@ defineOptions({
 const baseClasses =
   "block w-full px-3 py-2 text-sm text-fg placeholder-fg-muted focus:outline-none transition-shadow duration-200 br-input border border-transparent";
 
+// 優先順位: disabled > error > readonly。
+// error は readonly と同時指定でも表示する（旧実装の additive 合成を踏襲）。
+// disabled は操作不可が自明なので error rim は隠す。
 const stateClasses = computed(() => {
   if (props.disabled) return "br-input-disabled cursor-not-allowed";
-  if (props.readonly) return "br-input-readonly";
   if (props.error) return "br-input-error";
+  if (props.readonly) return "br-input-readonly";
   return "br-input-normal";
 });
 
