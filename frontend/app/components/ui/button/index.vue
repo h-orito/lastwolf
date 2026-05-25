@@ -75,13 +75,15 @@ const componentType = computed(() => {
 const isDisabled = computed(() => props.disabled || props.loading);
 
 // Strategy A directional lighting:
-//   primary = 黒ベース + 右上から赤光（pill rounded-full）
-//   secondary = 黒に rim gradient
-//   danger = outline 赤（取り返しのつかない操作）
-//   ghost = text only
+//   primary = 黒ベース + 右上から赤光
+//   secondary = 黒に rim gradient（強 rim で ghost と区別）
+//   danger = 赤い base + 強 rim + 内側 blood glow（取り返しのつかない操作 / 押せそうな存在感）
+//   ghost = 透過 + text-fg
 // border は variant 側で付与
+// タイポグラフィ: Noto Sans JP の font-medium は世界観に対して「素のゴシック太字」感が出るため、
+// font-normal + tracking-wide で重さと密度を抜く（font-family は sans のまま、明朝は和文ボタンで読みづらく崩れやすいため不採用）
 const baseClasses =
-  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full border border-transparent transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blood";
+  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-normal tracking-wide antialiased rounded-lg border border-transparent transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blood";
 
 // DESIGN.md「ボタン」テーブル: disabled は bg-soft + text-fg-muted + opacity 0.5
 // `text-fg-muted` は DESIGN.md アクセシビリティ欄の「disabled ボタンのラベル」許容用途に該当
@@ -94,8 +96,7 @@ const variantClasses = computed(() => {
     primary: "btn-primary-glow cursor-pointer",
     secondary: "btn-secondary-rim cursor-pointer",
     danger: "btn-danger-outline cursor-pointer",
-    ghost:
-      "bg-transparent text-fg-secondary hover:bg-elev hover:text-fg active:bg-soft cursor-pointer",
+    ghost: "bg-transparent text-fg hover:bg-elev active:bg-soft cursor-pointer",
   };
   return map[props.buttonType];
 });
@@ -194,64 +195,67 @@ const handleClick = (event: MouseEvent) => {
     0 0 42px -10px rgba(224, 46, 46, 0.65);
 }
 
-/* Secondary — 黒に rim gradient */
+/* Secondary — 黒に rim gradient（rim を強めて ghost と明確に区別） */
 .btn-secondary-rim {
   color: var(--color-fg);
   background:
-    linear-gradient(135deg, rgba(24, 14, 14, 0.85) 0%, rgba(14, 8, 8, 0.85) 100%) padding-box,
+    linear-gradient(135deg, rgba(32, 20, 20, 0.95) 0%, rgba(18, 10, 10, 0.95) 100%) padding-box,
     linear-gradient(
         225deg,
-        rgba(244, 241, 232, 0.22) 0%,
-        rgba(224, 46, 46, 0.18) 30%,
-        rgba(0, 0, 0, 0) 60%,
-        rgba(139, 26, 26, 0.12) 100%
+        rgba(244, 241, 232, 0.55) 0%,
+        rgba(224, 46, 46, 0.4) 30%,
+        rgba(58, 20, 20, 0.25) 60%,
+        rgba(139, 26, 26, 0.4) 100%
       )
       border-box;
+  box-shadow: inset 0 1px 0 rgba(244, 241, 232, 0.08);
 }
 .btn-secondary-rim:hover:not(:disabled) {
   background:
-    linear-gradient(135deg, rgba(36, 20, 20, 0.9) 0%, rgba(20, 12, 12, 0.9) 100%) padding-box,
+    linear-gradient(135deg, rgba(48, 28, 28, 0.95) 0%, rgba(24, 14, 14, 0.95) 100%) padding-box,
     linear-gradient(
         225deg,
-        rgba(244, 241, 232, 0.35) 0%,
-        rgba(224, 46, 46, 0.3) 30%,
-        rgba(0, 0, 0, 0) 60%,
-        rgba(139, 26, 26, 0.2) 100%
+        rgba(244, 241, 232, 0.75) 0%,
+        rgba(224, 46, 46, 0.55) 30%,
+        rgba(58, 20, 20, 0.35) 60%,
+        rgba(139, 26, 26, 0.55) 100%
       )
       border-box;
+  box-shadow: inset 0 1px 0 rgba(244, 241, 232, 0.14);
 }
 
-/* Danger — outline 赤（取り返しのつかない操作） */
+/* Danger — outline 赤（取り返しのつかない操作）。disabled に見えないよう base/rim/glow を強化 */
 .btn-danger-outline {
-  color: #ff8484;
+  color: #fff;
   background:
-    linear-gradient(180deg, rgba(60, 10, 10, 0.35) 0%, rgba(20, 6, 6, 0.35) 100%) padding-box,
-    linear-gradient(
-        225deg,
-        rgba(255, 130, 100, 0.85) 0%,
-        rgba(224, 46, 46, 0.55) 22%,
-        rgba(139, 26, 26, 0.2) 50%,
-        rgba(139, 26, 26, 0.35) 100%
-      )
-      border-box;
-  box-shadow:
-    inset 0 0 16px -4px rgba(224, 46, 46, 0.18),
-    0 0 22px -10px rgba(224, 46, 46, 0.4);
-}
-.btn-danger-outline:hover:not(:disabled) {
-  color: #ffb0b0;
-  background:
-    linear-gradient(180deg, rgba(80, 14, 14, 0.5) 0%, rgba(30, 8, 8, 0.5) 100%) padding-box,
+    linear-gradient(180deg, rgba(90, 18, 18, 0.85) 0%, rgba(40, 10, 10, 0.85) 100%) padding-box,
     linear-gradient(
         225deg,
         rgba(255, 160, 130, 1) 0%,
-        rgba(255, 84, 84, 0.7) 22%,
-        rgba(180, 30, 30, 0.4) 50%,
-        rgba(180, 30, 30, 0.5) 100%
+        rgba(224, 46, 46, 0.85) 22%,
+        rgba(139, 26, 26, 0.5) 50%,
+        rgba(139, 26, 26, 0.7) 100%
       )
       border-box;
   box-shadow:
-    inset 0 0 22px -4px rgba(224, 46, 46, 0.3),
-    0 0 30px -8px rgba(224, 46, 46, 0.55);
+    inset 0 1px 0 rgba(255, 180, 160, 0.18),
+    inset 0 0 18px -4px rgba(224, 46, 46, 0.4),
+    0 0 26px -8px rgba(224, 46, 46, 0.55);
+}
+.btn-danger-outline:hover:not(:disabled) {
+  background:
+    linear-gradient(180deg, rgba(120, 24, 24, 0.92) 0%, rgba(55, 14, 14, 0.92) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 190, 160, 1) 0%,
+        rgba(255, 84, 84, 0.95) 22%,
+        rgba(180, 30, 30, 0.65) 50%,
+        rgba(180, 30, 30, 0.85) 100%
+      )
+      border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 210, 180, 0.26),
+    inset 0 0 26px -4px rgba(224, 46, 46, 0.55),
+    0 0 36px -6px rgba(224, 46, 46, 0.7);
 }
 </style>

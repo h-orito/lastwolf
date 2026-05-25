@@ -42,7 +42,15 @@
         <h2 class="font-serif text-xl text-moon">Buttons</h2>
 
         <div class="space-y-3 rounded border border-line-soft bg-elev p-4">
-          <div class="text-xs text-fg-secondary">variant</div>
+          <div class="text-xs text-fg-secondary">variant（和文ラベル / 実運用の主シナリオ）</div>
+          <div class="flex flex-wrap gap-3">
+            <BaseButton button-type="primary">決定</BaseButton>
+            <BaseButton button-type="secondary">キャンセル</BaseButton>
+            <BaseButton button-type="danger">退村する</BaseButton>
+            <BaseButton button-type="ghost">閉じる</BaseButton>
+          </div>
+
+          <div class="mt-4 text-xs text-fg-secondary">variant（英字ラベル）</div>
           <div class="flex flex-wrap gap-3">
             <BaseButton button-type="primary">Primary</BaseButton>
             <BaseButton button-type="secondary">Secondary</BaseButton>
@@ -52,24 +60,24 @@
 
           <div class="mt-4 text-xs text-fg-secondary">loading</div>
           <div class="flex flex-wrap gap-3">
-            <BaseButton button-type="primary" loading>Primary</BaseButton>
-            <BaseButton button-type="secondary" loading>Secondary</BaseButton>
-            <BaseButton button-type="danger" loading>Danger</BaseButton>
-            <BaseButton button-type="ghost" loading>Ghost</BaseButton>
+            <BaseButton button-type="primary" loading>送信中</BaseButton>
+            <BaseButton button-type="secondary" loading>処理中</BaseButton>
+            <BaseButton button-type="danger" loading>退村中</BaseButton>
+            <BaseButton button-type="ghost" loading>読込中</BaseButton>
           </div>
 
           <div class="mt-4 text-xs text-fg-secondary">disabled</div>
           <div class="flex flex-wrap gap-3">
-            <BaseButton button-type="primary" disabled>Primary</BaseButton>
-            <BaseButton button-type="secondary" disabled>Secondary</BaseButton>
-            <BaseButton button-type="danger" disabled>Danger</BaseButton>
-            <BaseButton button-type="ghost" disabled>Ghost</BaseButton>
+            <BaseButton button-type="primary" disabled>決定</BaseButton>
+            <BaseButton button-type="secondary" disabled>キャンセル</BaseButton>
+            <BaseButton button-type="danger" disabled>退村する</BaseButton>
+            <BaseButton button-type="ghost" disabled>閉じる</BaseButton>
           </div>
 
           <div class="mt-4 text-xs text-fg-secondary">block</div>
           <div class="flex flex-col gap-2">
-            <BaseButton button-type="primary" block>Block Primary</BaseButton>
-            <BaseButton button-type="secondary" block>Block Secondary</BaseButton>
+            <BaseButton button-type="primary" block>村に入る</BaseButton>
+            <BaseButton button-type="secondary" block>キャンセル</BaseButton>
           </div>
         </div>
       </section>
