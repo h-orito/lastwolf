@@ -58,7 +58,8 @@ Tailwind v4 の `@theme` で定義する。これにより `bg-deep` / `text-fg`
   --color-mono: #95a3b5; /* 独白（静寂の灰） */
   --color-grave: #8cc0d3; /* 墓下（幽霊水色） */
   --color-seer: #d4c283; /* 占い（淡金 = gold 系） */
-  --color-medium: #beadde; /* 霊媒（青紫） */
+  --color-medium: #beadde; /* 霊媒・村建て（青紫） */
+  --color-fanatic: #d8906b; /* 狂信（くすんだ橙） */
 }
 ```
 
@@ -147,31 +148,58 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 ### チャットメッセージ
 
-**既存の背景塗りは廃止**。背景は全種 `bg-elev` に統一し、ロール色は以下で表現:
+**ロール色は線ではなく「左下から湧き上がる光」として背景に滲ませる + その光が border に乗っているように見せる** 方針（Black & Blood directional lighting をメッセージにも展開）。BaseButton の rim 言語に揃え、左下を主アクセントにする。
 
-- **アバターリング**: 該当ロール色の box-shadow / グラデ
-- **上ボーダー（または左ボーダー）**: 該当ロール色
-- **小タグ**: ラテン装飾（`WOLF` / `MASON` / `GRAVE` 等、Cinzel）または日本語（`人狼` / `共有` / `墓下`）
+| ロール | 背景の構成 | 縁の光（inset box-shadow） | アバターリング | 補足 |
+| ------ | ---------- | -------------------------- | -------------- | ---- |
 
-| ロール     | 旧（背景塗り） | 新（線/タグ）                                     |
-| ---------- | -------------- | ------------------------------------------------- |
-| 通常発言   | `#ffffff`      | 上ボーダー `border-fg-secondary`                  |
-| 人狼会話   | `#f2cece`      | 上ボーダー + リング `border-wolf` / `ring-wolf`   |
-| 共有者会話 | `#cef2ce`      | 上ボーダー + リング `border-mason` / `ring-mason` |
-| 独り言     | `#dddddd`      | 左ボーダー dotted `border-mono`、italic           |
-| 墓下発言   | `#ceedf2`      | 上ボーダー dashed `border-grave`、italic          |
-| 観戦発言   | `#f2f2ce`      | 上ボーダー dashed `border-seer`（淡金）           |
+全 variant 共通: `rounded-lg` + `border: 1px solid transparent`。BaseButton と同じ padding-box / border-box 手法を使い、`linear-gradient(45deg, role-color → transparent) border-box` で「左下から右上にフェードする rim」を実現。inset の直線 box-shadow は廃止（線が安っぽく見えるため）。
 
-> ⚠ 観戦発言は占い師ロールと同じ `--color-seer`（淡金）を流用している。視覚的に色相が近い（既存も `#f2f2ce` / 占いシステムは緑系→新方針で淡金）ため共有とした。Phase 1 で「観戦と占い師の発話が同画面に並ぶケース」がある場合は、専用トークン `--color-spectate` を分離すること。
+| variant      | 背景（padding-box）                                             | rim（border-box 45deg）           | アバターリング             | 名前色 override |
+| ------------ | --------------------------------------------------------------- | --------------------------------- | -------------------------- | --------------- |
+| normal       | `bg-elev` のみ                                                  | なし                              | なし                       | 個人識別カラー  |
+| wolf         | `bg-elev` + 右上 radial(wolf 14%) + 左下 radial(wolf 40%)       | wolf → transparent（強 rim）      | ring `wolf` + 外側 halo    | `text-wolf`     |
+| fanatic      | `bg-elev` + 右上 radial(fanatic 12%) + 左下 radial(fanatic 32%) | fanatic → transparent（中 rim）   | ring `fanatic` + 外側 halo | `text-fanatic`  |
+| mason        | `bg-elev` + 右上 radial(mason 12%) + 左下 radial(mason 38%)     | mason → transparent（強 rim）     | ring `mason` + 外側 halo   | `text-mason`    |
+| village_info | `bg-elev` + 左下 radial(mason 28%)                              | mason 55% → transparent（控えめ） | なし                       | 個人識別カラー  |
+| psychic_info | `bg-elev` + 左下 radial(grave 28%)                              | grave 55% → transparent（控えめ） | なし                       | 個人識別カラー  |
+| mono         | 透明 + 左下 radial(mono 14%)                                    | なし                              | なし。本文 italic          | 個人識別カラー  |
+| grave        | `bg-elev` + 左下 radial(grave 30%) + 180deg linear(grave 5%)    | grave 55% → transparent           | ring `grave`。本文 italic  | `text-grave`    |
+| seer         | `bg-elev` + 左下 radial(seer 20%)                               | seer 45% → transparent（弱）      | ring `seer`                | 個人識別カラー  |
+| creator      | `bg-elev` + 左下 radial(medium 26%)                             | medium 55% → transparent          | ring `medium`              | 個人識別カラー  |
 
-#### 既存実装との差分（Phase 2 着手時の注意）
+ねらい:
 
-既存の実装は以下の構造になっており、Phase 2 で **置き換え** が必要:
+- **左下を主アクセント** にすることで「光が床から漏れる」directional lighting を再現（BaseButton 等と同じ言語）
+- **border-box の linear-gradient rim** で「光が縁に沿って差し込み、右上へフェードする」感を出す（角に直線の線が出ないため安っぽくならない）
+- 会話系（wolf / fanatic / mason）は左下 radial を強めに、システム通知系は控えめに区別
+- 独り言は rim 光なしで透過 + 副光源のみ → 「内側の声」を表現
+- 創建者は紫系（medium）の rim で「特別な発信者だが他 variant と視覚言語は揃える」位置付け
+- **名前色 override**: 閉じた特別な場（wolf / fanatic / mason / grave）では個人識別カラーよりロール色が場の意味を強化するため、名前色を該当ロール色に固定する
 
-- `frontend/app/components/pages/village/message/Message.vue` — Tailwind の `text-red-600` / `text-green-600` / `text-blue-600` / `text-pink-600` / `text-gray-600` を直接付与（`messageClasses`）。`messageStyle` で `props.color`（個人識別カラー）をインライン適用
-- `frontend/app/components/pages/village/message/DayMessages.vue` — 上記 `Message` の親、ロールごとの分岐ロジックを保持
-- `frontend/app/lib/api/message-color.ts` — プレイヤーごとの個人識別カラー（`#f00` / `#00f` / `#000088` 等の固定 10 色）。**ダーク背景で著しく沈む色を含むため、Phase 1 で再検討必須**
-- `frontend/app/assets/css/main.css` の `--color-{normal,werewolf,mason,monologue,grave,spectate}-say` — 事実上未使用（dead config）。Phase 1 で削除し、新ロール色体系（`--color-{wolf,mason,mono,grave,seer,medium}`）に統一
+#### 役職限定システム通知の色分け
+
+- **village_info**（緑 = mason 色）: `PRIVATE_SEER`（占い結果）/ `PRIVATE_WISE`（賢者）/ `PRIVATE_GURU`（グル）/ `PRIVATE_CORONER`（検視官）— 村陣営の象徴色として揃える
+- **psychic_info**（水色 = grave 色）: `PRIVATE_PSYCHIC`（霊媒結果）— 死霊との繋がりを示唆するため墓下と同系の水色
+- 第三陣営（狐 / 恋人）/ 共鳴者（PRIVATE_SYMPATHIZER）は陣営定義が不明確なため `normal` フォールバック維持
+
+> 観戦発言は占い師ロールと同じ `--color-seer`（淡金）を流用している。視覚的に色相が近いため共有とした。「観戦と占い師の発話が同画面に並ぶケース」が問題化したら専用トークン `--color-spectate` を分離する。
+
+#### 小タグ (roleTag)
+
+- 表記: 日本語（`人狼` / `共有` / `独白` / `墓下` / `観戦`）を維持
+- スタイル: `text-[10px] tracking-widest` + 該当ロール色。`font-display` への切替（Cinzel + 英字 `WOLF` / `MASON`）は今回見送り — Cinzel は和文非対応で `Noto Serif JP` フォールバックになり、BaseButton (#15) で明朝化を見送ったのと同じ理由（短文・和文で明朝は崩れやすい）
+- `messageType` (`[狼]` `[共]` 等) と重複するため、`roleTag` が出るケースでは `messageType` を抑制。例外は `PRIVATE_FANATIC`（[信] は固有情報）
+
+#### 個人識別カラー
+
+- 名前テキストの inline style 適用は維持（`message-color.ts` の 10 色）
+- ダーク背景上のコントラスト検証は派生 TODO として `.issues/HANDOFF.md` に残す（必要なら別 Issue）
+
+#### 実装
+
+- 実体は `Message.vue` の `<style scoped>` 内 `.msg-*` クラスに閉じる（BaseButton の `.btn-*` 同手法）
+- `RoleVariant` 型は `frontend/app/lib/api/message-role.ts` を流用（不変）
 
 ### システム通知
 

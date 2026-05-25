@@ -38,7 +38,8 @@
   --color-mono: #95a3b5; /* 独白（静寂の灰） */
   --color-grave: #8cc0d3; /* 墓下（幽霊水色） */
   --color-seer: #d4c283; /* 占い（淡金 = gold 系） */
-  --color-medium: #beadde; /* 霊媒（青紫） */
+  --color-medium: #beadde; /* 霊媒・村建て（青紫） */
+  --color-fanatic: #d8906b; /* 狂信（くすんだ橙） */
 
   /* === Fonts === */
   --font-sans: "Noto Sans JP", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
