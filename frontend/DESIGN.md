@@ -100,12 +100,13 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 #### FormInput / FormSelect
 
 - 形: `border-radius: 10px`、`border: 1px solid transparent`
-- 通常: 黒ベース (`linear-gradient 135deg` rgba(20,12,12,.85)→rgba(10,6,6,.85)) + 縁 `225deg` の bone 22% → blood 18% → 黒 → blood-deep 微弱 の rim
-- hover: ベースを 1 段明るく、rim も 1 段強める（focus 中は無効化）
-- focus: 右上 corner に radial 赤光 `radial-gradient(at 100% -20%, rgba(255,120,100,.22)…)` を上乗せ、rim 明度を強める、外側 `box-shadow: 0 0 0 3px rgba(224,46,46,.15), 0 0 18px -6px rgba(224,46,46,.4)` の blood halo
+- 通常: ページ bg `#050202` から明確に持ち上がる base (`linear-gradient 135deg` rgba(36,22,22,.95)→rgba(20,12,12,.95)) + 視認できる強さの 225deg 赤 rim (bone 55% → blood 35% → 黒 → blood-deep 35%) + わずかな inset top highlight。**入力欄であることが一目で分かる必要があるため、focus 相当の rim 明度を baseline にしている**
+- hover: ベース・rim とも 1 段明るく（focus 中は無効化）
+- focus: 右上 corner に radial 赤光 `radial-gradient(at 100% -20%, rgba(255,120,100,.28)…)` を上乗せ、base と rim をさらに明るく、外側 `box-shadow: 0 0 0 3px rgba(224,46,46,.2), 0 0 22px -6px rgba(224,46,46,.5)` の blood halo
+- 優先順位: `disabled > error > readonly`（error は readonly と同時指定でも表示）
 - error: 全周 blood-deep の rim + 暗赤 base、`inset` で薄い赤グロー
 - error + focus: 上記 error rim をさらに強めて halo も拡大
-- readonly: 通常より沈ませ、rim の bone 成分を弱める
+- readonly: 通常より沈ませ、rim の bone 成分を弱める（focus rim は出さない）
 - disabled: opacity `0.55`、cursor `not-allowed`、rim ほぼ消す
 - placeholder: `placeholder-fg-muted`
 - 実装: `<style scoped>` 内に `.br-input-*` / `.br-select-*` クラスとして閉じる（BaseButton の `.btn-*-glow` と同手法）

@@ -145,55 +145,60 @@ const handleBlur = (event: FocusEvent) => {
   color-scheme: dark;
 }
 
+/* normal: 入力欄であることが一目で分かる base + rim 明度。FormInput と揃える。 */
 .br-select-normal {
   background:
-    linear-gradient(135deg, rgba(20, 12, 12, 0.85) 0%, rgba(10, 6, 6, 0.85) 100%) padding-box,
+    linear-gradient(135deg, rgba(36, 22, 22, 0.95) 0%, rgba(20, 12, 12, 0.95) 100%) padding-box,
     linear-gradient(
         225deg,
-        rgba(244, 241, 232, 0.18) 0%,
-        rgba(224, 46, 46, 0.12) 30%,
-        rgba(0, 0, 0, 0) 60%,
-        rgba(139, 26, 26, 0.1) 100%
+        rgba(255, 165, 135, 0.55) 0%,
+        rgba(224, 46, 46, 0.35) 18%,
+        rgba(244, 241, 232, 0.1) 40%,
+        rgba(139, 26, 26, 0.2) 70%,
+        rgba(139, 26, 26, 0.35) 100%
       )
       border-box;
+  box-shadow: inset 0 1px 0 rgba(255, 165, 135, 0.08);
 }
 
 .br-select-normal:hover:not(:focus) {
   background:
-    linear-gradient(135deg, rgba(28, 16, 16, 0.9) 0%, rgba(14, 8, 8, 0.9) 100%) padding-box,
+    linear-gradient(135deg, rgba(44, 26, 26, 0.95) 0%, rgba(24, 14, 14, 0.95) 100%) padding-box,
     linear-gradient(
         225deg,
-        rgba(244, 241, 232, 0.25) 0%,
-        rgba(224, 46, 46, 0.18) 30%,
-        rgba(0, 0, 0, 0) 60%,
-        rgba(139, 26, 26, 0.15) 100%
+        rgba(255, 180, 150, 0.7) 0%,
+        rgba(224, 46, 46, 0.45) 18%,
+        rgba(244, 241, 232, 0.14) 40%,
+        rgba(139, 26, 26, 0.25) 70%,
+        rgba(139, 26, 26, 0.45) 100%
       )
       border-box;
+  box-shadow: inset 0 1px 0 rgba(255, 165, 135, 0.12);
 }
 
 .br-select-normal:focus {
   background:
     radial-gradient(
         ellipse 60% 140% at 100% -20%,
-        rgba(255, 120, 100, 0.22) 0%,
-        rgba(224, 46, 46, 0.1) 30%,
+        rgba(255, 120, 100, 0.28) 0%,
+        rgba(224, 46, 46, 0.14) 30%,
         transparent 60%
       )
       padding-box,
-    linear-gradient(135deg, rgba(28, 16, 16, 0.92) 0%, rgba(14, 8, 8, 0.92) 100%) padding-box,
+    linear-gradient(135deg, rgba(50, 30, 30, 0.96) 0%, rgba(28, 16, 16, 0.96) 100%) padding-box,
     linear-gradient(
         225deg,
-        rgba(255, 165, 135, 0.85) 0%,
-        rgba(224, 46, 46, 0.55) 18%,
-        rgba(244, 241, 232, 0.08) 40%,
-        rgba(0, 0, 0, 0) 65%,
-        rgba(139, 26, 26, 0.35) 100%
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 84, 84, 0.7) 18%,
+        rgba(244, 241, 232, 0.18) 40%,
+        rgba(139, 26, 26, 0.3) 70%,
+        rgba(139, 26, 26, 0.55) 100%
       )
       border-box;
   box-shadow:
-    inset 0 1px 0 rgba(255, 165, 135, 0.12),
-    0 0 0 3px rgba(224, 46, 46, 0.15),
-    0 0 18px -6px rgba(224, 46, 46, 0.4);
+    inset 0 1px 0 rgba(255, 200, 180, 0.2),
+    0 0 0 3px rgba(224, 46, 46, 0.2),
+    0 0 22px -6px rgba(224, 46, 46, 0.5);
 }
 
 .br-select-error {
