@@ -83,7 +83,7 @@ const isDisabled = computed(() => props.disabled || props.loading);
 // タイポグラフィ: Noto Sans JP の font-medium は世界観に対して「素のゴシック太字」感が出るため、
 // font-normal + tracking-wide で重さと密度を抜く（font-family は sans のまま、明朝は和文ボタンで読みづらく崩れやすいため不採用）
 const baseClasses =
-  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-normal tracking-wide rounded-full border border-transparent transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blood";
+  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-normal tracking-wide antialiased rounded-lg border border-transparent transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blood";
 
 // DESIGN.md「ボタン」テーブル: disabled は bg-soft + text-fg-muted + opacity 0.5
 // `text-fg-muted` は DESIGN.md アクセシビリティ欄の「disabled ボタンのラベル」許容用途に該当
@@ -226,7 +226,7 @@ const handleClick = (event: MouseEvent) => {
 
 /* Danger — outline 赤（取り返しのつかない操作）。disabled に見えないよう base/rim/glow を強化 */
 .btn-danger-outline {
-  color: #ffb4b4;
+  color: #fff;
   background:
     linear-gradient(180deg, rgba(90, 18, 18, 0.85) 0%, rgba(40, 10, 10, 0.85) 100%) padding-box,
     linear-gradient(
@@ -243,7 +243,7 @@ const handleClick = (event: MouseEvent) => {
     0 0 26px -8px rgba(224, 46, 46, 0.55);
 }
 .btn-danger-outline:hover:not(:disabled) {
-  color: #ffd0d0;
+  color: #fff;
   background:
     linear-gradient(180deg, rgba(120, 24, 24, 0.92) 0%, rgba(55, 14, 14, 0.92) 100%) padding-box,
     linear-gradient(

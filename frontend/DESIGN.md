@@ -79,18 +79,18 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 **Strategy A — Directional Glow（pill）**: 黒い物体に右上から赤光が当たっているように見せる。primary は塗り赤に見えるが内部は黒ベースで radial 赤を重ねる構成。danger は枠線赤（取り返しのつかない操作）。
 
-共通: `border-radius: 999px`（pill）、`border: 1px solid transparent`、focus は `ring-blood`。モバイル前提のため `:active` が主要な押下フィードバック。
+共通: `border-radius: 8px`（`rounded-lg`）、`border: 1px solid transparent`、focus は `ring-blood`。モバイル前提のため `:active` が主要な押下フィードバック。FormInput (10px) とほぼ同等の角丸で、ピル過剰さを避けつつコンポーネント間の調和を取る。
 
 タイポグラフィ: `font-sans`（Noto Sans JP）+ `font-normal` + `tracking-wide`。
 ボタンラベルはほぼ和文短文（「決定」「キャンセル」「投票」「次へ」等）のため明朝化は採用しない（短文・密度高で読みづらく感じやすい）。
 代わりに `font-medium` → `font-normal` で太字感を抜き、`tracking-wide` で密度を下げて、Black & Blood directional lighting の重厚感に対し文字が「素のゴシック太字」で浮いて見える問題を解消する。
-コントラスト: 非 disabled 状態の文字色（`#fff` / `text-fg` #f4f1e8 / `#ffb4b4`）は漆黒～赤暗のベース上で 4.5:1 を大きく上回るため AA を満たす。disabled 状態（`text-fg-muted` + `opacity-55`）は WCAG 2.1 SC 1.4.3 で適用除外（inactive UI components）。font-weight 変更（500→400）は WCAG コントラスト計算に影響しない。
+コントラスト: 非 disabled 状態の文字色（`#fff` / `text-fg` #f4f1e8）は漆黒～赤暗のベース上で 4.5:1 を大きく上回るため AA を満たす。disabled 状態（`text-fg-muted` + `opacity-55`）は WCAG 2.1 SC 1.4.3 で適用除外（inactive UI components）。font-weight 変更（500→400）は WCAG コントラスト計算に影響しない。
 
 | variant   | 背景の構成                                                                               | 文字            | 縁 (border-box gradient)                                           |
 | --------- | ---------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------ |
 | primary   | 黒ベース + 右上から radial(ember→blood→透明) + 左下に弱 radial(blood) + 黒 linear        | `#fff`          | 225deg: ember 0% → blood 18% → 黒 → 微 blood-deep 100%             |
 | secondary | 黒の不透明 linear-gradient (rgba 32/20/20 → 18/10/10, α≈0.95) + 1px bone inset highlight | `text-fg`       | 225deg: bone 55% → blood 40% → wine 25% → blood-deep 40%（強 rim） |
-| danger    | 赤い base (rgba 90/18/18 → 40/10/10, α≈0.85) + 内側 blood glow + 外側 halo               | `#ffb4b4`       | 225deg: ember 0% → blood 85% → blood-deep 50% → 70%（強 rim）      |
+| danger    | 赤い base (rgba 90/18/18 → 40/10/10, α≈0.85) + 内側 blood glow + 外側 halo               | `#fff`          | 225deg: ember 0% → blood 85% → blood-deep 50% → 70%（強 rim）      |
 | ghost     | transparent / hover で `bg-elev` / active で `bg-soft`                                   | `text-fg`       | なし                                                               |
 | disabled  | `bg-soft`                                                                                | `text-fg-muted` | なし、opacity 0.55 + cursor-not-allowed                            |
 
