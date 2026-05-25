@@ -80,8 +80,10 @@ const isDisabled = computed(() => props.disabled || props.loading);
 //   danger = outline 赤（取り返しのつかない操作）
 //   ghost = text only
 // border は variant 側で付与
+// タイポグラフィ: Noto Sans JP の font-medium は世界観に対して「素のゴシック太字」感が出るため、
+// font-normal + tracking-wide で重さと密度を抜く（font-family は sans のまま、明朝は和文ボタンで読みづらく崩れやすいため不採用）
 const baseClasses =
-  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full border border-transparent transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blood";
+  "inline-flex items-center justify-center gap-1.5 px-3 py-1 text-sm font-normal tracking-wide rounded-full border border-transparent transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blood";
 
 // DESIGN.md「ボタン」テーブル: disabled は bg-soft + text-fg-muted + opacity 0.5
 // `text-fg-muted` は DESIGN.md アクセシビリティ欄の「disabled ボタンのラベル」許容用途に該当

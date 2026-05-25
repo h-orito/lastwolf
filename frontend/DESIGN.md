@@ -81,6 +81,8 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 共通: `border-radius: 999px`（pill）、`border: 1px solid transparent`、focus は `ring-blood`。モバイル前提のため `:active` が主要な押下フィードバック。
 
+タイポグラフィ: `font-sans`（Noto Sans JP）+ `font-normal` + `tracking-wide`。ボタンラベルはほぼ和文短文（「決定」「キャンセル」「投票」「次へ」等）のため明朝化は採用しない（短文・密度高で読みづらく感じやすい）。代わりに `font-medium` → `font-normal` で太字感を抜き、`tracking-wide` で密度を下げて、Black & Blood directional lighting の重厚感に対し文字が「素のゴシック太字」で浮いて見える問題を解消する。
+
 | variant   | 背景の構成                                                                        | 文字                | 縁 (border-box gradient)                               |
 | --------- | --------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------ |
 | primary   | 黒ベース + 右上から radial(ember→blood→透明) + 左下に弱 radial(blood) + 黒 linear | `#fff`              | 225deg: ember 0% → blood 18% → 黒 → 微 blood-deep 100% |
