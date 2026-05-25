@@ -118,7 +118,7 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 ボタンと同じ思想で、on 時は **黒ベース + 内側の赤 glow + rim**:
 
 - track off: `linear-gradient(135deg, rgba(20,12,12,.95), rgba(10,6,6,.95))` + 弱 bone hairline rim + 内側ドロップシャドウで沈める
-- track on: `linear-gradient(135deg, #200a0a, #100404)` 黒ベース + 右側から `radial-gradient` で blood/ember を差し込む + 縁 225deg 赤グラデ rim + `inset 0 0 10px rgba(224,46,46,.5)` の inset blood glow + 外側 `0 0 14px -4px rgba(224,46,46,.55)` の halo
+- track on: 黒ベース (`linear-gradient(135deg, #200a0a, #100404)`) + 右側から `radial-gradient` で blood/ember を差し込む + **全周クリアな blood rim**（225deg を ember 0% → blood .9 15% → .75 40% → blood-deep .7 70% → blood .75 100% と閉ループ）+ `inset 0 0 10px rgba(224,46,46,.5)` の inset blood glow + 外側 halo を 2 段に（`0 0 0 1px rgba(224,46,46,.35)` の thin rim + `0 0 18px -2px rgba(224,46,46,.75)` の近距離 + `0 0 32px -6px rgba(255,91,58,.4)` の遠距離 ember bloom）。track 内部は暗いまま、rim と halo で活性を主張する
 - knob: `bg-bone` + on 時は内側に微かな赤いリフレクション
 - focus: 既存の `ring-blood + ring-offset-base` を維持（同色化を避けるため offset で base 色のギャップを挟む）
 

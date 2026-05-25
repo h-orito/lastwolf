@@ -103,7 +103,8 @@ const knobClasses = computed(() => {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-/* on: 黒ベース + 内側に強い blood glow + 右上から赤光 rim */
+/* on: 黒ベース + 内側に弱い blood glow + 全周をクリアな blood rim が囲む。
+ * track 中身は暗いまま、rim と外側 halo を明確に強めることで活性を表現する。 */
 .br-switch-on {
   background:
     radial-gradient(
@@ -115,18 +116,23 @@ const knobClasses = computed(() => {
       )
       padding-box,
     linear-gradient(135deg, #200a0a 0%, #100404 100%) padding-box,
+    /* 全周クリアな blood rim: 起点を ember、終点も blood-deep .7 まで上げて閉ループ感を出す */
     linear-gradient(
         225deg,
-        rgba(255, 165, 135, 0.95) 0%,
-        rgba(224, 46, 46, 0.6) 18%,
-        rgba(139, 26, 26, 0.35) 50%,
-        rgba(139, 26, 26, 0.45) 100%
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 91, 58, 0.9) 15%,
+        rgba(224, 46, 46, 0.75) 40%,
+        rgba(180, 30, 30, 0.7) 70%,
+        rgba(224, 46, 46, 0.75) 100%
       )
       border-box;
   box-shadow:
     inset 0 0 10px rgba(224, 46, 46, 0.5),
     inset 0 1px 0 rgba(255, 165, 135, 0.18),
-    0 0 14px -4px rgba(224, 46, 46, 0.55);
+    /* 外側 halo を 2 段に: 近距離の濃い blood + 遠距離の ember bloom */ 0 0 0 1px
+      rgba(224, 46, 46, 0.35),
+    0 0 18px -2px rgba(224, 46, 46, 0.75),
+    0 0 32px -6px rgba(255, 91, 58, 0.4);
 }
 
 /* knob: on のとき内側に微かな赤いリフレクション */
