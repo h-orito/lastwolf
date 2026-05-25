@@ -173,7 +173,7 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 - **左下を主アクセント** にすることで「光が床から漏れる」directional lighting を再現（BaseButton 等と同じ言語）
 - 会話系（wolf / fanatic / mason）は左下 radial を強めに、独り言・墓下・観戦は控えめに区別
-- 独り言は透過 bg + L 字灰 rim + 副光源を絞って本文（text-fg-secondary）の可読性を確保
+- 独り言は透過 bg + L 字灰 rim + 副光源を絞って本文（text-fg-secondary）の可読性を確保（他 variant の `linear-gradient(elev, elev)` 補完層を省略しているため bg は外側コンテナの色が透ける）
 - 創建者は紫系（medium）の rim で「特別な発信者だが他 variant と視覚言語は揃える」位置付け
 - システム通知（system / village_info / psychic_info）は **全周 solid rim** で「会話ではなく情報枠」と一目で区別。右上 radial を省き、左下 radial のみで主役感を出さない
 - **名前色 override**: 閉じた特別な場（wolf / fanatic / mason / grave）では個人識別カラーよりロール色が場の意味を強化するため、名前色を該当ロール色に固定する

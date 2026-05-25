@@ -271,15 +271,17 @@ const filter = () => {
  */
 
 .msg {
-  /* 共通ベース。padding-box / border-box を使うため border-radius と border 透明を指定 */
-  background-color: var(--color-elev);
+  /* 共通ベース。padding-box / border-box を使うため border 透明を指定するだけに留め、
+   * 背景は各 variant が `background:` ショートハンドで自前管理する。
+   * （`.msg` に background-color を書くと background ショートハンドにリセットされ
+   * 機能しないため。新 variant 追加時は必ず elev 層を含めること） */
   position: relative;
   border: 1px solid transparent;
 }
 
 /* Normal — 装飾なし（bg-elev + rounded のみ。発言区切りは外側コンテナ側の gap が担う） */
 .msg-normal {
-  /* fallback: 共通の bg-elev だけで十分 */
+  background-color: var(--color-elev);
 }
 
 /*
@@ -370,7 +372,9 @@ const filter = () => {
 
 /* Mono — 独り言。透過 + 両コーナーから mono 灰がうっすら + L 字 mono(灰) rim + italic
  * bg は透過のため、左下 radial が大きいと本文（text-fg-secondary）と重なって読みづらくなる。
- * 半径を絞り（40% × 80%）+ 早めにフェード（transparent 40%）して本文領域を avoid する */
+ * 半径を絞り（40% × 80%）+ 早めにフェード（transparent 40%）して本文領域を avoid する。
+ * 他 variant と違い elev の linear 層を省略（背景を透過にして「内側の声」感を出すため）。
+ * 新 variant をここから派生させる場合は背景補完層の有無に注意。 */
 .msg-mono {
   background:
     radial-gradient(
