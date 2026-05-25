@@ -81,7 +81,10 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 共通: `border-radius: 999px`（pill）、`border: 1px solid transparent`、focus は `ring-blood`。モバイル前提のため `:active` が主要な押下フィードバック。
 
-タイポグラフィ: `font-sans`（Noto Sans JP）+ `font-normal` + `tracking-wide`。ボタンラベルはほぼ和文短文（「決定」「キャンセル」「投票」「次へ」等）のため明朝化は採用しない（短文・密度高で読みづらく感じやすい）。代わりに `font-medium` → `font-normal` で太字感を抜き、`tracking-wide` で密度を下げて、Black & Blood directional lighting の重厚感に対し文字が「素のゴシック太字」で浮いて見える問題を解消する。
+タイポグラフィ: `font-sans`（Noto Sans JP）+ `font-normal` + `tracking-wide`。
+ボタンラベルはほぼ和文短文（「決定」「キャンセル」「投票」「次へ」等）のため明朝化は採用しない（短文・密度高で読みづらく感じやすい）。
+代わりに `font-medium` → `font-normal` で太字感を抜き、`tracking-wide` で密度を下げて、Black & Blood directional lighting の重厚感に対し文字が「素のゴシック太字」で浮いて見える問題を解消する。
+コントラスト: 非 disabled 状態の文字色（`#fff` / `text-fg` / `#ff8484` / `text-fg-secondary`）は漆黒ベース上で 4.5:1 を大きく上回るため AA を満たす。disabled 状態（`text-fg-muted` + `opacity-55`）は WCAG 2.1 SC 1.4.3 で適用除外（inactive UI components）。font-weight 変更（500→400）は WCAG コントラスト計算に影響しない。
 
 | variant   | 背景の構成                                                                        | 文字                | 縁 (border-box gradient)                               |
 | --------- | --------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------ |
