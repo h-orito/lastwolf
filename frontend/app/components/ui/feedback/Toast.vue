@@ -2,10 +2,16 @@
   <Teleport to="body">
     <div class="fixed left-1/2 top-4 z-[9999] -translate-x-1/2">
       <TransitionGroup name="toast" tag="div" class="flex flex-col items-center gap-2">
-        <div v-for="toast in toasts" :key="toast.id" :class="toastClasses(toast.type)" role="alert">
+        <div v-for="toast in toasts" :key="toast.id" :class="TOAST_BASE_CLASSES" role="alert">
+          <!-- 左端アクセントバー（border ショートハンドと border-l-{color} の競合を避けるため独立要素） -->
+          <span
+            class="absolute inset-y-0 left-0 w-1 rounded-l-lg"
+            :class="accentBarClass(toast.type)"
+            aria-hidden="true"
+          />
           <!-- トーストタイプ別アイコン -->
           <svg
-            class="mr-2 h-5 w-5 shrink-0"
+            :class="iconClasses(toast.type)"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -37,6 +43,7 @@
           <button
             type="button"
             class="ml-auto shrink-0 pl-3 opacity-70 transition-opacity hover:opacity-100"
+            aria-label="閉じる"
             @click="remove(toast.id)"
           >
             <svg
@@ -62,17 +69,26 @@
 <script setup lang="ts">
 const { toasts, remove } = useToast();
 
-const toastClasses = (type: "info" | "success" | "error") => {
-  const baseClasses =
-    "flex items-center px-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px]";
+// 左端アクセントは独立要素で表現するため border-l は使わない
+const TOAST_BASE_CLASSES =
+  "relative flex items-center pl-5 pr-4 py-3 rounded-lg shadow-lg min-w-[280px] max-w-[400px] bg-elev text-fg border border-line-soft";
 
-  const typeClasses = {
-    info: "bg-[#ceedf2] text-gray-800",
-    success: "bg-[#cef2ce] text-gray-800",
-    error: "bg-[#f2cece] text-gray-800",
+const accentBarClass = (type: "info" | "success" | "error") => {
+  const map = {
+    info: "bg-ember",
+    success: "bg-mason",
+    error: "bg-blood",
   };
+  return map[type];
+};
 
-  return `${baseClasses} ${typeClasses[type]}`;
+const iconClasses = (type: "info" | "success" | "error") => {
+  const map = {
+    info: "text-ember",
+    success: "text-mason",
+    error: "text-blood",
+  };
+  return `mr-2 h-5 w-5 shrink-0 ${map[type]}`;
 };
 </script>
 
