@@ -148,33 +148,34 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 ### チャットメッセージ
 
-**ロール色は線ではなく「左下から湧き上がる光」として背景に滲ませる + その光が border に乗っているように見せる** 方針（Black & Blood directional lighting をメッセージにも展開）。BaseButton の rim 言語に揃え、左下を主アクセントにする。
+**ロール色は線ではなく「光」として背景に滲ませる + 縁に光を載せる** 方針（Black & Blood directional lighting をメッセージにも展開）。役割別に 2 つの rim パターンを使い分け:
 
-| ロール | 背景の構成 | 縁の光（inset box-shadow） | アバターリング | 補足 |
-| ------ | ---------- | -------------------------- | -------------- | ---- |
+- **会話・独り言系（wolf / fanatic / mason / mono / grave / seer / creator）**: 左下角中心の **L 字 rim**（`radial-gradient(ellipse 100% 100% at 0% 100%) border-box`）で左辺と下辺だけ光らせ、上辺・右辺は透明。両コーナー（右上・左下）に bg radial も重ね、光が両側から差し込む構図。
+- **システム系（system / village_info / psychic_info）**: **全周 solid rim**（`linear-gradient(color, color) border-box`）で情報通知としての枠を強調。左下の bg radial のみ（右上 radial なし）でシンプルに保つ。
 
-全 variant 共通: `rounded-lg` + `border: 1px solid transparent`。BaseButton と同じ padding-box / border-box 手法を使い、`linear-gradient(45deg, role-color → transparent) border-box` で「左下から右上にフェードする rim」を実現。inset の直線 box-shadow は廃止（線が安っぽく見えるため）。
+全 variant 共通: `rounded-lg` + `border: 1px solid transparent`。透明度合成は `color-mix(in srgb, var(--color-X) N%, transparent)` で CSS 変数を単一情報源化（rgba ハードコード禁止）。
 
-| variant      | 背景（padding-box）                                             | rim（border-box 45deg）           | アバターリング             | 名前色 override |
-| ------------ | --------------------------------------------------------------- | --------------------------------- | -------------------------- | --------------- |
-| normal       | `bg-elev` のみ                                                  | なし                              | なし                       | 個人識別カラー  |
-| wolf         | `bg-elev` + 右上 radial(wolf 14%) + 左下 radial(wolf 40%)       | wolf → transparent（強 rim）      | ring `wolf` + 外側 halo    | `text-wolf`     |
-| fanatic      | `bg-elev` + 右上 radial(fanatic 12%) + 左下 radial(fanatic 32%) | fanatic → transparent（中 rim）   | ring `fanatic` + 外側 halo | `text-fanatic`  |
-| mason        | `bg-elev` + 右上 radial(mason 12%) + 左下 radial(mason 38%)     | mason → transparent（強 rim）     | ring `mason` + 外側 halo   | `text-mason`    |
-| village_info | `bg-elev` + 左下 radial(mason 28%)                              | mason 55% → transparent（控えめ） | なし                       | 個人識別カラー  |
-| psychic_info | `bg-elev` + 左下 radial(grave 28%)                              | grave 55% → transparent（控えめ） | なし                       | 個人識別カラー  |
-| mono         | 透明 + 左下 radial(mono 14%)                                    | なし                              | なし。本文 italic          | 個人識別カラー  |
-| grave        | `bg-elev` + 左下 radial(grave 30%) + 180deg linear(grave 5%)    | grave 55% → transparent           | ring `grave`。本文 italic  | `text-grave`    |
-| seer         | `bg-elev` + 左下 radial(seer 20%)                               | seer 45% → transparent（弱）      | ring `seer`                | 個人識別カラー  |
-| creator      | `bg-elev` + 左下 radial(medium 26%)                             | medium 55% → transparent          | ring `medium`              | 個人識別カラー  |
+| variant      | 右上 bg radial | 左下 bg radial        | rim                      | アバターリング             | 名前色 override |
+| ------------ | -------------- | --------------------- | ------------------------ | -------------------------- | --------------- |
+| normal       | なし           | なし                  | なし                     | なし                       | 個人識別カラー  |
+| wolf         | wolf 14%       | wolf 40%              | L 字 wolf rim（強）      | ring `wolf` + 外側 halo    | `text-wolf`     |
+| fanatic      | fanatic 12%    | fanatic 32%           | L 字 fanatic rim（中）   | ring `fanatic` + 外側 halo | `text-fanatic`  |
+| mason        | mason 12%      | mason 38%             | L 字 mason rim（強）     | ring `mason` + 外側 halo   | `text-mason`    |
+| mono         | mono 6% / 縮小 | mono 10% / 縮小・透過 | L 字 mono rim（灰）      | なし。本文 italic          | 個人識別カラー  |
+| grave        | grave 10%      | grave 30%             | L 字 grave rim           | ring `grave`。本文 italic  | `text-grave`    |
+| seer         | seer 8%        | seer 20%              | L 字 seer rim（弱）      | ring `seer`                | 個人識別カラー  |
+| creator      | medium 10%     | medium 26%            | L 字 medium rim          | ring `medium`              | 個人識別カラー  |
+| village_info | **なし**       | mason 24%             | **全周 solid** mason 45% | なし                       | 個人識別カラー  |
+| psychic_info | **なし**       | grave 24%             | **全周 solid** grave 45% | なし                       | 個人識別カラー  |
+| system       | **なし**       | bone 6%               | **全周 solid** bone 35%  | なし                       | 個人識別カラー  |
 
 ねらい:
 
 - **左下を主アクセント** にすることで「光が床から漏れる」directional lighting を再現（BaseButton 等と同じ言語）
-- **border-box の linear-gradient rim** で「光が縁に沿って差し込み、右上へフェードする」感を出す（角に直線の線が出ないため安っぽくならない）
-- 会話系（wolf / fanatic / mason）は左下 radial を強めに、システム通知系は控えめに区別
-- 独り言は rim 光なしで透過 + 副光源のみ → 「内側の声」を表現
+- 会話系（wolf / fanatic / mason）は左下 radial を強めに、独り言・墓下・観戦は控えめに区別
+- 独り言は透過 bg + L 字灰 rim + 副光源を絞って本文（text-fg-secondary）の可読性を確保
 - 創建者は紫系（medium）の rim で「特別な発信者だが他 variant と視覚言語は揃える」位置付け
+- システム通知（system / village_info / psychic_info）は **全周 solid rim** で「会話ではなく情報枠」と一目で区別。右上 radial を省き、左下 radial のみで主役感を出さない
 - **名前色 override**: 閉じた特別な場（wolf / fanatic / mason / grave）では個人識別カラーよりロール色が場の意味を強化するため、名前色を該当ロール色に固定する
 
 #### 役職限定システム通知の色分け

@@ -19,12 +19,9 @@
         <span class="flex-1 truncate" :class="nameColorClass" :style="nameStyle">{{
           fromName
         }}</span>
-        <span
-          v-if="roleTag"
-          class="msg-role-tag text-[10px] shrink-0 tracking-widest"
-          :class="roleTag.cls"
-          >{{ roleTag.label }}</span
-        >
+        <span v-if="roleTag" class="text-[10px] shrink-0 tracking-widest" :class="roleTag.cls">{{
+          roleTag.label
+        }}</span>
         <span v-if="showMessageType" class="text-fg-secondary text-xs shrink-0">{{
           messageType
         }}</span>
@@ -143,9 +140,9 @@ const roleVariant = computed<RoleVariant>(() => {
   const code = props.message.content.type.code;
   // フォールバック normal の対象（DESIGN.md でロール色未定義）:
   //   - LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系
-  //   - PUBLIC_SYSTEM / PRIVATE_SYSTEM: 一般システム通知
   //   - PRIVATE_FOX / PRIVATE_LOVERS / PRIVATE_SYMPATHIZER: 第三陣営寄り or 不明確
   //     （messageType の [狐] 等で識別できるため normal で許容）
+  // PUBLIC_SYSTEM / PRIVATE_SYSTEM は SYSTEM_CODES 経由で system variant にルーティングされる
   if (WOLF_CODES.has(code)) return "wolf";
   if (FANATIC_CODES.has(code)) return "fanatic";
   if (MASON_CODES.has(code)) return "mason";
@@ -285,21 +282,35 @@ const filter = () => {
   /* fallback: 共通の bg-elev だけで十分 */
 }
 
+/*
+ * 配色は `var(--color-*)` トークンを単一情報源にし、透明度合成は
+ * `color-mix(in srgb, var(--color-X) N%, transparent)` で表現する。
+ * rgba ハードコードは禁止（トークン値が変わったときに二重管理になるため）。
+ */
+
 /* ============ 会話・独り言系: L 字 rim（左下角中心の radial で 2 辺だけ光る） ============ */
 
 /* Wolf — 会話。両コーナー radial bg + L 字 wolf rim */
 .msg-wolf {
   background:
-    radial-gradient(ellipse 70% 140% at 100% 0%, rgba(216, 96, 107, 0.14) 0%, transparent 60%)
+    radial-gradient(
+        ellipse 70% 140% at 100% 0%,
+        color-mix(in srgb, var(--color-wolf) 14%, transparent) 0%,
+        transparent 60%
+      )
       padding-box,
-    radial-gradient(ellipse 70% 120% at 0% 100%, rgba(216, 96, 107, 0.4) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-wolf) 40%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-wolf) 0%,
-        rgba(216, 96, 107, 0.7) 15%,
-        rgba(216, 96, 107, 0.3) 35%,
+        color-mix(in srgb, var(--color-wolf) 70%, transparent) 15%,
+        color-mix(in srgb, var(--color-wolf) 30%, transparent) 35%,
         transparent 60%
       )
       border-box;
@@ -308,16 +319,24 @@ const filter = () => {
 /* Fanatic — 狂信。両コーナー radial bg + L 字 fanatic rim */
 .msg-fanatic {
   background:
-    radial-gradient(ellipse 70% 140% at 100% 0%, rgba(216, 144, 107, 0.12) 0%, transparent 60%)
+    radial-gradient(
+        ellipse 70% 140% at 100% 0%,
+        color-mix(in srgb, var(--color-fanatic) 12%, transparent) 0%,
+        transparent 60%
+      )
       padding-box,
-    radial-gradient(ellipse 70% 120% at 0% 100%, rgba(216, 144, 107, 0.32) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-fanatic) 32%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-fanatic) 0%,
-        rgba(216, 144, 107, 0.65) 15%,
-        rgba(216, 144, 107, 0.25) 35%,
+        color-mix(in srgb, var(--color-fanatic) 65%, transparent) 15%,
+        color-mix(in srgb, var(--color-fanatic) 25%, transparent) 35%,
         transparent 60%
       )
       border-box;
@@ -326,16 +345,24 @@ const filter = () => {
 /* Mason — 会話。両コーナー radial bg + L 字 mason rim */
 .msg-mason {
   background:
-    radial-gradient(ellipse 70% 140% at 100% 0%, rgba(141, 194, 150, 0.12) 0%, transparent 60%)
+    radial-gradient(
+        ellipse 70% 140% at 100% 0%,
+        color-mix(in srgb, var(--color-mason) 12%, transparent) 0%,
+        transparent 60%
+      )
       padding-box,
-    radial-gradient(ellipse 70% 120% at 0% 100%, rgba(141, 194, 150, 0.38) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-mason) 38%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-mason) 0%,
-        rgba(141, 194, 150, 0.65) 15%,
-        rgba(141, 194, 150, 0.28) 35%,
+        color-mix(in srgb, var(--color-mason) 65%, transparent) 15%,
+        color-mix(in srgb, var(--color-mason) 28%, transparent) 35%,
         transparent 60%
       )
       border-box;
@@ -346,33 +373,49 @@ const filter = () => {
  * 半径を絞り（40% × 80%）+ 早めにフェード（transparent 40%）して本文領域を avoid する */
 .msg-mono {
   background:
-    radial-gradient(ellipse 50% 100% at 100% 0%, rgba(149, 163, 181, 0.06) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 50% 100% at 100% 0%,
+        color-mix(in srgb, var(--color-mono) 6%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
-    radial-gradient(ellipse 40% 80% at 0% 100%, rgba(149, 163, 181, 0.1) 0%, transparent 40%)
+    radial-gradient(
+        ellipse 40% 80% at 0% 100%,
+        color-mix(in srgb, var(--color-mono) 10%, transparent) 0%,
+        transparent 40%
+      )
       padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-mono) 0%,
-        rgba(149, 163, 181, 0.5) 15%,
-        rgba(149, 163, 181, 0.2) 35%,
+        color-mix(in srgb, var(--color-mono) 50%, transparent) 15%,
+        color-mix(in srgb, var(--color-mono) 20%, transparent) 35%,
         transparent 60%
       )
       border-box;
 }
 
-/* Grave — 墓下発言。両コーナー radial bg + 上部 grave 滲み + L 字 grave rim + italic */
+/* Grave — 墓下発言。両コーナー radial bg + L 字 grave rim + italic */
 .msg-grave {
   background:
-    radial-gradient(ellipse 70% 130% at 100% 0%, rgba(140, 192, 211, 0.1) 0%, transparent 60%)
+    radial-gradient(
+        ellipse 70% 130% at 100% 0%,
+        color-mix(in srgb, var(--color-grave) 10%, transparent) 0%,
+        transparent 60%
+      )
       padding-box,
-    radial-gradient(ellipse 70% 120% at 0% 100%, rgba(140, 192, 211, 0.3) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-grave) 30%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-grave) 0%,
-        rgba(140, 192, 211, 0.6) 15%,
-        rgba(140, 192, 211, 0.25) 35%,
+        color-mix(in srgb, var(--color-grave) 60%, transparent) 15%,
+        color-mix(in srgb, var(--color-grave) 25%, transparent) 35%,
         transparent 60%
       )
       border-box;
@@ -381,16 +424,24 @@ const filter = () => {
 /* Seer — 観戦。両コーナー radial(seer) + L 字 seer rim（弱） */
 .msg-seer {
   background:
-    radial-gradient(ellipse 60% 130% at 100% 0%, rgba(212, 194, 131, 0.08) 0%, transparent 60%)
+    radial-gradient(
+        ellipse 60% 130% at 100% 0%,
+        color-mix(in srgb, var(--color-seer) 8%, transparent) 0%,
+        transparent 60%
+      )
       padding-box,
-    radial-gradient(ellipse 60% 110% at 0% 100%, rgba(212, 194, 131, 0.2) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 60% 110% at 0% 100%,
+        color-mix(in srgb, var(--color-seer) 20%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-seer) 0%,
-        rgba(212, 194, 131, 0.5) 15%,
-        rgba(212, 194, 131, 0.2) 35%,
+        color-mix(in srgb, var(--color-seer) 50%, transparent) 15%,
+        color-mix(in srgb, var(--color-seer) 20%, transparent) 35%,
         transparent 60%
       )
       border-box;
@@ -399,16 +450,24 @@ const filter = () => {
 /* Creator — 村建て。両コーナー radial(medium) + L 字 medium rim */
 .msg-creator {
   background:
-    radial-gradient(ellipse 60% 130% at 100% 0%, rgba(190, 173, 222, 0.1) 0%, transparent 60%)
+    radial-gradient(
+        ellipse 60% 130% at 100% 0%,
+        color-mix(in srgb, var(--color-medium) 10%, transparent) 0%,
+        transparent 60%
+      )
       padding-box,
-    radial-gradient(ellipse 70% 120% at 0% 100%, rgba(190, 173, 222, 0.26) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-medium) 26%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-medium) 0%,
-        rgba(190, 173, 222, 0.6) 15%,
-        rgba(190, 173, 222, 0.25) 35%,
+        color-mix(in srgb, var(--color-medium) 60%, transparent) 15%,
+        color-mix(in srgb, var(--color-medium) 25%, transparent) 35%,
         transparent 60%
       )
       border-box;
@@ -419,46 +478,69 @@ const filter = () => {
 /* System — 投票結果 / 開始終了など汎用システム通知。白系 (bone) で全周囲む */
 .msg-system {
   background:
-    radial-gradient(ellipse 70% 110% at 0% 100%, rgba(244, 241, 232, 0.06) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 110% at 0% 100%,
+        color-mix(in srgb, var(--color-bone) 6%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
-    linear-gradient(rgba(244, 241, 232, 0.35), rgba(244, 241, 232, 0.35)) border-box;
+    linear-gradient(
+        color-mix(in srgb, var(--color-bone) 35%, transparent),
+        color-mix(in srgb, var(--color-bone) 35%, transparent)
+      )
+      border-box;
 }
 
 /* Village info — 占い結果 / 賢者 / 検視官 等。緑(mason)で全周囲む */
 .msg-village-info {
   background:
-    radial-gradient(ellipse 70% 120% at 0% 100%, rgba(141, 194, 150, 0.24) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-mason) 24%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
-    linear-gradient(rgba(141, 194, 150, 0.45), rgba(141, 194, 150, 0.45)) border-box;
+    linear-gradient(
+        color-mix(in srgb, var(--color-mason) 45%, transparent),
+        color-mix(in srgb, var(--color-mason) 45%, transparent)
+      )
+      border-box;
 }
 
 /* Psychic info — 霊媒結果。水色(grave)で全周囲む */
 .msg-psychic-info {
   background:
-    radial-gradient(ellipse 70% 120% at 0% 100%, rgba(140, 192, 211, 0.24) 0%, transparent 55%)
+    radial-gradient(
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-grave) 24%, transparent) 0%,
+        transparent 55%
+      )
       padding-box,
     linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
-    linear-gradient(rgba(140, 192, 211, 0.45), rgba(140, 192, 211, 0.45)) border-box;
+    linear-gradient(
+        color-mix(in srgb, var(--color-grave) 45%, transparent),
+        color-mix(in srgb, var(--color-grave) 45%, transparent)
+      )
+      border-box;
 }
 
-/* === Avatar ring — Tailwind の ring-{color} を box-shadow で踏襲しつつ
- *     wolf/mason はロール色の弱い halo を外側に重ねて主役感を出す === */
+/* === Avatar ring — wolf / fanatic / mason はロール色の弱い halo を外側に重ねて主役感を出す === */
 .msg-avatar-wolf {
   box-shadow:
     0 0 0 2px var(--color-wolf),
-    0 0 10px -2px rgba(216, 96, 107, 0.55);
+    0 0 10px -2px color-mix(in srgb, var(--color-wolf) 55%, transparent);
 }
 .msg-avatar-fanatic {
   box-shadow:
     0 0 0 2px var(--color-fanatic),
-    0 0 10px -2px rgba(216, 144, 107, 0.45);
+    0 0 10px -2px color-mix(in srgb, var(--color-fanatic) 45%, transparent);
 }
 .msg-avatar-mason {
   box-shadow:
     0 0 0 2px var(--color-mason),
-    0 0 10px -2px rgba(141, 194, 150, 0.45);
+    0 0 10px -2px color-mix(in srgb, var(--color-mason) 45%, transparent);
 }
 .msg-avatar-grave {
   box-shadow: 0 0 0 1px var(--color-grave);
@@ -468,10 +550,5 @@ const filter = () => {
 }
 .msg-avatar-creator {
   box-shadow: 0 0 0 1px var(--color-medium);
-}
-
-/* === Role tag — 日本語のままだが tracking-widest で儀式感を強める === */
-.msg-role-tag {
-  font-variant-numeric: tabular-nums;
 }
 </style>
