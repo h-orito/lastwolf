@@ -81,7 +81,7 @@ class CreatorDomainService(
         player: Player?,
     ): Boolean {
         if (!this.isAvailableCreatorSetting(village, player)) return false
-        return village.status.isRecruiting() // プロローグ中のみ可能
+        return !village.status.isFinished() // 廃村・終了済以外なら可能（点呼中・進行中・決着でも可）
     }
 
     private fun isAvailableKick(
