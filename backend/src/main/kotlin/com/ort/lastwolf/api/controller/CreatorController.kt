@@ -58,7 +58,7 @@ class CreatorController(
     }
 
     // NOTE: 認可ロジックは domain 層 (CreatorDomainService#assertCancelVillage) に集約済み。
-    // 同 Controller の kick / say 等は Controller 直書きの認可が残っており、Coordinator 移行＋ domain への assert 集約を Issue #20 で別途整理する
+    // 同 Controller の kick / say 等は Controller 直書きの認可が残っており、Coordinator 移行＋ domain への assert 集約 ＋ @Transactional の付与を Issue #20 で別途整理する
     @PostMapping("/creator/village/{villageId}/cancel")
     fun cancel(
         @PathVariable("villageId") villageId: Int,

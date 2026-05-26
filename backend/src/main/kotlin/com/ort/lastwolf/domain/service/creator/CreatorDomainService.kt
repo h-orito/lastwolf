@@ -47,6 +47,13 @@ class CreatorDomainService(
         if (!isAvailableCancelVillage(village, player, user)) throw LastwolfBusinessException("廃村できません")
     }
 
+    fun assertModifySetting(
+        village: Village,
+        player: Player,
+    ) {
+        if (!isAvailableModifySetting(village, player)) throw LastwolfBusinessException("設定を変更できません")
+    }
+
     // ===================================================================================
     //                                                                        Assist Logic
     //                                                                        ============
@@ -111,7 +118,7 @@ class CreatorDomainService(
         return village.status.isRecruiting() // プロローグ中のみ可能
     }
 
-    fun isAvailableModifySetting(
+    private fun isAvailableModifySetting(
         village: Village,
         player: Player?,
     ): Boolean {

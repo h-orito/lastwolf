@@ -124,9 +124,7 @@ class VillageCoordinator(
         player: Player,
         resource: VillageCreateResource,
     ) {
-        if (!creatorDomainService.isAvailableModifySetting(village, player)) {
-            throw LastwolfBusinessException("設定を変更できません")
-        }
+        creatorDomainService.assertModifySetting(village, player)
         villageSettingDomainService.assertModify(village, player, resource)
     }
 
