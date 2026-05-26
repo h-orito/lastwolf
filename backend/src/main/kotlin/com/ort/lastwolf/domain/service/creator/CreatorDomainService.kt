@@ -16,12 +16,13 @@ class CreatorDomainService(
     fun convertToSituation(
         village: Village,
         player: Player?,
+        user: LastwolfUser?,
     ): VillageCreatorSituation =
         VillageCreatorSituation(
             isAvailableCreatorSetting = isAvailableCreatorSetting(village, player),
             isAvailableCreatorSay = isAvailableCreatorSay(village, player),
             isAvailableStartVillage = isAvailableStartVillage(village, player),
-            isAvailableCancelVillage = isAvailableCancelVillage(village, player),
+            isAvailableCancelVillage = isAvailableCancelVillage(village, player, user),
             isAvailableKick = isAvailableKick(village, player),
             isAvailableModifySetting = isAvailableModifySetting(village, player),
             isAvailableStartRollCall = rollCallingDomainService.canStartRollCall(village, player),
@@ -36,18 +37,14 @@ class CreatorDomainService(
         if (!isAvailableStartVillage(village, player)) throw LastwolfBusinessException("村を開始できません")
     }
 
-    // 廃村は「村建て or 管理者」が「未終了の村」に対してのみ実行可能。権限と状態の両方を domain 層で検証する
+    // 廃村は「村建て or 管理者」が「未終了の村」に対してのみ実行可能。
+    // フロント表示用フラグ (isAvailableCancelVillage) と同じ判定ロジックを使い、サーバ側認可とのズレを生まない
     fun assertCancelVillage(
         village: Village,
         player: Player,
         user: LastwolfUser,
     ) {
-        if (user.authority != CDef.Authority.管理者 && village.creatorPlayer.id != player.id) {
-            throw LastwolfBusinessException("村建てか管理者しか使えません")
-        }
-        if (village.status.isFinished()) {
-            throw LastwolfBusinessException("廃村できません")
-        }
+        if (!isAvailableCancelVillage(village, player, user)) throw LastwolfBusinessException("廃村できません")
     }
 
     // ===================================================================================
@@ -92,13 +89,17 @@ class CreatorDomainService(
         return village.isAvailableStart()
     }
 
+    // 廃村可否は「村建て or 管理者」+「未終了」で判定する。フロント表示と API 認可で同じ判定を共有する
     private fun isAvailableCancelVillage(
         village: Village,
         player: Player?,
+        user: LastwolfUser?,
     ): Boolean {
-        if (!this.isAvailableCreatorSetting(village, player)) return false
-        // isAvailableCreatorSetting が isFinished() をガード済のため、募集中・点呼中・進行中・決着すべてで廃村可能
-        return true
+        if (player == null || user == null) return false
+        if (village.status.isFinished()) return false
+        if (user.authority == CDef.Authority.管理者) return true
+        if (village.creatorPlayer.id == player.id) return true
+        return false
     }
 
     private fun isAvailableKick(

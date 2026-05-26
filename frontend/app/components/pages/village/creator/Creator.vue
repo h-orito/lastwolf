@@ -101,6 +101,7 @@
   <!-- 廃村確認ダイアログ -->
   <UiModal v-model="isCancelVillageConfirmOpen" title="廃村確認">
     <p>本当に廃村しますか？</p>
+    <p v-if="!isPrologue" class="mt-1 text-red-600">村を廃村すると参加プレイヤーに影響します。</p>
     <template #footer>
       <button
         class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
