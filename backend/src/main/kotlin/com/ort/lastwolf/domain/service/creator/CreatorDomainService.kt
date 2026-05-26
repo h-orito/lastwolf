@@ -81,7 +81,7 @@ class CreatorDomainService(
         player: Player?,
     ): Boolean {
         if (!this.isAvailableCreatorSetting(village, player)) return false
-        // isAvailableCreatorSetting が isFinished() をガード済のため、点呼中・進行中・決着いずれも廃村可能
+        // isAvailableCreatorSetting が isFinished() をガード済のため、募集中・点呼中・進行中・決着すべてで廃村可能
         return true
     }
 

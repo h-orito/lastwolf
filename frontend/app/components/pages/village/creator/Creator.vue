@@ -60,23 +60,26 @@
         </div>
       </div>
 
-      <!-- 村の開始/廃村 -->
-      <div v-if="isPrologue || isRollcalling">
+      <!-- 村の開始 -->
+      <div v-if="isPrologue || isRollcalling" class="mb-2">
         <hr class="border-gray-200 my-2" />
-        <strong class="block mb-1">村の開始/廃村</strong>
+        <strong class="block mb-1">村の開始</strong>
         <p v-if="isRollcalling" class="mb-1">{{ currentDoneRollcallCount }}</p>
-        <div class="flex gap-1">
-          <UiButton button-type="primary" :disabled="!canStartVillage" @click="startVillage">
-            村を開始する
-          </UiButton>
-          <UiButton
-            button-type="danger"
-            :disabled="!canCancelVillage"
-            @click="confirmCancelVillage"
-          >
-            廃村する（確認）
-          </UiButton>
-        </div>
+        <UiButton button-type="primary" :disabled="!canStartVillage" @click="startVillage">
+          村を開始する
+        </UiButton>
+      </div>
+
+      <!-- 廃村（募集中・点呼中・進行中・決着で表示。バックエンドの available_cancel_village フラグに追従） -->
+      <div v-if="isCancelVillageVisible">
+        <hr class="border-gray-200 my-2" />
+        <strong class="block mb-1">廃村</strong>
+        <p v-if="!isPrologue" class="mb-1 text-red-600">
+          進行中の村を廃村するとプレイヤー全員に影響します。
+        </p>
+        <UiButton button-type="danger" :disabled="!canCancelVillage" @click="confirmCancelVillage">
+          廃村する（確認）
+        </UiButton>
       </div>
     </div>
   </div>
@@ -159,6 +162,9 @@ const canStartVillage = computed(
 );
 const canCancelVillage = computed(
   () => !submitting.value && (situation.value?.creator.available_cancel_village ?? false),
+);
+const isCancelVillageVisible = computed(
+  () => situation.value?.creator.available_cancel_village ?? false,
 );
 const canCreatorSay = computed(
   () => !submitting.value && (situation.value?.creator.available_creator_say ?? false),
