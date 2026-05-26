@@ -13,6 +13,7 @@ import com.ort.lastwolf.domain.model.charachip.Chara
 import com.ort.lastwolf.domain.model.message.Message
 import com.ort.lastwolf.domain.model.message.MessageContent
 import com.ort.lastwolf.domain.model.message.MessageTime
+import com.ort.lastwolf.domain.service.creator.CreatorDomainService
 import com.ort.lastwolf.fw.exception.LastwolfBusinessException
 import com.ort.lastwolf.fw.security.LastwolfUser
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -31,6 +32,7 @@ class CreatorController(
     private val messageService: MessageService,
     private val charachipService: CharachipService,
     private val villageCoordinator: VillageCoordinator,
+    private val creatorDomainService: CreatorDomainService,
 ) {
     @PostMapping("/creator/village/{villageId}/kick")
     fun kick(
@@ -66,6 +68,7 @@ class CreatorController(
         if (user.authority != CDef.Authority.管理者 && village.creatorPlayer.id != player.id) {
             throw LastwolfBusinessException("村建てか管理者しか使えません")
         }
+        creatorDomainService.assertCancelVillage(village, player)
 
         val changedVillage = village.changeStatus(CDef.VillageStatus.廃村)
         villageService.updateVillageDifference(village, changedVillage)

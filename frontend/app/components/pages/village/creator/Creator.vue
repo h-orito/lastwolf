@@ -71,11 +71,11 @@
       </div>
 
       <!-- 廃村（募集中・点呼中・進行中・決着で表示。バックエンドの available_cancel_village フラグに追従） -->
-      <div v-if="isCancelVillageVisible">
+      <div v-if="situation?.creator.available_cancel_village">
         <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">廃村</strong>
         <p v-if="!isPrologue" class="mb-1 text-red-600">
-          進行中の村を廃村するとプレイヤー全員に影響します。
+          点呼中・進行中・決着の村を廃村するとプレイヤー全員に影響します。
         </p>
         <UiButton button-type="danger" :disabled="!canCancelVillage" @click="confirmCancelVillage">
           廃村する（確認）
@@ -162,9 +162,6 @@ const canStartVillage = computed(
 );
 const canCancelVillage = computed(
   () => !submitting.value && (situation.value?.creator.available_cancel_village ?? false),
-);
-const isCancelVillageVisible = computed(
-  () => situation.value?.creator.available_cancel_village ?? false,
 );
 const canCreatorSay = computed(
   () => !submitting.value && (situation.value?.creator.available_creator_say ?? false),

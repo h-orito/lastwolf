@@ -34,6 +34,13 @@ class CreatorDomainService(
         if (!isAvailableStartVillage(village, player)) throw LastwolfBusinessException("村を開始できません")
     }
 
+    fun assertCancelVillage(
+        village: Village,
+        player: Player,
+    ) {
+        if (!isAvailableCancelVillage(village, player)) throw LastwolfBusinessException("廃村できません")
+    }
+
     // ===================================================================================
     //                                                                        Assist Logic
     //                                                                        ============
