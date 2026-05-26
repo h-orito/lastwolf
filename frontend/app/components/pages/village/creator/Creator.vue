@@ -74,10 +74,6 @@
       <div v-if="situation?.creator.available_cancel_village" class="mb-2">
         <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">廃村</strong>
-        <!-- プロローグ以外（点呼中・進行中・決着）はプレイヤーが既に集まっている / 進行が始まっているため警告を出す -->
-        <p v-if="!isPrologue" class="mb-1 text-red-600">
-          村を廃村すると参加プレイヤーに影響します。
-        </p>
         <!-- v-if で available 判定済のため :disabled は送信中の二重押し防止のみ -->
         <UiButton button-type="danger" :disabled="submitting" @click="confirmCancelVillage">
           廃村する（確認）
@@ -103,8 +99,7 @@
   <!-- 廃村確認ダイアログ -->
   <UiModal v-model="isCancelVillageConfirmOpen" title="廃村確認">
     <p>本当に廃村しますか？</p>
-    <!-- 廃村セクション側と同方針: プロローグ以外（点呼中・進行中・決着）で警告を出す -->
-    <p v-if="!isPrologue" class="mt-1 text-red-600">村を廃村すると参加プレイヤーに影響します。</p>
+    <p class="mt-1 text-red-600">この操作は元に戻せません。</p>
     <template #footer>
       <button
         class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
