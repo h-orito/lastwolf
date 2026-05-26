@@ -232,7 +232,7 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 ## 影響範囲（Phase 1 以降で実装）
 
 - `frontend/app/assets/css/main.css` — CSS variables 全面更新。**既存の `--color-{normal,werewolf,mason,monologue,grave,spectate}-say` および `--color-{private,seer,psychic,werewolf,mason,creator}-system-*` は事実上 dead なので Phase 1 で削除**
-- `frontend/nuxt.config.ts` — `theme-color` を `#050609` に、PWA manifest の `background_color` も
+- `frontend/nuxt.config.ts` — `theme-color` を `#050202`（Black & Blood ピボット後の `--color-deep`）に、PWA manifest の `theme_color` / `background_color` も
 - `frontend/app/layouts/default.vue` / `layouts/top.vue` — `background-color` を `var(--color-deep)` に
 - `frontend/app/components/layout/NavBar.vue` — 上記ヘッダー方針
 - `frontend/app/components/ui/**` — 上記コンポーネント方針

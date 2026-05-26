@@ -16,6 +16,9 @@
                 <button
                   v-if="setting.description"
                   class="help-toggle text-xs"
+                  type="button"
+                  :aria-label="`${setting.name}の説明を${openDescriptionIdx === idx ? '閉じる' : '開く'}`"
+                  :aria-expanded="openDescriptionIdx === idx"
                   @click="toggleDescription(idx)"
                 >
                   [?]
