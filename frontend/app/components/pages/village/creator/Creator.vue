@@ -71,7 +71,7 @@
       </div>
 
       <!-- 廃村（募集中・点呼中・進行中・決着で表示。バックエンドの available_cancel_village フラグに追従） -->
-      <div v-if="situation?.creator.available_cancel_village">
+      <div v-if="situation?.creator.available_cancel_village" class="mb-2">
         <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">廃村</strong>
         <p v-if="!isPrologue" class="mb-1 text-red-600">
@@ -255,9 +255,9 @@ const cancelVillage = async () => {
     await apiCall(`/creator/village/${villageStore.villageId}/cancel`, { method: "POST" });
   } catch (error: unknown) {
     const fetchError = error as { status?: number; data?: { message?: string } };
-    if (fetchError.status === 404 && fetchError.data) {
-      toast.add({ message: fetchError.data.message ?? "エラーが発生しました", type: "error" });
-    }
+    // 廃村は進行中・決着でも呼べるようになったため、サーバ側で 4xx (権限・状態) が返るケースをサイレント失敗させない
+    const message = fetchError.data?.message ?? "廃村に失敗しました";
+    toast.add({ message, type: "error" });
   } finally {
     submitting.value = false;
   }
