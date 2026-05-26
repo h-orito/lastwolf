@@ -17,6 +17,7 @@ import com.ort.lastwolf.domain.service.creator.CreatorDomainService
 import com.ort.lastwolf.fw.exception.LastwolfBusinessException
 import com.ort.lastwolf.fw.security.LastwolfUser
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -58,8 +59,10 @@ class CreatorController(
     }
 
     // NOTE: 認可ロジックは domain 層 (CreatorDomainService#assertCancelVillage) に集約済み。
-    // 同 Controller の kick / say 等は Controller 直書きの認可が残っており、Coordinator 移行＋ domain への assert 集約 ＋ @Transactional の付与を Issue #20 で別途整理する
+    // 同 Controller の kick / say 等は Controller 直書きの認可が残っており、Coordinator 移行＋ domain への assert 集約を Issue #20 で別途整理する。
+    // @Transactional は本来 Coordinator に付けるべきだが、Issue #20 の整理までの暫定で Controller に付与（updateVillageDifference / registerMessage の 2 段書き込みを atomic に）
     @PostMapping("/creator/village/{villageId}/cancel")
+    @Transactional(rollbackFor = [Exception::class, LastwolfBusinessException::class])
     fun cancel(
         @PathVariable("villageId") villageId: Int,
         @AuthenticationPrincipal user: LastwolfUser,

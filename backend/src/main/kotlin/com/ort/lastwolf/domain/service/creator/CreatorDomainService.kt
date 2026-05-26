@@ -97,7 +97,8 @@ class CreatorDomainService(
         return village.isAvailableStart()
     }
 
-    // 廃村可否は「村建て or 管理者」+「未終了」で判定する。フロント表示と API 認可で同じ判定を共有する
+    // 廃村可否は「村建て or 管理者」+「未終了」で判定する。フロント表示と API 認可で同じ判定を共有する。
+    // 仕様メモ: 管理者は廃村のみ実行可能。kick / creatorSay / startVillage 等の他操作は isAvailableCreatorSetting (creator/dummy のみ) で false になるため、管理者には他の操作フラグは立たない（運営介入は廃村に限る設計）
     private fun isAvailableCancelVillage(
         village: Village,
         player: Player?,
