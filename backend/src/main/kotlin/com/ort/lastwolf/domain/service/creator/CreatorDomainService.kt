@@ -104,7 +104,8 @@ class CreatorDomainService(
         user: LastwolfUser?,
     ): Boolean {
         if (player == null || user == null) return false
-        // isFinished() は「廃村」「終了」のみ true。「決着」は意図的にすり抜けさせる仕様（エピローグでも廃村できるよう Issue #16 で合意）
+        // VillageStatus.isFinished() = CDef.VillageStatus.isFinishedVillage = 「廃村」「終了」のみ true（決着は含まない）。
+        // 「決着」(エピローグ) は意図的にこのガードをすり抜けて廃村可能とする仕様（Issue #16）
         if (village.status.isFinished()) return false
         // 「どの village か」は villageId → Controller#findVillage で担保されるため、ここでは authority と creator-id だけ判定する
         if (user.authority == CDef.Authority.管理者) return true

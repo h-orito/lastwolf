@@ -62,7 +62,8 @@ class CreatorController(
     // 同 Controller の kick / say 等は Controller 直書きの認可が残っており、Coordinator 移行＋ domain への assert 集約を Issue #20 で別途整理する。
     // @Transactional は本来 Coordinator に付けるべきだが、Issue #20 の整理までの暫定で Controller に付与（updateVillageDifference / registerMessage の 2 段書き込みを atomic に）
     @PostMapping("/creator/village/{villageId}/cancel")
-    @Transactional(rollbackFor = [Exception::class, LastwolfBusinessException::class])
+    // LastwolfBusinessException は RuntimeException で標準動作でロールバック対象。検査例外もロールバックさせるため Exception::class を指定
+    @Transactional(rollbackFor = [Exception::class])
     fun cancel(
         @PathVariable("villageId") villageId: Int,
         @AuthenticationPrincipal user: LastwolfUser,
@@ -74,7 +75,7 @@ class CreatorController(
 
         val changedVillage = village.changeStatus(CDef.VillageStatus.廃村)
         val updatedVillage = villageService.updateVillageDifference(village, changedVillage)
-        val message = village.createCreatorCancelVillageMessage()
+        val message = updatedVillage.createCreatorCancelVillageMessage()
         messageService.registerMessage(updatedVillage, message)
     }
 
