@@ -37,11 +37,6 @@ class CreatorDomainService(
         if (!isAvailableStartVillage(village, player)) throw LastwolfBusinessException("村を開始できません")
     }
 
-    // 設定変更可否（authority 非依存）。assertModifySetting から user を持ち込まないようにする目的で提供
-    fun canModifySetting(
-        village: Village,
-        player: Player?,
-    ): Boolean = isAvailableModifySetting(village, player)
 
     // 廃村は「村建て or 管理者」が「未終了の村」に対してのみ実行可能。
     // フロント表示用フラグ (isAvailableCancelVillage) と同じ判定ロジックを使い、サーバ側認可とのズレを生まない
@@ -62,7 +57,8 @@ class CreatorDomainService(
     ): Boolean {
         player ?: return false
         if (village.status.isFinished()) return false
-        // 村建て or ダミー（GM）であればok（管理者ロールはここでは見ない。廃村など個別操作で必要に応じて isAvailableCancelVillage 側で判定する）
+        // 村建て or ダミー枠（村設定でダミーキャラとして参戦している = GM）であれば ok。
+        // 管理者ロール (LastwolfUser#authority) はここでは見ない。廃村など個別操作で必要に応じて isAvailableCancelVillage 側で判定する
         if (village.creatorPlayer.id == player.id) return true
         val dummyParticipant = village.dummyParticipant() ?: return false
         return dummyParticipant.player.id == player.id
@@ -116,7 +112,7 @@ class CreatorDomainService(
         return village.status.isRecruiting() // プロローグ中のみ可能
     }
 
-    private fun isAvailableModifySetting(
+    fun isAvailableModifySetting(
         village: Village,
         player: Player?,
     ): Boolean {

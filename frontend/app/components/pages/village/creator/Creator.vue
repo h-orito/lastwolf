@@ -77,7 +77,8 @@
         <p v-if="!isPrologue" class="mb-1 text-red-600">
           村を廃村すると参加プレイヤーに影響します。
         </p>
-        <UiButton button-type="danger" :disabled="!canCancelVillage" @click="confirmCancelVillage">
+        <!-- v-if で available 判定済のため :disabled は送信中の二重押し防止のみ -->
+        <UiButton button-type="danger" :disabled="submitting" @click="confirmCancelVillage">
           廃村する（確認）
         </UiButton>
       </div>
@@ -160,9 +161,6 @@ const canCancelRollcall = computed(
 );
 const canStartVillage = computed(
   () => !submitting.value && (situation.value?.creator.available_start_village ?? false),
-);
-const canCancelVillage = computed(
-  () => !submitting.value && (situation.value?.creator.available_cancel_village ?? false),
 );
 const canCreatorSay = computed(
   () => !submitting.value && (situation.value?.creator.available_creator_say ?? false),
