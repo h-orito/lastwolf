@@ -45,8 +45,8 @@ class CreatorDomainService(
         if (village.status.isFinished()) return false
         // 管理者か村建てならok
         if (village.creatorPlayer.id == player.id) return true
-        if (village.dummyParticipant()!!.player.id == player.id) return true
-        return false
+        val dummyParticipant = village.dummyParticipant() ?: return false
+        return dummyParticipant.player.id == player.id
     }
 
     private fun isViewableSpoiler(
@@ -56,8 +56,8 @@ class CreatorDomainService(
         player ?: return false
         // GMか村建てならok
         if (village.isGameMaster(player)) return true
-        if (village.dummyParticipant()!!.player.id == player.id) return true
-        return false
+        val dummyParticipant = village.dummyParticipant() ?: return false
+        return dummyParticipant.player.id == player.id
     }
 
     private fun isAvailableCreatorSay(
@@ -81,7 +81,8 @@ class CreatorDomainService(
         player: Player?,
     ): Boolean {
         if (!this.isAvailableCreatorSetting(village, player)) return false
-        return !village.status.isFinished() // 廃村・終了済以外なら可能（点呼中・進行中・決着でも可）
+        // isAvailableCreatorSetting が isFinished() をガード済のため、点呼中・進行中・決着いずれも廃村可能
+        return true
     }
 
     private fun isAvailableKick(
