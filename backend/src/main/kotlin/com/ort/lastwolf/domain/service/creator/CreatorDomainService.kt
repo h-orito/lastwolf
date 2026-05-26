@@ -106,6 +106,7 @@ class CreatorDomainService(
         if (player == null || user == null) return false
         // isFinished() は「廃村」「終了」のみ true。「決着」は意図的にすり抜けさせる仕様（エピローグでも廃村できるよう Issue #16 で合意）
         if (village.status.isFinished()) return false
+        // 「どの village か」は villageId → Controller#findVillage で担保されるため、ここでは authority と creator-id だけ判定する
         if (user.authority == CDef.Authority.管理者) return true
         if (village.creatorPlayer.id == player.id) return true
         return false

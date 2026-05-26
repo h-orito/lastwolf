@@ -260,7 +260,8 @@ const cancelVillage = async () => {
     // 廃村は進行中・決着でも呼べるようになったため、サーバ側で 4xx (権限・状態) が返るケースをサイレント失敗させない。
     // status を持つエラー (= サーバ応答エラー) のみ toast に出す。
     // ネットワークエラー等 status 無しは useApi 内で console.error 済み。他 handler (kick / startRollcall 等) も同様に未通知で運用しているため本 PR では踏襲し、エラーハンドリングの全体最適化は別途検討する
-    if (fetchError.status != null) {
+    // status: 0 は一部環境で接続失敗時に入るケースがあるため除外（サーバ応答とは見なせない）
+    if (fetchError.status != null && fetchError.status > 0) {
       const message = fetchError.data?.message ?? "廃村に失敗しました";
       toast.add({ message, type: "error" });
     }
