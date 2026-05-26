@@ -35,6 +35,8 @@ class CreatorController(
     private val villageCoordinator: VillageCoordinator,
     private val creatorDomainService: CreatorDomainService,
 ) {
+    // TODO: Issue #20 — updateVillageDifference / registerLeaveMessage の 2 段書き込みが @Transactional でガードされていない。
+    // cancel と同じ atomic 問題を抱えている。Coordinator 移行と合わせて整理する
     @PostMapping("/creator/village/{villageId}/kick")
     fun kick(
         @PathVariable("villageId") villageId: Int,
@@ -58,13 +60,11 @@ class CreatorController(
         messageService.registerLeaveMessage(updatedVillage, chara)
     }
 
-    // NOTE: 認可ロジックは domain 層 (CreatorDomainService#assertCancelVillage) に集約済み。
-    // 同 Controller の kick / say 等は Controller 直書きの認可が残っており、Coordinator 移行＋ domain への assert 集約を Issue #20 で別途整理する。
-    // @Transactional は本来 Coordinator に付けるべきだが、Issue #20 の整理までの暫定で Controller に付与（updateVillageDifference / registerMessage の 2 段書き込みを atomic に）
+    // 認可は domain 層 (CreatorDomainService#assertCancelVillage) に集約。Controller → Coordinator 移行と
+     // 同 Controller の他エンドポイント (kick / say 等) の認可・トランザクション整理は Issue #20 で別途扱う。
+    // @Transactional は updateVillageDifference + registerMessage の 2 段書き込みを atomic にするための暫定対応
+    // （Spring AOP proxy で intercept されるため Controller 配置でも動作する）。
     @PostMapping("/creator/village/{villageId}/cancel")
-    // @Transactional は Spring AOP proxy 経由で intercept される（DispatcherServlet → Controller#cancel は外部呼び出しのため proxy が効く）。
-    // villageService と messageService は別 Bean だが、本メソッドが開いた transaction に参加する形で 2 段書き込みが atomic になる。
-    // LastwolfBusinessException は RuntimeException で標準動作でロールバック対象。検査例外もロールバックさせるため Exception::class を指定
     @Transactional(rollbackFor = [Exception::class])
     fun cancel(
         @PathVariable("villageId") villageId: Int,

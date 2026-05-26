@@ -99,7 +99,7 @@ class CreatorDomainService(
         return village.isAvailableStart()
     }
 
-    // 廃村可否は「村建て or 管理者」+「未終了」で判定する。フロント表示と API 認可で同じ判定を共有する。
+    // 廃村可否は「村建て or GM（ダミー枠の参加者）or 管理者」+「未終了」で判定する。フロント表示と API 認可で同じ判定を共有する。
     // 仕様メモ: 管理者は廃村のみ実行可能。kick / creatorSay / startVillage 等の他操作は isAvailableCreatorSetting (creator/dummy のみ) で false になるため、管理者には他の操作フラグは立たない（運営介入は廃村に限る設計）
     private fun isAvailableCancelVillage(
         village: Village,
@@ -110,10 +110,11 @@ class CreatorDomainService(
         // VillageStatus.isFinished() = CDef.VillageStatus.isFinishedVillage = 「廃村」「終了」のみ true（決着は含まない）。
         // 「決着」(エピローグ) は意図的にこのガードをすり抜けて廃村可能とする仕様（Issue #16）
         if (village.status.isFinished()) return false
-        // 「どの village か」は villageId → Controller#findVillage で担保されるため、ここでは authority と creator-id だけ判定する
         if (user.authority == CDef.Authority.管理者) return true
         if (village.creatorPlayer.id == player.id) return true
-        return false
+        // GM ルールの村では dummy 参加者 ≠ creator になりうるため、isAvailableCreatorSetting と同様 dummy も廃村可能とする
+        val dummyParticipant = village.dummyParticipant() ?: return false
+        return dummyParticipant.player.id == player.id
     }
 
     private fun isAvailableKick(
