@@ -31,7 +31,7 @@
     <!-- 入村パスワード -->
     <div v-if="requiredJoinPassword" class="mb-2">
       <label class="block text-xs mb-1 text-fg">入村パスワード</label>
-      <UiFormInput v-model="joinPassword" type="password" />
+      <UiFormInput v-model="joinPassword" type="text" />
     </div>
 
     <UiButton button-type="primary" :disabled="!canSubmit || submitting" @click="participate">

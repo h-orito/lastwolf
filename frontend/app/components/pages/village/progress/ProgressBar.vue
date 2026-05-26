@@ -132,7 +132,7 @@ defineExpose({ refreshTimer });
 }
 .bar-danger {
   background: linear-gradient(180deg, var(--color-blood) 0%, var(--color-blood-deep) 100%);
-  box-shadow: inset 0 0 12px rgba(224, 46, 46, 0.5);
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--color-blood) 50%, transparent);
 }
 .bar-silent {
   background: linear-gradient(

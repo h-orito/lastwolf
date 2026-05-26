@@ -182,17 +182,18 @@ const say = async () => {
   cursor: not-allowed;
 }
 
-/* メッセージ種別ごとに base bg を変える: ロール色を 8% 程度 elev に重ねる */
-.msg-input-wolf {
+/* メッセージ種別ごとに base bg を変える: ロール色を 8% 程度 elev に重ねる
+ * .msg-input との結合セレクタで「修飾クラス」であることを明示し、カスケード順序依存を避ける */
+.msg-input.msg-input-wolf {
   background-color: color-mix(in srgb, var(--color-wolf) 8%, var(--color-elev));
 }
-.msg-input-mason {
+.msg-input.msg-input-mason {
   background-color: color-mix(in srgb, var(--color-mason) 8%, var(--color-elev));
 }
-.msg-input-grave {
+.msg-input.msg-input-grave {
   background-color: color-mix(in srgb, var(--color-grave) 8%, var(--color-elev));
 }
-.msg-input-mono {
+.msg-input.msg-input-mono {
   background-color: color-mix(in srgb, var(--color-mono) 8%, var(--color-elev));
 }
 

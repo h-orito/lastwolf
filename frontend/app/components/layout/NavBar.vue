@@ -36,14 +36,14 @@
 .logo {
   color: var(--color-bone);
   text-shadow:
-    0 0 6px rgba(139, 26, 26, 0.6),
-    0 0 16px rgba(224, 46, 46, 0.25);
+    0 0 6px color-mix(in srgb, var(--color-blood-deep) 60%, transparent),
+    0 0 16px color-mix(in srgb, var(--color-blood) 25%, transparent);
   transition: text-shadow 150ms ease;
 }
 
 .logo:hover {
   text-shadow:
-    0 0 8px rgba(139, 26, 26, 0.8),
-    0 0 22px rgba(224, 46, 46, 0.45);
+    0 0 8px color-mix(in srgb, var(--color-blood-deep) 80%, transparent),
+    0 0 22px color-mix(in srgb, var(--color-blood) 45%, transparent);
 }
 </style>
