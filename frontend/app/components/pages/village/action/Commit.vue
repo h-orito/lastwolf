@@ -1,12 +1,12 @@
 <template>
   <div>
-    <hr class="border-gray-200 my-2" />
-    <p class="mb-2 font-bold">時短希望</p>
-    <p class="mb-1">
+    <hr class="border-line-soft my-2" />
+    <p class="mb-2 font-bold text-fg">時短希望</p>
+    <p class="mb-1 text-fg">
       全員が時短希望すると残り時間が残っていても{{ nextNoonnight }}に進行できます。<br />
       全員が時短希望する前なら取り消す事もできます。
     </p>
-    <p class="mb-2">
+    <p class="mb-2 text-fg">
       あなたは時短を希望<strong>{{ isCurrentCommitting ? "しています" : "していません" }}</strong
       >。
     </p>

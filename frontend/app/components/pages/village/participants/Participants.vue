@@ -1,6 +1,8 @@
 <template>
-  <div class="rounded bg-[#fafafa] text-xs mb-2">
-    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">参加者</div>
+  <div class="rounded bg-elev text-fg text-xs mb-2 border border-line-soft">
+    <div class="bg-soft text-fg px-3 py-2 rounded-t font-bold border-b border-line-soft">
+      参加者
+    </div>
     <div class="px-3 py-2">
       <Participant
         v-for="p in participants"
@@ -9,13 +11,10 @@
         :is-disp-player="isDispPlayer"
       />
       <div v-if="isViewablePlayerInfo" class="mt-2">
-        <hr class="border-gray-200 my-2" />
-        <button
-          class="px-3 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0]"
-          @click="toggleDisplayPlayer"
-        >
+        <hr class="border-line-soft my-2" />
+        <UiButton button-type="secondary" @click="toggleDisplayPlayer">
           {{ toggleDisplayButtonMessage }}
-        </button>
+        </UiButton>
       </div>
     </div>
   </div>

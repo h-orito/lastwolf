@@ -1,18 +1,16 @@
 <template>
-  <div class="rounded bg-[#fafafa] text-xs mb-2">
-    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">チャット</div>
+  <div class="rounded bg-elev text-fg text-xs mb-2 border border-line-soft">
+    <div class="bg-soft text-fg px-3 py-2 rounded-t font-bold border-b border-line-soft">
+      チャット
+    </div>
     <div class="px-3 py-2">
       <!-- 日付タブ -->
       <div class="flex flex-wrap gap-1 mb-2">
         <button
           v-for="day in days"
           :key="day.id"
-          class="px-2 py-1 text-xs rounded border transition-colors flex items-center gap-1"
-          :class="
-            tabId === day.id
-              ? 'bg-gray-800 border-gray-800 text-white'
-              : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
-          "
+          class="day-tab"
+          :class="tabId === day.id ? 'is-active' : ''"
           @click="tabId = day.id"
         >
           <SunIcon v-if="day.noon_night.code === 'NOON'" class="w-3 h-3" />
@@ -31,16 +29,16 @@
           />
           <!-- 強調発言フィルタ -->
           <div class="mb-2">
-            <label class="inline-flex items-center gap-1 cursor-pointer text-xs">
+            <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-fg">
               <input
                 v-model="shouldFilterByStrong"
                 type="checkbox"
-                class="rounded cursor-pointer"
+                class="rounded cursor-pointer accent-blood"
               />
               強調発言のみ表示
             </label>
           </div>
-          <hr class="border-gray-200 my-2" />
+          <hr class="border-line-soft my-2" />
           <!-- メッセージ入力 -->
           <MessageInput />
           <!-- メッセージ一覧 -->
@@ -112,3 +110,30 @@ const openLatestday = () => {
 
 defineExpose({ openLatestday });
 </script>
+
+<style scoped>
+.day-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-line-soft);
+  background-color: var(--color-elev);
+  color: var(--color-fg-secondary);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+.day-tab:hover {
+  background-color: var(--color-soft);
+  color: var(--color-fg);
+}
+.day-tab.is-active {
+  background-color: var(--color-wine);
+  border-color: var(--color-blood-deep);
+  color: var(--color-bone);
+}
+</style>

@@ -18,7 +18,7 @@
           <p v-if="participant.skill" class="ml-1">
             {{ participant.skill.name }}
           </p>
-          <p v-if="participant.dead" class="text-red-600 ml-1">
+          <p v-if="participant.dead" class="text-wolf ml-1">
             {{ `${participant.dead.village_day.day}d${participant.dead.reason}` }}
           </p>
           <p v-if="isFirstVictim" class="ml-1">ダミー</p>
@@ -27,23 +27,23 @@
           {{ `${participant.player.nickname}@${participant.player.twitter_user_name}` }}
         </p>
         <div class="mt-1 flex gap-1">
-          <NuxtLink
+          <UiButton
             v-if="participant.player"
+            button-type="secondary"
             :to="{ path: '/player-record', query: { id: participant.player.id } }"
             target="_blank"
-            class="inline-flex items-center px-2 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0]"
           >
             戦績
-          </NuxtLink>
-          <a
+          </UiButton>
+          <UiButton
             v-if="participant.player"
+            button-type="secondary"
+            as="a"
             :href="`https://twitter.com/${participant.player.twitter_user_name}`"
             target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center px-2 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0]"
           >
             Twitter
-          </a>
+          </UiButton>
         </div>
       </div>
     </div>
@@ -59,10 +59,10 @@
       <p v-if="participant.skill" class="text-xs">
         {{ participant.skill.name }}
       </p>
-      <p v-if="participant.dead" class="text-red-600 text-xs">
+      <p v-if="participant.dead" class="text-wolf text-xs">
         {{ `${participant.dead.village_day.day}d${participant.dead.reason}` }}
       </p>
-      <p v-if="doneRollcall" class="text-blue-600 text-xs">準備完了</p>
+      <p v-if="doneRollcall" class="text-mason text-xs">準備完了</p>
       <p v-if="isFirstVictim" class="text-xs">ダミー</p>
     </div>
   </div>

@@ -1,6 +1,8 @@
 <template>
-  <div class="rounded bg-[#fafafa] text-xs mb-2">
-    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">デバッグ</div>
+  <div class="rounded bg-elev text-fg text-xs mb-2 border border-line-soft">
+    <div class="bg-soft text-fg px-3 py-2 rounded-t font-bold border-b border-line-soft">
+      デバッグ
+    </div>
     <div class="px-3 py-2 space-y-2">
       <!-- 村取得 -->
       <div>

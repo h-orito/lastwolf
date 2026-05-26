@@ -1,31 +1,28 @@
 <template>
   <div class="text-xs overflow-x-auto">
-    <table v-if="tableVillages.length > 0" class="w-full border-collapse bg-white">
+    <table v-if="tableVillages.length > 0" class="w-full border-collapse bg-elev text-fg">
       <thead>
-        <tr class="bg-gray-100">
-          <th class="border border-gray-300 px-3 py-2 text-left">村名</th>
-          <th class="border border-gray-300 px-3 py-2 text-left">人数</th>
-          <th class="border border-gray-300 px-3 py-2 text-left">編成</th>
-          <th class="border border-gray-300 px-3 py-2 text-left">勝利</th>
+        <tr class="bg-soft">
+          <th class="border border-line-soft px-3 py-2 text-left">村名</th>
+          <th class="border border-line-soft px-3 py-2 text-left">人数</th>
+          <th class="border border-line-soft px-3 py-2 text-left">編成</th>
+          <th class="border border-line-soft px-3 py-2 text-left">勝利</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="v in tableVillages" :key="v.village_id" class="odd:bg-white even:bg-gray-50">
-          <td class="border border-gray-300 px-3 py-1">
-            <NuxtLink
-              :to="{ path: '/village', query: { id: v.village_id } }"
-              class="text-blue-600 hover:text-blue-800"
-            >
+        <tr v-for="v in tableVillages" :key="v.village_id" class="row-stripe">
+          <td class="border border-line-soft px-3 py-1">
+            <NuxtLink :to="{ path: '/village', query: { id: v.village_id } }" class="village-link">
               {{ v.village_name }}
             </NuxtLink>
           </td>
-          <td class="border border-gray-300 px-3 py-1">{{ v.participant_count }}</td>
-          <td class="border border-gray-300 px-3 py-1">{{ v.organization }}</td>
-          <td class="border border-gray-300 px-3 py-1">{{ v.win_camp }}</td>
+          <td class="border border-line-soft px-3 py-1">{{ v.participant_count }}</td>
+          <td class="border border-line-soft px-3 py-1">{{ v.organization }}</td>
+          <td class="border border-line-soft px-3 py-1">{{ v.win_camp }}</td>
         </tr>
       </tbody>
     </table>
-    <div v-else class="text-center text-gray-500 py-4">
+    <div v-else class="text-center text-fg-secondary py-4">
       <p>終了した村はありません</p>
     </div>
   </div>
@@ -53,3 +50,24 @@ const tableVillages = computed(() => {
   }));
 });
 </script>
+
+<style scoped>
+.row-stripe:nth-child(odd) {
+  background-color: var(--color-elev);
+}
+.row-stripe:nth-child(even) {
+  background-color: var(--color-soft);
+}
+
+.village-link {
+  color: var(--color-blood);
+  transition:
+    color 150ms ease,
+    text-shadow 150ms ease;
+}
+.village-link:hover {
+  color: #ff5b5b;
+  text-decoration: underline;
+  text-shadow: 0 0 8px rgba(224, 46, 46, 0.4);
+}
+</style>

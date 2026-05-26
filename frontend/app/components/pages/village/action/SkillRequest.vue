@@ -1,18 +1,18 @@
 <template>
   <div>
-    <hr class="border-gray-200 my-2" />
-    <p class="mb-2 font-bold">役職希望</p>
-    <p class="mb-2">
+    <hr class="border-line-soft my-2" />
+    <p class="mb-2 font-bold text-fg">役職希望</p>
+    <p class="mb-2 text-fg">
       役職希望を変更することができます。<br />現在の希望は<strong> {{ currentRequest }} </strong
       >です。
     </p>
 
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
-      <label class="block text-xs mb-1">役職第1希望</label>
+      <label class="block text-xs mb-1 text-fg">役職第1希望</label>
       <UiFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
     </div>
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
-      <label class="block text-xs mb-1">役職第2希望</label>
+      <label class="block text-xs mb-1 text-fg">役職第2希望</label>
       <UiFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
     </div>
 

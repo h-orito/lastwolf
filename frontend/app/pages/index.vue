@@ -10,40 +10,25 @@
     <PlayerStats />
 
     <!-- 村一覧 -->
-    <section class="py-8 px-4 bg-white">
+    <section class="py-8 px-4 bg-deep">
       <div class="max-w-5xl mx-auto text-center">
-        <h1 class="text-lg font-bold mb-4">村一覧</h1>
+        <h1 class="text-lg font-bold mb-4 text-fg">村一覧</h1>
         <div class="text-sm">
           <VillageList :villages="villages" :loading-villages="loadingVillages" />
           <div class="mt-4 flex flex-wrap justify-center gap-2">
-            <NuxtLink
-              v-if="canCreateVillage"
-              to="/create-village"
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-[#3991f4] text-white hover:bg-[#2c7ae0] transition-colors"
-            >
+            <UiButton button-type="primary" :disabled="!canCreateVillage" to="/create-village">
               村を作成
-            </NuxtLink>
-            <span
-              v-else
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-400 cursor-not-allowed"
-            >
-              村を作成
-            </span>
-            <NuxtLink
-              to="/village-list"
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
-            >
-              終了した村
-            </NuxtLink>
+            </UiButton>
+            <UiButton button-type="secondary" to="/village-list"> 終了した村 </UiButton>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 最近終了した村（進行中の村がない場合） -->
-    <section v-if="completeVillages && completeVillages.length > 0" class="py-8 px-4 bg-white">
+    <section v-if="completeVillages && completeVillages.length > 0" class="py-8 px-4 bg-deep">
       <div class="max-w-5xl mx-auto text-center">
-        <h1 class="text-lg font-bold mb-4">最近終了した村</h1>
+        <h1 class="text-lg font-bold mb-4 text-fg">最近終了した村</h1>
         <div class="text-sm text-left">
           <CompleteVillageList :villages="completeVillages" />
         </div>

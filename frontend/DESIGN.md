@@ -217,21 +217,17 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 ### ヘッダー
 
-- 背景: `linear-gradient(180deg, var(--color-soft), var(--color-base))` + 上端 1px の `gold` グラデ線
-- ロゴ: 月白テキスト + 既存テキストシャドウ色 `#456185` を継承
-- アバター: 以下のコニックグラデで月の色順を回す（`brightness(0.75) saturate(0.8)` のフィルタを適用して落ち着かせる）
-  ```css
-  background: conic-gradient(
-    from 180deg,
-    var(--color-steel-deep) 0deg,
-    var(--color-steel) 90deg,
-    var(--color-halo) 180deg,
-    var(--color-moon) 240deg,
-    var(--color-gold) 300deg,
-    var(--color-steel-deep) 360deg
-  );
-  filter: brightness(0.75) saturate(0.8);
-  ```
+- 背景: `linear-gradient(180deg, var(--color-soft), var(--color-base))` + 下端 `border-line-soft` の 1px ライン
+- 上端 1px の `gold` グラデ線（左右暗→中央 gold で「ステンドグラスのストリップが一筋光る」イメージ）
+- ロゴ: `text-bone` + blood-deep のテキストシャドウ（`lastwolf.webp` の赤いオーラと整合。Phase 2 で steel-blue から Black & Blood にピボット済）
+- 旧仕様にあった月色順のコニックグラデアバターは、トップにアバター表示がないため未実装（必要になったタイミングで blood/ember/gold 構成で再設計する）
+
+### カードヘッダー（村画面の参加者・進行・チャット等のセクションヘッダ）
+
+- 背景: `bg-soft`、下端 `border-line-soft` 1px
+- 文字: `text-fg` + `font-bold`
+- 本体: `bg-elev`、外周 `border-line-soft` 1px
+- 旧 `bg-[#363636]` + `bg-[#fafafa]` のコントラスト強めヘッダから dark theme に統一
 
 ## 影響範囲（Phase 1 以降で実装）
 

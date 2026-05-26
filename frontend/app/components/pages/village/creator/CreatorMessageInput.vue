@@ -4,11 +4,11 @@
       :value="modelValue"
       placeholder="村建て発言"
       rows="5"
-      class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] font-sans resize-y"
+      class="creator-textarea w-full px-2 py-1 text-sm font-sans resize-y"
       @input="onInput"
     />
     <p class="text-right text-xs mt-1">
-      <span :class="isLengthOver ? 'text-red-600' : ''">
+      <span :class="isLengthOver ? 'text-wolf' : 'text-fg-secondary'">
         文字数: {{ currentLength }}/{{ maxLength }}
       </span>
     </p>
@@ -42,3 +42,23 @@ const onInput = (e: Event) => {
 
 defineExpose({ isLengthOver });
 </script>
+
+<style scoped>
+.creator-textarea {
+  background-color: var(--color-elev);
+  color: var(--color-fg);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 0.375rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.creator-textarea::placeholder {
+  color: var(--color-fg-muted);
+}
+.creator-textarea:focus {
+  outline: none;
+  border-color: var(--color-blood);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blood) 25%, transparent);
+}
+</style>

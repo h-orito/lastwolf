@@ -1,8 +1,8 @@
 <template>
   <div>
-    <hr class="border-gray-200 my-2" />
-    <p class="mb-2 font-bold">能力行使</p>
-    <p class="mb-2">
+    <hr class="border-line-soft my-2" />
+    <p class="mb-2 font-bold text-fg">能力行使</p>
+    <p class="mb-2 text-fg">
       <span v-for="(line, idx) in abilityMessageLines" :key="idx">
         <!-- eslint-disable-next-line vue/no-v-html -->
         <span v-html="line" /><br />
@@ -10,7 +10,7 @@
     </p>
 
     <div class="mb-2">
-      <label class="block text-xs mb-1">対象</label>
+      <label class="block text-xs mb-1 text-fg">対象</label>
       <div class="flex gap-1">
         <UiFormSelect
           v-model="participantId"
@@ -18,12 +18,7 @@
           placeholder="選択してください"
           class="flex-1"
         />
-        <button
-          class="px-2 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300 active:bg-gray-400 whitespace-nowrap"
-          @click="openSelectModal"
-        >
-          画像で選択
-        </button>
+        <UiButton button-type="secondary" @click="openSelectModal">画像で選択</UiButton>
       </div>
     </div>
 
@@ -40,14 +35,9 @@
 
     <!-- 確認ダイアログ -->
     <UiModal v-model="isConfirmOpen" title="確認">
-      <p>対象は{{ confirmTargetName }}でよろしいですか？</p>
+      <p class="text-fg">対象は{{ confirmTargetName }}でよろしいですか？</p>
       <template #footer>
-        <button
-          class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-          @click="isConfirmOpen = false"
-        >
-          キャンセル
-        </button>
+        <UiButton button-type="secondary" @click="isConfirmOpen = false">キャンセル</UiButton>
         <UiButton button-type="primary" @click="setAbility">
           {{ abilityButtonString }}
         </UiButton>
@@ -118,7 +108,7 @@ const abilityMessageLines = computed(() => {
     message += "\n襲撃は誰か1人が行使すると他の人は操作不可能になります。\n";
   }
   message +=
-    '\n<span class="text-red-600">能力行使しなかった場合突然死するため、必ず能力を行使してください。</span>';
+    '\n<span class="text-wolf">能力行使しなかった場合突然死するため、必ず能力を行使してください。</span>';
   if (type === "ATTACK") {
     message += "\n襲撃は誰か1人が行使すれば全員突然死しません。";
   }

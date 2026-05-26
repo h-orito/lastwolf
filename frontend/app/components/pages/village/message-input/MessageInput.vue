@@ -5,18 +5,14 @@
       type="text"
       :placeholder="placeholder"
       :disabled="!canSay"
-      class="flex-1 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] font-sans"
+      class="msg-input flex-1 px-2 py-1 text-sm font-sans"
       :class="messageBgColorClass"
       @keypress.exact.enter="keypressEnter"
       @keypress.shift.enter="keypressShiftEnter"
     />
     <label
-      class="flex items-center gap-1 px-2 py-1 text-xs rounded border cursor-pointer select-none"
-      :class="
-        strong
-          ? 'bg-[#3991f4] text-white border-[#3991f4]'
-          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-      "
+      class="strong-toggle flex items-center gap-1 px-2 py-1 text-xs cursor-pointer select-none"
+      :class="strong ? 'is-on' : ''"
     >
       <input v-model="strong" type="checkbox" class="hidden" :disabled="!canSay" />
       <strong>B</strong> 強調
@@ -59,17 +55,18 @@ const messageType = computed(() => {
 
 const messageBgColorClass = computed(() => {
   if (!canSay.value) return "";
+  // メッセージ種別ごとに input の bg にロール色をうっすら載せる（dark theme 対応）
   switch (messageType.value) {
     case MESSAGE_TYPE.WEREWOLF_SAY:
-      return "bg-red-50";
+      return "msg-input-wolf";
     case MESSAGE_TYPE.SYMPATHIZE_SAY:
-      return "bg-green-50";
+      return "msg-input-mason";
     case MESSAGE_TYPE.GRAVE_SAY:
-      return "bg-blue-50";
+      return "msg-input-grave";
     case MESSAGE_TYPE.MONOLOGUE_SAY:
-      return "bg-yellow-50";
+      return "msg-input-mono";
     default:
-      return "bg-white";
+      return "";
   }
 });
 
@@ -160,3 +157,62 @@ const say = async () => {
   }
 };
 </script>
+
+<style scoped>
+.msg-input {
+  background-color: var(--color-elev);
+  color: var(--color-fg);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 0.375rem;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.msg-input::placeholder {
+  color: var(--color-fg-muted);
+}
+.msg-input:focus {
+  outline: none;
+  border-color: var(--color-blood);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blood) 25%, transparent);
+}
+.msg-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* メッセージ種別ごとに base bg を変える: ロール色を 8% 程度 elev に重ねる */
+.msg-input-wolf {
+  background-color: color-mix(in srgb, var(--color-wolf) 8%, var(--color-elev));
+}
+.msg-input-mason {
+  background-color: color-mix(in srgb, var(--color-mason) 8%, var(--color-elev));
+}
+.msg-input-grave {
+  background-color: color-mix(in srgb, var(--color-grave) 8%, var(--color-elev));
+}
+.msg-input-mono {
+  background-color: color-mix(in srgb, var(--color-mono) 8%, var(--color-elev));
+}
+
+.strong-toggle {
+  background-color: var(--color-elev);
+  color: var(--color-fg-secondary);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 0.375rem;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+.strong-toggle:hover {
+  background-color: var(--color-soft);
+  color: var(--color-fg);
+}
+.strong-toggle.is-on {
+  background-color: var(--color-wine);
+  color: var(--color-bone);
+  border-color: var(--color-blood-deep);
+}
+</style>
