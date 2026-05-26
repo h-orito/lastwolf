@@ -65,10 +65,7 @@ class CreatorController(
         val village = villageService.findVillage(villageId)
         val player = playerService.findPlayer(user)
 
-        if (user.authority != CDef.Authority.管理者 && village.creatorPlayer.id != player.id) {
-            throw LastwolfBusinessException("村建てか管理者しか使えません")
-        }
-        creatorDomainService.assertCancelVillage(village, player)
+        creatorDomainService.assertCancelVillage(village, player, user)
 
         val changedVillage = village.changeStatus(CDef.VillageStatus.廃村)
         villageService.updateVillageDifference(village, changedVillage)

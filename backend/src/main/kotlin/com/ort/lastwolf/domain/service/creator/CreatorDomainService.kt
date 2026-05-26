@@ -1,10 +1,12 @@
 package com.ort.lastwolf.domain.service.creator
 
+import com.ort.dbflute.allcommon.CDef
 import com.ort.lastwolf.domain.model.myself.participant.VillageCreatorSituation
 import com.ort.lastwolf.domain.model.player.Player
 import com.ort.lastwolf.domain.model.village.Village
 import com.ort.lastwolf.domain.service.daychange.RollCallingDomainService
 import com.ort.lastwolf.fw.exception.LastwolfBusinessException
+import com.ort.lastwolf.fw.security.LastwolfUser
 import org.springframework.stereotype.Service
 
 @Service
@@ -34,11 +36,18 @@ class CreatorDomainService(
         if (!isAvailableStartVillage(village, player)) throw LastwolfBusinessException("村を開始できません")
     }
 
+    // 廃村は「村建て or 管理者」が「未終了の村」に対してのみ実行可能。権限と状態の両方を domain 層で検証する
     fun assertCancelVillage(
         village: Village,
         player: Player,
+        user: LastwolfUser,
     ) {
-        if (!isAvailableCancelVillage(village, player)) throw LastwolfBusinessException("廃村できません")
+        if (user.authority != CDef.Authority.管理者 && village.creatorPlayer.id != player.id) {
+            throw LastwolfBusinessException("村建てか管理者しか使えません")
+        }
+        if (village.status.isFinished()) {
+            throw LastwolfBusinessException("廃村できません")
+        }
     }
 
     // ===================================================================================

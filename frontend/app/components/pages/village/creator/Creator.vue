@@ -75,7 +75,7 @@
         <hr class="border-gray-200 my-2" />
         <strong class="block mb-1">廃村</strong>
         <p v-if="!isPrologue" class="mb-1 text-red-600">
-          点呼中・進行中・決着の村を廃村するとプレイヤー全員に影響します。
+          村を廃村すると参加プレイヤーに影響します。
         </p>
         <UiButton button-type="danger" :disabled="!canCancelVillage" @click="confirmCancelVillage">
           廃村する（確認）
