@@ -13,9 +13,11 @@ import com.ort.lastwolf.domain.model.charachip.Chara
 import com.ort.lastwolf.domain.model.message.Message
 import com.ort.lastwolf.domain.model.message.MessageContent
 import com.ort.lastwolf.domain.model.message.MessageTime
+import com.ort.lastwolf.domain.service.creator.CreatorDomainService
 import com.ort.lastwolf.fw.exception.LastwolfBusinessException
 import com.ort.lastwolf.fw.security.LastwolfUser
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,7 +33,10 @@ class CreatorController(
     private val messageService: MessageService,
     private val charachipService: CharachipService,
     private val villageCoordinator: VillageCoordinator,
+    private val creatorDomainService: CreatorDomainService,
 ) {
+    // TODO: Issue #20 — updateVillageDifference / registerLeaveMessage の 2 段書き込みが @Transactional でガードされていない。
+    // cancel と同じ atomic 問題を抱えている。Coordinator 移行と合わせて整理する
     @PostMapping("/creator/village/{villageId}/kick")
     fun kick(
         @PathVariable("villageId") villageId: Int,
@@ -55,7 +60,12 @@ class CreatorController(
         messageService.registerLeaveMessage(updatedVillage, chara)
     }
 
+    // 認可は domain 層 (CreatorDomainService#assertCancelVillage) に集約。Controller → Coordinator 移行と
+     // 同 Controller の他エンドポイント (kick / say 等) の認可・トランザクション整理は Issue #20 で別途扱う。
+    // @Transactional は updateVillageDifference + registerMessage の 2 段書き込みを atomic にするための暫定対応
+    // （Spring AOP proxy で intercept されるため Controller 配置でも動作する）。
     @PostMapping("/creator/village/{villageId}/cancel")
+    @Transactional(rollbackFor = [Exception::class])
     fun cancel(
         @PathVariable("villageId") villageId: Int,
         @AuthenticationPrincipal user: LastwolfUser,
@@ -63,14 +73,12 @@ class CreatorController(
         val village = villageService.findVillage(villageId)
         val player = playerService.findPlayer(user)
 
-        if (user.authority != CDef.Authority.管理者 && village.creatorPlayer.id != player.id) {
-            throw LastwolfBusinessException("村建てか管理者しか使えません")
-        }
+        creatorDomainService.assertCancelVillage(village, player, user)
 
         val changedVillage = village.changeStatus(CDef.VillageStatus.廃村)
-        villageService.updateVillageDifference(village, changedVillage)
-        val message = village.createCreatorCancelVillageMessage()
-        messageService.registerMessage(village, message)
+        val updatedVillage = villageService.updateVillageDifference(village, changedVillage)
+        val message = updatedVillage.createCreatorCancelVillageMessage()
+        messageService.registerMessage(updatedVillage, message)
     }
 
     @PostMapping("/creator/village/{villageId}/say-confirm")

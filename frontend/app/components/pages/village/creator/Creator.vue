@@ -60,23 +60,24 @@
         </div>
       </div>
 
-      <!-- 村の開始/廃村 -->
-      <div v-if="isPrologue || isRollcalling">
+      <!-- 村の開始 -->
+      <div v-if="isPrologue || isRollcalling" class="mb-2">
         <hr class="border-gray-200 my-2" />
-        <strong class="block mb-1">村の開始/廃村</strong>
+        <strong class="block mb-1">村の開始</strong>
         <p v-if="isRollcalling" class="mb-1">{{ currentDoneRollcallCount }}</p>
-        <div class="flex gap-1">
-          <UiButton button-type="primary" :disabled="!canStartVillage" @click="startVillage">
-            村を開始する
-          </UiButton>
-          <UiButton
-            button-type="danger"
-            :disabled="!canCancelVillage"
-            @click="confirmCancelVillage"
-          >
-            廃村する（確認）
-          </UiButton>
-        </div>
+        <UiButton button-type="primary" :disabled="!canStartVillage" @click="startVillage">
+          村を開始する
+        </UiButton>
+      </div>
+
+      <!-- 廃村（募集中・点呼中・進行中・決着で表示。バックエンドの available_cancel_village フラグに追従） -->
+      <div v-if="situation?.creator.available_cancel_village" class="mb-2">
+        <hr class="border-gray-200 my-2" />
+        <strong class="block mb-1">廃村</strong>
+        <!-- v-if で available 判定済のため :disabled は送信中の二重押し防止のみ -->
+        <UiButton button-type="danger" :disabled="submitting" @click="confirmCancelVillage">
+          廃村する（確認）
+        </UiButton>
       </div>
     </div>
   </div>
@@ -98,6 +99,7 @@
   <!-- 廃村確認ダイアログ -->
   <UiModal v-model="isCancelVillageConfirmOpen" title="廃村確認">
     <p>本当に廃村しますか？</p>
+    <p class="mt-1 text-red-600">この操作は元に戻せません。</p>
     <template #footer>
       <button
         class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
@@ -121,6 +123,11 @@ import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 
 type SituationAsParticipantView = components["schemas"]["SituationAsParticipantView"];
 type VillageView = components["schemas"]["VillageView"];
+
+interface ApiCallError {
+  status?: number;
+  data?: { message?: string };
+}
 
 const villageStore = useVillageStore();
 const situation = computed(() => villageStore.situation as SituationAsParticipantView | null);
@@ -156,9 +163,6 @@ const canCancelRollcall = computed(
 );
 const canStartVillage = computed(
   () => !submitting.value && (situation.value?.creator.available_start_village ?? false),
-);
-const canCancelVillage = computed(
-  () => !submitting.value && (situation.value?.creator.available_cancel_village ?? false),
 );
 const canCreatorSay = computed(
   () => !submitting.value && (situation.value?.creator.available_creator_say ?? false),
@@ -252,9 +256,11 @@ const cancelVillage = async () => {
   try {
     await apiCall(`/creator/village/${villageStore.villageId}/cancel`, { method: "POST" });
   } catch (error: unknown) {
-    const fetchError = error as { status?: number; data?: { message?: string } };
-    if (fetchError.status === 404 && fetchError.data) {
-      toast.add({ message: fetchError.data.message ?? "エラーが発生しました", type: "error" });
+    const fetchError = error as ApiCallError;
+    // サーバ応答エラー (status > 0) のみ toast。ネットワークエラーは useApi 側で console.error 済み
+    if (fetchError.status != null && fetchError.status > 0) {
+      const message = fetchError.data?.message ?? "廃村に失敗しました";
+      toast.add({ message, type: "error" });
     }
   } finally {
     submitting.value = false;
