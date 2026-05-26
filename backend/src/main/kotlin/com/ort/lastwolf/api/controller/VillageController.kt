@@ -444,7 +444,7 @@ class VillageController(
             convertToVillageCreateResource(villageRegisterBody, player).copy(
                 createPlayerId = village.creatorPlayer.id, // 管理者に上書きされるのを防ぐ
             )
-        villageCoordinator.assertModifySetting(village, player, user, createResource)
+        villageCoordinator.assertModifySetting(village, player, createResource)
     }
 
     /**
@@ -467,7 +467,7 @@ class VillageController(
         }
 
         val createResource = convertToVillageCreateResource(villageRegisterBody, player)
-        villageCoordinator.modifySetting(village, player, user, createResource)
+        villageCoordinator.modifySetting(village, player, createResource)
     }
 
     @PostMapping("/village/{villageId}/daychange-check")

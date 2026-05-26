@@ -122,10 +122,9 @@ class VillageCoordinator(
     fun assertModifySetting(
         village: Village,
         player: Player,
-        user: LastwolfUser,
         resource: VillageCreateResource,
     ) {
-        if (!creatorDomainService.convertToSituation(village, player, user).isAvailableModifySetting) {
+        if (!creatorDomainService.canModifySetting(village, player)) {
             throw LastwolfBusinessException("設定を変更できません")
         }
         villageSettingDomainService.assertModify(village, player, resource)
@@ -138,10 +137,9 @@ class VillageCoordinator(
     fun modifySetting(
         village: Village,
         player: Player,
-        user: LastwolfUser,
         resource: VillageCreateResource,
     ) {
-        assertModifySetting(village, player, user, resource)
+        assertModifySetting(village, player, resource)
         // 変更なしの場合もある
         villageSettingDomainService.createModifyMessage(village, resource)?.let { message ->
             messageService.registerMessage(village, message)
