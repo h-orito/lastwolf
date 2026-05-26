@@ -57,14 +57,13 @@ class CreatorDomainService(
     // ===================================================================================
     //                                                                        Assist Logic
     //                                                                        ============
+    // 「村建て or GM（ダミー枠の参加者）」のみ true。管理者ロールはここでは見ない（廃村だけは isAvailableCancelVillage で別判定）
     private fun isAvailableCreatorSetting(
         village: Village,
         player: Player?,
     ): Boolean {
         player ?: return false
         if (village.status.isFinished()) return false
-        // 村建て or ダミー枠（村設定でダミーキャラとして参戦している = GM）であれば ok。
-        // 管理者ロール (LastwolfUser#authority) はここでは見ない。廃村については isAvailableCancelVillage が独立して判定する（このメソッドは呼ばない）
         if (village.creatorPlayer.id == player.id) return true
         val dummyParticipant = village.dummyParticipant() ?: return false
         return dummyParticipant.player.id == player.id
@@ -105,6 +104,7 @@ class CreatorDomainService(
         user: LastwolfUser?,
     ): Boolean {
         if (player == null || user == null) return false
+        // isFinished() は「廃村」「終了」のみ true。「決着」は意図的にすり抜けさせる仕様（エピローグでも廃村できるよう Issue #16 で合意）
         if (village.status.isFinished()) return false
         if (user.authority == CDef.Authority.管理者) return true
         if (village.creatorPlayer.id == player.id) return true
