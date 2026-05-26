@@ -345,7 +345,7 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.NORMAL_SAY,
-      "通常発言のサンプル。fg ベースで読みやすい。",
+      "通常発言。bg-elev のみ、上端に hairline。",
       "村人A",
     ),
     color: "#ff8585",
@@ -353,23 +353,31 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.WEREWOLF_SAY,
-      "人狼会話のサンプル。上ボーダー＋アバターリングが wolf。",
+      "人狼会話。右上 + 左下の両コーナーから血色が差し込む。",
       "狼B",
     ),
     color: "#8ab4ff",
   },
   {
-    message: makeMessage(MESSAGE_TYPE.PRIVATE_FANATIC, "狂信者の私語。タグは [信] が残る。", "狂C"),
+    message: makeMessage(
+      MESSAGE_TYPE.PRIVATE_FANATIC,
+      "狂信者の私語。fanatic variant（くすんだ橙）+ 名前も橙 override + 「狂信」タグ。",
+      "狂C",
+    ),
     color: null,
   },
   {
-    message: makeMessage(MESSAGE_TYPE.SYMPATHIZE_SAY, "共有者会話のサンプル。", "共D"),
+    message: makeMessage(
+      MESSAGE_TYPE.SYMPATHIZE_SAY,
+      "共有者会話。右上 + 左下の両コーナーから苔緑が差し込む。",
+      "共D",
+    ),
     color: "#86c990",
   },
   {
     message: makeMessage(
       MESSAGE_TYPE.MONOLOGUE_SAY,
-      "独り言サンプル。dotted 左ボーダー + italic。",
+      "独り言。背景透過、左下から mono 灰がうっすら + italic。",
       "村人E",
     ),
     color: null,
@@ -377,7 +385,7 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.GRAVE_SAY,
-      "墓下発言サンプル。dashed 上ボーダー + italic。",
+      "墓下発言。左下から grave 色が湧き上がる + italic。",
       "亡霊F",
     ),
     color: "#88d0ff",
@@ -385,19 +393,39 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.SPECTATE_SAY,
-      "観戦発言サンプル。dashed 上ボーダー（seer 色）。",
+      "観戦発言。線なし、右上から淡 seer グラデのみ。",
       "観戦G",
     ),
     color: null,
   },
   {
-    message: makeMessage(MESSAGE_TYPE.CREATOR_SAY, "村建てメッセージ。上ボーダーが gold。", null),
+    message: makeMessage(
+      MESSAGE_TYPE.CREATOR_SAY,
+      "村建てメッセージ。紫系（medium）の rim で他 variant と統一。",
+      null,
+    ),
     color: null,
   },
   {
     message: makeMessage(
       MESSAGE_TYPE.PRIVATE_SEER,
-      "占い結果のシステム通知（normal フォールバック）。",
+      "占い結果のシステム通知。村陣営 → village_info（緑系）。",
+      null,
+    ),
+    color: null,
+  },
+  {
+    message: makeMessage(
+      MESSAGE_TYPE.PRIVATE_PSYCHIC,
+      "霊媒結果のシステム通知。死霊と繋がる役 → psychic_info（grave 系の水色 / 全周 border）。",
+      null,
+    ),
+    color: null,
+  },
+  {
+    message: makeMessage(
+      MESSAGE_TYPE.PUBLIC_SYSTEM,
+      "システム通知のサンプル（投票結果 / 開始終了等）。白系の全周 border。",
       null,
     ),
     color: null,
