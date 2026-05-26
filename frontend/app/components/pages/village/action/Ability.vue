@@ -4,8 +4,8 @@
     <p class="mb-2 font-bold text-fg">能力行使</p>
     <p class="mb-2 text-fg">
       <span v-for="(line, idx) in abilityMessageLines" :key="idx">
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="line" /><br />
+        <span :class="line.isWarning ? 'text-wolf' : ''">{{ line.text }}</span
+        ><br />
       </span>
     </p>
 
@@ -90,29 +90,48 @@ const targetOptions = computed(() => {
 
 const canSubmit = computed(() => participantId.value != null);
 
-const abilityMessageLines = computed(() => {
-  let message = "";
+interface AbilityMessageLine {
+  text: string;
+  isWarning: boolean;
+}
+
+const abilityMessageLines = computed((): AbilityMessageLine[] => {
   const type = props.abilityType;
+  const lines: AbilityMessageLine[] = [];
+
   if (type === "ATTACK") {
-    message = "襲撃対象を選択してください。";
+    lines.push({ text: "襲撃対象を選択してください。", isWarning: false });
   } else if (type === "DIVINE") {
-    message = "占う対象を選択してください。";
+    lines.push({ text: "占う対象を選択してください。", isWarning: false });
   } else if (type === "GUARD") {
-    message = "護衛対象を選択してください。";
+    lines.push({ text: "護衛対象を選択してください。", isWarning: false });
   }
-  message += "\n一度決定すると取り消すことができないため注意してください。";
+  lines.push({
+    text: "一度決定すると取り消すことができないため注意してください。",
+    isWarning: false,
+  });
   if (type === "GUARD" && !village.value?.setting.rules.available_same_target_guard) {
-    message += "\nまた、この村では、2日連続同じ対象を護衛できないため注意してください。";
+    lines.push({
+      text: "また、この村では、2日連続同じ対象を護衛できないため注意してください。",
+      isWarning: false,
+    });
   }
   if (type === "ATTACK") {
-    message += "\n襲撃は誰か1人が行使すると他の人は操作不可能になります。\n";
+    lines.push({
+      text: "襲撃は誰か1人が行使すると他の人は操作不可能になります。",
+      isWarning: false,
+    });
+    lines.push({ text: "", isWarning: false });
   }
-  message +=
-    '\n<span class="text-wolf">能力行使しなかった場合突然死するため、必ず能力を行使してください。</span>';
+  lines.push({ text: "", isWarning: false });
+  lines.push({
+    text: "能力行使しなかった場合突然死するため、必ず能力を行使してください。",
+    isWarning: true,
+  });
   if (type === "ATTACK") {
-    message += "\n襲撃は誰か1人が行使すれば全員突然死しません。";
+    lines.push({ text: "襲撃は誰か1人が行使すれば全員突然死しません。", isWarning: false });
   }
-  return message.replace(/\n/gm, "<br>").split("<br>");
+  return lines;
 });
 
 const abilityButtonString = computed(() => {

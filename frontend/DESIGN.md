@@ -217,9 +217,8 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 ### ヘッダー
 
-- 背景: `linear-gradient(180deg, var(--color-soft), var(--color-base))` + 下端 `border-line-soft` の 1px ライン
-- 上端 1px の `gold` グラデ線（左右暗→中央 gold で「ステンドグラスのストリップが一筋光る」イメージ）
-- ロゴ: `text-bone` + blood-deep のテキストシャドウ（`lastwolf.webp` の赤いオーラと整合。Phase 2 で steel-blue から Black & Blood にピボット済）
+- 背景: `linear-gradient(180deg, var(--color-soft), var(--color-base))` を bg に、**上端 1px の gold グラデ線**（`::before` で transparent→gold→transparent の中央寄せ。ステンドグラスのストリップが一筋光るイメージ）+ **下端 1px の `border-line-soft`** で本体と区切る
+- ロゴ: `text-bone` + 二段の blood グロー（近距離 `blood-deep` + 遠距離 `blood`、`color-mix(... transparent)` 経由）。`lastwolf.webp` の赤いオーラと整合（Phase 2 で steel-blue から Black & Blood にピボット済）
 - 旧仕様にあった月色順のコニックグラデアバターは、トップにアバター表示がないため未実装（必要になったタイミングで blood/ember/gold 構成で再設計する）
 
 ### カードヘッダー（村画面の参加者・進行・チャット等のセクションヘッダ）
