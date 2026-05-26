@@ -57,7 +57,10 @@ class CreatorDomainService(
     // ===================================================================================
     //                                                                        Assist Logic
     //                                                                        ============
-    // 「村建て or GM（ダミー枠の参加者）」のみ true。管理者ロールはここでは見ない（廃村だけは isAvailableCancelVillage で別判定）
+    // 「村建て or GM（ダミー枠の参加者）」のみ true。管理者ロールはここでは見ない（廃村だけは isAvailableCancelVillage で別判定）。
+    // 仕様メモ: 廃村は決着でも実行可能だが、本メソッドは isFinished() (= 廃村/終了) で弾いている。
+    // ため決着では本メソッド経由のフラグ群 (isAvailableCreatorSay 等) は false になる。決着で廃村可能なのは isAvailableCancelVillage が
+    // 本メソッドに依存せず独立して判定しているため。将来本メソッドのガードを変える際は isAvailableCancelVillage の独立性を維持すること。
     private fun isAvailableCreatorSetting(
         village: Village,
         player: Player?,
