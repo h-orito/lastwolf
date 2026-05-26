@@ -220,13 +220,6 @@ const close = () => {
 </script>
 
 <style scoped>
-.row-stripe:nth-child(odd) {
-  background-color: var(--color-elev);
-}
-.row-stripe:nth-child(even) {
-  background-color: var(--color-soft);
-}
-
 .help-toggle {
   color: var(--color-fg-muted);
   transition: color 150ms ease;

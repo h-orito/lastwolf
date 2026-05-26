@@ -120,14 +120,14 @@ defineExpose({ refreshTimer });
   background: linear-gradient(
     180deg,
     var(--color-mason) 0%,
-    color-mix(in srgb, var(--color-mason) 70%, #000) 100%
+    color-mix(in srgb, var(--color-mason) 70%, var(--color-deep)) 100%
   );
 }
 .bar-warn {
   background: linear-gradient(
     180deg,
     var(--color-seer) 0%,
-    color-mix(in srgb, var(--color-seer) 70%, #000) 100%
+    color-mix(in srgb, var(--color-seer) 70%, var(--color-deep)) 100%
   );
 }
 .bar-danger {
@@ -138,7 +138,7 @@ defineExpose({ refreshTimer });
   background: linear-gradient(
     180deg,
     var(--color-fg-muted) 0%,
-    color-mix(in srgb, var(--color-fg-muted) 60%, #000) 100%
+    color-mix(in srgb, var(--color-fg-muted) 60%, var(--color-deep)) 100%
   );
 }
 </style>

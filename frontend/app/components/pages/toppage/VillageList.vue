@@ -26,7 +26,7 @@
         <tbody>
           <tr v-for="village in villages" :key="village.id" class="row-stripe">
             <td class="border-b border-line-soft px-3 py-1">
-              <NuxtLink :to="{ path: '/village', query: { id: village.id } }" class="village-link">
+              <NuxtLink :to="{ path: '/village', query: { id: village.id } }" class="text-link">
                 {{ `${village.id}. ${village.name}` }}
               </NuxtLink>
             </td>
@@ -58,25 +58,3 @@ withDefaults(defineProps<Props>(), {
   loadingVillages: false,
 });
 </script>
-
-<style scoped>
-.row-stripe:nth-child(odd) {
-  background-color: var(--color-elev);
-}
-.row-stripe:nth-child(even) {
-  background-color: var(--color-soft);
-}
-
-/* テキストリンクには text-blood（CTA 色）。ember は rim 専用なので使わず、hover は明度を引き上げる */
-.village-link {
-  color: var(--color-blood);
-  transition:
-    color 150ms ease,
-    text-shadow 150ms ease;
-}
-.village-link:hover {
-  color: #ff5b5b;
-  text-decoration: underline;
-  text-shadow: 0 0 8px rgba(224, 46, 46, 0.4);
-}
-</style>

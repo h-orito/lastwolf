@@ -6,8 +6,8 @@
 
 <script setup lang="ts">
 // NavBar: Black & Blood 世界観に合わせたヘッダー
-// - 背景: linear-gradient(180deg, bg-soft, bg-base) + 上端 1px の gold グラデ線
-// - ロゴ: 月白テキスト + blood-deep のテキストシャドウ（lastwolf 赤グローと整合）
+// - 背景: linear-gradient(180deg, soft, base) + 上端 1px の gold グラデ線
+// - ロゴ: bone (warm white) + blood-deep 近距離 / blood 遠距離の二段グロー（lastwolf.webp の赤いオーラと整合）
 </script>
 
 <style scoped>

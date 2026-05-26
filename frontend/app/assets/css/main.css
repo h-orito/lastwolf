@@ -52,6 +52,35 @@ a {
   text-decoration: none;
 }
 
+/*
+ * 共通テキストリンク（村名・フッターリンク等）
+ * blood をベースに hover でやや明るく + 微 halo。
+ * DESIGN.md: ember は rim 専用のため、hover の明色は `color-mix(blood + bone)` で生成する。
+ */
+.text-link {
+  color: var(--color-blood);
+  transition:
+    color 150ms ease,
+    text-shadow 150ms ease;
+}
+.text-link:hover {
+  /* blood に bone を 35% 混ぜて明度だけ上げる（DESIGN.md「ember は ベタ塗り文字に使わない」原則を維持） */
+  color: color-mix(in srgb, var(--color-blood) 65%, var(--color-bone));
+  text-decoration: underline;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--color-blood) 40%, transparent);
+}
+
+/*
+ * 共通テーブルストライプ（村一覧・設定モーダル等）
+ * `.row-stripe` を <tr> に付けるだけで奇数=elev / 偶数=soft の縞模様になる。
+ */
+.row-stripe:nth-child(odd) {
+  background-color: var(--color-elev);
+}
+.row-stripe:nth-child(even) {
+  background-color: var(--color-soft);
+}
+
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {
