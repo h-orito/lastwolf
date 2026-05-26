@@ -73,9 +73,9 @@ class CreatorController(
         creatorDomainService.assertCancelVillage(village, player, user)
 
         val changedVillage = village.changeStatus(CDef.VillageStatus.廃村)
-        villageService.updateVillageDifference(village, changedVillage)
+        val updatedVillage = villageService.updateVillageDifference(village, changedVillage)
         val message = village.createCreatorCancelVillageMessage()
-        messageService.registerMessage(village, message)
+        messageService.registerMessage(updatedVillage, message)
     }
 
     @PostMapping("/creator/village/{villageId}/say-confirm")
