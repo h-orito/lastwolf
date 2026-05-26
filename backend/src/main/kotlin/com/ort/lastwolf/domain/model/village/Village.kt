@@ -31,6 +31,7 @@ data class Village(
     private val firstNightMessage: String =
         "村が開始されました。\n能力者は進行欄で能力を行使してください。\n行使せずに朝を迎えた場合、突然死してしまいます。"
 
+    // TODO: Issue #18 — 進行中・決着でも違和感ない文言 / 操作者 (村建て or 管理者) 別の文言検討
     private val creatorCancelMessage: String = "村建ての操作により廃村しました。"
 
     private val extendPrologueMessage: String = "村人が揃っていないため、開始予定時刻を1時間繰り下げました。"
