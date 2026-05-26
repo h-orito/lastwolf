@@ -26,6 +26,7 @@
         <p v-if="participant.player">
           {{ `${participant.player.nickname}@${participant.player.twitter_user_name}` }}
         </p>
+        <!-- 外部リンクボタン: UiButton は a / NuxtLink + target="_blank" の場合に rel="noopener noreferrer" を自動付与する（components/ui/button/index.vue） -->
         <div class="mt-1 flex gap-1">
           <UiButton
             v-if="participant.player"

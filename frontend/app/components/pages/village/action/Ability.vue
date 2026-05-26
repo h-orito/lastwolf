@@ -94,7 +94,9 @@ const targetOptions = computed(() => {
 const canSubmit = computed(() => participantId.value != null);
 
 // 1 つの「行」は通常テキスト行 (text + isWarning) または空行 (isBreak) のいずれか。
-// 空行は <br> 1 本だけを出力するため、隣接するテキスト行と組み合わさると視覚的に 1 行の余白になる。
+// テキスト行は末尾に <br> を出力するので、isBreak: true (= <br> のみ) を 1 つ挟むと
+// <br><br> 連続になり「テキスト → 空行 1 本 → 次のテキスト」と表示される。
+// （旧実装の `\n\n` → `.split("<br>")` で生まれる空文字列要素と同じ視覚効果）
 type AbilityMessageLine = { isBreak: false; text: string; isWarning: boolean } | { isBreak: true };
 
 const abilityMessageLines = computed((): AbilityMessageLine[] => {

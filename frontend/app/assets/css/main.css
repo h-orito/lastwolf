@@ -72,12 +72,14 @@ a {
 
 /*
  * 共通テーブルストライプ（村一覧・設定モーダル等）
- * `.row-stripe` を <tr> に付けるだけで奇数=elev / 偶数=soft の縞模様になる。
+ * `.row-stripe` を <tbody> 直下の <tr> に付けるだけで奇数=elev / 偶数=soft の縞模様になる。
+ * thead の <tr> に誤って付与しても thead 内 :first-child は odd 判定で elev になるが、
+ * thead 側は別途 `bg-soft` を当てる前提なので干渉しない（thead 内では :nth-child を使わない運用）。
  */
-.row-stripe:nth-child(odd) {
+:where(tbody) .row-stripe:nth-child(odd) {
   background-color: var(--color-elev);
 }
-.row-stripe:nth-child(even) {
+:where(tbody) .row-stripe:nth-child(even) {
   background-color: var(--color-soft);
 }
 
