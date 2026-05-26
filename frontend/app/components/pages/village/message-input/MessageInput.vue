@@ -54,6 +54,7 @@ const messageType = computed(() => {
 });
 
 const messageBgColorClass = computed(() => {
+  // 発言不可時は修飾クラスなし → .msg-input のベース (`bg-elev`) + `:disabled` の opacity 0.55 で沈ませる
   if (!canSay.value) return "";
   // メッセージ種別ごとに input の bg にロール色をうっすら載せる（dark theme 対応）
   switch (messageType.value) {

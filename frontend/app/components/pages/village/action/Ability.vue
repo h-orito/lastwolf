@@ -3,10 +3,13 @@
     <hr class="border-line-soft my-2" />
     <p class="mb-2 font-bold text-fg">能力行使</p>
     <p class="mb-2 text-fg">
-      <span v-for="(line, idx) in abilityMessageLines" :key="idx">
-        <span :class="line.isWarning ? 'text-wolf' : ''">{{ line.text }}</span
-        ><br />
-      </span>
+      <template v-for="(line, idx) in abilityMessageLines" :key="idx">
+        <br v-if="line.isBreak" />
+        <template v-else>
+          <span :class="line.isWarning ? 'text-wolf' : ''">{{ line.text }}</span
+          ><br />
+        </template>
+      </template>
     </p>
 
     <div class="mb-2">
@@ -90,46 +93,53 @@ const targetOptions = computed(() => {
 
 const canSubmit = computed(() => participantId.value != null);
 
-interface AbilityMessageLine {
-  text: string;
-  isWarning: boolean;
-}
+// 1 つの「行」は通常テキスト行 (text + isWarning) または空行 (isBreak) のいずれか。
+// 空行は <br> 1 本だけを出力するため、隣接するテキスト行と組み合わさると視覚的に 1 行の余白になる。
+type AbilityMessageLine = { isBreak: false; text: string; isWarning: boolean } | { isBreak: true };
 
 const abilityMessageLines = computed((): AbilityMessageLine[] => {
   const type = props.abilityType;
   const lines: AbilityMessageLine[] = [];
 
   if (type === "ATTACK") {
-    lines.push({ text: "襲撃対象を選択してください。", isWarning: false });
+    lines.push({ isBreak: false, text: "襲撃対象を選択してください。", isWarning: false });
   } else if (type === "DIVINE") {
-    lines.push({ text: "占う対象を選択してください。", isWarning: false });
+    lines.push({ isBreak: false, text: "占う対象を選択してください。", isWarning: false });
   } else if (type === "GUARD") {
-    lines.push({ text: "護衛対象を選択してください。", isWarning: false });
+    lines.push({ isBreak: false, text: "護衛対象を選択してください。", isWarning: false });
   }
   lines.push({
+    isBreak: false,
     text: "一度決定すると取り消すことができないため注意してください。",
     isWarning: false,
   });
   if (type === "GUARD" && !village.value?.setting.rules.available_same_target_guard) {
     lines.push({
+      isBreak: false,
       text: "また、この村では、2日連続同じ対象を護衛できないため注意してください。",
       isWarning: false,
     });
   }
   if (type === "ATTACK") {
     lines.push({
+      isBreak: false,
       text: "襲撃は誰か1人が行使すると他の人は操作不可能になります。",
       isWarning: false,
     });
-    lines.push({ text: "", isWarning: false });
+    // ATTACK 時のみ警告の前に空行を 1 つ挟む（旧実装の "\n\n" 相当）
+    lines.push({ isBreak: true });
   }
-  lines.push({ text: "", isWarning: false });
   lines.push({
+    isBreak: false,
     text: "能力行使しなかった場合突然死するため、必ず能力を行使してください。",
     isWarning: true,
   });
   if (type === "ATTACK") {
-    lines.push({ text: "襲撃は誰か1人が行使すれば全員突然死しません。", isWarning: false });
+    lines.push({
+      isBreak: false,
+      text: "襲撃は誰か1人が行使すれば全員突然死しません。",
+      isWarning: false,
+    });
   }
   return lines;
 });

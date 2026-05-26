@@ -453,9 +453,9 @@ onUnmounted(() => {
   }
 }
 
-/* X(Twitter) シェアボタン: 黒地に白文字 + blood rim */
+/* X(Twitter) シェアボタン: deep を base に + 微 blood で温度を持たせる（X ロゴ自体は黒地イメージを継承） */
 .x-share-link {
-  background-color: #000;
+  background-color: var(--color-deep);
   color: var(--color-bone);
   border: 1px solid var(--color-line-bright);
   transition:
@@ -463,7 +463,7 @@ onUnmounted(() => {
     border-color 150ms ease;
 }
 .x-share-link:hover {
-  background-color: #1a0606;
+  background-color: color-mix(in srgb, var(--color-wine) 35%, var(--color-deep));
   border-color: var(--color-blood-deep);
 }
 
