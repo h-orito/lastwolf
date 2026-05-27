@@ -22,6 +22,7 @@ useSeoMeta(meta);
 
 const { loginWithGoogle, loginout, isAuthenticated, waitForAuth } = useAuth();
 const router = useRouter();
+const toast = useToast();
 
 onMounted(async () => {
   const user = await waitForAuth();
@@ -37,6 +38,10 @@ async function handleGoogleLogin(): Promise<void> {
     router.push("/");
   } catch (error) {
     console.error("Googleログインに失敗しました:", error);
+    toast.add({
+      message: "ログインに失敗しました。時間をおいて再度お試しください。",
+      type: "error",
+    });
   }
 }
 </script>

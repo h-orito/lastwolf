@@ -26,7 +26,9 @@
                 <li><a href="#divine" class="text-link">占い</a></li>
                 <li><a href="#psychic" class="text-link">霊視</a></li>
                 <li><a href="#guard" class="text-link">護衛</a></li>
+                <li><a href="#forcesuicide" class="text-link">道連れ</a></li>
                 <li><a href="#attack" class="text-link">襲撃</a></li>
+                <li><a href="#foxsuicide" class="text-link">後追い（背徳者）</a></li>
               </ul>
             </li>
           </ul>
