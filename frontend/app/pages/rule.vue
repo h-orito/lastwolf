@@ -36,7 +36,7 @@
 
         <div class="space-y-7 text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
           <section>
-            <h3 id="create-village" class="doc-section-heading">村作成</h3>
+            <h2 id="create-village" class="doc-section-heading">村作成</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
               <li>
                 プレイヤーが村を作成できます。
@@ -54,7 +54,7 @@
           </section>
 
           <section>
-            <h3 id="creator" class="doc-section-heading">村建てが行えること</h3>
+            <h2 id="creator" class="doc-section-heading">村建てが行えること</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
               <li>村の設定変更（募集中のみ）</li>
               <li>
@@ -82,7 +82,7 @@
           </section>
 
           <section>
-            <h3 id="overall" class="doc-section-heading">大まかな流れ</h3>
+            <h2 id="overall" class="doc-section-heading">大まかな流れ</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
               <li>
                 募集中
@@ -157,7 +157,7 @@
           </section>
 
           <section>
-            <h3 id="skill-assign" class="doc-section-heading">役職割り当て</h3>
+            <h2 id="skill-assign" class="doc-section-heading">役職割り当て</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
               <li>村の開始時、以下のように役職が割り当てられます。</li>
               <li>
@@ -195,7 +195,7 @@
           </section>
 
           <section>
-            <h3 id="vote" class="doc-section-heading">投票</h3>
+            <h2 id="vote" class="doc-section-heading">投票</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
               <li>自分以外の生存者に投票することができます。</li>
               <li>全員が投票すると、誰が誰に投票したか公開されます。</li>
@@ -208,7 +208,7 @@
           </section>
 
           <section>
-            <h3 id="commit" class="doc-section-heading">時短希望</h3>
+            <h2 id="commit" class="doc-section-heading">時短希望</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
               <li>昼時間と夜時間に、生存者は時短を希望することができます。</li>
               <li>
@@ -219,7 +219,7 @@
           </section>
 
           <section>
-            <h3 id="suddenly-death" class="doc-section-heading">突然死</h3>
+            <h2 id="suddenly-death" class="doc-section-heading">突然死</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
               <li>夜時間に能力行使をしなかった/投票時間に投票しなかった生存者は突然死します。</li>
               <li>突然死者はエピローグ以外で一切の発言ができなくなります。</li>
@@ -236,7 +236,7 @@
           </section>
 
           <section>
-            <h3 id="night-process" class="doc-section-heading">投票→夜時間の処理</h3>
+            <h2 id="night-process" class="doc-section-heading">投票→夜時間の処理</h2>
             <ol class="list-decimal space-y-1 pl-6 marker:text-blood-deep">
               <li>突然死</li>
               <li>処刑</li>
@@ -246,7 +246,7 @@
           </section>
 
           <section>
-            <h3 id="noon-process" class="doc-section-heading">夜→昼時間の処理</h3>
+            <h2 id="noon-process" class="doc-section-heading">夜→昼時間の処理</h2>
             <ol class="list-decimal space-y-1 pl-6 marker:text-blood-deep">
               <li>突然死</li>
               <li>呪殺</li>
@@ -256,18 +256,18 @@
           </section>
 
           <section>
-            <h3 id="skill" class="doc-section-heading">役職</h3>
+            <h2 id="skill" class="doc-section-heading">役職</h2>
             <RuleSkill v-if="!loading && skillList.length > 0" :skill-list="skillList" />
             <div v-else-if="loading" class="text-fg-muted">読み込み中...</div>
           </section>
 
           <section>
-            <h3 id="ability" class="doc-section-heading">能力行使</h3>
+            <h2 id="ability" class="doc-section-heading">能力行使</h2>
             <RuleAbility />
           </section>
 
           <section>
-            <h3 class="doc-section-heading">陣営、勝利条件</h3>
+            <h2 class="doc-section-heading">陣営、勝利条件</h2>
             <div class="overflow-x-auto">
               <table class="w-full border-collapse text-fg">
                 <thead>

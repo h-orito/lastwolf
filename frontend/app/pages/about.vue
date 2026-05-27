@@ -7,13 +7,12 @@
         </header>
 
         <div class="space-y-7 text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
-          <section>
-            <ul class="list-disc space-y-1.5 pl-6 marker:text-blood-deep">
-              <li>LASTWOLFは、オンラインで短期人狼が遊べるサイトです。</li>
-              <li>ユーザが自分で好きな設定の村を作成することができます。</li>
-              <li>機能の豊富さよりもわかりやすさを優先し、シンプルにしています。</li>
-            </ul>
-          </section>
+          <!-- h1「このサイトは」直下のリード文。h2 を持たないので section ではなく単独ブロック -->
+          <ul class="list-disc space-y-1.5 pl-6 marker:text-blood-deep">
+            <li>LASTWOLFは、オンラインで短期人狼が遊べるサイトです。</li>
+            <li>ユーザが自分で好きな設定の村を作成することができます。</li>
+            <li>機能の豊富さよりもわかりやすさを優先し、シンプルにしています。</li>
+          </ul>
 
           <section>
             <h2 class="doc-section-heading">注意事項</h2>

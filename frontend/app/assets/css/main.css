@@ -395,7 +395,9 @@ a {
  *
  * h1 は `.section-heading` + `.section-title` で章中央タイトル。
  * h2 はこの `.doc-section-heading` で軽い章タイトル（下にライン）。
- * h3 はこの `.doc-sub-heading` で小見出し（ライン無し）。
+ *   - `rule.vue` のように h2 内に h3 を持たないページでは h3 にも適用可。
+ * h4 はこの `.doc-sub-heading` で小見出し（ライン無し）。
+ *   - 例: `RuleAbility.vue` の能力ごとの見出し。
  *
  * 役職表など table の `.row-stripe` ・リンクの `.text-link` と組み合わせる。
  */
@@ -409,6 +411,11 @@ a {
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--color-line-soft);
 }
+/*
+ * 小見出し: h4 想定。h2 (= `.doc-section-heading`) の中で更に小区分を作るとき用。
+ * h2 とのコントラストを保つため、h2 がレスポンシブで sm 以上で 1.0625rem に上がっても
+ * .doc-sub-heading はそのまま 0.9375rem に固定する（小見出しらしさを維持）。
+ */
 .doc-sub-heading {
   font-family: var(--font-serif);
   font-size: 0.9375rem;
