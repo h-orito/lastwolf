@@ -6,9 +6,9 @@
         :class="{ 'is-disabled': !canSay }"
         aria-hidden="true"
       />
-      <!-- @keypress.exact.enter / .shift.enter は UiFormInput のラッパー <div> に付くが、
-        内側 <input> から keypress がバブリングして同じハンドラが発火する。
-        UiFormInput が inheritAttrs: false + $attrs を div に渡す構造のため。 -->
+      <!-- @keypress.exact.enter / .shift.enter は UiFormInput が inheritAttrs: false + $attrs を
+        ラッパー <div> に渡す構造のため、最終的に div に付く。keypress は内側 <input> から
+        div へバブリングして発火するので意図通り動作する。 -->
       <UiFormInput
         v-model="message"
         type="text"

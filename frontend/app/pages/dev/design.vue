@@ -44,40 +44,40 @@
         <div class="space-y-3 rounded border border-line-soft bg-elev p-4">
           <div class="text-xs text-fg-secondary">variant（和文ラベル / 実運用の主シナリオ）</div>
           <div class="flex flex-wrap gap-3">
-            <BaseButton button-type="primary">決定</BaseButton>
-            <BaseButton button-type="secondary">キャンセル</BaseButton>
-            <BaseButton button-type="danger">退村する</BaseButton>
-            <BaseButton button-type="ghost">閉じる</BaseButton>
+            <UiButton button-type="primary">決定</UiButton>
+            <UiButton button-type="secondary">キャンセル</UiButton>
+            <UiButton button-type="danger">退村する</UiButton>
+            <UiButton button-type="ghost">閉じる</UiButton>
           </div>
 
           <div class="mt-4 text-xs text-fg-secondary">variant（英字ラベル）</div>
           <div class="flex flex-wrap gap-3">
-            <BaseButton button-type="primary">Primary</BaseButton>
-            <BaseButton button-type="secondary">Secondary</BaseButton>
-            <BaseButton button-type="danger">Danger</BaseButton>
-            <BaseButton button-type="ghost">Ghost</BaseButton>
+            <UiButton button-type="primary">Primary</UiButton>
+            <UiButton button-type="secondary">Secondary</UiButton>
+            <UiButton button-type="danger">Danger</UiButton>
+            <UiButton button-type="ghost">Ghost</UiButton>
           </div>
 
           <div class="mt-4 text-xs text-fg-secondary">loading</div>
           <div class="flex flex-wrap gap-3">
-            <BaseButton button-type="primary" loading>送信中</BaseButton>
-            <BaseButton button-type="secondary" loading>処理中</BaseButton>
-            <BaseButton button-type="danger" loading>退村中</BaseButton>
-            <BaseButton button-type="ghost" loading>読込中</BaseButton>
+            <UiButton button-type="primary" loading>送信中</UiButton>
+            <UiButton button-type="secondary" loading>処理中</UiButton>
+            <UiButton button-type="danger" loading>退村中</UiButton>
+            <UiButton button-type="ghost" loading>読込中</UiButton>
           </div>
 
           <div class="mt-4 text-xs text-fg-secondary">disabled</div>
           <div class="flex flex-wrap gap-3">
-            <BaseButton button-type="primary" disabled>決定</BaseButton>
-            <BaseButton button-type="secondary" disabled>キャンセル</BaseButton>
-            <BaseButton button-type="danger" disabled>退村する</BaseButton>
-            <BaseButton button-type="ghost" disabled>閉じる</BaseButton>
+            <UiButton button-type="primary" disabled>決定</UiButton>
+            <UiButton button-type="secondary" disabled>キャンセル</UiButton>
+            <UiButton button-type="danger" disabled>退村する</UiButton>
+            <UiButton button-type="ghost" disabled>閉じる</UiButton>
           </div>
 
           <div class="mt-4 text-xs text-fg-secondary">block</div>
           <div class="flex flex-col gap-2">
-            <BaseButton button-type="primary" block>村に入る</BaseButton>
-            <BaseButton button-type="secondary" block>キャンセル</BaseButton>
+            <UiButton button-type="primary" block>村に入る</UiButton>
+            <UiButton button-type="secondary" block>キャンセル</UiButton>
           </div>
         </div>
       </section>
@@ -136,11 +136,11 @@
       <section id="modal" class="space-y-4">
         <h2 class="font-serif text-xl text-moon">Modal</h2>
         <div class="flex flex-wrap gap-3 rounded border border-line-soft bg-elev p-4">
-          <BaseButton button-type="primary" @click="showModalA = true">タイトルのみ</BaseButton>
-          <BaseButton button-type="secondary" @click="showModalB = true"
-            >タイトル + フッター</BaseButton
+          <UiButton button-type="primary" @click="showModalA = true">タイトルのみ</UiButton>
+          <UiButton button-type="secondary" @click="showModalB = true"
+            >タイトル + フッター</UiButton
           >
-          <BaseButton button-type="ghost" @click="showModalC = true">タイトルなし</BaseButton>
+          <UiButton button-type="ghost" @click="showModalC = true">タイトルなし</UiButton>
         </div>
 
         <BaseModal v-model="showModalA" title="タイトル例">
@@ -154,8 +154,8 @@
         <BaseModal v-model="showModalB" title="確認">
           <p>削除してよろしいですか？</p>
           <template #footer>
-            <BaseButton button-type="ghost" @click="showModalB = false">キャンセル</BaseButton>
-            <BaseButton button-type="danger" @click="showModalB = false">削除</BaseButton>
+            <UiButton button-type="ghost" @click="showModalB = false">キャンセル</UiButton>
+            <UiButton button-type="danger" @click="showModalB = false">削除</UiButton>
           </template>
         </BaseModal>
 
@@ -168,9 +168,9 @@
       <section id="toast" class="space-y-4">
         <h2 class="font-serif text-xl text-moon">Toast</h2>
         <div class="flex flex-wrap gap-3 rounded border border-line-soft bg-elev p-4">
-          <BaseButton button-type="secondary" @click="fireToast('info')">info</BaseButton>
-          <BaseButton button-type="primary" @click="fireToast('success')">success</BaseButton>
-          <BaseButton button-type="danger" @click="fireToast('error')">error</BaseButton>
+          <UiButton button-type="secondary" @click="fireToast('info')">info</UiButton>
+          <UiButton button-type="primary" @click="fireToast('success')">success</UiButton>
+          <UiButton button-type="danger" @click="fireToast('error')">error</UiButton>
         </div>
       </section>
 
@@ -207,11 +207,11 @@
       <section id="chara-select" class="space-y-4">
         <h2 class="font-serif text-xl text-moon">Chara Select</h2>
         <div class="flex flex-wrap gap-3 rounded border border-line-soft bg-elev p-4">
-          <BaseButton button-type="secondary" @click="showCharaSelect = true"
-            >CharaSelectModal</BaseButton
+          <UiButton button-type="secondary" @click="showCharaSelect = true"
+            >CharaSelectModal</UiButton
           >
-          <BaseButton button-type="secondary" @click="showParticipantSelect = true"
-            >ParticipantSelectModal</BaseButton
+          <UiButton button-type="secondary" @click="showParticipantSelect = true"
+            >ParticipantSelectModal</UiButton
           >
         </div>
 
@@ -231,7 +231,7 @@
 </template>
 
 <script setup lang="ts">
-import BaseButton from "~/components/ui/button/index.vue";
+import UiButton from "~/components/ui/button/index.vue";
 import BaseModal from "~/components/ui/modal/Modal.vue";
 import FormGroup from "~/components/ui/form/FormGroup.vue";
 import FormInput from "~/components/ui/form/FormInput.vue";

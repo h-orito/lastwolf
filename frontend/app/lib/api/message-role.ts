@@ -50,7 +50,11 @@ export const INFO_WOLF_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_WEREWOLF]);
 // 狂信者への通知（人狼仲間の情報等）。橙テキスト
 export const INFO_FANATIC_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_FANATIC]);
 
-// 村陣営の役職限定通知。共有者通知 + 占い・賢者・グル・検視官の結果を緑（mason）テキストで揃える
+// 村陣営の役職限定通知。共有者通知 + 占い・賢者・グル・検視官の結果を緑（mason）テキストで揃える。
+// PRIVATE_MASON は旧 MASON_CODES（会話バブル扱い）から本セットに移動した。共有者の SAY (SYMPATHIZE_SAY)
+// は会話扱いだが、PRIVATE_MASON は「あなたは共有者で、仲間は X」のシステム生成通知なので、他の
+// PRIVATE_SEER/WISE/GURU/CORONER と同じく info_village（緑テキスト、bg なし）に統一する。
+// DESIGN.md「村陣営の象徴色として揃える」方針を踏襲。
 export const INFO_VILLAGE_CODES = new Set<string>([
   MESSAGE_TYPE.PRIVATE_MASON,
   MESSAGE_TYPE.PRIVATE_SEER,
