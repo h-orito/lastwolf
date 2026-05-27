@@ -28,7 +28,10 @@
       <UiFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
     </div>
 
-    <!-- 入村パスワード -->
+    <!-- 入村パスワード
+      type="text" は意図的: 入村パスワードは「村参加用の合言葉」(村建てが Twitter 等で公開シェアする運用)
+      であり機密情報ではない。type="password" にするとパスワードマネージャーが誤認・自動入力を試みて
+      UX を阻害するため平文表示で良い。 -->
     <div v-if="requiredJoinPassword" class="mb-2">
       <label class="block text-xs mb-1 text-fg">入村パスワード</label>
       <UiFormInput v-model="joinPassword" type="text" />

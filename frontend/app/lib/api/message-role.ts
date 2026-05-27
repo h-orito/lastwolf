@@ -67,3 +67,13 @@ export const INFO_SYSTEM_CODES = new Set<string>([
   MESSAGE_TYPE.PUBLIC_SYSTEM,
   MESSAGE_TYPE.PRIVATE_SYSTEM,
 ]);
+
+/**
+ * 意図的に上記いずれにも含めないコード:
+ *   - LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系で会話バブル扱い → normal フォールバック
+ *   - PRIVATE_FOX: 妖狐への私信。第三陣営寄りで陣営色のトークンが未定義 → normal フォールバック
+ *   - PRIVATE_SYMPATHIZER: 共鳴者への私信。陣営定義が不明確 → normal フォールバック
+ *   - PRIVATE_LOVERS: 恋人への私信。陣営横断のため特定色を当てない → normal フォールバック
+ * これらは Message.vue 側で messageType prefix（"[狐]" "[共]" 等）で識別される。
+ * 将来 DESIGN.md に専用色が定義されたら適切な info_* セットに追加すること。
+ */
