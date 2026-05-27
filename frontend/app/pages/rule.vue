@@ -263,6 +263,9 @@
             <h2 id="skill" class="doc-section-heading">役職</h2>
             <RuleSkill v-if="!loading && skillList.length > 0" :skill-list="skillList" />
             <div v-else-if="loading" class="text-fg-muted">読み込み中...</div>
+            <div v-else class="text-fg-muted">
+              役職一覧の取得に失敗しました。時間をおいて再度お試しください。
+            </div>
           </section>
 
           <section>

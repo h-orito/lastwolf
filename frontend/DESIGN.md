@@ -231,7 +231,7 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 ### ドキュメントページ（about / rule / faq / release-note / google-auth 等の長文ページ）
 
 - 全体: `<section class="px-4 py-6 sm:py-8">` + `mx-auto max-w-3xl`（読みやすさ優先で 3xl、表が多い `rule` は `max-w-4xl`） + `.panel px-5 py-6 sm:px-7 sm:py-8`
-- ページタイトル h1: `.section-heading` + `.section-title`（中央寄せ和文タイトル + 下細線）
+- ページタイトル: `<header class="section-heading"><h1 class="section-title">…</h1></header>`（`.section-heading` で中央寄せ + 下細線、`.section-title` で和文タイトル書式）
 - 章タイトル h2: `.doc-section-heading`（軽い下細線あり）
 - 小見出し h3: `.doc-sub-heading`（線なし、`RuleAbility.vue` の能力ごと等）
 - 本文: `text-sm leading-relaxed text-fg sm:text-[0.9375rem]`
