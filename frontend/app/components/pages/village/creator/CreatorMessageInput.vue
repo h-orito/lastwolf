@@ -1,14 +1,14 @@
 <template>
   <div>
-    <textarea
-      :value="modelValue"
+    <UiFormInput
+      :model-value="modelValue"
+      type="textarea"
       placeholder="村建て発言"
-      rows="5"
-      class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] font-sans resize-y"
-      @input="onInput"
+      :rows="5"
+      @update:model-value="onUpdate"
     />
     <p class="text-right text-xs mt-1">
-      <span :class="isLengthOver ? 'text-red-600' : ''">
+      <span :class="isLengthOver ? 'text-wolf' : 'text-fg-secondary'">
         文字数: {{ currentLength }}/{{ maxLength }}
       </span>
     </p>
@@ -16,6 +16,8 @@
 </template>
 
 <script setup lang="ts">
+import UiFormInput from "~/components/ui/form/FormInput.vue";
+
 interface Props {
   modelValue: string;
 }
@@ -36,8 +38,8 @@ const currentLength = computed(() => {
 
 const isLengthOver = computed(() => currentLength.value > maxLength);
 
-const onInput = (e: Event) => {
-  emit("update:modelValue", (e.target as HTMLTextAreaElement).value);
+const onUpdate = (value: string) => {
+  emit("update:modelValue", value);
 };
 
 defineExpose({ isLengthOver });

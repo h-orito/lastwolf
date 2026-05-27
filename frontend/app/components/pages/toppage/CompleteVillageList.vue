@@ -1,30 +1,35 @@
 <template>
-  <div class="overflow-x-auto">
-    <table class="w-full border-collapse bg-white text-sm">
-      <thead>
-        <tr>
-          <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">村名</th>
-          <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">人数</th>
-          <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">編成</th>
-          <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">勝利</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="village in tableVillages" :key="village.id" class="odd:bg-white even:bg-gray-50">
-          <td class="border-b border-gray-200 px-3 py-1">
-            <NuxtLink
-              :to="{ path: '/village', query: { id: village.id } }"
-              class="text-blue-600 hover:text-blue-800"
-            >
-              {{ village.name }}
-            </NuxtLink>
-          </td>
-          <td class="border-b border-gray-200 px-3 py-1">{{ village.participantCount }}</td>
-          <td class="border-b border-gray-200 px-3 py-1">{{ village.organization }}</td>
-          <td class="border-b border-gray-200 px-3 py-1">{{ village.winCamp }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div>
+    <nav v-if="tableVillages.length > 0" class="registry" aria-label="最近終了した村一覧">
+      <NuxtLink
+        v-for="v in tableVillages"
+        :key="v.id"
+        :to="{ path: '/village', query: { id: v.id } }"
+        class="registry-entry"
+      >
+        <span class="registry-numeral" aria-hidden="true">
+          <span class="registry-numeral-mark">№</span>
+          <span class="registry-numeral-id">{{ v.id }}</span>
+        </span>
+        <span class="registry-rule" aria-hidden="true"></span>
+        <span class="registry-text">
+          <span class="registry-title">{{ v.name }}</span>
+          <span class="registry-meta">
+            <span class="registry-meta-field">{{ v.participantCount }}</span>
+            <span class="registry-meta-sep" aria-hidden="true">·</span>
+            <span class="registry-meta-field">{{ v.organization }}</span>
+            <span class="registry-meta-sep" aria-hidden="true">·</span>
+            <span class="registry-meta-camp">{{ v.winCamp }}</span>
+          </span>
+        </span>
+        <span class="registry-arrow" aria-hidden="true">→</span>
+      </NuxtLink>
+    </nav>
+
+    <div v-else class="registry-state">
+      <span class="registry-state-mark" aria-hidden="true">—</span>
+      <span class="registry-state-text">終了した村はありません</span>
+    </div>
   </div>
 </template>
 
@@ -50,3 +55,19 @@ const tableVillages = computed(() =>
   })),
 );
 </script>
+
+<style scoped>
+.registry-numeral-mark {
+  font-size: 0.7em;
+  margin-right: 0.18em;
+  opacity: 0.75;
+}
+.registry-numeral-id {
+  letter-spacing: 0.04em;
+}
+
+/* 勝利陣営は bone で軽く強調（meta の他項目より目立たせる） */
+.registry-meta-camp {
+  color: var(--color-bone);
+}
+</style>

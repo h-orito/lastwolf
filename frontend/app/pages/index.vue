@@ -1,61 +1,56 @@
 <template>
   <div>
-    <!-- スポットライト -->
+    <!-- 画面上部のヘッダー: LASTWOLF + ユーザー情報 -->
+    <TopHeader />
+
+    <!-- スポットライト（フルブリードのヒーロー画像） -->
     <Spotlight />
 
-    <!-- イントロ -->
-    <Intro />
+    <!-- 以下のセクションは max-w コンテナにまとめて panel として並べる -->
+    <div class="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:space-y-8 sm:px-6 sm:py-8">
+      <!-- イントロ -->
+      <Intro />
 
-    <!-- プレイヤー情報・ログイン -->
-    <PlayerStats />
+      <!-- プレイヤー情報・ログイン -->
+      <PlayerStats />
 
-    <!-- 村一覧 -->
-    <section class="py-8 px-4 bg-white">
-      <div class="max-w-5xl mx-auto text-center">
-        <h1 class="text-lg font-bold mb-4">村一覧</h1>
-        <div class="text-sm">
+      <!-- 村一覧 -->
+      <section class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <div class="mx-auto max-w-2xl">
+          <header class="section-heading">
+            <h2 class="section-title">村一覧</h2>
+          </header>
           <VillageList :villages="villages" :loading-villages="loadingVillages" />
-          <div class="mt-4 flex flex-wrap justify-center gap-2">
-            <NuxtLink
-              v-if="canCreateVillage"
-              to="/create-village"
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-[#3991f4] text-white hover:bg-[#2c7ae0] transition-colors"
-            >
+          <div class="mt-5 flex flex-wrap justify-center gap-2">
+            <UiButton button-type="primary" :disabled="!canCreateVillage" to="/create-village">
               村を作成
-            </NuxtLink>
-            <span
-              v-else
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-400 cursor-not-allowed"
-            >
-              村を作成
-            </span>
-            <NuxtLink
-              to="/village-list"
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
-            >
-              終了した村
-            </NuxtLink>
+            </UiButton>
+            <UiButton button-type="secondary" to="/village-list">終了した村</UiButton>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 最近終了した村（進行中の村がない場合） -->
-    <section v-if="completeVillages && completeVillages.length > 0" class="py-8 px-4 bg-white">
-      <div class="max-w-5xl mx-auto text-center">
-        <h1 class="text-lg font-bold mb-4">最近終了した村</h1>
-        <div class="text-sm text-left">
+      <!-- 最近終了した村（進行中の村がない場合） -->
+      <section
+        v-if="completeVillages && completeVillages.length > 0"
+        class="panel px-5 py-6 sm:px-7 sm:py-8"
+      >
+        <div class="mx-auto max-w-2xl">
+          <header class="section-heading">
+            <h2 class="section-title">最近終了した村</h2>
+          </header>
           <CompleteVillageList :villages="completeVillages" />
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- フッター -->
-    <IndexFooter />
+      <!-- フッター -->
+      <IndexFooter />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import TopHeader from "~/components/pages/toppage/TopHeader.vue";
 import Spotlight from "~/components/pages/toppage/Spotlight.vue";
 import Intro from "~/components/pages/toppage/Intro.vue";
 import PlayerStats from "~/components/pages/toppage/PlayerStats.vue";

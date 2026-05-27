@@ -1,10 +1,10 @@
 <template>
-  <div class="rounded bg-[#fafafa] text-xs mb-2">
-    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">村建て機能</div>
+  <div class="panel-compact text-fg text-xs mb-2">
+    <div class="px-3 pt-2 pb-1.5 font-bold border-b border-line-soft">村建て機能</div>
     <div class="px-3 py-2">
       <!-- 村建て発言 -->
       <div v-if="canCreatorSay" class="mb-2">
-        <strong class="block mb-1">村建て発言</strong>
+        <strong class="block mb-1 text-fg">村建て発言</strong>
         <CreatorMessageInput ref="messageInputRef" v-model="message" />
         <div class="text-right mt-1">
           <UiButton button-type="primary" :disabled="!canSay" @click="say"> 発言 </UiButton>
@@ -13,20 +13,20 @@
 
       <!-- 設定変更 -->
       <div v-if="isPrologue" class="mb-2">
-        <hr class="border-gray-200 my-2" />
-        <strong class="block mb-1">設定変更</strong>
-        <NuxtLink
+        <hr class="border-line-soft my-2" />
+        <strong class="block mb-1 text-fg">設定変更</strong>
+        <UiButton
+          button-type="secondary"
           :to="{ path: '/village-setting', query: { id: village?.id } }"
-          class="inline-block px-3 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0]"
         >
           村の設定を変更する
-        </NuxtLink>
+        </UiButton>
       </div>
 
       <!-- キック -->
       <div v-if="isPrologue" class="mb-2">
-        <hr class="border-gray-200 my-2" />
-        <strong class="block mb-1">キック</strong>
+        <hr class="border-line-soft my-2" />
+        <strong class="block mb-1 text-fg">キック</strong>
         <div class="flex gap-1">
           <UiFormSelect
             v-model="participantId"
@@ -47,9 +47,9 @@
 
       <!-- 点呼 -->
       <div v-if="isPrologue || isRollcalling" class="mb-2">
-        <hr class="border-gray-200 my-2" />
-        <strong class="block mb-1">点呼</strong>
-        <p class="mb-1">点呼を開始し、全員が点呼すると村を開始することができます。</p>
+        <hr class="border-line-soft my-2" />
+        <strong class="block mb-1 text-fg">点呼</strong>
+        <p class="mb-1 text-fg">点呼を開始し、全員が点呼すると村を開始することができます。</p>
         <div class="flex gap-1">
           <UiButton button-type="primary" :disabled="!canStartRollcall" @click="startRollcall">
             点呼を開始する
@@ -62,9 +62,9 @@
 
       <!-- 村の開始 -->
       <div v-if="isPrologue || isRollcalling" class="mb-2">
-        <hr class="border-gray-200 my-2" />
-        <strong class="block mb-1">村の開始</strong>
-        <p v-if="isRollcalling" class="mb-1">{{ currentDoneRollcallCount }}</p>
+        <hr class="border-line-soft my-2" />
+        <strong class="block mb-1 text-fg">村の開始</strong>
+        <p v-if="isRollcalling" class="mb-1 text-fg">{{ currentDoneRollcallCount }}</p>
         <UiButton button-type="primary" :disabled="!canStartVillage" @click="startVillage">
           村を開始する
         </UiButton>
@@ -72,8 +72,8 @@
 
       <!-- 廃村（募集中・点呼中・進行中・決着で表示。バックエンドの available_cancel_village フラグに追従） -->
       <div v-if="situation?.creator.available_cancel_village" class="mb-2">
-        <hr class="border-gray-200 my-2" />
-        <strong class="block mb-1">廃村</strong>
+        <hr class="border-line-soft my-2" />
+        <strong class="block mb-1 text-fg">廃村</strong>
         <!-- v-if で available 判定済のため :disabled は送信中の二重押し防止のみ -->
         <UiButton button-type="danger" :disabled="submitting" @click="confirmCancelVillage">
           廃村する（確認）
@@ -84,29 +84,21 @@
 
   <!-- キック確認ダイアログ -->
   <UiModal v-model="isKickConfirmOpen" title="キック確認">
-    <p>本当に退村させますか？</p>
+    <p class="text-fg">本当に退村させますか？</p>
     <template #footer>
-      <button
-        class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-        @click="isKickConfirmOpen = false"
-      >
-        キャンセル
-      </button>
+      <UiButton button-type="secondary" @click="isKickConfirmOpen = false">キャンセル</UiButton>
       <UiButton button-type="danger" @click="kick">キックする</UiButton>
     </template>
   </UiModal>
 
   <!-- 廃村確認ダイアログ -->
   <UiModal v-model="isCancelVillageConfirmOpen" title="廃村確認">
-    <p>本当に廃村しますか？</p>
-    <p class="mt-1 text-red-600">この操作は元に戻せません。</p>
+    <p class="text-fg">本当に廃村しますか？</p>
+    <p class="mt-1 text-blood">この操作は元に戻せません。</p>
     <template #footer>
-      <button
-        class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-        @click="isCancelVillageConfirmOpen = false"
-      >
+      <UiButton button-type="secondary" @click="isCancelVillageConfirmOpen = false">
         キャンセル
-      </button>
+      </UiButton>
       <UiButton button-type="danger" @click="cancelVillage">廃村する</UiButton>
     </template>
   </UiModal>

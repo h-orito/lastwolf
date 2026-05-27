@@ -1,18 +1,15 @@
 <template>
-  <div class="rounded bg-[#fafafa] text-xs mb-2">
-    <div class="bg-[#363636] text-white px-3 py-2 rounded-t font-bold">進行</div>
+  <div class="panel-compact text-fg text-xs mb-2">
+    <div class="px-3 pt-2 pb-1.5 font-bold border-b border-line-soft">進行</div>
     <div class="px-3 py-2">
       <CurrentSituation />
       <Myself />
       <Action />
-      <hr class="border-gray-200 my-2" />
+      <hr class="border-line-soft my-2" />
       <div class="text-right">
-        <button
-          class="px-3 py-1 text-xs bg-[#3991f4] text-white rounded hover:bg-[#2c7ae0]"
-          @click="openVillageInfoModal"
-        >
+        <UiButton button-type="secondary" @click="openVillageInfoModal">
           村の設定を確認する
-        </button>
+        </UiButton>
       </div>
       <ModalVillageInfo
         v-model="isOpenVillageInfoModal"
