@@ -228,6 +228,19 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 - 本体: `bg-elev`、外周 `border-line-soft` 1px
 - 旧 `bg-[#363636]` + `bg-[#fafafa]` のコントラスト強めヘッダから dark theme に統一
 
+### ドキュメントページ（about / rule / faq / release-note / google-auth 等の長文ページ）
+
+- 全体: `<section class="px-4 py-6 sm:py-8">` + `mx-auto max-w-3xl`（読みやすさ優先で 3xl、表が多い `rule` は `max-w-4xl`） + `.panel px-5 py-6 sm:px-7 sm:py-8`
+- ページタイトル h1: `.section-heading` + `.section-title`（中央寄せ和文タイトル + 下細線）
+- 章タイトル h2 / h3: `.doc-section-heading`（軽い下細線あり）
+- 小見出し h4: `.doc-sub-heading`（線なし、`RuleAbility.vue` の能力ごと等）
+- 本文: `text-sm leading-relaxed text-fg sm:text-[0.9375rem]`
+- リンク: `.text-link`
+- リスト marker: `marker:text-blood-deep`（深い静脈赤の点）
+- 表: `<thead>` に `bg-soft`、`<tr>` に `.row-stripe`、border は `border-line-soft`、人狼系強調は `text-wolf`
+- 「読み込み中…」等の状態テキスト: `text-fg-muted`
+- 段落間: `space-y-7`（章間） / 章内リスト間: `space-y-1.5` 〜 `space-y-3`
+
 ## 影響範囲（Phase 1 以降で実装）
 
 - `frontend/app/assets/css/main.css` — CSS variables 全面更新。**既存の `--color-{normal,werewolf,mason,monologue,grave,spectate}-say` および `--color-{private,seer,psychic,werewolf,mason,creator}-system-*` は事実上 dead なので Phase 1 で削除**

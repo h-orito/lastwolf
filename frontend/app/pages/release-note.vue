@@ -1,9 +1,14 @@
 <template>
-  <section class="py-8 px-4">
-    <div class="max-w-5xl mx-auto">
-      <h1 class="text-lg font-bold mb-4">更新情報</h1>
-      <div>
-        <ul class="text-left text-sm list-disc pl-6 space-y-1">
+  <section class="px-4 py-6 sm:py-8">
+    <div class="mx-auto max-w-3xl">
+      <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">更新情報</h1>
+        </header>
+
+        <ul
+          class="list-disc space-y-1.5 pl-6 text-left text-sm leading-relaxed text-fg marker:text-blood-deep sm:text-[0.9375rem]"
+        >
           <li>2026/05/03 残り時間と能力・投票勧告を常に最下部に表示</li>
           <li>2026/05/03 フロントエンドのフレームワーク刷新</li>
           <li>2024/02/23 設定「GM制」追加</li>
@@ -19,7 +24,7 @@
           <li>2020/12/16 公開</li>
           <li>2020/12/07 テストプレイ開始</li>
         </ul>
-      </div>
+      </article>
     </div>
   </section>
 </template>

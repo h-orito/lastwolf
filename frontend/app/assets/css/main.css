@@ -390,6 +390,39 @@ a {
   }
 }
 
+/*
+ * ドキュメント中見出し（about / rule / faq / release-note 等の長文ページ）
+ *
+ * h1 は `.section-heading` + `.section-title` で章中央タイトル。
+ * h2 はこの `.doc-section-heading` で軽い章タイトル（下にライン）。
+ * h3 はこの `.doc-sub-heading` で小見出し（ライン無し）。
+ *
+ * 役職表など table の `.row-stripe` ・リンクの `.text-link` と組み合わせる。
+ */
+.doc-section-heading {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-line-soft);
+}
+.doc-sub-heading {
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+@media (min-width: 640px) {
+  .doc-section-heading {
+    font-size: 1.0625rem;
+  }
+}
+
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {
