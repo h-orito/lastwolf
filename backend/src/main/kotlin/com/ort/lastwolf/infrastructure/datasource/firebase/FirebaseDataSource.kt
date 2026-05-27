@@ -1,5 +1,6 @@
 package com.ort.lastwolf.infrastructure.datasource.firebase
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -50,7 +51,13 @@ class FirebaseDataSource {
                         unixTimeMilli = epocTimeMilli,
                     ),
             )
-        ref.push().setValueAsync(messageView)
+        // Firebase Admin SDK の CustomClassMapper は LocalDateTime をリフレクション展開時に
+        // java.time.chrono.IsoChronology へアクセスし、Java 21 の強カプセル化で
+        // InaccessibleObjectException となる。ObjectMapper (SNAKE_CASE + JavaTimeModule) で
+        // 一度 Map に直列化し、Firebase には Map ベースで書き込む。
+        val payload: Map<String, Any?> =
+            objectMapper.convertValue(messageView, object : TypeReference<Map<String, Any?>>() {})
+        ref.push().setValueAsync(payload)
     }
 
     fun registerVillageLatest(villageId: Int) {
