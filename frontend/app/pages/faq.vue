@@ -62,7 +62,7 @@ useSeoMeta(meta);
   font-weight: 600;
   color: var(--color-fg);
 }
-.faq-question:first-child {
+.faq-question:first-of-type {
   margin-top: 0;
 }
 .faq-question::before,

@@ -7,7 +7,10 @@
         </header>
 
         <!-- 目次 -->
-        <nav class="mb-7 rounded-md border border-line-soft bg-soft/60 px-4 py-3 text-sm text-fg">
+        <nav
+          aria-label="目次"
+          class="mb-7 rounded-md border border-line-soft bg-soft/60 px-4 py-3 text-sm text-fg"
+        >
           <ul class="space-y-1 leading-relaxed">
             <li><a href="#create-village" class="text-link">村作成</a></li>
             <li><a href="#creator" class="text-link">村建てが行えること</a></li>
@@ -19,6 +22,7 @@
             <li><a href="#night-process" class="text-link">投票→夜時間の処理</a></li>
             <li><a href="#noon-process" class="text-link">夜→昼時間の処理</a></li>
             <li><a href="#skill" class="text-link">役職</a></li>
+            <li><a href="#camps" class="text-link">陣営、勝利条件</a></li>
             <li>
               <a href="#ability" class="text-link">能力行使</a>
               <ul class="mt-1 space-y-1 pl-4">
@@ -267,7 +271,7 @@
           </section>
 
           <section>
-            <h2 class="doc-section-heading">陣営、勝利条件</h2>
+            <h2 id="camps" class="doc-section-heading">陣営、勝利条件</h2>
             <div class="overflow-x-auto">
               <table class="w-full border-collapse text-fg">
                 <thead>
