@@ -1,8 +1,6 @@
 <template>
-  <div class="rounded bg-elev text-fg text-xs mb-2 border border-line-soft">
-    <div class="bg-soft text-fg px-3 py-2 rounded-t font-bold border-b border-line-soft">
-      参加者
-    </div>
+  <div class="panel-compact text-fg text-xs mb-2">
+    <div class="px-3 pt-2 pb-1.5 font-bold border-b border-line-soft">参加者</div>
     <div class="px-3 py-2">
       <Participant
         v-for="p in participants"

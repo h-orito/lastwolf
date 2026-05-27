@@ -1,11 +1,11 @@
 <template>
   <div>
-    <textarea
-      :value="modelValue"
+    <UiFormInput
+      :model-value="modelValue"
+      type="textarea"
       placeholder="村建て発言"
-      rows="5"
-      class="creator-textarea w-full px-2 py-1 text-sm font-sans resize-y"
-      @input="onInput"
+      :rows="5"
+      @update:model-value="onUpdate"
     />
     <p class="text-right text-xs mt-1">
       <span :class="isLengthOver ? 'text-wolf' : 'text-fg-secondary'">
@@ -16,6 +16,8 @@
 </template>
 
 <script setup lang="ts">
+import UiFormInput from "~/components/ui/form/FormInput.vue";
+
 interface Props {
   modelValue: string;
 }
@@ -36,29 +38,9 @@ const currentLength = computed(() => {
 
 const isLengthOver = computed(() => currentLength.value > maxLength);
 
-const onInput = (e: Event) => {
-  emit("update:modelValue", (e.target as HTMLTextAreaElement).value);
+const onUpdate = (value: string) => {
+  emit("update:modelValue", value);
 };
 
 defineExpose({ isLengthOver });
 </script>
-
-<style scoped>
-.creator-textarea {
-  background-color: var(--color-elev);
-  color: var(--color-fg);
-  border: 1px solid var(--color-line-soft);
-  border-radius: 0.375rem;
-  transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease;
-}
-.creator-textarea::placeholder {
-  color: var(--color-fg-muted);
-}
-.creator-textarea:focus {
-  outline: none;
-  border-color: var(--color-blood);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blood) 25%, transparent);
-}
-</style>

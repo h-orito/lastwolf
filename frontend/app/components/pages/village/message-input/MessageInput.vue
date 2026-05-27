@@ -1,26 +1,35 @@
 <template>
-  <div class="flex gap-1 mb-2">
-    <input
-      v-model="message"
-      type="text"
-      :placeholder="placeholder"
-      :disabled="!canSay"
-      class="msg-input flex-1 px-2 py-1 text-sm font-sans"
-      :class="messageBgColorClass"
-      @keypress.exact.enter="keypressEnter"
-      @keypress.shift.enter="keypressShiftEnter"
-    />
+  <div class="flex gap-2 mb-2 items-stretch">
+    <div class="msg-input-wrap relative flex-1">
+      <ChatBubbleOvalLeftEllipsisIcon
+        class="msg-input-icon"
+        :class="{ 'is-disabled': !canSay }"
+        aria-hidden="true"
+      />
+      <UiFormInput
+        v-model="message"
+        type="text"
+        :placeholder="placeholder"
+        :disabled="!canSay"
+        @keypress.exact.enter="keypressEnter"
+        @keypress.shift.enter="keypressShiftEnter"
+      />
+    </div>
     <label
-      class="strong-toggle flex items-center gap-1 px-2 py-1 text-xs cursor-pointer select-none"
-      :class="strong ? 'is-on' : ''"
+      class="strong-toggle flex items-center gap-1 px-3 py-2 text-xs cursor-pointer select-none"
+      :class="[strong ? 'is-on' : '', !canSay ? 'is-disabled' : '']"
     >
       <input v-model="strong" type="checkbox" class="hidden" :disabled="!canSay" />
-      <strong>B</strong> 強調
+      <strong>B</strong>
+      <span>強調</span>
     </label>
   </div>
 </template>
 
 <script setup lang="ts">
+import UiFormInput from "~/components/ui/form/FormInput.vue";
+import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/vue/24/outline";
+
 import type { components } from "~/lib/api/schema";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 import { MESSAGE_TYPE } from "~/lib/api/message-constants";
@@ -51,24 +60,6 @@ const messageType = computed(() => {
   if (selectable.some((t) => t.code === MESSAGE_TYPE.MONOLOGUE_SAY))
     return MESSAGE_TYPE.MONOLOGUE_SAY;
   return "";
-});
-
-const messageBgColorClass = computed(() => {
-  // 発言不可時は修飾クラスなし → .msg-input のベース (`bg-elev`) + `:disabled` の opacity 0.55 で沈ませる
-  if (!canSay.value) return "";
-  // メッセージ種別ごとに input の bg にロール色をうっすら載せる（dark theme 対応）
-  switch (messageType.value) {
-    case MESSAGE_TYPE.WEREWOLF_SAY:
-      return "msg-input-wolf";
-    case MESSAGE_TYPE.SYMPATHIZE_SAY:
-      return "msg-input-mason";
-    case MESSAGE_TYPE.GRAVE_SAY:
-      return "msg-input-grave";
-    case MESSAGE_TYPE.MONOLOGUE_SAY:
-      return "msg-input-mono";
-    default:
-      return "";
-  }
 });
 
 const placeholder = computed(() => {
@@ -160,61 +151,82 @@ const say = async () => {
 </script>
 
 <style scoped>
-.msg-input {
-  background-color: var(--color-elev);
-  color: var(--color-fg);
-  border: 1px solid var(--color-line-soft);
-  border-radius: 0.375rem;
-  transition:
-    border-color 150ms ease,
-    background-color 150ms ease,
-    box-shadow 150ms ease;
+/* チャット吹き出しアイコン: 入力欄が「チャット入力」だと一目で分かるよう左端に常時表示 */
+.msg-input-wrap {
+  position: relative;
 }
-.msg-input::placeholder {
+.msg-input-icon {
+  position: absolute;
+  left: 0.7rem;
+  top: 50%;
+  width: 1rem;
+  height: 1rem;
+  transform: translateY(-50%);
   color: var(--color-fg-muted);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 150ms ease;
 }
-.msg-input:focus {
-  outline: none;
-  border-color: var(--color-blood);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blood) 25%, transparent);
-}
-.msg-input:disabled {
+.msg-input-icon.is-disabled {
   opacity: 0.55;
-  cursor: not-allowed;
+}
+/* UiFormInput の input の左 padding をアイコン分広げる（scoped 越境） */
+.msg-input-wrap :deep(.br-input) {
+  padding-left: 2.25rem;
 }
 
-/* メッセージ種別ごとに base bg を変える: ロール色を 8% 程度 elev に重ねる
- * .msg-input との結合セレクタで「修飾クラス」であることを明示し、カスケード順序依存を避ける */
-.msg-input.msg-input-wolf {
-  background-color: color-mix(in srgb, var(--color-wolf) 8%, var(--color-elev));
-}
-.msg-input.msg-input-mason {
-  background-color: color-mix(in srgb, var(--color-mason) 8%, var(--color-elev));
-}
-.msg-input.msg-input-grave {
-  background-color: color-mix(in srgb, var(--color-grave) 8%, var(--color-elev));
-}
-.msg-input.msg-input-mono {
-  background-color: color-mix(in srgb, var(--color-mono) 8%, var(--color-elev));
-}
-
+/* 強調トグル: UiFormInput と高さ・角丸を揃えて並べる。
+ * OFF 状態でも入力欄と並んで認識できる明度を確保 (旧 elev は panel 背景に溶け込んで「隠れて」見えた)。
+ * ON 時は wine + blood-deep で染まり、外側 halo で「強調モード」を伝える。 */
 .strong-toggle {
-  background-color: var(--color-elev);
-  color: var(--color-fg-secondary);
-  border: 1px solid var(--color-line-soft);
-  border-radius: 0.375rem;
-  transition:
-    background-color 150ms ease,
-    color 150ms ease,
-    border-color 150ms ease;
-}
-.strong-toggle:hover {
-  background-color: var(--color-soft);
+  /* line-soft ベースの 2 層 bg (パネルから明確に持ち上がる) */
+  background:
+    linear-gradient(135deg, rgba(40, 24, 24, 0.96) 0%, rgba(28, 16, 16, 0.96) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(244, 241, 232, 0.25) 0%,
+        rgba(139, 26, 26, 0.3) 50%,
+        rgba(139, 26, 26, 0.35) 100%
+      )
+      border-box;
   color: var(--color-fg);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition:
+    background 200ms ease,
+    color 150ms ease,
+    box-shadow 200ms ease;
+  white-space: nowrap;
+}
+.strong-toggle:hover:not(.is-disabled):not(.is-on) {
+  background:
+    linear-gradient(135deg, rgba(52, 32, 32, 0.96) 0%, rgba(36, 22, 22, 0.96) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(244, 241, 232, 0.35) 0%,
+        rgba(224, 46, 46, 0.4) 50%,
+        rgba(139, 26, 26, 0.5) 100%
+      )
+      border-box;
+  color: var(--color-bone);
 }
 .strong-toggle.is-on {
-  background-color: var(--color-wine);
+  background:
+    linear-gradient(135deg, rgba(80, 24, 24, 0.95) 0%, rgba(50, 16, 16, 0.95) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 165, 135, 0.85) 0%,
+        rgba(224, 46, 46, 0.6) 50%,
+        rgba(139, 26, 26, 0.65) 100%
+      )
+      border-box;
   color: var(--color-bone);
-  border-color: var(--color-blood-deep);
+  box-shadow:
+    inset 0 0 8px rgba(224, 46, 46, 0.3),
+    0 0 14px -4px color-mix(in srgb, var(--color-blood) 40%, transparent);
+}
+.strong-toggle.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 </style>

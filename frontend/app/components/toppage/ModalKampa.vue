@@ -9,14 +9,14 @@
       <div>
         <h2 class="font-semibold text-base mb-2">Amazonほしいものリスト</h2>
         <p class="mb-2">Amazonほしいものリストから選んで開発者に送ることができます。</p>
-        <a
+        <UiButton
+          button-type="secondary"
+          as="a"
           href="https://www.amazon.jp/hz/wishlist/ls/1KZSJAJS1ETW4?ref_=wl_share"
           target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-[#3991f4] text-white hover:bg-[#2c7ae0] transition-colors"
         >
           Amazonほしいものリスト
-        </a>
+        </UiButton>
       </div>
 
       <div>
@@ -24,14 +24,9 @@
         <p class="mb-2">
           下記からAmazonに遷移してカートに追加＆購入すると、管理人に若干の紹介料が入ります。
         </p>
-        <a
-          href="https://amzn.to/48auG7Q"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-[#3991f4] text-white hover:bg-[#2c7ae0] transition-colors"
-        >
+        <UiButton button-type="secondary" as="a" href="https://amzn.to/48auG7Q" target="_blank">
           Amazonに遷移
-        </a>
+        </UiButton>
       </div>
 
       <div>
@@ -43,7 +38,7 @@
               href="https://twitter.com/ort_dev"
               target="_blank"
               rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-800"
+              class="text-link"
               >@ort_dev</a
             >までお願いします。
           </li>

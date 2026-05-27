@@ -71,6 +71,103 @@ a {
 }
 
 /*
+ * パネル（rounded panel with red rim glow）
+ *
+ * `/dev/black-red-proposal` の `.br-pill` 相当。黒ベース + 右上から赤光、border は強く光る。
+ * セクションを `.panel` でラップするだけで、トップページ全体に統一感のある directional lighting を適用できる。
+ *
+ * 構造（重ね順は CSS 仕様で逆順 = 上から padding-box の順に重なる）:
+ *   1. 右上 corner の赤 radial（強）
+ *   2. 左下 corner の弱 blood radial
+ *   3. 黒のベース linear-gradient
+ *   4. border-box: 225deg の rim グラデ（右上 corner が明るい）
+ */
+.panel {
+  position: relative;
+  border-radius: 28px;
+  background:
+    radial-gradient(
+        ellipse 38% 50% at 100% 0%,
+        rgba(255, 91, 58, 0.15) 0%,
+        rgba(224, 46, 46, 0.06) 32%,
+        transparent 65%
+      )
+      padding-box,
+    radial-gradient(ellipse 32% 42% at 0% 100%, rgba(224, 46, 46, 0.06) 0%, transparent 60%)
+      padding-box,
+    linear-gradient(135deg, rgba(14, 8, 8, 0.92) 0%, rgba(8, 4, 4, 0.92) 100%) padding-box,
+    linear-gradient(
+        225deg,
+        rgba(255, 130, 100, 0.9) 0%,
+        rgba(255, 91, 58, 0.65) 10%,
+        rgba(224, 46, 46, 0.38) 22%,
+        rgba(139, 26, 26, 0.15) 36%,
+        rgba(244, 241, 232, 0.04) 52%,
+        rgba(0, 0, 0, 0) 70%,
+        rgba(139, 26, 26, 0.13) 100%
+      )
+      border-box;
+  border: 1px solid transparent;
+  /*
+   * Halo を dev/black-red-proposal の plan-card 寄りに強化（旧 0.38/0.18 → 0.55/0.28）。
+   * 縦に複数 panel が並ぶトップページで「薄暗い」と感じる現象への対策。
+   * hero-card ほど強くはせず、繰り返し並べても主張が過剰にならないバランス。
+   */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 91, 58, 0.08),
+    0 0 44px -8px rgba(224, 46, 46, 0.55),
+    0 0 100px -18px rgba(255, 91, 58, 0.28),
+    0 30px 60px -30px rgba(0, 0, 0, 0.9);
+}
+
+/*
+ * コンパクトパネル — 情報密度が高いゲーム画面用の小型カード
+ *
+ * .panel に対して:
+ *  - border-radius を 28px → 14px に縮小
+ *  - halo / drop-shadow を約 1/2〜1/3 に減衰（縦に複数並んでも目が疲れない）
+ *  - directional lighting の言語（右上から赤光）は維持
+ *
+ * 用途: 村画面の参加者・進行・チャット・村建て機能・デバッグ等の各カード。
+ */
+.panel-compact {
+  position: relative;
+  border-radius: 14px;
+  background:
+    radial-gradient(
+        ellipse 50% 60% at 100% 0%,
+        rgba(255, 91, 58, 0.12) 0%,
+        rgba(224, 46, 46, 0.05) 35%,
+        transparent 65%
+      )
+      padding-box,
+    radial-gradient(ellipse 38% 50% at 0% 100%, rgba(224, 46, 46, 0.05) 0%, transparent 60%)
+      padding-box,
+    linear-gradient(135deg, rgba(18, 10, 10, 0.96) 0%, rgba(12, 6, 6, 0.96) 100%) padding-box,
+    /*
+     * 縁: directional は保ちつつ「切れ目」を無くす。
+     * 旧版は 52% 以降ほぼ透明だったため枠感が消えていた。floor を blood-deep 18% に上げて
+     * どの辺でも赤い線が残るようにする。右上が最明（ember/blood ピーク）、それ以外は floor 値で揃う。
+     */
+    linear-gradient(
+        225deg,
+        rgba(255, 130, 100, 0.85) 0%,
+        rgba(224, 46, 46, 0.55) 14%,
+        rgba(139, 26, 26, 0.35) 32%,
+        rgba(139, 26, 26, 0.22) 52%,
+        rgba(139, 26, 26, 0.18) 70%,
+        rgba(139, 26, 26, 0.3) 100%
+      )
+      border-box;
+  border: 1px solid transparent;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 91, 58, 0.08),
+    0 0 24px -6px rgba(224, 46, 46, 0.42),
+    0 0 56px -14px rgba(255, 91, 58, 0.22),
+    0 12px 28px -14px rgba(0, 0, 0, 0.9);
+}
+
+/*
  * 共通テーブルストライプ（村一覧・設定モーダル等）
  * `.row-stripe` を <tbody> 直下の <tr> に付けるだけで奇数=elev / 偶数=soft の縞模様になる。
  * thead の <tr> に誤って付与しても thead 内 :first-child は odd 判定で elev になるが、
@@ -81,6 +178,200 @@ a {
 }
 :where(tbody) .row-stripe:nth-child(even) {
   background-color: var(--color-soft);
+}
+
+/*
+ * セクション見出し（チャプター見出し）
+ *
+ * 和文タイトルを中央寄せで、下に細線。サブタイトル無し。
+ * パネル内でセクションを区切るシンプルな見出し用途。
+ */
+.section-heading {
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-line-soft);
+  text-align: center;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/*
+ * Registry（古書の登録名簿）パターン
+ *
+ * Intro の案内リンクから村一覧まで、リンクの縦並びを「古書の目次」に見立てた共通パターン。
+ *   [Numeral] [短い罫] [Title + Meta] [Arrow →]
+ * のグリッドで、ホバー時に下端の hairline が左から血赤に滲み広がる。
+ *
+ * .registry-numeral / .registry-meta などの中身のスタイルは利用側で override 可能
+ *  - Intro: Roman numeral (Cinzel italic)
+ *  - 村一覧: № + village ID
+ */
+.registry {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.registry-entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.5rem 1rem 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 0.35rem;
+  border-bottom: 1px solid var(--color-line-soft);
+  color: var(--color-fg);
+  text-align: left;
+  text-decoration: none;
+  transition: background-color 240ms ease;
+}
+
+/* 下端の血赤グラデ線。デフォルト幅 0 → hover で 100% に流れる */
+.registry-entry::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--color-blood) 0%,
+    var(--color-blood-deep) 65%,
+    transparent 100%
+  );
+  transition: width 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.registry-entry:hover {
+  background-color: color-mix(in srgb, var(--color-wine) 22%, transparent);
+}
+.registry-entry:focus-visible {
+  outline: none;
+  background-color: color-mix(in srgb, var(--color-wine) 32%, transparent);
+}
+.registry-entry:hover::after,
+.registry-entry:focus-visible::after {
+  width: 100%;
+}
+
+.registry-numeral {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-blood-deep);
+  letter-spacing: 0.05em;
+  text-align: center;
+  white-space: nowrap;
+  transition:
+    color 240ms ease,
+    text-shadow 240ms ease;
+}
+.registry-entry:hover .registry-numeral,
+.registry-entry:focus-visible .registry-numeral {
+  color: var(--color-blood);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--color-blood) 40%, transparent);
+}
+
+.registry-rule {
+  display: block;
+  height: 1px;
+  background-color: var(--color-line-soft);
+  transition: background-color 240ms ease;
+}
+.registry-entry:hover .registry-rule,
+.registry-entry:focus-visible .registry-rule {
+  background-color: var(--color-blood-deep);
+}
+
+.registry-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-width: 0;
+}
+
+.registry-title {
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  color: var(--color-fg);
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.registry-meta {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  color: var(--color-fg-secondary);
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.registry-meta-sep {
+  color: var(--color-line-bright);
+}
+
+.registry-arrow {
+  font-family: var(--font-display);
+  color: var(--color-blood-deep);
+  font-size: 0.9375rem;
+  transition:
+    transform 240ms ease,
+    color 240ms ease;
+}
+.registry-entry:hover .registry-arrow,
+.registry-entry:focus-visible .registry-arrow {
+  color: var(--color-blood);
+  transform: translateX(0.35rem);
+}
+
+/* 空・ローディング等の状態表示 */
+.registry-state {
+  padding: 2rem 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  color: var(--color-fg-muted);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+}
+.registry-state-mark {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.5em;
+  color: var(--color-blood-deep);
+}
+
+@media (min-width: 640px) {
+  .section-title {
+    font-size: 1.25rem;
+  }
+  .registry-entry {
+    padding: 1rem 0.5rem;
+    gap: 0.9rem;
+    grid-template-columns: 4.5rem 1.5rem 1fr auto;
+  }
+  .registry-numeral {
+    font-size: 0.875rem;
+  }
+  .registry-title {
+    font-size: 1rem;
+  }
+  .registry-meta {
+    font-size: 0.75rem;
+  }
 }
 
 /* ページ遷移アニメーション */
