@@ -1,20 +1,15 @@
 <template>
   <div>
-    <hr class="border-gray-200 my-2" />
-    <p class="mb-2 font-bold">退村</p>
-    <p class="mb-2">参加を取りやめたい場合は退村することができます。</p>
+    <hr class="border-line-soft my-2" />
+    <p class="mb-2 font-bold text-fg">退村</p>
+    <p class="mb-2 text-fg">参加を取りやめたい場合は退村することができます。</p>
     <UiButton button-type="danger" @click="confirmLeave">退村する</UiButton>
 
     <!-- 確認ダイアログ -->
     <UiModal v-model="isConfirmOpen" title="退村確認">
-      <p>本当に退村しますか？</p>
+      <p class="text-fg">本当に退村しますか？</p>
       <template #footer>
-        <button
-          class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-          @click="isConfirmOpen = false"
-        >
-          キャンセル
-        </button>
+        <UiButton button-type="secondary" @click="isConfirmOpen = false">キャンセル</UiButton>
         <UiButton button-type="danger" @click="leave">退村する</UiButton>
       </template>
     </UiModal>

@@ -1,21 +1,17 @@
 <template>
   <div v-if="village && isInProgress" class="progress-bar mb-2">
-    <strong class="text-xs">{{ timeName }}</strong>
-    <strong v-if="needsAbility" class="text-xs text-red-600 ml-2"
-      >時間内に能力行使してください</strong
-    >
-    <strong v-if="needsVote" class="text-xs text-red-600 ml-2">時間内に投票してください</strong>
+    <strong class="text-xs text-fg">{{ timeName }}</strong>
+    <strong v-if="needsAbility" class="text-xs text-wolf ml-2">時間内に能力行使してください</strong>
+    <strong v-if="needsVote" class="text-xs text-wolf ml-2">時間内に投票してください</strong>
     <div class="mt-1">
       <!-- プログレスバー -->
-      <div class="w-full bg-gray-200 rounded h-4 relative overflow-hidden">
+      <div class="w-full bg-soft rounded h-4 relative overflow-hidden border border-line-soft">
         <div
           class="h-4 rounded transition-all duration-1000"
           :class="barColorClass"
           :style="{ width: `${barPercent}%` }"
         />
-        <span
-          class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white"
-        >
+        <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-bone">
           残り{{ left }}秒
         </span>
       </div>
@@ -75,10 +71,11 @@ const needsVote = computed(() => {
 });
 
 const barColorClass = computed(() => {
-  if (isSilentTime.value) return "bg-gray-400";
-  if (left.value > 60) return "bg-green-500";
-  if (left.value > 30) return "bg-yellow-500";
-  return "bg-red-500";
+  // 残り時間バー: ダーク世界観の差異色（彩度を抑えつつ識別可能なペース）
+  if (isSilentTime.value) return "bar-silent";
+  if (left.value > 60) return "bar-safe";
+  if (left.value > 30) return "bar-warn";
+  return "bar-danger";
 });
 
 const refreshTimer = () => {
@@ -116,3 +113,32 @@ const checkDaychangeIfNeeded = (diff: number) => {
 
 defineExpose({ refreshTimer });
 </script>
+
+<style scoped>
+/* 残り時間: 安全 → mason 緑（おだやか）/ 注意 → seer 淡金 / 危険 → blood 赤グロー / 沈黙 → 灰 */
+.bar-safe {
+  background: linear-gradient(
+    180deg,
+    var(--color-mason) 0%,
+    color-mix(in srgb, var(--color-mason) 70%, var(--color-deep)) 100%
+  );
+}
+.bar-warn {
+  background: linear-gradient(
+    180deg,
+    var(--color-seer) 0%,
+    color-mix(in srgb, var(--color-seer) 70%, var(--color-deep)) 100%
+  );
+}
+.bar-danger {
+  background: linear-gradient(180deg, var(--color-blood) 0%, var(--color-blood-deep) 100%);
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--color-blood) 50%, transparent);
+}
+.bar-silent {
+  background: linear-gradient(
+    180deg,
+    var(--color-fg-muted) 0%,
+    color-mix(in srgb, var(--color-fg-muted) 60%, var(--color-deep)) 100%
+  );
+}
+</style>

@@ -1,10 +1,10 @@
 <template>
   <UiModal v-model="isOpen" title="村が開始されました" @close="close">
-    <div v-if="myself?.skill" class="text-sm">
+    <div v-if="myself?.skill" class="text-sm text-fg">
       <p class="mb-2">
         あなたの役職は <strong>{{ myself.skill.name }}</strong> です。
       </p>
-      <div class="border border-gray-200 rounded p-3 bg-gray-50 text-xs whitespace-pre-wrap">
+      <div class="border border-line-soft rounded p-3 bg-soft text-xs whitespace-pre-wrap text-fg">
         {{ myself.skill.description }}
       </div>
     </div>

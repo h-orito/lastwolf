@@ -1,21 +1,24 @@
 <template>
   <UiModal v-model="isOpen" title="村の情報" @close="close">
     <div v-if="village" class="text-xs">
-      <table class="w-full border-collapse">
+      <table class="w-full border-collapse text-fg">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-3 py-2 text-left">設定</th>
-            <th class="border border-gray-300 px-3 py-2 text-left">値</th>
+          <tr class="bg-soft">
+            <th class="border border-line-soft px-3 py-2 text-left">設定</th>
+            <th class="border border-line-soft px-3 py-2 text-left">値</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(setting, idx) in settings" :key="idx" class="odd:bg-white even:bg-gray-50">
-            <td class="border border-gray-300 px-3 py-1 align-top">
+          <tr v-for="(setting, idx) in settings" :key="idx" class="row-stripe">
+            <td class="border border-line-soft px-3 py-1 align-top">
               <div class="flex items-center gap-1">
                 <span>{{ setting.name }}</span>
                 <button
                   v-if="setting.description"
-                  class="text-gray-400 hover:text-gray-600 text-xs"
+                  class="help-toggle text-xs"
+                  type="button"
+                  :aria-label="`${setting.name}の説明を${openDescriptionIdx === idx ? '閉じる' : '開く'}`"
+                  :aria-expanded="openDescriptionIdx === idx"
                   @click="toggleDescription(idx)"
                 >
                   [?]
@@ -24,14 +27,14 @@
               <!-- 説明の展開 -->
               <div
                 v-if="setting.description && openDescriptionIdx === idx"
-                class="mt-1 text-gray-600 text-xs whitespace-pre-wrap"
+                class="mt-1 text-fg-secondary text-xs whitespace-pre-wrap"
               >
                 {{ setting.description }}
               </div>
             </td>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <td
-              class="border border-gray-300 px-3 py-1"
+              class="border border-line-soft px-3 py-1"
               v-html="setting.value.replace(/\n/g, '<br />')"
             />
           </tr>
@@ -39,12 +42,7 @@
       </table>
     </div>
     <template #footer>
-      <button
-        class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-        @click="close"
-      >
-        閉じる
-      </button>
+      <UiButton button-type="secondary" @click="close">閉じる</UiButton>
     </template>
   </UiModal>
 </template>
@@ -223,3 +221,13 @@ const close = () => {
   emit("update:modelValue", false);
 };
 </script>
+
+<style scoped>
+.help-toggle {
+  color: var(--color-fg-muted);
+  transition: color 150ms ease;
+}
+.help-toggle:hover {
+  color: var(--color-fg-secondary);
+}
+</style>

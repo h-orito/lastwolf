@@ -217,26 +217,21 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 ### ヘッダー
 
-- 背景: `linear-gradient(180deg, var(--color-soft), var(--color-base))` + 上端 1px の `gold` グラデ線
-- ロゴ: 月白テキスト + 既存テキストシャドウ色 `#456185` を継承
-- アバター: 以下のコニックグラデで月の色順を回す（`brightness(0.75) saturate(0.8)` のフィルタを適用して落ち着かせる）
-  ```css
-  background: conic-gradient(
-    from 180deg,
-    var(--color-steel-deep) 0deg,
-    var(--color-steel) 90deg,
-    var(--color-halo) 180deg,
-    var(--color-moon) 240deg,
-    var(--color-gold) 300deg,
-    var(--color-steel-deep) 360deg
-  );
-  filter: brightness(0.75) saturate(0.8);
-  ```
+- 背景: `linear-gradient(180deg, var(--color-soft), var(--color-base))` を bg に、**上端 1px の gold グラデ線**（`::before` で transparent→gold→transparent の中央寄せ。ステンドグラスのストリップが一筋光るイメージ）+ **下端 1px の `border-line-soft`** で本体と区切る
+- ロゴ: `text-bone` + 二段の blood グロー（近距離 `blood-deep` + 遠距離 `blood`、`color-mix(... transparent)` 経由）。`lastwolf.webp` の赤いオーラと整合（Phase 2 で steel-blue から Black & Blood にピボット済）
+- 旧仕様にあった月色順のコニックグラデアバターは、トップにアバター表示がないため未実装（必要になったタイミングで blood/ember/gold 構成で再設計する）
+
+### カードヘッダー（村画面の参加者・進行・チャット等のセクションヘッダ）
+
+- 背景: `bg-soft`、下端 `border-line-soft` 1px
+- 文字: `text-fg` + `font-bold`
+- 本体: `bg-elev`、外周 `border-line-soft` 1px
+- 旧 `bg-[#363636]` + `bg-[#fafafa]` のコントラスト強めヘッダから dark theme に統一
 
 ## 影響範囲（Phase 1 以降で実装）
 
 - `frontend/app/assets/css/main.css` — CSS variables 全面更新。**既存の `--color-{normal,werewolf,mason,monologue,grave,spectate}-say` および `--color-{private,seer,psychic,werewolf,mason,creator}-system-*` は事実上 dead なので Phase 1 で削除**
-- `frontend/nuxt.config.ts` — `theme-color` を `#050609` に、PWA manifest の `background_color` も
+- `frontend/nuxt.config.ts` — `theme-color` を `#050202`（Black & Blood ピボット後の `--color-deep`）に、PWA manifest の `theme_color` / `background_color` も
 - `frontend/app/layouts/default.vue` / `layouts/top.vue` — `background-color` を `var(--color-deep)` に
 - `frontend/app/components/layout/NavBar.vue` — 上記ヘッダー方針
 - `frontend/app/components/ui/**` — 上記コンポーネント方針

@@ -42,13 +42,14 @@
 import type { components } from "~/lib/api/schema";
 import { MESSAGE_TYPE } from "~/lib/api/message-constants";
 import {
-  WOLF_CODES,
-  FANATIC_CODES,
-  MASON_CODES,
+  WOLF_SAY_CODES,
+  MASON_SAY_CODES,
   MONO_CODES,
-  VILLAGE_INFO_CODES,
-  PSYCHIC_INFO_CODES,
-  SYSTEM_CODES,
+  INFO_WOLF_CODES,
+  INFO_FANATIC_CODES,
+  INFO_VILLAGE_CODES,
+  INFO_PSYCHIC_CODES,
+  INFO_SYSTEM_CODES,
   type RoleVariant,
 } from "~/lib/api/message-role";
 import dayjs from "dayjs";
@@ -138,75 +139,77 @@ const imgHeight = computed(() => {
 
 const roleVariant = computed<RoleVariant>(() => {
   const code = props.message.content.type.code;
-  // フォールバック normal の対象（DESIGN.md でロール色未定義）:
-  //   - LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系
-  //   - PRIVATE_FOX / PRIVATE_LOVERS / PRIVATE_SYMPATHIZER: 第三陣営寄り or 不明確
-  //     （messageType の [狐] 等で識別できるため normal で許容）
-  // PUBLIC_SYSTEM / PRIVATE_SYSTEM は SYSTEM_CODES 経由で system variant にルーティングされる
-  if (WOLF_CODES.has(code)) return "wolf";
-  if (FANATIC_CODES.has(code)) return "fanatic";
-  if (MASON_CODES.has(code)) return "mason";
+  // 会話系（bg + frame ありの発言バブル）
+  if (WOLF_SAY_CODES.has(code)) return "wolf";
+  if (MASON_SAY_CODES.has(code)) return "mason";
   if (MONO_CODES.has(code)) return "mono";
-  if (VILLAGE_INFO_CODES.has(code)) return "village_info";
-  if (PSYCHIC_INFO_CODES.has(code)) return "psychic_info";
-  if (SYSTEM_CODES.has(code)) return "system";
   if (code === MESSAGE_TYPE.GRAVE_SAY) return "grave";
   if (code === MESSAGE_TYPE.SPECTATE_SAY) return "seer";
   if (code === MESSAGE_TYPE.CREATOR_SAY) return "creator";
+  // 情報通知系（bg なし、ロール色テキスト）
+  if (INFO_WOLF_CODES.has(code)) return "info_wolf";
+  if (INFO_FANATIC_CODES.has(code)) return "info_fanatic";
+  if (INFO_VILLAGE_CODES.has(code)) return "info_village";
+  if (INFO_PSYCHIC_CODES.has(code)) return "info_psychic";
+  if (INFO_SYSTEM_CODES.has(code)) return "info_system";
+  // フォールバック normal:
+  //   LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系
+  //   PRIVATE_FOX / PRIVATE_LOVERS / PRIVATE_SYMPATHIZER: 第三陣営寄り or 不明確
   return "normal";
 });
 
-// 新方針: ロール色は「線」で強調せず、背景にうっすら滲ませる + アクセントの細バー
-// 詳細は DESIGN.md「チャットメッセージ」節を参照。実体は <style scoped> 内の .msg-* に閉じる
 const containerClasses = computed(() => {
   const map: Record<RoleVariant, string> = {
+    // 会話系
     normal: "msg-normal",
     wolf: "msg-wolf",
-    fanatic: "msg-fanatic",
     mason: "msg-mason",
     mono: "msg-mono italic",
     grave: "msg-grave italic",
     seer: "msg-seer",
     creator: "msg-creator",
-    village_info: "msg-village-info",
-    psychic_info: "msg-psychic-info",
-    system: "msg-system",
+    // 情報通知系（bg なし）
+    info_wolf: "msg-info msg-info-wolf",
+    info_fanatic: "msg-info msg-info-fanatic",
+    info_village: "msg-info msg-info-village",
+    info_psychic: "msg-info msg-info-psychic",
+    info_system: "msg-info msg-info-system",
   };
   return map[roleVariant.value];
 });
 
 const avatarRingClass = computed(() => {
+  // 会話系のみ avatar ring を出す。情報通知系は基本 from=null でアバター自体が出ない
   const map: Record<RoleVariant, string> = {
     normal: "",
     wolf: "msg-avatar-wolf",
-    fanatic: "msg-avatar-fanatic",
     mason: "msg-avatar-mason",
     mono: "",
     grave: "msg-avatar-grave",
     seer: "msg-avatar-seer",
     creator: "msg-avatar-creator",
-    village_info: "",
-    psychic_info: "",
-    system: "",
+    info_wolf: "",
+    info_fanatic: "",
+    info_village: "",
+    info_psychic: "",
+    info_system: "",
   };
   return map[roleVariant.value];
 });
 
-// roleTag（"人狼" "狂信" "共有" "独白" "墓下" "観戦"）と messageType（"[狼]" "[共]" "[独]" ...）は
+// roleTag（"人狼" "共有" "独白" "墓下" "観戦"）と messageType（"[狼]" "[共]" "[独]" ...）は
 // 意味が重複するため、roleTag が出るケースでは messageType を抑制する。
 //   例: WEREWOLF_SAY → roleTag "人狼" だけ表示し、"[狼]" は隠す
-//       PRIVATE_FANATIC → roleTag "狂信" だけ表示し、"[信]" は隠す
+// 情報通知系（info_*）は roleTag を持たないため messageType "[狼]" 等が表示される
 const showMessageType = computed(() => {
   if (!messageType.value) return false;
   return !roleTag.value;
 });
 
-// 小タグ（人狼/狂信/共有/独白/墓下/観戦）。normal / creator / village_info / psychic_info は表示しない
-// 日本語ラベルを維持しつつ tracking-widest で「儀式感」を出す（Cinzel への英字切替は今回見送り）
+// 小タグ（人狼/共有/独白/墓下/観戦）。会話系のみ。情報通知系は messageType 接頭辞で識別。
 const roleTag = computed<{ label: string; cls: string } | null>(() => {
   const map: Partial<Record<RoleVariant, { label: string; cls: string }>> = {
     wolf: { label: "人狼", cls: "text-wolf" },
-    fanatic: { label: "狂信", cls: "text-fanatic" },
     mason: { label: "共有", cls: "text-mason" },
     mono: { label: "独白", cls: "text-mono" },
     grave: { label: "墓下", cls: "text-grave" },
@@ -216,31 +219,36 @@ const roleTag = computed<{ label: string; cls: string } | null>(() => {
 });
 
 const bodyColorClass = computed(() => {
-  // 本文色はロール色ではなく fg ベース。視覚的な分類は背景滲み・タグ・アバターリングで表現
+  // 会話系は fg / fg-secondary ベース、情報通知系は陣営色そのものを本文色に
   const map: Record<RoleVariant, string> = {
     normal: "text-fg",
     wolf: "text-fg",
-    fanatic: "text-fg",
     mason: "text-fg",
     mono: "text-fg-secondary",
     grave: "text-fg-secondary",
     seer: "text-fg",
     creator: "text-fg",
-    village_info: "text-fg",
-    psychic_info: "text-fg",
-    system: "text-fg",
+    info_wolf: "text-wolf",
+    info_fanatic: "text-fanatic",
+    info_village: "text-mason",
+    info_psychic: "text-grave",
+    info_system: "text-fg-secondary",
   };
   return map[roleVariant.value];
 });
 
-// 名前テキストの色: ロールが閉じた特別な場（wolf / fanatic / mason / grave）では
-// 世界観優先で該当ロール色に固定し、個人識別カラー（props.color）は使わない。
-// それ以外は個人識別カラー優先、無ければ fg。
+// 名前テキストの色: ロールが閉じた特別な場（wolf / mason / grave）と情報通知系では
+// ロール色に固定（個人識別カラー props.color は使わない）。それ以外は個人識別カラー優先、
+// 無ければ fg。
 const nameOverrideClass: Partial<Record<RoleVariant, string>> = {
   wolf: "text-wolf",
-  fanatic: "text-fanatic",
   mason: "text-mason",
   grave: "text-grave",
+  info_wolf: "text-wolf",
+  info_fanatic: "text-fanatic",
+  info_village: "text-mason",
+  info_psychic: "text-grave",
+  info_system: "text-fg-secondary",
 };
 const nameColorClass = computed(() => {
   const override = nameOverrideClass[roleVariant.value];
@@ -260,13 +268,23 @@ const filter = () => {
 <style scoped>
 /*
  * Black & Blood directional lighting をチャットメッセージにも展開。
- * rounded-lg + border: 1px solid transparent + padding-box / border-box の手法で、
- * 役割別に 2 つの rim パターンを使い分ける:
+ *
+ * 改訂方針 (2026-05):
+ *   - base bg を「ロール色を 14% 程度混ぜた elev」に変更（純黒ではなく、ロール色が透けて見える）
+ *   - L 字 rim の outer stop を transparent から「ロール色 20-25%」に上げて、全周にロール色のラインを残す
+ *     （左下→右上方向に減衰する directional は維持）
+ *   - 外側に box-shadow でロール色の halo を追加。「囁き」が発光して見える
+ *
+ * 役割別 rim パターン:
  *   - 会話・mono 系: L 字 rim（radial-gradient(ellipse at 0% 100%) border-box）
- *     左下角で最大、左辺と下辺に沿って減衰し、上辺・右辺は出ない。
- *     さらに右上にも淡い radial を padding-box で乗せ、両コーナーから光が差す構図にする。
- *   - システム系（system / village_info / psychic_info）: 全周を囲む solid rim
- *     （linear-gradient(color, color) border-box）。情報通知としての枠を強調。
+ *     左下角で最大、上辺・右辺もロール色の floor 値で薄く可視。
+ *   - システム系（system / village_info / psychic_info）: 全周 solid rim
+ *     （linear-gradient(color, color) border-box）。情報通知の枠を強調。
+ *
+ * 配色は `var(--color-*)` トークンを単一情報源にし、透明度合成は
+ * `color-mix(in srgb, var(--color-X) N%, transparent)` で表現する。
+ * rgba ハードコードは禁止（トークン値が変わったときに二重管理になるため）。
+ *
  * 詳細は DESIGN.md「チャットメッセージ」節を参照。
  */
 
@@ -279,267 +297,243 @@ const filter = () => {
   border: 1px solid transparent;
 }
 
-/* Normal — 装飾なし（bg-elev + rounded のみ。発言区切りは外側コンテナ側の gap が担う） */
+/* Normal — 中性色。base bg-elev + 薄い line-soft 線で枠を出す */
 .msg-normal {
   background-color: var(--color-elev);
+  border-color: color-mix(in srgb, var(--color-line-bright) 85%, transparent);
 }
 
-/*
- * 配色は `var(--color-*)` トークンを単一情報源にし、透明度合成は
- * `color-mix(in srgb, var(--color-X) N%, transparent)` で表現する。
- * rgba ハードコードは禁止（トークン値が変わったときに二重管理になるため）。
- */
+/* ============ 会話・独り言系: L 字 rim + ロール色 base + 外側 halo ============ */
 
-/* ============ 会話・独り言系: L 字 rim（左下角中心の radial で 2 辺だけ光る） ============ */
-
-/* Wolf — 会話。両コーナー radial bg + L 字 wolf rim */
+/* Wolf — 血色の囁き。base に wolf 14% を混ぜて赤く染め、L 字 rim 強化 + 外側 halo */
 .msg-wolf {
   background:
     radial-gradient(
         ellipse 70% 140% at 100% 0%,
-        color-mix(in srgb, var(--color-wolf) 14%, transparent) 0%,
+        color-mix(in srgb, var(--color-wolf) 22%, transparent) 0%,
         transparent 60%
       )
       padding-box,
     radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-wolf) 40%, transparent) 0%,
+        ellipse 80% 130% at 0% 100%,
+        color-mix(in srgb, var(--color-wolf) 50%, transparent) 0%,
         transparent 55%
       )
       padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-wolf) 14%, var(--color-elev)) 0%,
+        color-mix(in srgb, var(--color-wolf) 6%, var(--color-elev)) 100%
+      )
+      padding-box,
     radial-gradient(
-        ellipse 100% 100% at 0% 100%,
+        ellipse 110% 110% at 0% 100%,
         var(--color-wolf) 0%,
-        color-mix(in srgb, var(--color-wolf) 70%, transparent) 15%,
-        color-mix(in srgb, var(--color-wolf) 30%, transparent) 35%,
-        transparent 60%
+        color-mix(in srgb, var(--color-wolf) 75%, transparent) 18%,
+        color-mix(in srgb, var(--color-wolf) 40%, transparent) 45%,
+        color-mix(in srgb, var(--color-wolf) 25%, transparent) 100%
       )
       border-box;
+  box-shadow: 0 0 12px -4px color-mix(in srgb, var(--color-wolf) 32%, transparent);
 }
 
-/* Fanatic — 狂信。両コーナー radial bg + L 字 fanatic rim */
-.msg-fanatic {
-  background:
-    radial-gradient(
-        ellipse 70% 140% at 100% 0%,
-        color-mix(in srgb, var(--color-fanatic) 12%, transparent) 0%,
-        transparent 60%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-fanatic) 32%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
-    radial-gradient(
-        ellipse 100% 100% at 0% 100%,
-        var(--color-fanatic) 0%,
-        color-mix(in srgb, var(--color-fanatic) 65%, transparent) 15%,
-        color-mix(in srgb, var(--color-fanatic) 25%, transparent) 35%,
-        transparent 60%
-      )
-      border-box;
-}
-
-/* Mason — 会話。両コーナー radial bg + L 字 mason rim */
+/* Mason — 共有の会話。苔緑染め + L 字 mason rim + halo */
 .msg-mason {
   background:
     radial-gradient(
         ellipse 70% 140% at 100% 0%,
-        color-mix(in srgb, var(--color-mason) 12%, transparent) 0%,
+        color-mix(in srgb, var(--color-mason) 16%, transparent) 0%,
         transparent 60%
       )
       padding-box,
     radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-mason) 38%, transparent) 0%,
+        ellipse 80% 130% at 0% 100%,
+        color-mix(in srgb, var(--color-mason) 46%, transparent) 0%,
         transparent 55%
       )
       padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-mason) 12%, var(--color-elev)) 0%,
+        color-mix(in srgb, var(--color-mason) 5%, var(--color-elev)) 100%
+      )
+      padding-box,
     radial-gradient(
-        ellipse 100% 100% at 0% 100%,
+        ellipse 110% 110% at 0% 100%,
         var(--color-mason) 0%,
-        color-mix(in srgb, var(--color-mason) 65%, transparent) 15%,
-        color-mix(in srgb, var(--color-mason) 28%, transparent) 35%,
-        transparent 60%
+        color-mix(in srgb, var(--color-mason) 70%, transparent) 18%,
+        color-mix(in srgb, var(--color-mason) 38%, transparent) 45%,
+        color-mix(in srgb, var(--color-mason) 24%, transparent) 100%
       )
       border-box;
+  box-shadow: 0 0 10px -4px color-mix(in srgb, var(--color-mason) 28%, transparent);
 }
 
-/* Mono — 独り言。透過 + 両コーナーから mono 灰がうっすら + L 字 mono(灰) rim + italic
- * bg は透過のため、左下 radial が大きいと本文（text-fg-secondary）と重なって読みづらくなる。
- * 半径を絞り（40% × 80%）+ 早めにフェード（transparent 40%）して本文領域を avoid する。
- * 他 variant と違い elev の linear 層を省略（背景を透過にして「内側の声」感を出すため）。
- * 新 variant をここから派生させる場合は背景補完層の有無に注意。 */
+/* Mono — 独り言（内側の声）。控えめのまま、tint を僅かに加え rim 全周を可視化
+ *  - base に mono 4% を混ぜて純黒を避ける
+ *  - 他 variant と違い halo は付けない（発光しない、内側の声） */
 .msg-mono {
   background:
     radial-gradient(
         ellipse 50% 100% at 100% 0%,
-        color-mix(in srgb, var(--color-mono) 6%, transparent) 0%,
+        color-mix(in srgb, var(--color-mono) 8%, transparent) 0%,
         transparent 55%
       )
       padding-box,
     radial-gradient(
-        ellipse 40% 80% at 0% 100%,
-        color-mix(in srgb, var(--color-mono) 10%, transparent) 0%,
-        transparent 40%
+        ellipse 50% 90% at 0% 100%,
+        color-mix(in srgb, var(--color-mono) 16%, transparent) 0%,
+        transparent 45%
+      )
+      padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-mono) 4%, var(--color-elev)) 0%,
+        var(--color-elev) 100%
       )
       padding-box,
     radial-gradient(
         ellipse 100% 100% at 0% 100%,
         var(--color-mono) 0%,
-        color-mix(in srgb, var(--color-mono) 50%, transparent) 15%,
-        color-mix(in srgb, var(--color-mono) 20%, transparent) 35%,
-        transparent 60%
+        color-mix(in srgb, var(--color-mono) 55%, transparent) 18%,
+        color-mix(in srgb, var(--color-mono) 28%, transparent) 45%,
+        color-mix(in srgb, var(--color-mono) 18%, transparent) 100%
       )
       border-box;
 }
 
-/* Grave — 墓下発言。両コーナー radial bg + L 字 grave rim + italic */
+/* Grave — 墓下発言。幽霊水色染め + L 字 grave rim + halo + italic */
 .msg-grave {
   background:
     radial-gradient(
         ellipse 70% 130% at 100% 0%,
-        color-mix(in srgb, var(--color-grave) 10%, transparent) 0%,
+        color-mix(in srgb, var(--color-grave) 14%, transparent) 0%,
         transparent 60%
       )
       padding-box,
     radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-grave) 30%, transparent) 0%,
+        ellipse 80% 130% at 0% 100%,
+        color-mix(in srgb, var(--color-grave) 36%, transparent) 0%,
         transparent 55%
       )
       padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-grave) 10%, var(--color-elev)) 0%,
+        color-mix(in srgb, var(--color-grave) 4%, var(--color-elev)) 100%
+      )
+      padding-box,
     radial-gradient(
-        ellipse 100% 100% at 0% 100%,
+        ellipse 110% 110% at 0% 100%,
         var(--color-grave) 0%,
-        color-mix(in srgb, var(--color-grave) 60%, transparent) 15%,
-        color-mix(in srgb, var(--color-grave) 25%, transparent) 35%,
-        transparent 60%
+        color-mix(in srgb, var(--color-grave) 65%, transparent) 18%,
+        color-mix(in srgb, var(--color-grave) 32%, transparent) 45%,
+        color-mix(in srgb, var(--color-grave) 22%, transparent) 100%
       )
       border-box;
+  box-shadow: 0 0 8px -4px color-mix(in srgb, var(--color-grave) 22%, transparent);
 }
 
-/* Seer — 観戦。両コーナー radial(seer) + L 字 seer rim（弱） */
+/* Seer — 観戦。淡金染め + L 字 seer rim + 薄 halo */
 .msg-seer {
   background:
     radial-gradient(
         ellipse 60% 130% at 100% 0%,
-        color-mix(in srgb, var(--color-seer) 8%, transparent) 0%,
+        color-mix(in srgb, var(--color-seer) 12%, transparent) 0%,
         transparent 60%
       )
       padding-box,
     radial-gradient(
-        ellipse 60% 110% at 0% 100%,
-        color-mix(in srgb, var(--color-seer) 20%, transparent) 0%,
+        ellipse 70% 120% at 0% 100%,
+        color-mix(in srgb, var(--color-seer) 28%, transparent) 0%,
         transparent 55%
       )
       padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-seer) 8%, var(--color-elev)) 0%,
+        color-mix(in srgb, var(--color-seer) 3%, var(--color-elev)) 100%
+      )
+      padding-box,
     radial-gradient(
-        ellipse 100% 100% at 0% 100%,
+        ellipse 110% 110% at 0% 100%,
         var(--color-seer) 0%,
-        color-mix(in srgb, var(--color-seer) 50%, transparent) 15%,
-        color-mix(in srgb, var(--color-seer) 20%, transparent) 35%,
-        transparent 60%
+        color-mix(in srgb, var(--color-seer) 55%, transparent) 18%,
+        color-mix(in srgb, var(--color-seer) 26%, transparent) 45%,
+        color-mix(in srgb, var(--color-seer) 18%, transparent) 100%
       )
       border-box;
+  box-shadow: 0 0 8px -4px color-mix(in srgb, var(--color-seer) 20%, transparent);
 }
 
-/* Creator — 村建て。両コーナー radial(medium) + L 字 medium rim */
+/* Creator — 村建て。青紫(medium)染め + L 字 medium rim + 薄 halo */
 .msg-creator {
   background:
     radial-gradient(
         ellipse 60% 130% at 100% 0%,
-        color-mix(in srgb, var(--color-medium) 10%, transparent) 0%,
+        color-mix(in srgb, var(--color-medium) 14%, transparent) 0%,
         transparent 60%
       )
       padding-box,
     radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-medium) 26%, transparent) 0%,
+        ellipse 80% 130% at 0% 100%,
+        color-mix(in srgb, var(--color-medium) 34%, transparent) 0%,
         transparent 55%
       )
       padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-medium) 10%, var(--color-elev)) 0%,
+        color-mix(in srgb, var(--color-medium) 4%, var(--color-elev)) 100%
+      )
+      padding-box,
     radial-gradient(
-        ellipse 100% 100% at 0% 100%,
+        ellipse 110% 110% at 0% 100%,
         var(--color-medium) 0%,
-        color-mix(in srgb, var(--color-medium) 60%, transparent) 15%,
-        color-mix(in srgb, var(--color-medium) 25%, transparent) 35%,
-        transparent 60%
+        color-mix(in srgb, var(--color-medium) 65%, transparent) 18%,
+        color-mix(in srgb, var(--color-medium) 30%, transparent) 45%,
+        color-mix(in srgb, var(--color-medium) 20%, transparent) 100%
       )
       border-box;
+  box-shadow: 0 0 8px -4px color-mix(in srgb, var(--color-medium) 22%, transparent);
 }
 
-/* ============ システム系: 全周 solid rim ============ */
-
-/* System — 投票結果 / 開始終了など汎用システム通知。白系 (bone) で全周囲む */
-.msg-system {
-  background:
-    radial-gradient(
-        ellipse 70% 110% at 0% 100%,
-        color-mix(in srgb, var(--color-bone) 6%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
-    linear-gradient(
-        color-mix(in srgb, var(--color-bone) 35%, transparent),
-        color-mix(in srgb, var(--color-bone) 35%, transparent)
-      )
-      border-box;
+/* ============ 情報通知系 (info_*): bg なし、全周ロール色 border、ロール色テキスト ============
+ *
+ * 「システム生成の通知」は会話バブルとは別の存在感にする:
+ * - bg なし → 縦に並んだ際にチャットの「発言の流れ」を圧迫しない
+ * - **全周 1px のロール色 border**（会話バブルの bg + frame + halo に対する「軽い枠」）
+ * - 本文はロール色そのまま（人狼通知=赤、狂信者通知=橙、村陣営通知=緑、霊媒結果=水色、汎用=fg）
+ * - アバター ring も出さない（情報通知に発信者ロール色を二重で付けない）
+ * - 微かな box-shadow halo で会話バブルとの「並びの中での沈み込み」を防ぐ */
+.msg-info {
+  background-color: transparent;
+}
+.msg-info-wolf {
+  border-color: color-mix(in srgb, var(--color-wolf) 55%, transparent);
+  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-wolf) 18%, transparent);
+}
+.msg-info-fanatic {
+  border-color: color-mix(in srgb, var(--color-fanatic) 55%, transparent);
+  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-fanatic) 15%, transparent);
+}
+.msg-info-village {
+  border-color: color-mix(in srgb, var(--color-mason) 55%, transparent);
+  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-mason) 18%, transparent);
+}
+.msg-info-psychic {
+  border-color: color-mix(in srgb, var(--color-grave) 55%, transparent);
+  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-grave) 18%, transparent);
+}
+.msg-info-system {
+  border-color: color-mix(in srgb, var(--color-bone) 35%, transparent);
 }
 
-/* Village info — 占い結果 / 賢者 / 検視官 等。緑(mason)で全周囲む */
-.msg-village-info {
-  background:
-    radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-mason) 24%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
-    linear-gradient(
-        color-mix(in srgb, var(--color-mason) 45%, transparent),
-        color-mix(in srgb, var(--color-mason) 45%, transparent)
-      )
-      border-box;
-}
-
-/* Psychic info — 霊媒結果。水色(grave)で全周囲む */
-.msg-psychic-info {
-  background:
-    radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-grave) 24%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(var(--color-elev), var(--color-elev)) padding-box,
-    linear-gradient(
-        color-mix(in srgb, var(--color-grave) 45%, transparent),
-        color-mix(in srgb, var(--color-grave) 45%, transparent)
-      )
-      border-box;
-}
-
-/* === Avatar ring — wolf / fanatic / mason はロール色の弱い halo を外側に重ねて主役感を出す === */
+/* === Avatar ring — wolf / mason はロール色の弱い halo を外側に重ねて主役感を出す === */
 .msg-avatar-wolf {
   box-shadow:
     0 0 0 2px var(--color-wolf),
     0 0 10px -2px color-mix(in srgb, var(--color-wolf) 55%, transparent);
-}
-.msg-avatar-fanatic {
-  box-shadow:
-    0 0 0 2px var(--color-fanatic),
-    0 0 10px -2px color-mix(in srgb, var(--color-fanatic) 45%, transparent);
 }
 .msg-avatar-mason {
   box-shadow:

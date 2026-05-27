@@ -2,55 +2,82 @@ import { MESSAGE_TYPE } from "~/lib/api/message-constants";
 
 /**
  * チャットメッセージのロールバリアント分類。
+ *
+ * 2 系統に分ける:
+ *   - 会話系 (say variants): 全周 bg + frame + halo を持つ「発言バブル」
+ *     normal / wolf / mason / mono / grave / seer / creator
+ *   - 情報通知系 (info_* variants): bg なし、文字色のみで陣営を識別する「システム通知」
+ *     info_wolf / info_fanatic / info_village / info_psychic / info_system
+ *
  * UI 上の枠線・アバターリング・小タグの表示分岐に使う。
  */
 export type RoleVariant =
+  // === 会話系 ===
   | "normal"
   | "wolf"
-  | "fanatic"
   | "mason"
   | "mono"
   | "grave"
   | "seer"
   | "creator"
-  | "village_info"
-  | "psychic_info"
-  | "system";
+  // === 情報通知系 (no bg, role-colored text) ===
+  | "info_wolf"
+  | "info_fanatic"
+  | "info_village"
+  | "info_psychic"
+  | "info_system";
 
-export const WOLF_CODES = new Set<string>([
-  MESSAGE_TYPE.PRIVATE_WEREWOLF,
-  MESSAGE_TYPE.WEREWOLF_SAY,
-]);
+/* === 会話系 === */
 
-// 狂信者（人狼陣営だが人狼ではない）。wolf と区別してくすんだ橙系で表示
-export const FANATIC_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_FANATIC]);
+// 人狼陣営の発言。bg + frame ありの「血色の囁き」
+export const WOLF_SAY_CODES = new Set<string>([MESSAGE_TYPE.WEREWOLF_SAY]);
 
-export const MASON_CODES = new Set<string>([
-  MESSAGE_TYPE.PRIVATE_MASON,
-  MESSAGE_TYPE.SYMPATHIZE_SAY,
-]);
+// 共有者（共鳴）の発言。bg + frame ありの「苔緑の会話」
+export const MASON_SAY_CODES = new Set<string>([MESSAGE_TYPE.SYMPATHIZE_SAY]);
 
+// 独り言。MONOLOGUE_SAY = ユーザー手入力、PRIVATE_ABILITY = 能力行使確認（個人内ログ）
+// どちらも「個人の内的ログ」として mono 灰染め + italic で表示
 export const MONO_CODES = new Set<string>([
   MESSAGE_TYPE.MONOLOGUE_SAY,
   MESSAGE_TYPE.PRIVATE_ABILITY,
 ]);
 
-// 村陣営の役職限定システム通知（霊媒系を除く）。占い結果 / 賢者 / グル / 検視官 等。
-// 緑系の色味で「村陣営の情報」であることを示す。
-// PRIVATE_FOX / PRIVATE_LOVERS / PRIVATE_SYMPATHIZER は第三陣営寄り or 不明確のため
-// 含めない（normal フォールバック維持）。
-export const VILLAGE_INFO_CODES = new Set<string>([
+/* === 情報通知系（bg なし、文字色のみ） === */
+
+// 人狼陣営への通知（誰を襲撃したか等）。赤テキスト
+export const INFO_WOLF_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_WEREWOLF]);
+
+// 狂信者への通知（人狼仲間の情報等）。橙テキスト
+export const INFO_FANATIC_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_FANATIC]);
+
+// 村陣営の役職限定通知。共有者通知 + 占い・賢者・グル・検視官の結果を緑（mason）テキストで揃える。
+// PRIVATE_MASON は旧 MASON_CODES（会話バブル扱い）から本セットに移動した。共有者の SAY (SYMPATHIZE_SAY)
+// は会話扱いだが、PRIVATE_MASON は「あなたは共有者で、仲間は X」のシステム生成通知なので、他の
+// PRIVATE_SEER/WISE/GURU/CORONER と同じく info_village（緑テキスト、bg なし）に統一する。
+// DESIGN.md「村陣営の象徴色として揃える」方針を踏襲。
+export const INFO_VILLAGE_CODES = new Set<string>([
+  MESSAGE_TYPE.PRIVATE_MASON,
   MESSAGE_TYPE.PRIVATE_SEER,
   MESSAGE_TYPE.PRIVATE_WISE,
   MESSAGE_TYPE.PRIVATE_GURU,
   MESSAGE_TYPE.PRIVATE_CORONER,
 ]);
 
-// 霊媒結果。死霊との繋がりを示唆するため墓下と同じ水色（grave）系統で表示。
-export const PSYCHIC_INFO_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_PSYCHIC]);
+// 霊媒結果。死霊との繋がりを示唆する水色（grave）テキスト
+export const INFO_PSYCHIC_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_PSYCHIC]);
 
-// 一般システム通知（投票結果 / 開始終了等）。占い・霊媒のロール固有ではない汎用通知を白系で囲む
-export const SYSTEM_CODES = new Set<string>([
+// 汎用システム通知（投票結果 / 開始終了等）。bone / fg ベースのニュートラルテキスト
+export const INFO_SYSTEM_CODES = new Set<string>([
   MESSAGE_TYPE.PUBLIC_SYSTEM,
   MESSAGE_TYPE.PRIVATE_SYSTEM,
 ]);
+
+/**
+ * 意図的に上記いずれにも含めないコード:
+ *   - LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系で会話バブル扱い → normal フォールバック
+ *   - PRIVATE_FOX: 妖狐への私信。第三陣営寄りで陣営色のトークンが未定義 → normal フォールバック
+ *   - PRIVATE_SYMPATHIZER: 共鳴者への私信。陣営定義が不明確 → normal フォールバック
+ *   - PRIVATE_LOVERS: 恋人への私信。陣営横断のため特定色を当てない → normal フォールバック
+ * これらは Message.vue 側で messageType prefix（"[狐]" "[共]" 等）で識別される。
+ * 将来 DESIGN.md に専用色が定義されたら適切な info_* セットに追加すること。
+ */

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <hr class="border-gray-200 my-2" />
-    <p class="mb-2 font-bold">参加</p>
-    <p class="mb-2">あなたはこの村に参加できます。</p>
+    <hr class="border-line-soft my-2" />
+    <p class="mb-2 font-bold text-fg">参加</p>
+    <p class="mb-2 text-fg">あなたはこの村に参加できます。</p>
 
     <!-- キャラクター選択 -->
     <div class="mb-2">
-      <label class="block text-xs mb-1">キャラクター</label>
+      <label class="block text-xs mb-1 text-fg">キャラクター</label>
       <div class="flex gap-1">
         <UiFormSelect
           v-model="charaId"
@@ -14,33 +14,27 @@
           placeholder="選択してください"
           class="flex-1"
         />
-        <button
-          class="px-2 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300 active:bg-gray-400 whitespace-nowrap"
-          @click="openCharaModal"
-        >
-          画像で選択
-        </button>
+        <UiButton button-type="secondary" @click="openCharaModal">画像で選択</UiButton>
       </div>
     </div>
 
     <!-- 役職希望 -->
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
-      <label class="block text-xs mb-1">役職第1希望</label>
+      <label class="block text-xs mb-1 text-fg">役職第1希望</label>
       <UiFormSelect v-model="firstRequestSkillCode" :options="skillOptions" />
     </div>
     <div v-if="situation?.skill_request.available_skill_request" class="mb-2">
-      <label class="block text-xs mb-1">役職第2希望</label>
+      <label class="block text-xs mb-1 text-fg">役職第2希望</label>
       <UiFormSelect v-model="secondRequestSkillCode" :options="skillOptions" />
     </div>
 
-    <!-- 入村パスワード -->
+    <!-- 入村パスワード
+      type="text" は意図的: 入村パスワードは「村参加用の合言葉」(村建てが Twitter 等で公開シェアする運用)
+      であり機密情報ではない。type="password" にするとパスワードマネージャーが誤認・自動入力を試みて
+      UX を阻害するため平文表示で良い。 -->
     <div v-if="requiredJoinPassword" class="mb-2">
-      <label class="block text-xs mb-1">入村パスワード</label>
-      <input
-        v-model="joinPassword"
-        type="text"
-        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#3991f4] bg-white"
-      />
+      <label class="block text-xs mb-1 text-fg">入村パスワード</label>
+      <UiFormInput v-model="joinPassword" type="text" />
     </div>
 
     <UiButton button-type="primary" :disabled="!canSubmit || submitting" @click="participate">
@@ -59,6 +53,7 @@
 <script setup lang="ts">
 import UiCharaSelectModal from "~/components/ui/chara-select/CharaSelectModal.vue";
 import UiButton from "~/components/ui/button/index.vue";
+import UiFormInput from "~/components/ui/form/FormInput.vue";
 import UiFormSelect from "~/components/ui/form/FormSelect.vue";
 
 import type { components } from "~/lib/api/schema";

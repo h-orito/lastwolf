@@ -10,7 +10,7 @@
               :href="xShareUrl"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-black text-white rounded hover:bg-gray-800 transition-colors"
+              class="x-share-link inline-flex items-center gap-1 px-2 py-1 text-xs rounded"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -44,12 +44,7 @@
           <Creator v-if="isCreator" />
           <Debug v-if="isDebug" />
           <div class="text-right mt-2">
-            <NuxtLink
-              to="/"
-              class="inline-block px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-            >
-              トップページへ
-            </NuxtLink>
+            <UiButton button-type="secondary" to="/">トップページへ</UiButton>
           </div>
         </div>
       </div>
@@ -60,44 +55,32 @@
 
     <!-- 固定フッター: PC版は残り時間バーのみ、モバイルは残り時間バー+ナビゲーション -->
     <div
-      class="fixed bottom-0 left-0 w-full bg-white z-50"
+      class="fixed bottom-0 left-0 w-full bg-base z-50"
       style="padding-bottom: env(safe-area-inset-bottom)"
     >
       <!-- 残り時間プログレスバー (進行中のみ表示) -->
       <ProgressBar ref="mobileProgressBarRef" class="px-2 pt-1" />
       <!-- ナビゲーション (モバイルのみ) -->
-      <div class="flex border-t border-gray-300 md:hidden">
+      <div class="flex border-t border-line-soft md:hidden">
         <button
-          class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
-          :class="
-            activeSection === 'participants'
-              ? 'text-blue-600 border-blue-600'
-              : 'text-gray-500 border-transparent hover:bg-gray-100'
-          "
+          class="village-nav-btn"
+          :class="activeSection === 'participants' ? 'is-active' : ''"
           @click="scrollToSection('#participants-area', 'participants')"
         >
           <UsersIcon class="h-4 w-4" />
           <span>参加者</span>
         </button>
         <button
-          class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
-          :class="
-            activeSection === 'progress'
-              ? 'text-blue-600 border-blue-600'
-              : 'text-gray-500 border-transparent hover:bg-gray-100'
-          "
+          class="village-nav-btn"
+          :class="activeSection === 'progress' ? 'is-active' : ''"
           @click="scrollToSection('#progress-area', 'progress')"
         >
           <ClockIcon class="h-4 w-4" />
           <span>進行</span>
         </button>
         <button
-          class="flex-1 py-2 text-xs flex items-center justify-center gap-1 border-t-2 transition-colors"
-          :class="
-            activeSection === 'messages'
-              ? 'text-blue-600 border-blue-600'
-              : 'text-gray-500 border-transparent hover:bg-gray-100'
-          "
+          class="village-nav-btn"
+          :class="activeSection === 'messages' ? 'is-active' : ''"
           @click="scrollToSection('#messages-area', 'messages')"
         >
           <ChatBubbleOvalLeftEllipsisIcon class="h-4 w-4" />
@@ -468,5 +451,43 @@ onUnmounted(() => {
   .village-wrapper.village-in-progress {
     padding-bottom: calc(50px + env(safe-area-inset-bottom));
   }
+}
+
+/* X(Twitter) シェアボタン: deep を base に + 微 blood で温度を持たせる（X ロゴ自体は黒地イメージを継承） */
+.x-share-link {
+  background-color: var(--color-deep);
+  color: var(--color-bone);
+  border: 1px solid var(--color-line-bright);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.x-share-link:hover {
+  background-color: color-mix(in srgb, var(--color-wine) 35%, var(--color-deep));
+  border-color: var(--color-blood-deep);
+}
+
+/* モバイルのセクションナビ */
+.village-nav-btn {
+  flex: 1;
+  padding: 0.5rem 0;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  color: var(--color-fg-secondary);
+  border-top: 2px solid transparent;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.village-nav-btn:hover {
+  background-color: var(--color-elev);
+}
+.village-nav-btn.is-active {
+  color: var(--color-blood);
+  border-top-color: var(--color-blood);
 }
 </style>

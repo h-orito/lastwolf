@@ -2,10 +2,10 @@
   <div class="min-h-dvh bg-deep text-fg">
     <header class="border-b border-line-soft bg-base px-6 py-6">
       <div class="mx-auto max-w-6xl">
-        <p class="font-display text-xs uppercase tracking-[0.4em] text-steel">
+        <p class="font-display text-xs uppercase tracking-[0.4em] text-blood">
           Phase 2 · Button study
         </p>
-        <h1 class="mt-2 font-serif text-3xl font-bold text-moon">Button Design Proposals</h1>
+        <h1 class="mt-2 font-serif text-3xl font-bold text-bone">Button Design Proposals</h1>
         <p class="mt-2 max-w-2xl text-sm text-fg-secondary">
           現状のボタンが「古い iOS 風」とのフィードバックを受けて、4
           種類の方向性で代替案を用意しました。 ホバー /
@@ -33,8 +33,8 @@
       <section>
         <header class="mb-4 flex items-baseline justify-between border-b border-line-soft pb-2">
           <div>
-            <p class="font-display text-[10px] uppercase tracking-[0.4em] text-steel">Proposal A</p>
-            <h2 class="mt-1 font-serif text-xl text-moon">Onyx — Flat Tonal</h2>
+            <p class="font-display text-[10px] uppercase tracking-[0.4em] text-blood">Proposal A</p>
+            <h2 class="mt-1 font-serif text-xl text-bone">Onyx — Flat Tonal</h2>
           </div>
           <p class="max-w-[42ch] text-right text-xs text-fg-secondary">
             グラデを廃し、単色 + わずかな上端ハイライト。Linear / Vercel
@@ -50,8 +50,8 @@
       <section>
         <header class="mb-4 flex items-baseline justify-between border-b border-line-soft pb-2">
           <div>
-            <p class="font-display text-[10px] uppercase tracking-[0.4em] text-steel">Proposal B</p>
-            <h2 class="mt-1 font-serif text-xl text-moon">Halo — Outline</h2>
+            <p class="font-display text-[10px] uppercase tracking-[0.4em] text-blood">Proposal B</p>
+            <h2 class="mt-1 font-serif text-xl text-bone">Halo — Outline</h2>
           </div>
           <p class="max-w-[42ch] text-right text-xs text-fg-secondary">
             1px のスチール輪郭 +
@@ -68,7 +68,7 @@
         <header class="mb-4 flex items-baseline justify-between border-b border-line-soft pb-2">
           <div>
             <p class="font-display text-[10px] uppercase tracking-[0.4em] text-gold">Proposal C</p>
-            <h2 class="mt-1 font-serif text-xl text-moon">Sigil — Ceremonial Hairline</h2>
+            <h2 class="mt-1 font-serif text-xl text-bone">Sigil — Ceremonial Hairline</h2>
           </div>
           <p class="max-w-[42ch] text-right text-xs text-fg-secondary">
             Cinzel + 広めのトラッキング + 細い 1px 罫。儀式的・人狼世界観に最も寄せた案。装飾マーク
@@ -84,8 +84,8 @@
       <section>
         <header class="mb-4 flex items-baseline justify-between border-b border-line-soft pb-2">
           <div>
-            <p class="font-display text-[10px] uppercase tracking-[0.4em] text-steel">Proposal D</p>
-            <h2 class="mt-1 font-serif text-xl text-moon">Moonlit — Flat + Shimmer</h2>
+            <p class="font-display text-[10px] uppercase tracking-[0.4em] text-blood">Proposal D</p>
+            <h2 class="mt-1 font-serif text-xl text-bone">Moonlit — Flat + Shimmer</h2>
           </div>
           <p class="max-w-[42ch] text-right text-xs text-fg-secondary">
             フラットに見えるが、ホバーで月光が左から右へ薄く流れる微細インタラクション。"署名"
@@ -102,7 +102,7 @@
         <header class="mb-4 flex items-baseline justify-between border-b border-line-soft pb-2">
           <div>
             <p class="font-display text-[10px] uppercase tracking-[0.4em] text-gold">Follow-up</p>
-            <h2 class="mt-1 font-serif text-xl text-moon">Onyx — Brightness Study（明度比較）</h2>
+            <h2 class="mt-1 font-serif text-xl text-bone">Onyx — Brightness Study（明度比較）</h2>
           </div>
           <p class="max-w-[42ch] text-right text-xs text-fg-secondary">
             「フラットは OK だが暗すぎてボタンに見えない」フィードバックを受けて、primary の明度を 4
@@ -125,7 +125,7 @@
                 lvl.label
               }}</span>
               <button
-                class="btn-base text-moon"
+                class="btn-base text-bone"
                 :style="{ backgroundColor: lvl.bg, boxShadow: lvl.shadow }"
               >
                 村に入る
@@ -150,7 +150,7 @@
                 lvl.label
               }}</span>
               <button
-                class="btn-base text-moon"
+                class="btn-base text-bone"
                 :style="{ backgroundColor: lvl.bg, boxShadow: lvl.shadow }"
               >
                 村に入る
@@ -162,7 +162,7 @@
 
         <!-- Mid 推奨 + secondary 改善案 -->
         <div class="mt-4 rounded border border-line-soft bg-elev p-5">
-          <p class="mb-3 text-[10px] uppercase tracking-[0.3em] text-steel">
+          <p class="mb-3 text-[10px] uppercase tracking-[0.3em] text-blood">
             Onyx (Mid) フルセット案 — primary 明度上げ + secondary に薄縁を追加
           </p>
           <div class="space-y-3">
@@ -194,8 +194,8 @@
             </div>
           </div>
           <p class="mt-4 text-xs text-fg-secondary">
-            primary は <code class="text-steel">#2c4566</code>（旧グラデの上端と同色）。secondary
-            は背景を残しつつ <code class="text-steel">border-line-bright</code> を 1px
+            primary は <code class="text-blood">#2c4566</code>（旧グラデの上端と同色）。secondary
+            は背景を残しつつ <code class="text-blood">border-line-bright</code> を 1px
             置いて押せる縁を作っています。
           </p>
         </div>
@@ -220,17 +220,17 @@
               >Now</span
             >
             <button
-              class="btn-base bg-[linear-gradient(180deg,#2c4566,#15263a)] border border-steel text-moon hover:brightness-110 active:brightness-95"
+              class="btn-base bg-[linear-gradient(180deg,#2c4566,#15263a)] border border-steel text-bone hover:brightness-110 active:brightness-95"
             >
               村に入る
             </button>
           </div>
           <div class="flex flex-col items-center gap-3">
-            <span class="font-display text-[10px] uppercase tracking-[0.3em] text-steel">Onyx</span>
+            <span class="font-display text-[10px] uppercase tracking-[0.3em] text-blood">Onyx</span>
             <button class="btn-base btn-onyx-primary">村に入る</button>
           </div>
           <div class="flex flex-col items-center gap-3">
-            <span class="font-display text-[10px] uppercase tracking-[0.3em] text-steel">Halo</span>
+            <span class="font-display text-[10px] uppercase tracking-[0.3em] text-blood">Halo</span>
             <button class="btn-base btn-halo-primary">村に入る</button>
           </div>
           <div class="flex flex-col items-center gap-3">
@@ -242,7 +242,7 @@
             </button>
           </div>
           <div class="flex flex-col items-center gap-3">
-            <span class="font-display text-[10px] uppercase tracking-[0.3em] text-steel"
+            <span class="font-display text-[10px] uppercase tracking-[0.3em] text-blood"
               >Moonlit</span
             >
             <button class="btn-base btn-moonlit btn-moonlit-primary">
