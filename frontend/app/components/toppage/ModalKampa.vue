@@ -9,6 +9,7 @@
       <div>
         <h2 class="font-semibold text-base mb-2">Amazonほしいものリスト</h2>
         <p class="mb-2">Amazonほしいものリストから選んで開発者に送ることができます。</p>
+        <!-- UiButton は a/NuxtLink + target="_blank" の場合 rel="noopener noreferrer" を自動付与する -->
         <UiButton
           button-type="secondary"
           as="a"

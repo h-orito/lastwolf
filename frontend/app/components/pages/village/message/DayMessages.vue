@@ -13,15 +13,6 @@
   </div>
 </template>
 
-<style scoped>
-/* 発言と発言の間にわずかな gap を入れて、各メッセージの枠を独立して認識しやすくする */
-.message-area {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-</style>
-
 <script setup lang="ts">
 import Message from "~/components/pages/village/message/Message.vue";
 import type { components } from "~/lib/api/schema";
@@ -90,3 +81,12 @@ const filter = (payload: { participantId: number | undefined }) => {
   emit("filter", payload);
 };
 </script>
+
+<style scoped>
+/* 発言と発言の間にわずかな gap を入れて、各メッセージの枠を独立して認識しやすくする */
+.message-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+</style>

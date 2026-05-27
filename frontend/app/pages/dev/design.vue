@@ -2,20 +2,20 @@
   <div class="min-h-dvh bg-deep text-fg">
     <header class="border-b border-line-soft bg-base px-6 py-6">
       <div class="mx-auto max-w-5xl">
-        <h1 class="font-serif text-2xl font-bold text-moon">LASTWOLF Design Preview</h1>
+        <h1 class="font-serif text-2xl font-bold text-bone">LASTWOLF Design Preview</h1>
         <p class="mt-1 text-sm text-fg-secondary">
           dev のみ閲覧可。ダークデザイントークン適用後の各 UI
           コンポーネントを並べて視覚確認するためのページ。
         </p>
         <nav class="mt-3 flex flex-wrap gap-3 text-xs">
-          <a href="#tokens" class="text-steel hover:underline">tokens</a>
-          <a href="#buttons" class="text-steel hover:underline">buttons</a>
-          <a href="#forms" class="text-steel hover:underline">forms</a>
-          <a href="#modal" class="text-steel hover:underline">modal</a>
-          <a href="#toast" class="text-steel hover:underline">toast</a>
-          <a href="#loading" class="text-steel hover:underline">loading</a>
-          <a href="#messages" class="text-steel hover:underline">messages</a>
-          <a href="#chara-select" class="text-steel hover:underline">chara-select</a>
+          <a href="#tokens" class="text-blood hover:underline">tokens</a>
+          <a href="#buttons" class="text-blood hover:underline">buttons</a>
+          <a href="#forms" class="text-blood hover:underline">forms</a>
+          <a href="#modal" class="text-blood hover:underline">modal</a>
+          <a href="#toast" class="text-blood hover:underline">toast</a>
+          <a href="#loading" class="text-blood hover:underline">loading</a>
+          <a href="#messages" class="text-blood hover:underline">messages</a>
+          <a href="#chara-select" class="text-blood hover:underline">chara-select</a>
         </nav>
       </div>
     </header>
@@ -23,7 +23,7 @@
     <main class="mx-auto max-w-5xl space-y-12 px-6 py-8">
       <!-- ===================== Tokens ===================== -->
       <section id="tokens" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Tokens</h2>
+        <h2 class="font-serif text-xl text-bone">Tokens</h2>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-6">
           <div
             v-for="t in tokens"
@@ -39,7 +39,7 @@
 
       <!-- ===================== Buttons ===================== -->
       <section id="buttons" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Buttons</h2>
+        <h2 class="font-serif text-xl text-bone">Buttons</h2>
 
         <div class="space-y-3 rounded border border-line-soft bg-elev p-4">
           <div class="text-xs text-fg-secondary">variant（和文ラベル / 実運用の主シナリオ）</div>
@@ -84,7 +84,7 @@
 
       <!-- ===================== Forms ===================== -->
       <section id="forms" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Forms</h2>
+        <h2 class="font-serif text-xl text-bone">Forms</h2>
 
         <div class="grid gap-4 rounded border border-line-soft bg-elev p-4 md:grid-cols-2">
           <FormGroup label="テキスト" required>
@@ -134,7 +134,7 @@
 
       <!-- ===================== Modal ===================== -->
       <section id="modal" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Modal</h2>
+        <h2 class="font-serif text-xl text-bone">Modal</h2>
         <div class="flex flex-wrap gap-3 rounded border border-line-soft bg-elev p-4">
           <UiButton button-type="primary" @click="showModalA = true">タイトルのみ</UiButton>
           <UiButton button-type="secondary" @click="showModalB = true"
@@ -145,8 +145,8 @@
 
         <BaseModal v-model="showModalA" title="タイトル例">
           <p>
-            本体は <code class="text-steel">bg-elev</code> +
-            <code class="text-steel">text-fg</code>。
+            本体は <code class="text-blood">bg-elev</code> +
+            <code class="text-blood">text-fg</code>。
           </p>
           <p class="mt-2 text-fg-secondary">補助テキストは text-fg-secondary。</p>
         </BaseModal>
@@ -166,7 +166,7 @@
 
       <!-- ===================== Toast ===================== -->
       <section id="toast" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Toast</h2>
+        <h2 class="font-serif text-xl text-bone">Toast</h2>
         <div class="flex flex-wrap gap-3 rounded border border-line-soft bg-elev p-4">
           <UiButton button-type="secondary" @click="fireToast('info')">info</UiButton>
           <UiButton button-type="primary" @click="fireToast('success')">success</UiButton>
@@ -176,7 +176,7 @@
 
       <!-- ===================== Loading ===================== -->
       <section id="loading" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Loading</h2>
+        <h2 class="font-serif text-xl text-bone">Loading</h2>
         <div class="rounded border border-line-soft bg-elev p-4">
           <p class="mb-3 text-xs text-fg-secondary">
             inline 表示（コンテナ高さ依存。本番では fixed モードで全画面オーバーレイ）
@@ -189,7 +189,7 @@
 
       <!-- ===================== Messages ===================== -->
       <section id="messages" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Chat Messages</h2>
+        <h2 class="font-serif text-xl text-bone">Chat Messages</h2>
         <div class="space-y-1 rounded border border-line-soft bg-base p-2">
           <ChatMessage
             v-for="(m, idx) in sampleMessages"
@@ -205,7 +205,7 @@
 
       <!-- ===================== Chara select ===================== -->
       <section id="chara-select" class="space-y-4">
-        <h2 class="font-serif text-xl text-moon">Chara Select</h2>
+        <h2 class="font-serif text-xl text-bone">Chara Select</h2>
         <div class="flex flex-wrap gap-3 rounded border border-line-soft bg-elev p-4">
           <UiButton button-type="secondary" @click="showCharaSelect = true"
             >CharaSelectModal</UiButton
