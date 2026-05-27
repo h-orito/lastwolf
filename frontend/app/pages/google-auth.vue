@@ -6,7 +6,7 @@
           <h1 class="section-title">Googleアカウントでログイン</h1>
         </header>
 
-        <p class="mb-5 text-sm text-fg-secondary">ログイン後、自動的にトップへ戻ります。</p>
+        <p class="mb-5 text-sm text-fg-secondary">Googleアカウントを使ってログインします。</p>
 
         <UiButton button-type="primary" @click="handleGoogleLogin">ログイン</UiButton>
       </article>
@@ -22,7 +22,7 @@ useSeoMeta(meta);
 
 const { loginWithGoogle, loginout, isAuthenticated, waitForAuth } = useAuth();
 const router = useRouter();
-const toast = useToast();
+const { add: addToast } = useToast();
 
 onMounted(async () => {
   const user = await waitForAuth();
@@ -38,7 +38,7 @@ async function handleGoogleLogin(): Promise<void> {
     router.push("/");
   } catch (error) {
     console.error("Googleログインに失敗しました:", error);
-    toast.add({
+    addToast({
       message: "ログインに失敗しました。時間をおいて再度お試しください。",
       type: "error",
     });

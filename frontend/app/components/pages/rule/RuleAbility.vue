@@ -72,7 +72,7 @@
       </ul>
     </div>
     <h3 id="foxsuicide" class="doc-sub-heading">後追い（背徳者）</h3>
-    <div>
+    <div class="mb-5">
       <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
         <li>妖狐が全滅すると、後を追って死亡します。（原因は後追死）</li>
         <li>
