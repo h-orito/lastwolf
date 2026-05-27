@@ -122,14 +122,15 @@ const refreshTimer = () => {
 };
 
 const keypressEnter = (e: KeyboardEvent) => {
-  say();
+  // preventDefault は同期フェーズで呼ぶ必要があるため say() より先に
   e.preventDefault();
+  say();
 };
 
 const keypressShiftEnter = async (e: KeyboardEvent) => {
+  e.preventDefault();
   strong.value = true;
   await say();
-  e.preventDefault();
 };
 
 const say = async () => {
@@ -231,5 +232,10 @@ const say = async () => {
 .strong-toggle.is-disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+/* 内側 checkbox は hidden で見えないため、ラベル側で focus-within の視覚を出す */
+.strong-toggle:focus-within {
+  outline: 2px solid color-mix(in srgb, var(--color-blood) 65%, transparent);
+  outline-offset: 2px;
 }
 </style>
