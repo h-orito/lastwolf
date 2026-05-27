@@ -232,8 +232,8 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 - 全体: `<section class="px-4 py-6 sm:py-8">` + `mx-auto max-w-3xl`（読みやすさ優先で 3xl、表が多い `rule` は `max-w-4xl`） + `.panel px-5 py-6 sm:px-7 sm:py-8`
 - ページタイトル h1: `.section-heading` + `.section-title`（中央寄せ和文タイトル + 下細線）
-- 章タイトル h2 / h3: `.doc-section-heading`（軽い下細線あり）
-- 小見出し h4: `.doc-sub-heading`（線なし、`RuleAbility.vue` の能力ごと等）
+- 章タイトル h2: `.doc-section-heading`（軽い下細線あり）
+- 小見出し h3: `.doc-sub-heading`（線なし、`RuleAbility.vue` の能力ごと等）
 - 本文: `text-sm leading-relaxed text-fg sm:text-[0.9375rem]`
 - リンク: `.text-link`
 - リスト marker: `marker:text-blood-deep`（深い静脈赤の点）
