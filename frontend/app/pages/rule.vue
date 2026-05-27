@@ -11,7 +11,7 @@
           <ul class="space-y-1 leading-relaxed">
             <li><a href="#create-village" class="text-link">村作成</a></li>
             <li><a href="#creator" class="text-link">村建てが行えること</a></li>
-            <li><a href="#overall" class="text-link">流れ</a></li>
+            <li><a href="#overall" class="text-link">大まかな流れ</a></li>
             <li><a href="#skill-assign" class="text-link">役職割り当て</a></li>
             <li><a href="#vote" class="text-link">投票</a></li>
             <li><a href="#commit" class="text-link">時短希望</a></li>
