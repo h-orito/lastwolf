@@ -1,64 +1,64 @@
 <template>
-  <div>
-    <section class="py-8 px-4 bg-gray-100">
-      <div class="max-w-5xl mx-auto">
-        <h1 class="text-lg font-bold mb-4">キャラチップ一覧</h1>
-        <div class="text-sm">
-          <p class="mb-4">キャラ画像は以下の方々に提供いただいています。ありがとうございます。</p>
+  <section class="px-4 py-6 sm:py-8">
+    <div class="mx-auto max-w-5xl">
+      <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">キャラチップ一覧</h1>
+        </header>
 
-          <!-- ローディング中 -->
-          <div v-if="loading" class="text-center py-8 text-gray-500">読み込み中...</div>
+        <p class="mb-5 text-left text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
+          キャラ画像は以下の方々に提供いただいています。ありがとうございます。
+        </p>
 
-          <!-- データなし -->
-          <div v-else-if="tableCharachips.length === 0" class="text-center py-8 text-gray-500">
-            <p>キャラチップがありません</p>
-          </div>
+        <!-- ローディング中 -->
+        <div v-if="loading" class="py-8 text-center text-sm text-fg-muted">読み込み中...</div>
 
-          <!-- テーブル -->
-          <div v-else class="overflow-x-auto">
-            <table class="w-full border-collapse bg-white text-sm text-left">
-              <thead>
-                <tr>
-                  <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">
-                    キャラチップ名
-                  </th>
-                  <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">作者</th>
-                  <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">例</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="item in tableCharachips"
-                  :key="item.charachip_id"
-                  class="odd:bg-white even:bg-gray-50"
-                >
-                  <td class="border-b border-gray-200 px-3 py-1">
-                    <NuxtLink
-                      :to="{ path: '/charachip', query: { id: item.charachip_id } }"
-                      class="text-blue-600 hover:text-blue-800"
-                    >
-                      {{ item.charachip_name }}
-                    </NuxtLink>
-                  </td>
-                  <td class="border-b border-gray-200 px-3 py-1">{{ item.designer_name }}</td>
-                  <td class="border-b border-gray-200 px-3 py-1 text-center">
-                    <img
-                      v-if="item.chara"
-                      :src="item.chara.image.image_url"
-                      :alt="item.chara.name.name"
-                      :width="item.chara.image.width"
-                      :height="item.chara.image.height"
-                      class="inline-block"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <!-- データなし -->
+        <div
+          v-else-if="tableCharachips.length === 0"
+          class="py-8 text-center text-sm text-fg-muted"
+        >
+          <p>キャラチップがありません</p>
         </div>
-      </div>
-    </section>
-  </div>
+
+        <!-- テーブル -->
+        <div v-else class="overflow-x-auto">
+          <table class="doc-table text-fg">
+            <thead>
+              <tr>
+                <th class="whitespace-nowrap">キャラチップ名</th>
+                <th class="whitespace-nowrap">作者</th>
+                <th class="whitespace-nowrap text-center">例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in tableCharachips" :key="item.charachip_id" class="row-stripe">
+                <td>
+                  <NuxtLink
+                    :to="{ path: '/charachip', query: { id: item.charachip_id } }"
+                    class="text-link"
+                  >
+                    {{ item.charachip_name }}
+                  </NuxtLink>
+                </td>
+                <td>{{ item.designer_name }}</td>
+                <td class="text-center">
+                  <img
+                    v-if="item.chara"
+                    :src="item.chara.image.image_url"
+                    :alt="item.chara.name.name"
+                    :width="item.chara.image.width"
+                    :height="item.chara.image.height"
+                    class="inline-block"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">

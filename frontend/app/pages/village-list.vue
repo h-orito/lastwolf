@@ -1,74 +1,26 @@
 <template>
-  <div>
-    <section class="py-8 px-4 bg-gray-100">
-      <div class="max-w-5xl mx-auto text-left">
-        <h1 class="text-lg font-bold mb-4">終了した村一覧</h1>
+  <section class="px-4 py-6 sm:py-8">
+    <div class="mx-auto max-w-2xl">
+      <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">終了した村一覧</h1>
+        </header>
 
         <!-- ローディング中 -->
-        <div v-if="loading" class="py-8 text-center text-gray-500 text-sm">読み込み中...</div>
-
-        <!-- データなし -->
-        <div
-          v-else-if="!villages || villages.length === 0"
-          class="py-8 text-center text-gray-500 text-sm"
-        >
-          <p>村がありません</p>
+        <div v-if="loading" class="registry-state">
+          <span class="registry-state-mark" aria-hidden="true">···</span>
+          <span class="registry-state-text">読み込み中</span>
         </div>
 
-        <!-- テーブル -->
-        <div v-else class="overflow-x-auto">
-          <table class="w-full border-collapse bg-white text-sm text-left">
-            <thead>
-              <tr>
-                <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">村名</th>
-                <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">人数</th>
-                <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">編成</th>
-                <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">
-                  勝利陣営
-                </th>
-                <th class="border-b-2 border-gray-300 px-3 py-2 text-left font-semibold">作成者</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="village in villages"
-                :key="village.id"
-                class="odd:bg-white even:bg-gray-50"
-              >
-                <td class="border-b border-gray-200 px-3 py-1">
-                  <NuxtLink
-                    :to="{ path: '/village', query: { id: village.id } }"
-                    class="text-blue-600 hover:text-blue-800"
-                  >
-                    {{ `${village.id}. ${village.name}` }}
-                  </NuxtLink>
-                </td>
-                <td class="border-b border-gray-200 px-3 py-1">
-                  {{ village.participants.count }}人
-                </td>
-                <td class="border-b border-gray-200 px-3 py-1">
-                  {{
-                    village.setting.organizations.organization[
-                      String(village.participants.count)
-                    ] ?? ""
-                  }}
-                </td>
-                <td class="border-b border-gray-200 px-3 py-1">
-                  {{ village.win_camp ? village.win_camp.name : "-" }}
-                </td>
-                <td class="border-b border-gray-200 px-3 py-1">
-                  {{ village.creator_player.nickname }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </div>
+        <!-- 終了した村レジストリ（データなし時はコンポーネント側で空状態を表示） -->
+        <CompleteVillageList v-else :villages="villages ?? []" />
+      </article>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
+import CompleteVillageList from "~/components/pages/toppage/CompleteVillageList.vue";
 import type { components } from "~/lib/api/schema";
 import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 
