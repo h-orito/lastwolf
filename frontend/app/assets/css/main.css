@@ -390,6 +390,70 @@ a {
   }
 }
 
+/*
+ * ドキュメント中見出し（about / rule / faq / release-note 等の長文ページ）
+ *
+ * h1 は `.section-heading` + `.section-title` で章中央タイトル。
+ * h2 はこの `.doc-section-heading` で軽い章タイトル（下にライン）。
+ * h3 はこの `.doc-sub-heading` で小見出し（ライン無し）。
+ *   - 例: `RuleAbility.vue` の能力ごとの見出し（h2 #ability 配下の h3）。
+ *
+ * 役職表など table の `.row-stripe` ・リンクの `.text-link` と組み合わせる。
+ */
+.doc-section-heading {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-line-soft);
+}
+/*
+ * 小見出し: h3 想定。h2 (= `.doc-section-heading`) の中で更に小区分を作るとき用。
+ * h2 とのコントラストを保つため、h2 がレスポンシブで sm 以上で 1.0625rem に上がっても
+ * .doc-sub-heading はそのまま 0.9375rem に固定する（小見出しらしさを維持）。
+ */
+.doc-sub-heading {
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+@media (min-width: 640px) {
+  .doc-section-heading {
+    font-size: 1.0625rem;
+  }
+}
+
+/*
+ * ドキュメントページの表（役職一覧 / 陣営勝利条件 等）
+ *
+ * セル境界には `--color-line-soft #2a1818` だと bg-elev/soft 上でほぼ視認できないため、
+ * 骨白を薄く混ぜた線（bone 16%）で「暗背景でも罫線が見える」ことを優先する。
+ * thead は `bg-soft` + 下端のみ blood-deep アクセントで見出し行を強調。
+ * 行ストライプは `.row-stripe` を <tbody> の <tr> に付けて併用する。
+ */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.doc-table th,
+.doc-table td {
+  border: 1px solid color-mix(in srgb, var(--color-bone) 16%, transparent);
+  padding: 0.5rem 0.75rem;
+}
+.doc-table thead th {
+  background-color: var(--color-soft);
+  color: var(--color-fg);
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-blood-deep);
+}
+
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {

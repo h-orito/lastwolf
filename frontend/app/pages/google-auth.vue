@@ -1,8 +1,15 @@
 <template>
-  <section class="py-8 px-4">
-    <div class="max-w-5xl mx-auto text-left mt-10">
-      <h1 class="text-lg font-bold mb-6">Googleアカウントでログイン</h1>
-      <UiButton button-type="primary" @click="handleGoogleLogin">ログイン</UiButton>
+  <section class="px-4 py-6 sm:py-8">
+    <div class="mx-auto max-w-md">
+      <article class="panel px-5 py-7 text-center sm:px-7 sm:py-9">
+        <header class="section-heading">
+          <h1 class="section-title">Googleアカウントでログイン</h1>
+        </header>
+
+        <p class="mb-5 text-sm text-fg-secondary">Googleアカウントを使ってログインします。</p>
+
+        <UiButton button-type="primary" @click="handleGoogleLogin">ログイン</UiButton>
+      </article>
     </div>
   </section>
 </template>
@@ -15,6 +22,7 @@ useSeoMeta(meta);
 
 const { loginWithGoogle, loginout, isAuthenticated, waitForAuth } = useAuth();
 const router = useRouter();
+const { add: addToast } = useToast();
 
 onMounted(async () => {
   const user = await waitForAuth();
@@ -30,6 +38,10 @@ async function handleGoogleLogin(): Promise<void> {
     router.push("/");
   } catch (error) {
     console.error("Googleログインに失敗しました:", error);
+    addToast({
+      message: "ログインに失敗しました。時間をおいて再度お試しください。",
+      type: "error",
+    });
   }
 }
 </script>

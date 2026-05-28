@@ -1,61 +1,48 @@
 <template>
-  <div class="text-sm overflow-x-auto">
-    <table class="w-full border-collapse">
+  <div class="overflow-x-auto text-sm text-fg">
+    <table class="doc-table">
       <thead>
-        <tr class="bg-gray-100">
-          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">役職</th>
-          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap w-16">略称</th>
-          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">所属陣営</th>
-          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">能力</th>
-          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">占い結果</th>
-          <th class="border border-gray-300 px-3 py-2 text-left whitespace-nowrap">霊視結果</th>
-          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">発言可能</th>
-          <th class="border border-gray-300 px-3 py-2 text-center whitespace-nowrap">
-            勝敗判定カウント
-          </th>
+        <tr>
+          <th class="whitespace-nowrap">役職</th>
+          <th class="w-16 whitespace-nowrap text-center">略称</th>
+          <th class="whitespace-nowrap text-center">所属陣営</th>
+          <th class="whitespace-nowrap">能力</th>
+          <th class="whitespace-nowrap">占い結果</th>
+          <th class="whitespace-nowrap">霊視結果</th>
+          <th class="whitespace-nowrap text-center">発言可能</th>
+          <th class="whitespace-nowrap text-center">勝敗判定カウント</th>
         </tr>
       </thead>
       <tbody>
         <template v-for="skill in tableSkills" :key="skill.name">
-          <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50">
-            <td class="border border-gray-300 px-3 py-1">
+          <tr class="row-stripe">
+            <td>
               <button
                 v-if="skill.description"
-                class="text-blue-600 hover:text-blue-800 text-left"
+                class="text-link text-left"
                 @click="toggleDetail(skill.name)"
               >
                 {{ skill.name }}
               </button>
               <span v-else>{{ skill.name }}</span>
             </td>
-            <td class="border border-gray-300 px-3 py-1 text-center">{{ skill.short_name }}</td>
-            <td
-              class="border border-gray-300 px-3 py-1 text-center"
-              :class="skill.camp === '人狼陣営' ? 'text-red-600' : ''"
-            >
+            <td class="text-center">{{ skill.short_name }}</td>
+            <td class="text-center" :class="skill.camp === '人狼陣営' ? 'text-wolf' : ''">
               {{ skill.camp }}
             </td>
-            <td class="border border-gray-300 px-3 py-1">
+            <td>
               <span v-for="(ability, index) in skill.abilities" :key="ability.name">
                 {{ index !== 0 ? "," : "" }}
-                <a :href="'#' + ability.link" class="text-blue-600 hover:text-blue-800">{{
-                  ability.name
-                }}</a>
+                <a :href="'#' + ability.link" class="text-link">{{ ability.name }}</a>
               </span>
             </td>
-            <td
-              class="border border-gray-300 px-3 py-1"
-              :class="skill.divine_result === '人狼' ? 'text-red-600' : ''"
-            >
+            <td :class="skill.divine_result === '人狼' ? 'text-wolf' : ''">
               {{ skill.divine_result }}
             </td>
-            <td
-              class="border border-gray-300 px-3 py-1"
-              :class="skill.psychic_result === '人狼' ? 'text-red-600' : ''"
-            >
+            <td :class="skill.psychic_result === '人狼' ? 'text-wolf' : ''">
               {{ skill.psychic_result }}
             </td>
-            <td class="border border-gray-300 px-3 py-1 text-center">
+            <td class="text-center">
               <span
                 v-for="(messageType, index) in skill.sayable_message_types"
                 :key="messageType.name"
@@ -64,15 +51,12 @@
                 {{ messageType.name }}
               </span>
             </td>
-            <td
-              class="border border-gray-300 px-3 py-1 text-center"
-              :class="skill.count_camp === '人狼' ? 'text-red-600' : ''"
-            >
+            <td class="text-center" :class="skill.count_camp === '人狼' ? 'text-wolf' : ''">
               {{ skill.count_camp }}
             </td>
           </tr>
           <tr v-if="expandedSkills.has(skill.name)" :key="skill.name + '-detail'">
-            <td colspan="8" class="border border-gray-300 px-4 py-2 bg-gray-50 text-sm">
+            <td colspan="8" class="bg-elev text-sm text-fg">
               <p v-html="skill.description.replace(/\n/g, '<br />')"></p>
             </td>
           </tr>
