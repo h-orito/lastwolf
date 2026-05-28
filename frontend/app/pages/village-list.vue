@@ -52,7 +52,8 @@ onMounted(async () => {
       },
     });
     villages.value = data.list;
-  } catch {
+  } catch (error) {
+    console.error("終了した村一覧の取得に失敗しました:", error);
     hasError.value = true;
   } finally {
     loading.value = false;
