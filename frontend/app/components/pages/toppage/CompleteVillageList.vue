@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav v-if="tableVillages.length > 0" class="registry" aria-label="最近終了した村一覧">
+    <nav v-if="tableVillages.length > 0" class="registry" :aria-label="label">
       <NuxtLink
         v-for="v in tableVillages"
         :key="v.id"
@@ -45,9 +45,13 @@ type SimpleVillageView = components["schemas"]["SimpleVillageView"];
 
 interface Props {
   villages: SimpleVillageView[];
+  // nav の aria-label。トップ「最近終了した村」と village-list ページ（全件）で文脈が異なるため呼び出し側が指定可能
+  label?: string;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  label: "終了した村一覧",
+});
 
 const tableVillages = computed(() =>
   props.villages.map((village) => ({
