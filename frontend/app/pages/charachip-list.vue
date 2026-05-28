@@ -13,6 +13,11 @@
         <!-- ローディング中 -->
         <div v-if="loading" class="py-8 text-center text-sm text-fg-muted">読み込み中...</div>
 
+        <!-- 取得失敗 -->
+        <div v-else-if="hasError" class="py-8 text-center text-sm text-fg-muted">
+          キャラチップ一覧の取得に失敗しました。時間をおいて再度お試しください。
+        </div>
+
         <!-- データなし -->
         <div
           v-else-if="tableCharachips.length === 0"
@@ -82,6 +87,7 @@ const { apiCall } = useApi();
 
 const charachips = ref<CharachipView[]>([]);
 const loading = ref(true);
+const hasError = ref(false);
 
 const tableCharachips = computed<TableCharachip[]>(() => {
   return charachips.value.map((charachip: CharachipView) => ({
@@ -98,6 +104,7 @@ onMounted(async () => {
     charachips.value = data.list;
   } catch (error) {
     console.error("キャラチップ一覧の取得に失敗しました:", error);
+    hasError.value = true;
   } finally {
     loading.value = false;
   }
