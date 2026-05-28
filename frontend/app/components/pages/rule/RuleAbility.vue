@@ -1,5 +1,5 @@
 <template>
-  <div class="text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
+  <div class="text-left text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
     <h3 id="ability-overall" class="doc-sub-heading">全般</h3>
     <div class="mb-5">
       <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
