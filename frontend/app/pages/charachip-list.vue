@@ -10,6 +10,7 @@
           キャラ画像は以下の方々に提供いただいています。ありがとうございます。
         </p>
 
+        <!-- 状態表示は table 系ページのため registry-state ではなく rule.vue と同じ text-fg-muted で統一 -->
         <!-- ローディング中 -->
         <div v-if="loading" class="py-8 text-center text-sm text-fg-muted">読み込み中...</div>
 

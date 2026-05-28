@@ -12,6 +12,14 @@
           <span class="registry-state-text">読み込み中</span>
         </div>
 
+        <!-- 取得失敗（エラーと空状態を区別する） -->
+        <div v-else-if="hasError" class="registry-state">
+          <span class="registry-state-mark" aria-hidden="true">—</span>
+          <span class="registry-state-text">
+            終了した村一覧の取得に失敗しました。時間をおいて再度お試しください。
+          </span>
+        </div>
+
         <!-- 終了した村レジストリ（データなし時はコンポーネント側で空状態を表示） -->
         <CompleteVillageList v-else :villages="villages ?? []" />
       </article>
@@ -34,6 +42,7 @@ const { apiCall } = useApi();
 
 const villages = ref<SimpleVillageView[] | null>(null);
 const loading = ref(true);
+const hasError = ref(false);
 
 onMounted(async () => {
   try {
@@ -44,7 +53,7 @@ onMounted(async () => {
     });
     villages.value = data.list;
   } catch {
-    villages.value = [];
+    hasError.value = true;
   } finally {
     loading.value = false;
   }
