@@ -235,9 +235,10 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 - 章タイトル h2: `.doc-section-heading`（軽い下細線あり）
 - 小見出し h3: `.doc-sub-heading`（線なし、`RuleAbility.vue` の能力ごと等）
 - 本文: `text-sm leading-relaxed text-fg sm:text-[0.9375rem]`
+- **本文ラッパーには `text-left` を明示する**: `app.vue` の `.app-root` がグローバルに `text-align: center` を持つため、本文・リスト・目次は中央寄せに引っ張られる。本文ラッパー（`<div class="... text-left">` / `<dl class="text-left">` / `<nav class="text-left">`）で左寄せを宣言する。中央寄せが自然なページ（`google-auth`）は `text-center` のまま
 - リンク: `.text-link`
 - リスト marker: `marker:text-blood-deep`（深い静脈赤の点）
-- 表: `<thead>` に `bg-soft`、`<tr>` に `.row-stripe`、border は `border-line-soft`、人狼系強調は `text-wolf`
+- 表: `.doc-table` を `<table>` に付ける。セル境界は `color-mix(bone 16%)`（`line-soft` は暗背景で見えないため骨白を薄く混ぜる）、thead は `bg-soft` + 下端 `blood-deep` アクセント。`<tbody>` の `<tr>` に `.row-stripe` を併用、人狼系強調は `text-wolf`
 - 「読み込み中…」等の状態テキスト: `text-fg-muted`
 - 段落間: `space-y-7`（章間） / 章内リスト間: `space-y-1.5` 〜 `space-y-3`
 

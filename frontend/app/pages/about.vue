@@ -6,7 +6,7 @@
           <h1 class="section-title">このサイトは</h1>
         </header>
 
-        <div class="space-y-7 text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
+        <div class="space-y-7 text-left text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
           <!-- h1「このサイトは」直下のリード文。h2 を持たないので section ではなく単独ブロック -->
           <ul class="list-disc space-y-1.5 pl-6 marker:text-blood-deep">
             <li>LASTWOLFは、オンラインで短期人狼が遊べるサイトです。</li>

@@ -9,7 +9,7 @@
         <!-- 目次 -->
         <nav
           aria-label="目次"
-          class="mb-7 rounded-md border border-line-soft bg-soft/60 px-4 py-3 text-sm text-fg"
+          class="mb-7 rounded-md border border-line-soft bg-soft/60 px-4 py-3 text-left text-sm text-fg"
         >
           <ul class="space-y-1 leading-relaxed">
             <li><a href="#create-village" class="text-link">村作成</a></li>
@@ -38,7 +38,7 @@
           </ul>
         </nav>
 
-        <div class="space-y-7 text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
+        <div class="space-y-7 text-left text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
           <section>
             <h2 id="create-village" class="doc-section-heading">村作成</h2>
             <ul class="list-disc space-y-1 pl-6 marker:text-blood-deep">
@@ -276,21 +276,17 @@
           <section>
             <h2 id="camps" class="doc-section-heading">陣営、勝利条件</h2>
             <div class="overflow-x-auto">
-              <table class="w-full border-collapse text-fg">
+              <table class="doc-table text-fg">
                 <thead>
-                  <tr class="bg-soft">
-                    <th class="border border-line-soft px-3 py-2 text-left whitespace-nowrap">
-                      陣営
-                    </th>
-                    <th class="border border-line-soft px-3 py-2 text-left">勝利条件</th>
+                  <tr>
+                    <th class="whitespace-nowrap">陣営</th>
+                    <th>勝利条件</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="camp in camps" :key="camp.name" class="row-stripe">
-                    <td class="border border-line-soft px-3 py-1 whitespace-nowrap">
-                      {{ camp.name }}
-                    </td>
-                    <td class="border border-line-soft px-3 py-1">{{ camp.win_condition }}</td>
+                    <td class="whitespace-nowrap">{{ camp.name }}</td>
+                    <td>{{ camp.win_condition }}</td>
                   </tr>
                 </tbody>
               </table>

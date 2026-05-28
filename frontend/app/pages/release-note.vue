@@ -6,8 +6,8 @@
           <h1 class="section-title">更新情報</h1>
         </header>
 
-        <div class="text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
-          <ul class="list-disc space-y-1.5 pl-6 text-left marker:text-blood-deep">
+        <div class="text-left text-sm leading-relaxed text-fg sm:text-[0.9375rem]">
+          <ul class="list-disc space-y-1.5 pl-6 marker:text-blood-deep">
             <li>2026/05/03 残り時間と能力・投票勧告を常に最下部に表示</li>
             <li>2026/05/03 フロントエンドのフレームワーク刷新</li>
             <li>2024/02/23 設定「GM制」追加</li>

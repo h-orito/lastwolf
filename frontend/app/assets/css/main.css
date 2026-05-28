@@ -429,6 +429,31 @@ a {
   }
 }
 
+/*
+ * ドキュメントページの表（役職一覧 / 陣営勝利条件 等）
+ *
+ * セル境界には `--color-line-soft #2a1818` だと bg-elev/soft 上でほぼ視認できないため、
+ * 骨白を薄く混ぜた線（bone 16%）で「暗背景でも罫線が見える」ことを優先する。
+ * thead は `bg-soft` + 下端のみ blood-deep アクセントで見出し行を強調。
+ * 行ストライプは `.row-stripe` を <tbody> の <tr> に付けて併用する。
+ */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.doc-table th,
+.doc-table td {
+  border: 1px solid color-mix(in srgb, var(--color-bone) 16%, transparent);
+  padding: 0.5rem 0.75rem;
+}
+.doc-table thead th {
+  background-color: var(--color-soft);
+  color: var(--color-fg);
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-blood-deep);
+}
+
 /* ページ遷移アニメーション */
 .page-enter-active,
 .page-leave-active {
