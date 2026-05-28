@@ -125,13 +125,5 @@ const formatOrg = (v: SimpleVillageView): string | null => {
 .registry-status--cancel {
   color: var(--color-fg-muted);
 }
-
-.registry-creator {
-  color: var(--color-fg-secondary);
-  white-space: nowrap;
-}
-.registry-creator-label {
-  color: var(--color-fg-muted);
-  margin-right: 0.15em;
-}
+/* .registry-creator / .registry-creator-label は CompleteVillageList と共用のため main.css に集約 */
 </style>

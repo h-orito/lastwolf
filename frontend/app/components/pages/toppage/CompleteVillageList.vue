@@ -20,6 +20,11 @@
             <span class="registry-meta-field">{{ v.organization }}</span>
             <span class="registry-meta-sep" aria-hidden="true">·</span>
             <span class="registry-meta-camp">{{ v.winCamp }}</span>
+            <span class="registry-meta-sep" aria-hidden="true">·</span>
+            <span class="registry-creator">
+              <span class="registry-creator-label">作成者:</span>
+              {{ v.creator }}
+            </span>
           </span>
         </span>
         <span class="registry-arrow" aria-hidden="true">→</span>
@@ -51,7 +56,8 @@ const tableVillages = computed(() =>
     participantCount: `${village.participants.count}人`,
     organization:
       village.setting.organizations.organization[String(village.participants.count)] ?? "",
-    winCamp: village.win_camp?.name ?? "引分",
+    winCamp: village.win_camp ? `${village.win_camp.name}勝利` : "引分",
+    creator: village.creator_player.nickname,
   })),
 );
 </script>
