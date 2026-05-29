@@ -153,7 +153,8 @@ const dummyCharaName = computed(() => {
 
 // APIリクエストパラメータ
 const registerParam = computed(() => {
-  const startDatetime = basicForm.startDatetime.replace("T", "T") + ":00";
+  // datetime-local は "YYYY-MM-DDThh:mm" なので秒を補って ISO 風文字列にする
+  const startDatetime = basicForm.startDatetime + ":00";
   return {
     village_name: basicForm.villageName,
     setting: {

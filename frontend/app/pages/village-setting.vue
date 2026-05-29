@@ -134,16 +134,16 @@ const joinPasswordForm = reactive({
   joinPassword: "",
 });
 
-// エラー状態
+// エラー状態（設定変更ページにキャラチップ section は無いため charachipErrors は持たない）
 const basicErrors = reactive<Partial<Record<string, string>>>({});
-const charachipErrors = reactive<Partial<Record<string, string>>>({});
 const organizationErrors = reactive<Partial<Record<string, string>>>({});
 const ruleErrors = reactive<Partial<Record<string, string>>>({});
 const joinPasswordErrors = reactive<Partial<Record<string, string>>>({});
 
 // APIリクエストパラメータ
 const registerParam = computed(() => {
-  const startDatetime = basicForm.startDatetime.replace("T", "T") + ":00";
+  // datetime-local は "YYYY-MM-DDThh:mm" なので秒を補って ISO 風文字列にする
+  const startDatetime = basicForm.startDatetime + ":00";
   return {
     village_name: basicForm.villageName,
     setting: {
