@@ -9,6 +9,16 @@
         <div class="py-8 text-center text-sm text-fg-muted">読み込み中...</div>
       </article>
 
+      <!-- 取得失敗 -->
+      <article v-else-if="hasError" class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">戦績</h1>
+        </header>
+        <div class="py-8 text-center text-sm text-fg-muted">
+          戦績の取得に失敗しました。時間をおいて再度お試しください。
+        </div>
+      </article>
+
       <!-- データ表示 -->
       <template v-else-if="playerRecords">
         <!-- プレイヤー名 + 総合戦績 -->
@@ -84,6 +94,7 @@ const playerId = computed(() => {
 
 const playerRecords = ref<PlayerRecordsView | null>(null);
 const loadingRecords = ref(true);
+const hasError = ref(false);
 
 const playerName = computed(() => {
   if (!playerRecords.value) return "";
@@ -110,8 +121,10 @@ onMounted(async () => {
   loadingRecords.value = true;
   try {
     playerRecords.value = await apiCall<PlayerRecordsView>(`/player/${playerId.value}/record`);
-  } catch {
-    playerRecords.value = null;
+  } catch (error) {
+    // 取得失敗とデータなしを区別する（charachip.vue と同じ hasError パターン）
+    console.error("戦績の取得に失敗しました:", error);
+    hasError.value = true;
   } finally {
     loadingRecords.value = false;
   }

@@ -60,7 +60,12 @@ type CharachipView = components["schemas"]["CharachipView"];
 
 const route = useRoute();
 
-const charachipId = computed(() => route.query.id);
+// route.query.id は string | string[] | undefined。配列だと `/charachip/[object Array]` の
+// ような不正な URL になるため、string のときのみ採用する（player-record.vue と同じガード）。
+const charachipId = computed(() => {
+  const id = route.query.id;
+  return typeof id === "string" ? id : "";
+});
 
 const { apiCall } = useApi();
 

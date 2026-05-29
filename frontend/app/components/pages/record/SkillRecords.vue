@@ -2,7 +2,7 @@
   <div>
     <!-- データなし -->
     <div v-if="skillRecords.length === 0" class="py-4 text-center text-sm text-fg-muted">
-      <p>参加した村がありません</p>
+      <p>役職戦績がありません</p>
     </div>
 
     <!-- テーブル -->
