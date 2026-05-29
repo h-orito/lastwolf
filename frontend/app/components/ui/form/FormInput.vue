@@ -39,7 +39,7 @@
 <script setup lang="ts">
 interface Props {
   modelValue: string;
-  type?: "text" | "password" | "email" | "number" | "textarea";
+  type?: "text" | "password" | "email" | "number" | "datetime-local" | "textarea";
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
@@ -49,8 +49,9 @@ interface Props {
   error?: boolean;
   id?: string;
   name?: string;
-  min?: number;
-  max?: number;
+  // datetime-local では min/max に "YYYY-MM-DDTHH:mm" 形式の文字列を渡すため number | string
+  min?: number | string;
+  max?: number | string;
   step?: number;
   inputClass?: string;
 }
@@ -117,6 +118,8 @@ const handleBlur = (event: FocusEvent) => {
 
 .br-input {
   border-radius: 10px;
+  /* number の spinner や datetime-local の native ピッカー / カレンダーアイコンをダークで描画する */
+  color-scheme: dark;
 }
 
 /* normal: ページ bg #050202 から明確に持ち上がる base + 視認できる rim。

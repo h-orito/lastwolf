@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <h2 class="text-base font-semibold">キャラチップ</h2>
+    <h2 class="doc-section-heading">キャラチップ</h2>
 
     <!-- キャラチップ選択 -->
     <UiFormFormGroup label="キャラチップ" required>

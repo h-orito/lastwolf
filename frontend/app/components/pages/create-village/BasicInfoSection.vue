@@ -1,5 +1,7 @@
 <template>
   <div class="space-y-4">
+    <h2 class="doc-section-heading">基本情報</h2>
+
     <!-- 村名 -->
     <UiFormFormGroup label="村名" required>
       <UiFormFormInput
@@ -15,22 +17,20 @@
       </template>
     </UiFormFormGroup>
 
-    <hr class="border-gray-200" />
-    <h2 class="text-base font-semibold">時間</h2>
+    <h3 class="doc-sub-heading pt-2">時間</h3>
 
     <!-- 注意書き -->
-    <div class="bg-blue-50 border border-blue-200 rounded p-3 text-xs">
-      <ul class="list-disc pl-4 space-y-1">
+    <div class="rounded border border-line-soft bg-soft p-3 text-xs text-fg">
+      <ul class="list-disc space-y-1 pl-4 marker:text-blood-deep/60">
         <li>開始は村建てによる操作でしか行えないため、開始予定日時は参加者への案内用です。</li>
       </ul>
     </div>
 
     <!-- 開始日時 -->
     <UiFormFormGroup label="開始予定日時" required>
-      <input
+      <UiFormFormInput
         v-model="form.startDatetime"
         type="datetime-local"
-        class="block w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-[#3991f4] focus:outline-none focus:ring-2 focus:ring-[#3991f4]/20"
         :min="minDatetime"
         required
       />
