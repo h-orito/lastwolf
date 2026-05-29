@@ -1,6 +1,8 @@
 <template>
   <section class="px-4 py-6 sm:py-8">
-    <div class="mx-auto max-w-3xl">
+    <!-- text-left: default レイアウトの .site-content text-center を打ち消す。
+         見出しは .section-heading 側で個別に中央寄せされる。 -->
+    <div class="mx-auto max-w-3xl text-left">
       <!-- 戻るボタン -->
       <div class="mb-4">
         <UiButton button-type="secondary" :to="{ path: '/village', query: { id: villageId } }">
