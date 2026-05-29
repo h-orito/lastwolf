@@ -338,6 +338,16 @@ a {
   color: var(--color-line-bright);
 }
 
+/* 作成者は補助情報として控えめに（ラベルはさらに沈める）。VillageList / CompleteVillageList で共用 */
+.registry-creator {
+  color: var(--color-fg-secondary);
+  white-space: nowrap;
+}
+.registry-creator-label {
+  color: var(--color-fg-muted);
+  margin-right: 0.15em;
+}
+
 .registry-arrow {
   font-family: var(--font-display);
   color: var(--color-blood-deep);

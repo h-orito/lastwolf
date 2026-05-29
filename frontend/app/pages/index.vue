@@ -39,7 +39,7 @@
           <header class="section-heading">
             <h2 class="section-title">最近終了した村</h2>
           </header>
-          <CompleteVillageList :villages="completeVillages" />
+          <CompleteVillageList :villages="completeVillages" label="最近終了した村一覧" />
         </div>
       </section>
 

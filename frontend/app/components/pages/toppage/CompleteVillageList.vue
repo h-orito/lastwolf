@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav v-if="tableVillages.length > 0" class="registry" aria-label="最近終了した村一覧">
+    <nav v-if="tableVillages.length > 0" class="registry" :aria-label="label">
       <NuxtLink
         v-for="v in tableVillages"
         :key="v.id"
@@ -20,6 +20,11 @@
             <span class="registry-meta-field">{{ v.organization }}</span>
             <span class="registry-meta-sep" aria-hidden="true">·</span>
             <span class="registry-meta-camp">{{ v.winCamp }}</span>
+            <span class="registry-meta-sep" aria-hidden="true">·</span>
+            <span class="registry-creator">
+              <span class="registry-creator-label">作成者:</span>
+              {{ v.creator }}
+            </span>
           </span>
         </span>
         <span class="registry-arrow" aria-hidden="true">→</span>
@@ -40,9 +45,13 @@ type SimpleVillageView = components["schemas"]["SimpleVillageView"];
 
 interface Props {
   villages: SimpleVillageView[];
+  // nav の aria-label。トップ「最近終了した村」と village-list ページ（全件）で文脈が異なるため呼び出し側が指定可能
+  label?: string;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  label: "終了した村一覧",
+});
 
 const tableVillages = computed(() =>
   props.villages.map((village) => ({
@@ -51,7 +60,8 @@ const tableVillages = computed(() =>
     participantCount: `${village.participants.count}人`,
     organization:
       village.setting.organizations.organization[String(village.participants.count)] ?? "",
-    winCamp: village.win_camp?.name ?? "引分",
+    winCamp: village.win_camp ? `${village.win_camp.name}勝利` : "引分",
+    creator: village.creator_player.nickname,
   })),
 );
 </script>
