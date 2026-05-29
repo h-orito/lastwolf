@@ -1,44 +1,40 @@
 <template>
   <div>
     <!-- データなし -->
-    <div v-if="tableVillages.length === 0" class="py-4 text-center text-gray-500 text-sm">
+    <div v-if="tableVillages.length === 0" class="py-4 text-center text-sm text-fg-muted">
       <p>参加した村はありません</p>
     </div>
 
     <!-- テーブル -->
     <div v-else class="overflow-x-auto">
-      <table class="w-full border-collapse bg-white text-xs whitespace-nowrap">
+      <table class="doc-table whitespace-nowrap text-xs text-fg">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-3 py-2 text-left">村名</th>
-            <th class="border border-gray-300 px-3 py-2 text-left">人数</th>
-            <th class="border border-gray-300 px-3 py-2 text-left">キャラ</th>
-            <th class="border border-gray-300 px-3 py-2 text-left">役職</th>
-            <th class="border border-gray-300 px-3 py-2 text-left">生死</th>
-            <th class="border border-gray-300 px-3 py-2 text-left">陣営</th>
-            <th class="border border-gray-300 px-3 py-2 text-left">勝敗</th>
+          <tr>
+            <th>村名</th>
+            <th>人数</th>
+            <th>キャラ</th>
+            <th>役職</th>
+            <th>生死</th>
+            <th>陣営</th>
+            <th>勝敗</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="village in tableVillages"
-            :key="village.villageId"
-            class="odd:bg-white even:bg-gray-50"
-          >
-            <td class="border border-gray-300 px-3 py-1">
+          <tr v-for="village in tableVillages" :key="village.villageId" class="row-stripe">
+            <td>
               <NuxtLink
                 :to="{ path: '/village', query: { id: village.villageId } }"
-                class="text-blue-600 hover:text-blue-800"
+                class="text-link"
               >
                 {{ village.villageName }}
               </NuxtLink>
             </td>
-            <td class="border border-gray-300 px-3 py-1">{{ village.participantCount }}</td>
-            <td class="border border-gray-300 px-3 py-1">{{ village.charaName }}</td>
-            <td class="border border-gray-300 px-3 py-1">{{ village.skillName }}</td>
-            <td class="border border-gray-300 px-3 py-1">{{ village.status }}</td>
-            <td class="border border-gray-300 px-3 py-1">{{ village.camp }}</td>
-            <td class="border border-gray-300 px-3 py-1">{{ village.winStatus }}</td>
+            <td>{{ village.participantCount }}</td>
+            <td>{{ village.charaName }}</td>
+            <td>{{ village.skillName }}</td>
+            <td>{{ village.status }}</td>
+            <td>{{ village.camp }}</td>
+            <td>{{ village.winStatus }}</td>
           </tr>
         </tbody>
       </table>

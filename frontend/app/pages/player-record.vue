@@ -1,44 +1,63 @@
 <template>
-  <section class="py-8 px-4">
-    <div class="max-w-5xl mx-auto text-left">
+  <section class="px-4 py-6 sm:py-8">
+    <div class="mx-auto max-w-5xl space-y-6 sm:space-y-8">
       <!-- ローディング中 -->
-      <div v-if="loadingRecords" class="py-8 text-center text-gray-500 text-sm">読み込み中...</div>
+      <article v-if="loadingRecords" class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">戦績</h1>
+        </header>
+        <div class="py-8 text-center text-sm text-fg-muted">読み込み中...</div>
+      </article>
 
       <!-- データ表示 -->
       <template v-else-if="playerRecords">
-        <h1 v-if="playerName" class="text-lg font-bold mb-6">{{ playerName }}</h1>
-
-        <!-- 総合戦績 -->
-        <div class="mb-8">
-          <h2 class="text-base font-semibold mb-2">総合戦績</h2>
-          <p class="text-sm">{{ wholeResult }}</p>
-        </div>
+        <!-- プレイヤー名 + 総合戦績 -->
+        <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+          <header class="section-heading">
+            <h1 class="section-title">{{ playerName || "戦績" }}</h1>
+          </header>
+          <div class="text-center">
+            <p class="text-xs tracking-wide text-fg-muted">総合戦績</p>
+            <p class="mt-1 text-sm text-fg sm:text-[0.9375rem]">{{ wholeResult }}</p>
+          </div>
+        </article>
 
         <!-- 陣営戦績 -->
-        <div class="mb-8">
-          <h2 class="text-base font-semibold mb-2">陣営戦績</h2>
+        <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+          <header class="section-heading">
+            <h2 class="section-title">陣営戦績</h2>
+          </header>
           <CampRecords :camp-records="playerRecords.camp_record_list" />
-        </div>
+        </article>
 
         <!-- 役職戦績 -->
-        <div class="mb-8">
-          <h2 class="text-base font-semibold mb-2">役職戦績</h2>
+        <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+          <header class="section-heading">
+            <h2 class="section-title">役職戦績</h2>
+          </header>
           <SkillRecords :skill-records="playerRecords.skill_record_list" />
-        </div>
+        </article>
 
         <!-- 参加した村 -->
-        <div class="mb-8">
-          <h2 class="text-xl font-semibold mb-2">参加した村</h2>
+        <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+          <header class="section-heading">
+            <h2 class="section-title">参加した村</h2>
+          </header>
           <ParticipateVillageList
             :participate-village-list="playerRecords.participate_village_list"
           />
-        </div>
+        </article>
       </template>
 
       <!-- データなし -->
-      <div v-else class="py-8 text-center text-gray-500 text-sm">
-        <p>戦績が見つかりませんでした</p>
-      </div>
+      <article v-else class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">戦績</h1>
+        </header>
+        <div class="py-8 text-center text-sm text-fg-muted">
+          <p>戦績が見つかりませんでした</p>
+        </div>
+      </article>
     </div>
   </section>
 </template>
