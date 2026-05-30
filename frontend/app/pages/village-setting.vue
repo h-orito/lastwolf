@@ -1,78 +1,75 @@
 <template>
-  <section class="py-8 px-4">
-    <div class="max-w-5xl mx-auto text-left">
+  <section class="px-4 py-6 sm:py-8">
+    <!-- text-left: default レイアウトの .site-content text-center を打ち消す。
+         見出しは .section-heading 側で個別に中央寄せされる。 -->
+    <div class="mx-auto max-w-3xl text-left">
       <!-- 戻るボタン -->
-      <NuxtLink
-        :to="{ path: '/village', query: { id: villageId } }"
-        class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
-      >
-        戻る
-      </NuxtLink>
-
-      <h1 class="text-lg font-bold mt-8 mb-6">村の設定を変更する</h1>
-
-      <!-- 注意書き -->
-      <div class="mb-4 bg-yellow-50 border border-yellow-200 rounded p-3 text-xs text-yellow-800">
-        <ul class="list-disc pl-4 space-y-1">
-          <li>参加パスワードが毎回空になるのでご注意ください。</li>
-        </ul>
+      <div class="mb-4">
+        <UiButton button-type="secondary" :to="{ path: '/village', query: { id: villageId } }">
+          戻る
+        </UiButton>
       </div>
 
-      <!-- バリデーションエラー -->
-      <div
-        v-if="validationErrors.length > 0"
-        class="mb-4 bg-red-50 border border-red-200 rounded p-3 text-xs text-red-700"
-      >
-        <ul class="list-disc pl-4 space-y-1">
-          <li v-for="err in validationErrors" :key="err">{{ err }}</li>
-        </ul>
-      </div>
+      <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">村の設定を変更する</h1>
+        </header>
 
-      <div v-if="loading" class="py-8 text-center text-gray-500 text-sm">読み込み中...</div>
-
-      <div v-else class="text-sm space-y-6">
-        <!-- 基本情報 -->
-        <BasicInfoSection :form="basicForm" :errors="basicErrors" />
-
-        <hr class="border-gray-200" />
-
-        <!-- 編成 -->
-        <OrganizationSection :form="organizationForm" :errors="organizationErrors" />
-
-        <hr class="border-gray-200" />
-
-        <!-- ルール -->
-        <RuleSection :form="ruleForm" :errors="ruleErrors" />
-
-        <hr class="border-gray-200" />
-
-        <!-- 参加パスワード -->
-        <JoinPasswordSection :form="joinPasswordForm" :errors="joinPasswordErrors" />
-
-        <hr class="border-gray-200" />
-
-        <!-- 確認ボタン -->
-        <div class="flex justify-end">
-          <UiButton
-            button-type="primary"
-            :disabled="confirming"
-            :loading="confirming"
-            @click="confirm"
-          >
-            確認画面へ
-          </UiButton>
+        <!-- 注意書き -->
+        <div class="mb-4 rounded border border-line-soft bg-soft p-3 text-xs text-fg">
+          <ul class="list-disc space-y-1 pl-4 marker:text-blood-deep/60">
+            <li>参加パスワードが毎回空になるのでご注意ください。</li>
+          </ul>
         </div>
 
-        <!-- プレビューモーダル -->
-        <PreviewModal
-          v-model="isOpenConfirmModal"
-          :param="registerParam"
-          charachip-name=""
-          dummy-chara-name=""
-          save-label="設定を変更する"
-          @create="modifySetting"
-        />
-      </div>
+        <!-- バリデーションエラー -->
+        <div
+          v-if="validationErrors.length > 0"
+          class="mb-4 rounded-lg border border-blood-deep bg-wine/40 px-4 py-3 text-xs text-fg"
+        >
+          <ul class="list-disc space-y-1 pl-4 marker:text-blood">
+            <li v-for="err in validationErrors" :key="err">{{ err }}</li>
+          </ul>
+        </div>
+
+        <div v-if="loading" class="py-8 text-center text-sm text-fg-muted">読み込み中...</div>
+
+        <div v-else class="space-y-8">
+          <!-- 基本情報 -->
+          <BasicInfoSection :form="basicForm" :errors="basicErrors" />
+
+          <!-- 編成 -->
+          <OrganizationSection :form="organizationForm" :errors="organizationErrors" />
+
+          <!-- ルール -->
+          <RuleSection :form="ruleForm" :errors="ruleErrors" />
+
+          <!-- 参加パスワード -->
+          <JoinPasswordSection :form="joinPasswordForm" :errors="joinPasswordErrors" />
+
+          <!-- 確認ボタン -->
+          <div class="flex justify-end">
+            <UiButton
+              button-type="primary"
+              :disabled="confirming"
+              :loading="confirming"
+              @click="confirm"
+            >
+              確認画面へ
+            </UiButton>
+          </div>
+
+          <!-- プレビューモーダル -->
+          <PreviewModal
+            v-model="isOpenConfirmModal"
+            :param="registerParam"
+            charachip-name=""
+            dummy-chara-name=""
+            save-label="設定を変更する"
+            @create="modifySetting"
+          />
+        </div>
+      </article>
     </div>
   </section>
 </template>
@@ -139,16 +136,16 @@ const joinPasswordForm = reactive({
   joinPassword: "",
 });
 
-// エラー状態
+// エラー状態（設定変更ページにキャラチップ section は無いため charachipErrors は持たない）
 const basicErrors = reactive<Partial<Record<string, string>>>({});
-const charachipErrors = reactive<Partial<Record<string, string>>>({});
 const organizationErrors = reactive<Partial<Record<string, string>>>({});
 const ruleErrors = reactive<Partial<Record<string, string>>>({});
 const joinPasswordErrors = reactive<Partial<Record<string, string>>>({});
 
 // APIリクエストパラメータ
 const registerParam = computed(() => {
-  const startDatetime = basicForm.startDatetime.replace("T", "T") + ":00";
+  // datetime-local は "YYYY-MM-DDThh:mm" なので秒を補って ISO 風文字列にする
+  const startDatetime = basicForm.startDatetime + ":00";
   return {
     village_name: basicForm.villageName,
     setting: {

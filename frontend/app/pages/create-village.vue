@@ -1,60 +1,56 @@
 <template>
-  <section class="py-8 px-4">
-    <div class="max-w-5xl mx-auto text-left">
-      <h1 class="text-lg font-bold mt-8 mb-6">村を作成</h1>
+  <section class="px-4 py-6 sm:py-8">
+    <!-- text-left: default レイアウトの .site-content text-center を打ち消す。
+         見出しは .section-heading 側で個別に中央寄せされる。 -->
+    <div class="mx-auto max-w-3xl text-left">
+      <article class="panel px-5 py-6 sm:px-7 sm:py-8">
+        <header class="section-heading">
+          <h1 class="section-title">村を作成</h1>
+        </header>
 
-      <!-- バリデーションエラー -->
-      <div
-        v-if="validationErrors.length > 0"
-        class="mb-4 bg-red-50 border border-red-200 rounded p-3 text-xs text-red-700"
-      >
-        <ul class="list-disc pl-4 space-y-1">
-          <li v-for="err in validationErrors" :key="err">{{ err }}</li>
-        </ul>
-      </div>
+        <!-- バリデーションエラー -->
+        <div
+          v-if="validationErrors.length > 0"
+          class="mb-6 rounded-lg border border-blood-deep bg-wine/40 px-4 py-3 text-xs text-fg"
+        >
+          <ul class="list-disc space-y-1 pl-4 marker:text-blood">
+            <li v-for="err in validationErrors" :key="err">{{ err }}</li>
+          </ul>
+        </div>
 
-      <div class="text-sm space-y-6">
-        <!-- 基本情報 -->
-        <BasicInfoSection :form="basicForm" :errors="basicErrors" />
+        <div class="space-y-8">
+          <!-- 基本情報 -->
+          <BasicInfoSection :form="basicForm" :errors="basicErrors" />
 
-        <hr class="border-gray-200" />
+          <!-- キャラチップ -->
+          <CharachipSection
+            :form="charachipForm"
+            :errors="charachipErrors"
+            :charachips="charachips"
+            :charas="charas"
+            @load-charas="loadCharasByCharachipId"
+          />
 
-        <!-- キャラチップ -->
-        <CharachipSection
-          :form="charachipForm"
-          :errors="charachipErrors"
-          :charachips="charachips"
-          :charas="charas"
-          @load-charas="loadCharasByCharachipId"
-        />
+          <!-- 編成 -->
+          <OrganizationSection :form="organizationForm" :errors="organizationErrors" />
 
-        <hr class="border-gray-200" />
+          <!-- ルール -->
+          <RuleSection :form="ruleForm" :errors="ruleErrors" />
 
-        <!-- 編成 -->
-        <OrganizationSection :form="organizationForm" :errors="organizationErrors" />
+          <!-- 参加パスワード -->
+          <JoinPasswordSection :form="joinPasswordForm" :errors="joinPasswordErrors" />
 
-        <hr class="border-gray-200" />
-
-        <!-- ルール -->
-        <RuleSection :form="ruleForm" :errors="ruleErrors" />
-
-        <hr class="border-gray-200" />
-
-        <!-- 参加パスワード -->
-        <JoinPasswordSection :form="joinPasswordForm" :errors="joinPasswordErrors" />
-
-        <hr class="border-gray-200" />
-
-        <!-- 確認ボタン -->
-        <div class="flex justify-end">
-          <UiButton
-            button-type="primary"
-            :disabled="confirming"
-            :loading="confirming"
-            @click="confirm"
-          >
-            確認画面へ
-          </UiButton>
+          <!-- 確認ボタン -->
+          <div class="flex justify-end">
+            <UiButton
+              button-type="primary"
+              :disabled="confirming"
+              :loading="confirming"
+              @click="confirm"
+            >
+              確認画面へ
+            </UiButton>
+          </div>
         </div>
 
         <!-- プレビューモーダル -->
@@ -66,7 +62,7 @@
           save-label="村を作成する"
           @create="createVillage"
         />
-      </div>
+      </article>
     </div>
   </section>
 </template>
@@ -159,7 +155,8 @@ const dummyCharaName = computed(() => {
 
 // APIリクエストパラメータ
 const registerParam = computed(() => {
-  const startDatetime = basicForm.startDatetime.replace("T", "T") + ":00";
+  // datetime-local は "YYYY-MM-DDThh:mm" なので秒を補って ISO 風文字列にする
+  const startDatetime = basicForm.startDatetime + ":00";
   return {
     village_name: basicForm.villageName,
     setting: {

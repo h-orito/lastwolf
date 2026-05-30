@@ -1,15 +1,14 @@
 <template>
   <div class="space-y-4">
-    <h2 class="text-base font-semibold">編成</h2>
+    <h2 class="doc-section-heading">編成</h2>
 
     <!-- 注意書き -->
-    <div class="bg-blue-50 border border-blue-200 rounded p-3 text-xs">
-      <ul class="list-disc pl-4 space-y-1">
+    <div class="rounded border border-line-soft bg-soft p-3 text-xs text-fg">
+      <ul class="list-disc space-y-1 pl-4 marker:text-blood-deep/60">
         <li>
           役職1文字略称は
-          <NuxtLink to="/rule#skill" target="_blank" class="text-blue-600 hover:text-blue-800"
-            >仕様</NuxtLink
-          >を参照してください。
+          <NuxtLink to="/rule#skill" target="_blank" class="text-link">仕様</NuxtLink>
+          を参照してください。
         </li>
         <li>ダミー役欠けなしの場合、村人を1名以上含めてください。</li>
         <li>ダミー役欠けありの場合、噛まれて死亡する役職を1名以上含めてください。</li>

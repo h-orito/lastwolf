@@ -2,26 +2,22 @@
   <UiModal v-model="isOpen" title="村作成確認" @close="close">
     <div class="text-sm">
       <div v-if="param" class="overflow-x-auto">
-        <table class="w-full border-collapse bg-white">
+        <table class="doc-table text-fg">
           <thead>
-            <tr class="bg-gray-100">
-              <th class="border border-gray-300 px-3 py-2 text-left">設定</th>
-              <th class="border border-gray-300 px-3 py-2 text-left"></th>
+            <tr>
+              <th>設定</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="setting in settings"
-              :key="setting.name"
-              class="odd:bg-white even:bg-gray-50"
-            >
-              <td class="border border-gray-300 px-3 py-1 align-top font-medium">
+            <tr v-for="setting in settings" :key="setting.name" class="row-stripe">
+              <td class="align-top font-medium">
                 <div class="flex items-start gap-1">
                   <span>{{ setting.name }}</span>
                   <button
                     v-if="setting.description"
                     type="button"
-                    class="inline-flex items-center justify-center w-4 h-4 rounded-full border border-gray-400 text-gray-400 hover:border-gray-600 hover:text-gray-600 text-xs leading-none cursor-pointer flex-shrink-0 mt-0.5"
+                    class="mt-0.5 inline-flex h-4 w-4 flex-shrink-0 cursor-pointer items-center justify-center rounded-full border border-line-bright text-xs leading-none text-fg-secondary transition-colors hover:border-blood hover:text-blood"
                     :title="setting.description"
                     @click="toggleDescription(setting.name)"
                   >
@@ -30,15 +26,13 @@
                 </div>
                 <div
                   v-if="openDescriptions.has(setting.name) && setting.description"
-                  class="mt-1 text-xs text-gray-500 whitespace-pre-line"
+                  class="mt-1 whitespace-pre-line text-xs text-fg-secondary"
                 >
                   {{ setting.description }}
                 </div>
               </td>
-              <td
-                class="border border-gray-300 px-3 py-1"
-                v-html="setting.value.replace(/\n/g, '<br />')"
-              />
+              <!-- value は改行を含むため whitespace-pre-line で表示（旧 v-html は user 入力 XSS の懸念があり撤去） -->
+              <td class="whitespace-pre-line">{{ setting.value }}</td>
             </tr>
           </tbody>
         </table>

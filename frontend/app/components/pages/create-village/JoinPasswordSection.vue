@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <h2 class="text-base font-semibold">参加パスワード</h2>
+    <h2 class="doc-section-heading">参加パスワード</h2>
 
     <UiFormFormGroup label="参加パスワード（任意）">
       <UiFormFormInput

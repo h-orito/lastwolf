@@ -1,10 +1,10 @@
 <template>
   <div class="space-y-4">
-    <h2 class="text-base font-semibold">詳細ルール</h2>
+    <h2 class="doc-section-heading">詳細ルール</h2>
 
     <!-- 注意書き -->
-    <div class="bg-blue-50 border border-blue-200 rounded p-3 text-xs">
-      <ul class="list-disc pl-4 space-y-1">
+    <div class="rounded border border-line-soft bg-soft p-3 text-xs text-fg">
+      <ul class="list-disc space-y-1 pl-4 marker:text-blood-deep/60">
         <li>
           初日白通知の場合、初日の占いのみ人狼と妖狐以外の役職からランダムで対象が選ばれます。
         </li>
