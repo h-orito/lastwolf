@@ -215,6 +215,8 @@ const containerClasses = computed(() => {
     info_public: "msg-info-public",
     info_system: "msg-info-system",
   };
+  // !hasSender で到達するのは info_*（creator 除く）のみで全て map にあるため variant は通常見つかる。
+  // 念のため未登録時は塗り箱の枠だけ（base）にフォールバックする。
   const base = "rounded-lg border px-2.5 py-1.5";
   const variant = map[roleVariant.value];
   return variant ? `${base} ${variant}` : base;

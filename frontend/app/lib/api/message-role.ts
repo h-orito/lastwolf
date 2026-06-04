@@ -15,7 +15,7 @@ import { MESSAGE_TYPE } from "~/lib/api/message-constants";
  * UI 上のレイアウト分岐・名前色 override・小タグ（roleTag / 種別タグ）の表示分岐に使う。
  */
 export type RoleVariant =
-  // === 会話系 ===
+  // === 会話系（本文ボックスに firewolf dark 色） ===
   | "normal"
   | "wolf"
   | "mason"
@@ -28,10 +28,11 @@ export type RoleVariant =
   | "info_psychic"
   | "info_mason"
   | "info_lovers"
-  | "info_creator"
   | "info_fox"
   | "info_public"
-  | "info_system";
+  | "info_system"
+  // === 特殊: CREATOR_SAY。塗り箱ではなく会話レイアウトで描画（名前色 override 専用に roleVariant を保持） ===
+  | "info_creator";
 
 /* === 会話系 === */
 
