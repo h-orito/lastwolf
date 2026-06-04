@@ -1,5 +1,10 @@
 <template>
-  <div class="message-area max-h-[80vh] overflow-y-auto">
+  <!--
+    appear 未指定なので日タブ切替のマウント時（既存発言の一括描画）はアニメーションせず、
+    リアルタイム追加された新規発言だけが fade-in する（Issue #7 パフォーマンス懸念対策）。
+    トランジションクラス msg-in-* は main.css にグローバル定義（子 Message の root に当たるため）。
+  -->
+  <TransitionGroup tag="div" name="msg-in" class="message-area max-h-[80vh] overflow-y-auto">
     <Message
       v-for="m in filteredMessages"
       :key="`${m.time.village_day_id}-${m.time.unix_time_milli}-${m.from?.id ?? 'sys'}`"
@@ -10,7 +15,7 @@
       :color="messageColor(m)"
       @filter="filter($event)"
     />
-  </div>
+  </TransitionGroup>
 </template>
 
 <script setup lang="ts">

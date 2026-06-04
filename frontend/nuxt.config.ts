@@ -16,6 +16,8 @@ export default defineNuxtConfig({
 
   // head設定（SEO、パフォーマンス最適化）
   app: {
+    // ページ遷移トランジション（main.css の .page-* で定義 / prefers-reduced-motion で抑止）
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       titleTemplate: "%s | LASTWOLF",
       htmlAttrs: {
