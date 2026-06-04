@@ -215,11 +215,11 @@ const containerClasses = computed(() => {
     info_public: "msg-info-public",
     info_system: "msg-info-system",
   };
-  // !hasSender で到達するのは info_*（creator 除く）のみで全て map にあるため variant は通常見つかる。
-  // 念のため未登録時は塗り箱の枠だけ（base）にフォールバックする。
+  // !hasSender で到達するのは info_*（creator 除く）。想定外のシステム種別（PARTICIPANTS / ACTION 等が
+  // 万一メッセージ列に混入した場合）は roleVariant=normal で map 未登録になるため、個別システム通知
+  // （info_system / くすんだグレー塗り箱）の見た目にフォールバックして「枠だけ」になるのを防ぐ。
   const base = "rounded-lg border px-2.5 py-1.5";
-  const variant = map[roleVariant.value];
-  return variant ? `${base} ${variant}` : base;
+  return `${base} ${map[roleVariant.value] ?? "msg-info-system"}`;
 });
 
 // 小タグ（人狼/共有/独白/墓下/観戦）。会話系のみ。情報通知系は systemTag（種別1文字）で識別。
