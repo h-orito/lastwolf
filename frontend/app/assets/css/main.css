@@ -275,7 +275,7 @@ a {
 
 /*
  * サイト全体の背景: 右上から赤光が差し込む warm-dark gradient wash。
- * layouts/top.vue と layouts/default.vue の両方で使用するため、共通化して DRY 違反を避ける。
+ * 単一レイアウト layouts/default.vue の `.site` に付与する共通クラス。
  * `.panel` のリムが「ページ自体の主光源に照らされている」見え方を支える。
  */
 .site-bg {
@@ -557,12 +557,49 @@ a {
   border-bottom: 1px solid var(--color-blood-deep);
 }
 
-/* ページ遷移アニメーション */
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.1s;
+/*
+ * ページ遷移アニメーション
+ *
+ * nuxt.config.ts の app.pageTransition (name: "page", mode: "out-in") で配線する。
+ * out-in なので leave 完了後に enter。体感の遅さを避けるため leave は短く（0.12s）、
+ * enter で下からわずかに持ち上げて「定着する」印象に（0.22s）。
+ * 動かすのは transform / opacity のみ（compositor 合成で 60fps を維持）。
+ */
+.page-enter-active {
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
 }
-.page-enter-from,
+.page-leave-active {
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
 .page-leave-to {
   opacity: 0;
+  transform: translateY(-4px);
+}
+
+/*
+ * アクセシビリティ: prefers-reduced-motion（Issue #7 / Phase 5 必須要件）
+ *
+ * OS でモーション低減を有効にしているユーザーには、本サイトの全アニメーション/
+ * トランジション（ページ遷移・registry hover・モーダル・text-link 等）を実質無効化する。
+ * グローバルに当てることで、個別実装のガード漏れを防ぐ単一の防波堤にする。
+ * 0 ではなく 0.01ms にするのは transitionend / animationend を発火させ、
+ * Vue <Transition> / <TransitionGroup> の done コールバックを確実に解決させるため。
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

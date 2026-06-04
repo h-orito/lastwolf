@@ -16,6 +16,13 @@ export default defineNuxtConfig({
 
   // head設定（SEO、パフォーマンス最適化）
   app: {
+    // ページ遷移トランジション（main.css の .page-* で定義 / prefers-reduced-motion で抑止）。
+    // layoutTransition は有効化しない: トップ(layout:top) ⇄ 他ページ(layout:default) のレイアウト跨ぎを
+    // out-in にすると旧レイアウトが一旦完全に消え、その隙間でグローバル背景（ダーク指定が無く白）が
+    // 露出して「一瞬真っ白 + 間延び」になるため（背景は .site-bg = レイアウト側だけが持つ）。
+    // レイアウト跨ぎは無トランジション（即時）とし、同一レイアウト内の遷移（村一覧→村 / ドキュメント間 等）
+    // だけ fade させる。pageTransition はレイアウトを保持したまま走るので隙間が生じない。
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       titleTemplate: "%s | LASTWOLF",
       htmlAttrs: {

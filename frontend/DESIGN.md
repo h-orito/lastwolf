@@ -251,11 +251,21 @@ hover は全 variant 共通で `filter: brightness(1.12)` による一段明る�
 - 「読み込み中…」等の状態テキスト: `text-fg-muted`
 - 段落間: `space-y-7`（章間） / 章内リスト間: `space-y-1.5` 〜 `space-y-3`
 
+## モーション・トランジション（Phase 5 / Issue #7）
+
+世界観の没入感を高めるための **控えめな** モーション。人狼はテキスト主体ゲームのため**可読性最優先**で、過剰アニメーションは入れない。動かすのは原則 `transform` / `opacity` のみ（compositor 合成で 60fps を維持し、レイアウト・ペイントの再計算を避ける）。
+
+- **ページ遷移**: `app.pageTransition`（`name: "page"` / `mode: "out-in"`）。leave は速く（0.12s, fade + わずかに上へ）、enter は下から持ち上げて定着（0.22s, fade + `translateY(8px)→0`）。実体は `main.css` の `.page-*`。**全遷移（トップ⇄他ページ含む）で効く**。
+  - 当初トップだけ `layout: top` で他（`layout: default`）と分かれており、レイアウト跨ぎでは pageTransition が無音だった。`layoutTransition` を `out-in` で足すと、旧レイアウトが一旦完全に消えその隙間でグローバル背景（`.site-bg` はレイアウト側のみが持ち html/body にダーク指定が無い）の白が露出し「一瞬真っ白 + 間延び」になった。
+  - 解決として **レイアウトを `default` 単一に統合**（旧 `top.vue` 削除）。差分は NavBar 有無のみだったため、`default.vue` が `route.path === "/"` のときだけ NavBar を非表示にして旧 top を再現。レイアウト swap 自体が無くなり、`layoutTransition` 無しで全遷移に pageTransition が一貫して効く（白フラッシュ/間延びも構造的に発生しない）。
+- **モーダル**: `Modal.vue` の `<Transition>`（opacity 200ms + scale 95%→100%）。Phase 5 では変更せず現状維持
+- **prefers-reduced-motion**: `main.css` のグローバル `@media (prefers-reduced-motion: reduce)` で全アニメーション/トランジションを実質無効化（`*` に `animation-duration` / `transition-duration: 0.01ms !important`）。個別実装のガード漏れを防ぐ単一の防波堤。`0` でなく `0.01ms` なのは `transitionend`/`animationend` を発火させ Vue の Transition done コールバックを解決させるため
+
 ## 影響範囲（Phase 1 以降で実装）
 
 - `frontend/app/assets/css/main.css` — CSS variables 全面更新。**既存の `--color-{normal,werewolf,mason,monologue,grave,spectate}-say` および `--color-{private,seer,psychic,werewolf,mason,creator}-system-*` は事実上 dead なので Phase 1 で削除**
 - `frontend/nuxt.config.ts` — `theme-color` を `#050202`（Black & Blood ピボット後の `--color-deep`）に、PWA manifest の `theme_color` / `background_color` も
-- `frontend/app/layouts/default.vue` / `layouts/top.vue` — `background-color` を `var(--color-deep)` に
+- `frontend/app/layouts/default.vue`（旧 `layouts/top.vue` は Phase 5 で `default` に統合・削除）— `background-color` を `var(--color-deep)` に
 - `frontend/app/components/layout/NavBar.vue` — 上記ヘッダー方針
 - `frontend/app/components/ui/**` — 上記コンポーネント方針
 - `frontend/app/components/pages/**` — ページ固有部品の刷新
@@ -276,6 +286,7 @@ hover は全 variant 共通で `filter: brightness(1.12)` による一段明る�
 - ロール色のテキスト利用時はサイズ 13px 以上 + 周囲のコントラスト確保を必須化
 - focus ring は `blood` を使用（`focus-visible:ring-blood`）
 - `--color-ember #ff5b3a` は **rim glow / box-shadow / radial-gradient の中心 等専用**。`text-ember` のベタ塗り文字用途は彩度が高すぎて疲れるため避ける
+- **モーション**: `prefers-reduced-motion: reduce` で全アニメーション/トランジションを抑止（`main.css` のグローバルガード）。詳細は「モーション・トランジション」節
 
 ## 採用しなかった方向性（参考）
 
@@ -285,11 +296,11 @@ hover は全 variant 共通で `filter: brightness(1.12)` による一段明る�
 
 ## Phase 計画
 
-| Phase | 対象                                                                                                  | 状態     |
-| ----- | ----------------------------------------------------------------------------------------------------- | -------- |
-| 0     | デザイン方針合意（本書）                                                                              | 完了     |
-| 1     | デザイントークン整備（CSS variables / Tailwind theme / フォント読込 / `message-color.ts` ダーク対応） | 起票予定 |
-| 2     | `components/ui/` 配下の base component 刷新                                                           | 起票予定 |
-| 3     | `layouts/` と `pages/index.vue` 等トップ周りの刷新 + 村画面の情報設計                                 | 起票予定 |
-| 4     | 各機能ページ（村一覧・キャラチップ等）の刷新                                                          | 起票予定 |
-| 5     | 細部のアニメーション・トランジション（任意）                                                          | 起票予定 |
+| Phase | 対象                                                                                                  | 状態                                       |
+| ----- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| 0     | デザイン方針合意（本書）                                                                              | 完了                                       |
+| 1     | デザイントークン整備（CSS variables / Tailwind theme / フォント読込 / `message-color.ts` ダーク対応） | 起票予定                                   |
+| 2     | `components/ui/` 配下の base component 刷新                                                           | 起票予定                                   |
+| 3     | `layouts/` と `pages/index.vue` 等トップ周りの刷新 + 村画面の情報設計                                 | 起票予定                                   |
+| 4     | 各機能ページ（村一覧・キャラチップ等）の刷新                                                          | 起票予定                                   |
+| 5     | 細部のアニメーション・トランジション（任意）                                                          | 完了（ページ遷移 + reduced-motion ガード） |

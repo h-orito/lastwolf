@@ -63,8 +63,9 @@ import { VILLAGE_STATUS } from "~/lib/api/village-status-constants";
 type SimpleVillageView = components["schemas"]["SimpleVillageView"];
 type VillagesView = components["schemas"]["VillagesView"];
 
-definePageMeta({ layout: "top" });
-
+// レイアウトは default を使用（NavBar は default.vue 側で / のときだけ非表示にする）。
+// 旧 layout: "top" は default との差分が NavBar 有無のみで、レイアウト分離がページ遷移の
+// レイアウト跨ぎ問題を生んでいたため統合した。
 const meta = buildPageMeta({ title: "" });
 useSeoMeta(meta);
 useHead({ titleTemplate: () => "LASTWOLF" });
