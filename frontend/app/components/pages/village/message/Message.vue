@@ -101,7 +101,11 @@ const fromName = computed(() => {
 
 // 発言者名を持つか（通常発言 / 村建て）。false = システム通知。
 // システム通知は名前行を持たず、本文 + 種別 + 時間を 1 行に並べるレイアウトに切り替える。
-const hasSender = computed(() => fromName.value !== "");
+// from の有無を主軸に判定する（chara.name.name が空のキャラでも通常発言を誤ってシステム扱いしないため）。
+// CREATOR_SAY は from=null で固定名「村建て」を出す特殊ケースなので明示的に含める。
+const hasSender = computed(
+  () => !!props.message.from || props.message.content.type.code === MESSAGE_TYPE.CREATOR_SAY,
+);
 
 const messageTime = computed(() => {
   if (props.isPrologue || props.isEpilogue) {
@@ -211,7 +215,9 @@ const containerClasses = computed(() => {
     info_public: "msg-info-public",
     info_system: "msg-info-system",
   };
-  return `rounded-lg border px-2.5 py-1.5 ${map[roleVariant.value] ?? ""}`;
+  const base = "rounded-lg border px-2.5 py-1.5";
+  const variant = map[roleVariant.value];
+  return variant ? `${base} ${variant}` : base;
 });
 
 // 小タグ（人狼/共有/独白/墓下/観戦）。会話系のみ。情報通知系は systemTag（種別1文字）で識別。
