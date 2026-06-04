@@ -92,10 +92,12 @@ const emit = defineEmits<Emits>();
 
 const villageStore = useVillageStore();
 
+// 名前行に出す発言者名。テンプレート上は会話レイアウト（v-if="isConversation"）でのみ参照され、
+// システム通知（v-else）では描画されない。CREATOR_SAY は from=null だが会話系（SAY_BODY_CLASS に含む）
+// なので「村建て」を返す。それ以外の from=null（システム通知）は会話側に来ないため "" は実質描画されない。
 const fromName = computed(() => {
   if (props.message.from) return props.message.from.chara.name.name;
   if (props.message.content.type.code === MESSAGE_TYPE.CREATOR_SAY) return "村建て";
-  // システムメッセージ（from 無し）は発言者名を表示しない（旧「システム」表記を撤去）。
   return "";
 });
 
@@ -141,14 +143,16 @@ const SAY_BODY_CLASS: Record<string, string> = {
   [MESSAGE_TYPE.SECRET_SAY]: "msg-say-secret",
   [MESSAGE_TYPE.CREATOR_SAY]: "msg-say-creator",
 };
+// isConversation=true なら必ず SAY_BODY_CLASS にヒットするため ?? は理論上到達しない安全ネット。
 const sayBodyClass = computed(
   () => SAY_BODY_CLASS[props.message.content.type.code] ?? "msg-say-normal",
 );
 
 // 会話レイアウト（アバター ｜ 名前行 / 本文ボックス）で描画するか。
-// SAY_BODY_CLASS に登録されたコード = 会話系（各種発言 + 村建て）。from の有無ではなくメッセージ種別で
-// 判定するため、from=null の say（恋人/秘話 等）が来ても誤ってシステム通知レイアウトに落ちない。
-// これ以外（PRIVATE_* 通知系）はシステム通知レイアウト（v-else）。
+// 会話系の truth source は SAY_BODY_CLASS のキー集合（各種発言 + 村建て）。from の有無ではなく
+// メッセージ種別で判定するため、from=null の say（恋人/秘話 等）が来ても誤ってシステム通知に落ちない。
+// message-constants の isSayType() を使わないのは、CREATOR_SAY / PRIVATE_ABILITY が MESSAGE_TYPE_MAP では
+// "system" に分類される一方、lastwolf では会話レイアウト（村建て / 独り言）で扱うため分類が一致しないから。
 const isConversation = computed(() =>
   Object.hasOwn(SAY_BODY_CLASS, props.message.content.type.code),
 );
