@@ -81,7 +81,7 @@ export const INFO_MASON_CODES = new Set<string>([
 // ピンク（#404033/#f0a）: 恋人への私信
 export const INFO_LOVERS_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_LOVERS]);
 
-// CREATOR_SAY（村建て発言）。lastwolf では「村建て」名を持つため会話レイアウト（hasSender=true）で扱い、
+// CREATOR_SAY（村建て発言）。lastwolf では「村建て」名を持つため会話レイアウト（isConversation）で扱い、
 // 本文ボックスは会話系の --color-say-creator-*（暗地+薄文字+紫枠）を使う。
 // この roleVariant=info_creator は塗り箱用ではなく、Message.vue の nameOverrideClass で
 // 名前色を text-fg（白系）に固定するためだけに残している（削除すると名前色判定が変わる）。

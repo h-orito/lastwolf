@@ -11,8 +11,8 @@
     </div>
     <!-- メッセージ内容 -->
     <div class="flex-1 flex flex-col min-w-0">
-      <!-- 発言者あり（通常発言 / 村建て）: 名前行 → 本文行 の 2 段 -->
-      <template v-if="hasSender">
+      <!-- 会話系（各種発言 / 村建て）: 名前行 → 本文ボックス の 2 段 -->
+      <template v-if="isConversation">
         <div class="flex items-baseline gap-1.5">
           <span class="flex-1 truncate" :class="nameColorClass" :style="nameStyle">{{
             fromName
@@ -43,7 +43,7 @@
         <span
           v-if="systemTag"
           class="text-[10px] shrink-0 tracking-widest"
-          :style="{ color: systemTag.color }"
+          :class="systemTag.cls"
           >{{ systemTag.label }}</span
         >
         <span class="text-fg-secondary text-xs shrink-0">{{ messageTime }}</span>
@@ -99,14 +99,6 @@ const fromName = computed(() => {
   return "";
 });
 
-// 発言者名を持つか（通常発言 / 村建て）。false = システム通知。
-// システム通知は名前行を持たず、本文 + 種別 + 時間を 1 行に並べるレイアウトに切り替える。
-// from の有無を主軸に判定する（chara.name.name が空のキャラでも通常発言を誤ってシステム扱いしないため）。
-// CREATOR_SAY は from=null で固定名「村建て」を出す特殊ケースなので明示的に含める。
-const hasSender = computed(
-  () => !!props.message.from || props.message.content.type.code === MESSAGE_TYPE.CREATOR_SAY,
-);
-
 const messageTime = computed(() => {
   if (props.isPrologue || props.isEpilogue) {
     return dayjs(props.message.time.unix_time_milli).format("HH:mm");
@@ -116,25 +108,22 @@ const messageTime = computed(() => {
   return `${mesDatetime.diff(startDatetime, "second")}秒`;
 });
 
-// システム通知の種別タグ（1 文字）。色は枠（info_* の border）= firewolf 原色トークン由来。
-// ただし 赤(#f00) と 青(#00f) は暗背景上で文字が沈むため、同トークンを white 寄りに混ぜて明度を上げる
-// （枠の「明るめ版」。緑/橙/桃/黄は十分明るいので枠色そのまま）。
+// システム通知の種別タグ（1 文字）。色は枠（info_* の border）= firewolf 原色トークン由来で、
+// scoped の .systag-* クラスに閉じる（赤/青は暗背景で沈むため white 寄せの明るめ版にしている）。
 // 会話系（roleTag を持つ wolf/mason/mono/grave/seer）は roleTag で表示するためここに含めない。
 // CREATOR_SAY（「村建て」名で表示）/ PUBLIC_SYSTEM（全体通知）/ PRIVATE_SYSTEM はタグなし。
-const TAG_WOLF = "color-mix(in srgb, var(--color-sysmsg-wolf-border) 60%, white)";
-const TAG_PSYCHIC = "color-mix(in srgb, var(--color-sysmsg-psychic-border) 50%, white)";
-const SYSTEM_TAG: Record<string, { label: string; color: string }> = {
-  [MESSAGE_TYPE.PRIVATE_WEREWOLF]: { label: "狼", color: TAG_WOLF },
-  [MESSAGE_TYPE.PRIVATE_FANATIC]: { label: "信", color: TAG_WOLF },
-  [MESSAGE_TYPE.PRIVATE_SEER]: { label: "占", color: "var(--color-sysmsg-village-border)" },
-  [MESSAGE_TYPE.PRIVATE_WISE]: { label: "賢", color: "var(--color-sysmsg-village-border)" },
-  [MESSAGE_TYPE.PRIVATE_PSYCHIC]: { label: "霊", color: TAG_PSYCHIC },
-  [MESSAGE_TYPE.PRIVATE_GURU]: { label: "導", color: TAG_PSYCHIC },
-  [MESSAGE_TYPE.PRIVATE_CORONER]: { label: "検", color: TAG_PSYCHIC },
-  [MESSAGE_TYPE.PRIVATE_MASON]: { label: "共", color: "var(--color-sysmsg-mason-border)" },
-  [MESSAGE_TYPE.PRIVATE_SYMPATHIZER]: { label: "鳴", color: "var(--color-sysmsg-mason-border)" },
-  [MESSAGE_TYPE.PRIVATE_LOVERS]: { label: "恋", color: "var(--color-sysmsg-lovers-border)" },
-  [MESSAGE_TYPE.PRIVATE_FOX]: { label: "狐", color: "var(--color-sysmsg-fox-border)" },
+const SYSTEM_TAG: Record<string, { label: string; cls: string }> = {
+  [MESSAGE_TYPE.PRIVATE_WEREWOLF]: { label: "狼", cls: "systag-wolf" },
+  [MESSAGE_TYPE.PRIVATE_FANATIC]: { label: "信", cls: "systag-wolf" },
+  [MESSAGE_TYPE.PRIVATE_SEER]: { label: "占", cls: "systag-village" },
+  [MESSAGE_TYPE.PRIVATE_WISE]: { label: "賢", cls: "systag-village" },
+  [MESSAGE_TYPE.PRIVATE_PSYCHIC]: { label: "霊", cls: "systag-psychic" },
+  [MESSAGE_TYPE.PRIVATE_GURU]: { label: "導", cls: "systag-psychic" },
+  [MESSAGE_TYPE.PRIVATE_CORONER]: { label: "検", cls: "systag-psychic" },
+  [MESSAGE_TYPE.PRIVATE_MASON]: { label: "共", cls: "systag-mason" },
+  [MESSAGE_TYPE.PRIVATE_SYMPATHIZER]: { label: "鳴", cls: "systag-mason" },
+  [MESSAGE_TYPE.PRIVATE_LOVERS]: { label: "恋", cls: "systag-lovers" },
+  [MESSAGE_TYPE.PRIVATE_FOX]: { label: "狐", cls: "systag-fox" },
 };
 const systemTag = computed(() => SYSTEM_TAG[props.message.content.type.code] ?? null);
 
@@ -154,6 +143,14 @@ const SAY_BODY_CLASS: Record<string, string> = {
 };
 const sayBodyClass = computed(
   () => SAY_BODY_CLASS[props.message.content.type.code] ?? "msg-say-normal",
+);
+
+// 会話レイアウト（アバター ｜ 名前行 / 本文ボックス）で描画するか。
+// SAY_BODY_CLASS に登録されたコード = 会話系（各種発言 + 村建て）。from の有無ではなくメッセージ種別で
+// 判定するため、from=null の say（恋人/秘話 等）が来ても誤ってシステム通知レイアウトに落ちない。
+// これ以外（PRIVATE_* 通知系）はシステム通知レイアウト（v-else）。
+const isConversation = computed(() =>
+  Object.hasOwn(SAY_BODY_CLASS, props.message.content.type.code),
 );
 
 const image = computed((): CharaImage | null => {
@@ -200,11 +197,11 @@ const roleVariant = computed<RoleVariant>(() => {
 });
 
 // root のクラス。
-//  - 会話系（hasSender）: 本文ボックス（.msg-say-*）が色を持つので root は無装飾。
-//  - システム系（from 無し）: root 自体を firewolf dark の塗り箱（rounded + border + padding + bg）にする。
-//    info_creator（CREATOR_SAY）は「村建て」名を持つため hasSender=true 側＝会話レイアウトで扱う。
+//  - 会話系（isConversation）: 本文ボックス（.msg-say-*）が色を持つので root は無装飾。
+//  - システム系: root 自体を firewolf dark の塗り箱（rounded + border + padding + bg）にする。
+//    info_creator（CREATOR_SAY）は会話系（SAY_BODY_CLASS に含む）なので会話レイアウトで扱う。
 const containerClasses = computed(() => {
-  if (hasSender.value) return "";
+  if (isConversation.value) return "";
   const map: Partial<Record<RoleVariant, string>> = {
     info_wolf: "msg-info-wolf",
     info_village: "msg-info-village",
@@ -215,7 +212,7 @@ const containerClasses = computed(() => {
     info_public: "msg-info-public",
     info_system: "msg-info-system",
   };
-  // !hasSender で到達するのは info_*（creator 除く）。想定外のシステム種別（PARTICIPANTS / ACTION 等が
+  // !isConversation で到達するのは info_*（creator 除く）。想定外のシステム種別（PARTICIPANTS / ACTION 等が
   // 万一メッセージ列に混入した場合）は roleVariant=normal で map 未登録になるため、個別システム通知
   // （info_system / くすんだグレー塗り箱）の見た目にフォールバックして「枠だけ」になるのを防ぐ。
   const base = "rounded-lg border px-2.5 py-1.5";
@@ -223,6 +220,8 @@ const containerClasses = computed(() => {
 });
 
 // 小タグ（人狼/共有/独白/墓下/観戦）。会話系のみ。情報通知系は systemTag（種別1文字）で識別。
+// NORMAL_SAY / LOVERS_SAY / SECRET_SAY（roleVariant=normal）は roleTag を出さない（意図的）。
+// 恋人=桃 / 秘話=灰紫 は本文ボックスの色で識別できるため小タグは不要。
 const roleTag = computed<{ label: string; cls: string } | null>(() => {
   const map: Partial<Record<RoleVariant, { label: string; cls: string }>> = {
     wolf: { label: "人狼", cls: "text-wolf" },
@@ -234,7 +233,7 @@ const roleTag = computed<{ label: string; cls: string } | null>(() => {
   return map[roleVariant.value] ?? null;
 });
 
-// 名前テキストの色 override（名前行を持つ＝ hasSender のバリアントのみ対象）。
+// 名前テキストの色 override（名前行を持つ＝会話系 isConversation のバリアントのみ対象）。
 // 閉じた特別な場（wolf / mason / grave）はロール色に固定（個人識別カラー props.color は使わない）。
 // info_creator（村建て）は塗り箱でなく会話レイアウトなので名前を白系（text-fg）に固定。
 // それ以外（normal / mono / seer）は個人識別カラー優先、無ければ fg（map に入れない）。
@@ -369,5 +368,26 @@ const filter = () => {
 .msg-info-system {
   background-color: var(--color-sysmsg-system-bg);
   border-color: var(--color-sysmsg-system-border);
+}
+
+/* システム通知の種別タグ（1 文字）の色。枠（--color-sysmsg-*-border）と同色。
+ * 赤(#f00)/青(#00f) は暗背景で文字が沈むため white を混ぜて明度を上げる（緑/橙/桃/黄は枠色そのまま）。 */
+.systag-wolf {
+  color: color-mix(in srgb, var(--color-sysmsg-wolf-border) 60%, white);
+}
+.systag-village {
+  color: var(--color-sysmsg-village-border);
+}
+.systag-psychic {
+  color: color-mix(in srgb, var(--color-sysmsg-psychic-border) 50%, white);
+}
+.systag-mason {
+  color: var(--color-sysmsg-mason-border);
+}
+.systag-lovers {
+  color: var(--color-sysmsg-lovers-border);
+}
+.systag-fox {
+  color: var(--color-sysmsg-fox-border);
 }
 </style>
