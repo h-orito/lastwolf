@@ -255,8 +255,7 @@ hover は全 variant 共通で `filter: brightness(1.12)` による一段明る�
 
 世界観の没入感を高めるための **控えめな** モーション。人狼はテキスト主体ゲームのため**可読性最優先**で、過剰アニメーションは入れない。動かすのは原則 `transform` / `opacity` のみ（compositor 合成で 60fps を維持し、レイアウト・ペイントの再計算を避ける）。
 
-- **ページ遷移**: `app.pageTransition` (`name: "page"` / `mode: "out-in"`)。leave は速く（0.12s, fade + わずかに上へ）、enter は下から持ち上げて定着（0.22s, fade + `translateY(8px)→0`）。実体は `main.css` の `.page-*`
-- **ヒーロー血光の揺らぎ**: `Spotlight.vue` の LASTWOLF 背後に blood の radial halo を敷き、**opacity のみ**を 11s ループで微弱に明滅（`@keyframes hero-glow-breathe`、0.32↔0.66）。文字自体の outline shadow は可読性のため静的
+- **ページ遷移**: `app.pageTransition` + `app.layoutTransition`（両方 `name: "page"` / `mode: "out-in"`）。leave は速く（0.12s, fade + わずかに上へ）、enter は下から持ち上げて定着（0.22s, fade + `translateY(8px)→0`）。実体は `main.css` の `.page-*`。`layoutTransition` も同 name で有効化しているのは、トップ（`layout: top`）⇄ 他ページ（`layout: default`）のレイアウト跨ぎ遷移ではページ遷移が無音になるため、レイアウト側にも同じ fade を当てて全遷移で一貫させる目的
 - **メッセージ fade-in**: 村チャット `DayMessages.vue` の `<TransitionGroup name="msg-in">`（enter のみ / `main.css` にグローバル定義）。`appear` 未指定により**日タブ切替のマウント時は発火せず**、リアルタイム追加された新規発言だけが fade-in する（一覧一括描画のパフォーマンスコストを回避）。leave は未定義で即時除去（フィルタ切替時のレイアウト揺れ防止）
 - **モーダル**: `Modal.vue` の `<Transition>`（opacity 200ms + scale 95%→100%）。Phase 5 では変更せず現状維持
 - **prefers-reduced-motion**: `main.css` のグローバル `@media (prefers-reduced-motion: reduce)` で全アニメーション/トランジションを実質無効化（`*` に `animation-duration` / `transition-duration: 0.01ms !important`）。個別実装のガード漏れを防ぐ単一の防波堤。`0` でなく `0.01ms` なのは `transitionend`/`animationend` を発火させ Vue の Transition done コールバックを解決させるため
@@ -296,11 +295,11 @@ hover は全 variant 共通で `filter: brightness(1.12)` による一段明る�
 
 ## Phase 計画
 
-| Phase | 対象                                                                                                  | 状態                                                                                 |
-| ----- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| 0     | デザイン方針合意（本書）                                                                              | 完了                                                                                 |
-| 1     | デザイントークン整備（CSS variables / Tailwind theme / フォント読込 / `message-color.ts` ダーク対応） | 起票予定                                                                             |
-| 2     | `components/ui/` 配下の base component 刷新                                                           | 起票予定                                                                             |
-| 3     | `layouts/` と `pages/index.vue` 等トップ周りの刷新 + 村画面の情報設計                                 | 起票予定                                                                             |
-| 4     | 各機能ページ（村一覧・キャラチップ等）の刷新                                                          | 起票予定                                                                             |
-| 5     | 細部のアニメーション・トランジション（任意）                                                          | 完了（ページ遷移 / ヒーロー血光揺らぎ / メッセージ fade-in + reduced-motion ガード） |
+| Phase | 対象                                                                                                  | 状態                                                            |
+| ----- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 0     | デザイン方針合意（本書）                                                                              | 完了                                                            |
+| 1     | デザイントークン整備（CSS variables / Tailwind theme / フォント読込 / `message-color.ts` ダーク対応） | 起票予定                                                        |
+| 2     | `components/ui/` 配下の base component 刷新                                                           | 起票予定                                                        |
+| 3     | `layouts/` と `pages/index.vue` 等トップ周りの刷新 + 村画面の情報設計                                 | 起票予定                                                        |
+| 4     | 各機能ページ（村一覧・キャラチップ等）の刷新                                                          | 起票予定                                                        |
+| 5     | 細部のアニメーション・トランジション（任意）                                                          | 完了（ページ遷移 / メッセージ fade-in + reduced-motion ガード） |

@@ -17,7 +17,11 @@ export default defineNuxtConfig({
   // head設定（SEO、パフォーマンス最適化）
   app: {
     // ページ遷移トランジション（main.css の .page-* で定義 / prefers-reduced-motion で抑止）
+    // layoutTransition も同じ name で有効化: トップ(layout:top) ⇄ 他ページ(layout:default) の
+    // レイアウト跨ぎ遷移はページ遷移だけだと無音になるため、レイアウト側にも同じ fade を当てて
+    // 全遷移で一貫して効かせる。
     pageTransition: { name: "page", mode: "out-in" },
+    layoutTransition: { name: "page", mode: "out-in" },
     head: {
       titleTemplate: "%s | LASTWOLF",
       htmlAttrs: {
