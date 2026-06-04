@@ -3,13 +3,14 @@ import { MESSAGE_TYPE } from "~/lib/api/message-constants";
 /**
  * チャットメッセージのロールバリアント分類。
  *
- * 2 系統に分ける:
- *   - 会話系 (say variants): 全周 bg + frame + halo を持つ「発言バブル」
- *     normal / wolf / mason / mono / grave / seer
- *   - 情報通知系 (info_* variants): firewolf dark 準拠の「塗り箱」(暗グレー bg + 原色 border)
+ * 2 系統に分ける（2026-06 firewolf dark 準拠へ再編）:
+ *   - 会話系 (say variants): 「アバター ｜ 名前行 / 本文ボックス」レイアウト。本文ボックスにだけ
+ *     firewolf dark の bg/border/color を付ける（淡パステル地 + 黒文字）。directional rim / halo /
+ *     アバターリングは撤去済み。normal / wolf / mason / mono / grave / seer
+ *   - 情報通知系 (info_* variants): firewolf dark 準拠の「塗り箱」(暗グレー bg + 原色 border + 白系テキスト)
  *     info_wolf / info_village / info_psychic / info_mason / info_lovers / info_creator / info_fox / info_public / info_system
  *
- * UI 上の枠線・アバターリング・小タグの表示分岐に使う。
+ * UI 上のレイアウト分岐・名前色 override・小タグ（roleTag / 種別タグ）の表示分岐に使う。
  */
 export type RoleVariant =
   // === 会話系 ===
@@ -77,7 +78,10 @@ export const INFO_MASON_CODES = new Set<string>([
 // ピンク（#404033/#f0a）: 恋人への私信
 export const INFO_LOVERS_CODES = new Set<string>([MESSAGE_TYPE.PRIVATE_LOVERS]);
 
-// 紫（#403340/#c0f）: 村建て発言。firewolf は CREATOR_SAY を会話ではなくシステム箱として扱う
+// CREATOR_SAY（村建て発言）。lastwolf では「村建て」名を持つため会話レイアウト（hasSender=true）で扱い、
+// 本文ボックスは会話系の --color-say-creator-*（暗地+薄文字+紫枠）を使う。
+// この roleVariant=info_creator は塗り箱用ではなく、Message.vue の nameOverrideClass で
+// 名前色を text-fg（白系）に固定するためだけに残している（削除すると名前色判定が変わる）。
 export const INFO_CREATOR_CODES = new Set<string>([MESSAGE_TYPE.CREATOR_SAY]);
 
 // 妖狐への私信。firewolf の `.message-private-fox`（bg #403333 + くすんだ黄 border）に準拠

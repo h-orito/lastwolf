@@ -34,9 +34,10 @@
       <!-- 発言者なし（システム通知）: 本文 + 種別 + 時間 を 1 行に。
            本文が長い場合は本文だけ折り返し、種別/時間は items-baseline で 1 行目に残る。 -->
       <div v-else class="flex items-baseline gap-1.5 min-w-0">
+        <!-- システム通知の本文は塗り箱（暗グレー）上で読めるよう常に白系（text-fg）。陣営色は border が担う。 -->
         <span
-          class="flex-1 min-w-0 whitespace-pre-wrap break-all font-sans"
-          :class="[bodyColorClass, message.content.is_strong ? 'font-bold' : '']"
+          class="flex-1 min-w-0 whitespace-pre-wrap break-all font-sans text-fg"
+          :class="message.content.is_strong ? 'font-bold' : ''"
           >{{ message.content.text }}</span
         >
         <span
@@ -223,30 +224,6 @@ const roleTag = computed<{ label: string; cls: string } | null>(() => {
     seer: { label: "観戦", cls: "text-seer" },
   };
   return map[roleVariant.value] ?? null;
-});
-
-const bodyColorClass = computed(() => {
-  // 会話系は fg / fg-secondary ベース。
-  // 情報通知系（info_*）は firewolf dark の塗り箱（中間グレー bg）上で読めるよう白系 text-fg に統一。
-  // 陣営色はミュート役職色だと AA 不足のため本文には載せず、border 色で陣営を示す。
-  const map: Record<RoleVariant, string> = {
-    normal: "text-fg",
-    wolf: "text-fg",
-    mason: "text-fg",
-    mono: "text-fg-secondary",
-    grave: "text-fg-secondary",
-    seer: "text-fg",
-    info_wolf: "text-fg",
-    info_village: "text-fg",
-    info_psychic: "text-fg",
-    info_mason: "text-fg",
-    info_lovers: "text-fg",
-    info_creator: "text-fg",
-    info_fox: "text-fg",
-    info_public: "text-fg",
-    info_system: "text-fg",
-  };
-  return map[roleVariant.value];
 });
 
 // 名前テキストの色: ロールが閉じた特別な場（wolf / mason / grave）と情報通知系では

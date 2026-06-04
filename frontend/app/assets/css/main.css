@@ -55,8 +55,9 @@
  * Black & Blood のミュート役職色とは別系統（ユーザー指定で firewolf の値に忠実）。
  * 色グループは firewolf の `SystemMessage.vue` に準拠:
  *   赤=WEREWOLF/FANATIC, 緑=SEER/WISE, 青=PSYCHIC/GURU/CORONER,
- *   橙=MASON/SYMPATHIZER, ピンク=LOVERS, 紫=CREATOR_SAY, 黄=FOX,
+ *   橙=MASON/SYMPATHIZER, ピンク=LOVERS, 黄=FOX,
  *   灰=PRIVATE_SYSTEM, 白枠のみ=PUBLIC_SYSTEM。
+ *   （CREATOR_SAY は「村建て」名を持つため会話系扱い = --color-say-creator-* を参照。塗り箱なし）
  * @theme には入れない（utility 生成は不要なため通常の custom property として定義）。
  */
 :root {
