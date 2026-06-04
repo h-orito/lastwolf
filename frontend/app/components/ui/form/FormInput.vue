@@ -125,22 +125,42 @@ const handleBlur = (event: FocusEvent) => {
 /* normal: ページ bg #050202 から明確に持ち上がる base + 視認できる rim。
  * 入力欄であることが一目で分かる必要があるため、focus 相当の rim 明度を baseline にする。
  *
- * 改訂 (2026-05): 225deg rim の 40-70% 帯（上辺・左辺中段）が旧 bone 10% で実質透明だったため
- * 「左側が暗い／枠がない」と認識されていた。floor を blood-deep 40-45% に底上げして全周視認可能に。
- * 同時に base bg をやや明度アップ（rgba 36→44, 20→28）してページ bg からの浮き上がりを強化。
+ * 改訂 (2026-06): 旧 225deg 単一 rim は右上ピーク → 左下が floor のため「右側だけ光り左側が暗い」と
+ * 指摘された。**四隅それぞれを ember→blood で光らせる radial 4 枚 + blood-deep floor** の対称 rim に変更し、
+ * 左右どちらの端も同じ明度で光るようにする（panel-compact と同じ言語）。
  */
 .br-input-normal {
   background:
     linear-gradient(135deg, rgba(44, 26, 26, 0.96) 0%, rgba(28, 16, 16, 0.96) 100%) padding-box,
-    linear-gradient(
-        225deg,
+    radial-gradient(
+        ellipse 50% 75% at 0% 0%,
         rgba(255, 175, 145, 0.75) 0%,
-        rgba(224, 46, 46, 0.5) 18%,
-        rgba(139, 26, 26, 0.4) 40%,
-        rgba(139, 26, 26, 0.45) 70%,
-        rgba(139, 26, 26, 0.55) 100%
+        rgba(224, 46, 46, 0.5) 24%,
+        transparent 80%
       )
-      border-box;
+      border-box,
+    radial-gradient(
+        ellipse 50% 75% at 100% 0%,
+        rgba(255, 175, 145, 0.75) 0%,
+        rgba(224, 46, 46, 0.5) 24%,
+        transparent 80%
+      )
+      border-box,
+    radial-gradient(
+        ellipse 50% 75% at 0% 100%,
+        rgba(255, 175, 145, 0.75) 0%,
+        rgba(224, 46, 46, 0.5) 24%,
+        transparent 80%
+      )
+      border-box,
+    radial-gradient(
+        ellipse 50% 75% at 100% 100%,
+        rgba(255, 175, 145, 0.75) 0%,
+        rgba(224, 46, 46, 0.5) 24%,
+        transparent 80%
+      )
+      border-box,
+    linear-gradient(0deg, rgba(224, 46, 46, 0.58), rgba(224, 46, 46, 0.58)) border-box;
   box-shadow:
     inset 0 1px 0 rgba(255, 165, 135, 0.12),
     inset 0 0 0 1px rgba(255, 91, 58, 0.04);
@@ -149,40 +169,80 @@ const handleBlur = (event: FocusEvent) => {
 .br-input-normal:hover:not(:focus) {
   background:
     linear-gradient(135deg, rgba(52, 32, 32, 0.96) 0%, rgba(34, 20, 20, 0.96) 100%) padding-box,
-    linear-gradient(
-        225deg,
+    radial-gradient(
+        ellipse 50% 75% at 0% 0%,
         rgba(255, 185, 155, 0.85) 0%,
-        rgba(224, 46, 46, 0.6) 18%,
-        rgba(139, 26, 26, 0.5) 40%,
-        rgba(139, 26, 26, 0.55) 70%,
-        rgba(139, 26, 26, 0.65) 100%
+        rgba(224, 46, 46, 0.6) 24%,
+        transparent 80%
       )
-      border-box;
+      border-box,
+    radial-gradient(
+        ellipse 50% 75% at 100% 0%,
+        rgba(255, 185, 155, 0.85) 0%,
+        rgba(224, 46, 46, 0.6) 24%,
+        transparent 80%
+      )
+      border-box,
+    radial-gradient(
+        ellipse 50% 75% at 0% 100%,
+        rgba(255, 185, 155, 0.85) 0%,
+        rgba(224, 46, 46, 0.6) 24%,
+        transparent 80%
+      )
+      border-box,
+    radial-gradient(
+        ellipse 50% 75% at 100% 100%,
+        rgba(255, 185, 155, 0.85) 0%,
+        rgba(224, 46, 46, 0.6) 24%,
+        transparent 80%
+      )
+      border-box,
+    linear-gradient(0deg, rgba(224, 46, 46, 0.66), rgba(224, 46, 46, 0.66)) border-box;
   box-shadow:
     inset 0 1px 0 rgba(255, 185, 155, 0.18),
     inset 0 0 0 1px rgba(255, 91, 58, 0.06);
 }
 
-/* focus: 右上から radial 赤光が差し込み、外側に blood halo が広がる */
+/* focus: 上辺中央から radial 赤光が差し込み（左右対称）、四隅の rim が一段強まり、外側に blood halo */
 .br-input-normal:focus {
   background:
     radial-gradient(
-        ellipse 60% 140% at 100% -20%,
-        rgba(255, 120, 100, 0.28) 0%,
-        rgba(224, 46, 46, 0.14) 30%,
-        transparent 60%
+        ellipse 120% 150% at 50% -35%,
+        rgba(255, 120, 100, 0.24) 0%,
+        rgba(224, 46, 46, 0.12) 32%,
+        transparent 64%
       )
       padding-box,
     linear-gradient(135deg, rgba(58, 36, 36, 0.96) 0%, rgba(36, 22, 22, 0.96) 100%) padding-box,
-    linear-gradient(
-        225deg,
+    radial-gradient(
+        ellipse 50% 78% at 0% 0%,
         rgba(255, 200, 180, 1) 0%,
-        rgba(255, 84, 84, 0.8) 18%,
-        rgba(224, 46, 46, 0.55) 40%,
-        rgba(224, 46, 46, 0.55) 70%,
-        rgba(139, 26, 26, 0.75) 100%
+        rgba(255, 84, 84, 0.78) 24%,
+        transparent 80%
       )
-      border-box;
+      border-box,
+    radial-gradient(
+        ellipse 50% 78% at 100% 0%,
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 84, 84, 0.78) 24%,
+        transparent 80%
+      )
+      border-box,
+    radial-gradient(
+        ellipse 50% 78% at 0% 100%,
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 84, 84, 0.78) 24%,
+        transparent 80%
+      )
+      border-box,
+    radial-gradient(
+        ellipse 50% 78% at 100% 100%,
+        rgba(255, 200, 180, 1) 0%,
+        rgba(255, 84, 84, 0.78) 24%,
+        transparent 80%
+      )
+      border-box,
+    linear-gradient(0deg, rgba(224, 46, 46, 0.66), rgba(224, 46, 46, 0.66)) border-box;
   box-shadow:
     inset 0 1px 0 rgba(255, 200, 180, 0.22),
     0 0 0 3px rgba(224, 46, 46, 0.22),

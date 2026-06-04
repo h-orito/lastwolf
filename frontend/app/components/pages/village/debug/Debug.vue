@@ -1,6 +1,6 @@
 <template>
   <div class="panel-compact text-fg text-xs mb-2">
-    <div class="px-3 pt-2 pb-1.5 font-bold border-b border-line-soft">デバッグ</div>
+    <div class="panel-compact-header">デバッグ</div>
     <div class="px-3 py-2 space-y-2">
       <!-- 村取得 -->
       <div>

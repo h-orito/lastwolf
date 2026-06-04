@@ -47,6 +47,47 @@
   --font-display: "Cinzel", "Cormorant Garamond", "Noto Serif JP", serif;
 }
 
+/*
+ * システムメッセージ配色（firewolf dark 準拠 / 2026-06）
+ *
+ * 村画面のシステム通知（Message.vue の info_* variant）を firewolf のダークモードに合わせる:
+ *   暗いグレー系の塗り bg（陣営ごとに微かな色味）+ 原色の border + 白系テキスト。
+ * Black & Blood のミュート役職色とは別系統（ユーザー指定で firewolf の値に忠実）。
+ * 色グループは firewolf の `SystemMessage.vue` に準拠:
+ *   赤=WEREWOLF/FANATIC, 緑=SEER/WISE, 青=PSYCHIC/GURU/CORONER,
+ *   橙=MASON/SYMPATHIZER, ピンク=LOVERS, 紫=CREATOR_SAY, 黄=FOX,
+ *   灰=PRIVATE_SYSTEM, 白枠のみ=PUBLIC_SYSTEM。
+ * @theme には入れない（utility 生成は不要なため通常の custom property として定義）。
+ */
+:root {
+  /* 赤: 人狼陣営通知（WEREWOLF / FANATIC） */
+  --color-sysmsg-wolf-bg: #403333;
+  --color-sysmsg-wolf-border: #f00;
+  /* 緑: 占い系（SEER / WISE） */
+  --color-sysmsg-village-bg: #334033;
+  --color-sysmsg-village-border: #0f0;
+  /* 青: 死霊・検死系（PSYCHIC / GURU / CORONER） */
+  --color-sysmsg-psychic-bg: #333340;
+  --color-sysmsg-psychic-border: #00f;
+  /* 橙: 共有・共鳴系（MASON / SYMPATHIZER） */
+  --color-sysmsg-mason-bg: #404033;
+  --color-sysmsg-mason-border: #fa0;
+  /* ピンク: 恋人（LOVERS）。bg は firewolf 上 mason と同値 #404033 だが別陣営として独立管理（border のみ差) */
+  --color-sysmsg-lovers-bg: #404033;
+  --color-sysmsg-lovers-border: #f0a;
+  /* 紫: 村建て発言（CREATOR_SAY） */
+  --color-sysmsg-creator-bg: #403340;
+  --color-sysmsg-creator-border: #c0f;
+  /* PRIVATE_SYSTEM（個別通知）: くすんだグレー塗り */
+  --color-sysmsg-system-bg: #404040;
+  --color-sysmsg-system-border: #ccc;
+  /* PUBLIC_SYSTEM（全体通知）: firewolf 同様 bg なし（くすんでない）+ 白枠のみ */
+  --color-sysmsg-public-border: #fff;
+  /* fox: firewolf の `.message-private-fox`（bg #403333 / border #c9c934 のくすんだ黄）に準拠 */
+  --color-sysmsg-fox-bg: #403333;
+  --color-sysmsg-fox-border: #c9c934;
+}
+
 /* リンクスタイル */
 a {
   text-decoration: none;
@@ -126,7 +167,11 @@ a {
  * .panel に対して:
  *  - border-radius を 28px → 14px に縮小
  *  - halo / drop-shadow を約 1/2〜1/3 に減衰（縦に複数並んでも目が疲れない）
- *  - directional lighting の言語（右上から赤光）は維持
+ *
+ * 改訂 (2026-06): 村画面のレビューで「右上だけ光り左下が暗く、枠が弱い」と指摘。
+ * 旧 directional な 225deg 単一 rim（右上ピーク → 対角は floor）をやめ、
+ * **四隅それぞれを ember→blood で光らせる radial を 4 枚重ね、辺の中央は blood-deep floor で繋ぐ**
+ * 対称 rim に変更。トップの大型 `.panel` は従来の directional を維持（DESIGN.md 参照）。
  *
  * 用途: 村画面の参加者・進行・チャット・村建て機能・デバッグ等の各カード。
  */
@@ -134,37 +179,85 @@ a {
   position: relative;
   border-radius: 14px;
   background:
+    /* 内側: 四隅から淡く赤が差す wash（対称配置で偏りを無くす） */
+    radial-gradient(ellipse 55% 60% at 100% 0%, rgba(255, 91, 58, 0.1) 0%, transparent 62%)
+      padding-box,
+    radial-gradient(ellipse 55% 60% at 0% 0%, rgba(224, 46, 46, 0.06) 0%, transparent 62%)
+      padding-box,
+    radial-gradient(ellipse 55% 60% at 100% 100%, rgba(224, 46, 46, 0.06) 0%, transparent 62%)
+      padding-box,
+    radial-gradient(ellipse 55% 60% at 0% 100%, rgba(224, 46, 46, 0.06) 0%, transparent 62%)
+      padding-box,
+    /* 黒ベース */ linear-gradient(135deg, rgba(18, 10, 10, 0.96) 0%, rgba(12, 6, 6, 0.96) 100%)
+      padding-box,
+    /* rim: 四隅で ember→blood が光る radial 4 枚。辺の中央は下の floor が残る */
     radial-gradient(
-        ellipse 50% 60% at 100% 0%,
-        rgba(255, 91, 58, 0.12) 0%,
-        rgba(224, 46, 46, 0.05) 35%,
-        transparent 65%
+        ellipse 58% 60% at 0% 0%,
+        rgba(255, 130, 100, 0.9) 0%,
+        rgba(224, 46, 46, 0.66) 34%,
+        transparent 70%
       )
-      padding-box,
-    radial-gradient(ellipse 38% 50% at 0% 100%, rgba(224, 46, 46, 0.05) 0%, transparent 60%)
-      padding-box,
-    linear-gradient(135deg, rgba(18, 10, 10, 0.96) 0%, rgba(12, 6, 6, 0.96) 100%) padding-box,
-    /*
-     * 縁: directional は保ちつつ「切れ目」を無くす。
-     * 旧版は 52% 以降ほぼ透明だったため枠感が消えていた。floor を blood-deep 18% に上げて
-     * どの辺でも赤い線が残るようにする。右上が最明（ember/blood ピーク）、それ以外は floor 値で揃う。
-     */
-    linear-gradient(
-        225deg,
-        rgba(255, 130, 100, 0.85) 0%,
-        rgba(224, 46, 46, 0.55) 14%,
-        rgba(139, 26, 26, 0.35) 32%,
-        rgba(139, 26, 26, 0.22) 52%,
-        rgba(139, 26, 26, 0.18) 70%,
-        rgba(139, 26, 26, 0.3) 100%
+      border-box,
+    radial-gradient(
+        ellipse 58% 60% at 100% 0%,
+        rgba(255, 130, 100, 0.9) 0%,
+        rgba(224, 46, 46, 0.66) 34%,
+        transparent 70%
       )
-      border-box;
+      border-box,
+    radial-gradient(
+        ellipse 58% 60% at 0% 100%,
+        rgba(255, 130, 100, 0.9) 0%,
+        rgba(224, 46, 46, 0.66) 34%,
+        transparent 70%
+      )
+      border-box,
+    radial-gradient(
+        ellipse 58% 60% at 100% 100%,
+        rgba(255, 130, 100, 0.9) 0%,
+        rgba(224, 46, 46, 0.66) 34%,
+        transparent 70%
+      )
+      border-box,
+    /* floor: 辺も四隅と同じ blood で均一に光らせる（四隅は上に ember bloom が乗り僅かに暖色） */
+    linear-gradient(0deg, rgba(224, 46, 46, 0.62), rgba(224, 46, 46, 0.62)) border-box;
   border: 1px solid transparent;
   box-shadow:
     inset 0 0 0 1px rgba(255, 91, 58, 0.08),
     0 0 24px -6px rgba(224, 46, 46, 0.42),
     0 0 56px -14px rgba(255, 91, 58, 0.22),
     0 12px 28px -14px rgba(0, 0, 0, 0.9);
+}
+
+/*
+ * パネルヘッダ — 村画面の各カード（参加者 / 進行 / チャット / 村建て機能 / デバッグ）の見出し帯。
+ *
+ * 旧実装は `px-3 pt-2 pb-1.5 font-bold border-b border-line-soft`。
+ * border-line-soft (#2a1818) は暗背景でほぼ視認できず header/content の境目が曖昧だったため、
+ * 両端まで均一な blood の線（rim の floor と同色）に置換 + 帯を wine で僅かに沈める。
+ */
+.panel-compact-header {
+  position: relative;
+  padding: 0.5rem 0.75rem 0.4rem;
+  font-weight: 700;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-wine) 32%, transparent) 0%,
+    transparent 100%
+  );
+  /* panel-compact の角丸(14px) − border(1px) に合わせて帯の上端を丸める */
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+}
+.panel-compact-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  /* 端まで同色: フェードさせず blood で均一に引く（rim の floor と揃える） */
+  background: var(--color-blood);
 }
 
 /*

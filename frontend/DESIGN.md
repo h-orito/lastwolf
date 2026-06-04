@@ -9,7 +9,8 @@ Phase 0 で方針合意（Issue #1）→ Phase 2 で月夜（steel-blue）系か
 
 - **トーン**: ゴシック × ミステリー（"ホラー寄り" ではなく品のある重厚感）。月明かりよりも血の温度
 - **directional lighting**: 黒い面に **右上から赤光が差し込む** イメージ。左下にもごく薄く赤が射す
-- **rim glow**: パネル / ボタンの border は黒→赤のグラデで、上辺・右辺が「光って見える」
+  - ただし**情報密度が高く左右に並ぶ小型カード（`.panel-compact`）とフォーム入力（FormInput / FormSelect）は例外**で、**四隅対称の rim glow** を使う。directional 単一 rim だと「右上だけ光り左下／左側が暗い」と視認性を損ねるため（2026-06 村画面レビュー）。大型 `.panel`（トップ / ドキュメント）は従来どおり directional を維持
+- **rim glow**: パネル / ボタンの border は黒→赤のグラデで、上辺・右辺が「光って見える」（directional の場合）。対称版は **辺・四隅とも blood で均一に光らせ**、四隅にだけ ember bloom を僅かに上乗せして暖色を足す（辺が暗いと「枠が弱い／見づらい」ため floor を blood まで底上げ）
 - **可読性**: 日本語本文を最優先。WCAG AA（4.5:1）を維持
 - **ヒーロー画像**: `lastwolf.webp` の赤いオーラがそのままページの主光源を担う
 
@@ -78,28 +79,24 @@ Google Fonts CDN 経由で読み込む（Phase 1 で `nuxt.config.ts` に追加�
 
 ### ボタン (`components/ui/button/index.vue`)
 
-**Strategy A — Directional Glow**: 黒い物体に右上から赤光が当たっているように見せる。primary は塗り赤に見えるが内部は黒ベースで radial 赤を重ねる構成。danger は赤い base + 強 rim + 内側 blood glow で「取り返しのつかない操作」の存在感を示す。
+**Flat（2026-06 視認性刷新）**: directional 赤グロー（黒ベース + 右上赤光）は「何ボタンか一目で分からない」課題があったため廃止。**border=bg のフラットな単色面**に統一し、色面の違い（赤 / グレー）と文字色で variant を即座に判別できるようにする。
 
-共通: `border-radius: 8px`（`rounded-lg`）、`border: 1px solid transparent`、focus は `ring-blood`。モバイル前提のため `:active` が主要な押下フィードバック。FormInput (10px) とほぼ同等の角丸で、ピル過剰さを避けつつコンポーネント間の調和を取る。
+共通: `border-radius: 8px`（`rounded-lg`）、`border: 1px solid`（色は variant の bg と同色＝フラット）、focus は `ring-blood`。モバイル前提のため `:active`／`:hover`（`filter: brightness(1.12)`）が押下フィードバック。
 
-タイポグラフィ: `font-sans`（Noto Sans JP）+ `font-normal` + `tracking-wide`。
-ボタンラベルはほぼ和文短文（「決定」「キャンセル」「投票」「次へ」等）のため明朝化は採用しない（短文・密度高で読みづらく感じやすい）。
-代わりに `font-medium` → `font-normal` で太字感を抜き、`tracking-wide` で密度を下げて、Black & Blood directional lighting の重厚感に対し文字が「素のゴシック太字」で浮いて見える問題を解消する。
-コントラスト: 非 disabled 状態の文字色（`#fff` / `text-fg` #f4f1e8）は漆黒～赤暗のベース上で 4.5:1 を大きく上回るため AA を満たす。disabled 状態（`text-fg-muted` + `opacity-55`）は WCAG 2.1 SC 1.4.3 で適用除外（inactive UI components）。font-weight 変更（500→400）は WCAG コントラスト計算に影響しない。
+タイポグラフィ: `font-sans`（Noto Sans JP）+ **`font-semibold`** + `tracking-wide`。フラット面では文字の視認性を最優先するため、旧 directional 版の `font-normal` から weight を底上げ（重厚な背景グラデが無くなり「素のゴシック太字」問題が解消したため太字でも浮かない）。和文短文ラベル中心のため明朝化は不採用。
+コントラスト: primary 白文字（`#fff` on `#c62f2f`）≈ 5.5:1 ✅ / secondary 白文字（`#fff` on `#474242`）≈ 8.5:1 ✅ / danger 赤文字（`#ff6b6b` on `#474242`）≈ **3.5:1**（AA 4.5 にやや届かない既知のトレードオフ。グレー地に赤文字という指定上、これ以上はグレーを暗く or 赤を明るくする必要がある）。disabled（`text-fg-muted` + `opacity-55`）は WCAG 2.1 SC 1.4.3 で適用除外。
 
-| variant   | 背景の構成                                                                               | 文字            | 縁 (border-box gradient)                                           |
-| --------- | ---------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------ |
-| primary   | 黒ベース + 右上から radial(ember→blood→透明) + 左下に弱 radial(blood) + 黒 linear        | `#fff`          | 225deg: ember 0% → blood 18% → 黒 → 微 blood-deep 100%             |
-| secondary | 黒の不透明 linear-gradient (rgba 32/20/20 → 18/10/10, α≈0.95) + 1px bone inset highlight | `text-fg`       | 225deg: bone 55% → blood 40% → wine 25% → blood-deep 40%（強 rim） |
-| danger    | 赤い base (rgba 90/18/18 → 40/10/10, α≈0.85) + 内側 blood glow + 外側 halo               | `#fff`          | 225deg: ember 0% → blood 85% → blood-deep 50% → 70%（強 rim）      |
-| ghost     | transparent / hover で `bg-elev` / active で `bg-soft`                                   | `text-fg`       | なし                                                               |
-| disabled  | `bg-soft`                                                                                | `text-fg-muted` | なし、opacity 0.55 + cursor-not-allowed                            |
+| variant   | 背景                                             | 文字（color）   | 縁 (border)                             |
+| --------- | ------------------------------------------------ | --------------- | --------------------------------------- |
+| primary   | `#c62f2f`（赤）                                  | `#fff`          | bg と同色（flat）                       |
+| secondary | `#474242`（灰）                                  | `#fff`          | bg と同色（flat）                       |
+| danger    | `#474242`（灰）                                  | `#ff6b6b`（赤） | bg と同色（flat）                       |
+| ghost     | transparent / hover `bg-elev` / active `bg-soft` | `text-fg`       | なし                                    |
+| disabled  | `bg-soft`                                        | `text-fg-muted` | なし、opacity 0.55 + cursor-not-allowed |
 
-primary / danger の hover では ember / blood の明度を上げ、外側の box-shadow を強める。secondary も rim と inset highlight を 1 段強める。
+hover は全 variant 共通で `filter: brightness(1.12)` による一段明るさ（box-shadow / glow は持たない＝フラット維持）。secondary と danger は bg を同じグレーで共有し、文字色（白 / 赤）で区別する。
 
-> **2026-05-26 調整**: 初期実装の secondary / danger / ghost が「disabled っぽく見える」課題に対し、secondary の rim を 22%/18%/12% → 55%/40%/25%/40% に増強、danger の base 不透明度を 0.35 → 0.85 + inset 2 段 + 文字 `#ff8484` → `#fff` に底上げ、ghost の文字を `text-fg-secondary` → `text-fg` に引き上げ。primary を主役とした明度ヒエラルキー（primary > danger ≈ secondary > ghost > disabled）を維持しつつ、ghost 以外は「押せそう」な存在感を確保した。あわせて角丸を `rounded-full` → `rounded-lg`（8px）に縮小し、`antialiased` を baseClasses に付与して明色文字 × ダーク BG の halation で太く見える現象を緩和。
-
-実装: `frontend/app/components/ui/button/index.vue` の `<style scoped>` を参照。
+実装: `frontend/app/components/ui/button/index.vue` の `<style scoped>`（`.btn-primary` / `.btn-secondary` / `.btn-danger`）を参照。
 
 ### フォーム (`components/ui/form/*`)
 
@@ -108,16 +105,16 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 #### FormInput / FormSelect
 
 - 形: `border-radius: 10px`、`border: 1px solid transparent`
-- 通常: ページ bg `#050202` から明確に持ち上がる base (`linear-gradient 135deg` rgba(36,22,22,.95)→rgba(20,12,12,.95)) + 視認できる強さの 225deg 赤 rim (bone 55% → blood 35% → 黒 → blood-deep 35%) + わずかな inset top highlight。**入力欄であることが一目で分かる必要があるため、focus 相当の rim 明度を baseline にしている**
+- 通常: ページ bg `#050202` から明確に持ち上がる base (`linear-gradient 135deg` rgba(44,26,26,.96)→rgba(28,16,16,.96)) + **辺・四隅とも均一に光る赤 rim**（`blood .58` の floor linear で全辺を光らせ、各コーナーに `radial-gradient(ellipse 50% 75% at <corner>, ember .75 → blood .5 → transparent)` を 4 枚上乗せ）+ わずかな inset top highlight。**入力欄であることが一目で分かる必要があるため、focus 相当の rim 明度を baseline にしている**。2026-06 に旧 225deg 単一 rim（右上ピーク → 左下が暗い）から対称版へ変更、さらに floor を blood-deep → blood に底上げ（村画面レビュー: 「右だけ光り左が暗い」→「辺も同色で均一に」）
 - hover: ベース・rim とも 1 段明るく（focus 中は無効化）
-- focus: 右上 corner に radial 赤光 `radial-gradient(at 100% -20%, rgba(255,120,100,.28)…)` を上乗せ、base と rim をさらに明るく、外側 `box-shadow: 0 0 0 3px rgba(224,46,46,.2), 0 0 22px -6px rgba(224,46,46,.5)` の blood halo
+- focus: 上辺中央から radial 赤光 `radial-gradient(ellipse 120% 150% at 50% -35%, rgba(255,120,100,.24)…)`（左右対称）を上乗せ、四隅 rim と floor をさらに明るく、外側 `box-shadow: 0 0 0 3px rgba(224,46,46,.22), 0 0 24px -6px rgba(224,46,46,.55)` の blood halo
 - 優先順位: `disabled > error > readonly`（error は readonly と同時指定でも表示）
 - error: 「明らかに不正」と一目で分かる強さ。赤い base (`linear-gradient(135deg, rgba(80,22,22,.95), rgba(44,12,12,.95))`) + 全周ほぼ均一な blood ring (225deg を ember → blood .95 → .85 → .9 と高彩度に閉ループ) + 常時 outer halo (`0 0 0 1px rgba(224,46,46,.45)` thin rim + `0 0 18px -2px rgba(224,46,46,.6)` glow) + 強い inset blood glow。normal の rim 主張に埋もれないため彩度を一段上げる
 - error + focus: 右上から radial 赤光が上乗せ、base/rim/halo すべて一段強める
 - readonly: 通常より沈ませ、rim の bone 成分を弱める（focus rim は出さない）
 - disabled: opacity `0.55`、cursor `not-allowed`、rim ほぼ消す
 - placeholder: `placeholder-fg-muted`
-- 実装: `<style scoped>` 内に `.br-input-*` / `.br-select-*` クラスとして閉じる（BaseButton の `.btn-*-glow` と同手法）
+- 実装: `<style scoped>` 内に `.br-input-*` / `.br-select-*` クラスとして閉じる（BaseButton の `.btn-*` と同手法）
 
 `FormSelect` のドロップダウン矢印は `disabled` で `text-fg-muted`、それ以外は `text-blood/80`（rim の主役色と統一）。ネイティブ `<option>` のドロップダウン背景は `color-scheme: dark` で OS / ブラウザに dark テーマを伝える。
 
@@ -150,39 +147,48 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 
 **ロール色は線ではなく「光」として背景に滲ませる + 縁に光を載せる** 方針（Black & Blood directional lighting をメッセージにも展開）。役割別に 2 つの rim パターンを使い分け:
 
-- **会話・独り言系（wolf / fanatic / mason / mono / grave / seer / creator）**: 左下角中心の **L 字 rim**（`radial-gradient(ellipse 100% 100% at 0% 100%) border-box`）で左辺と下辺だけ光らせ、上辺・右辺は透明。両コーナー（右上・左下）に bg radial も重ね、光が両側から差し込む構図。
-- **システム系（system / village_info / psychic_info）**: **全周 solid rim**（`linear-gradient(color, color) border-box`）で情報通知としての枠を強調。左下の bg radial のみ（右上 radial なし）でシンプルに保つ。
+- **会話・独り言系（wolf / mason / mono / grave / seer）**: 左下角中心の **L 字 rim**（`radial-gradient(ellipse 100% 100% at 0% 100%) border-box`）で左辺と下辺だけ光らせ、上辺・右辺は透明。両コーナー（右上・左下）に bg radial も重ね、光が両側から差し込む構図。
+- **システム通知系（info_wolf / info_village / info_psychic / info_mason / info_lovers / info_creator / info_fox / info_public / info_system）**: 2026-06 に firewolf のダークモードに合わせ、会話バブルの directional とは別系統の **フラットな塗り箱** に変更。暗いグレー系の solid bg（陣営ごとに微かな色味）+ 原色の border + 白系テキスト。例外として **PUBLIC_SYSTEM（info_public）は bg なし（くすんでない）+ 白枠**、PRIVATE_SYSTEM（info_system）は **くすんだグレー塗り** で対比させる（後述「システム通知（firewolf dark 準拠）」）。
 
 全 variant 共通: `rounded-lg` + `border: 1px solid transparent`。透明度合成は `color-mix(in srgb, var(--color-X) N%, transparent)` で CSS 変数を単一情報源化（rgba ハードコード禁止）。
 
-| variant      | 右上 bg radial | 左下 bg radial        | rim                      | アバターリング             | 名前色 override |
-| ------------ | -------------- | --------------------- | ------------------------ | -------------------------- | --------------- |
-| normal       | なし           | なし                  | なし                     | なし                       | 個人識別カラー  |
-| wolf         | wolf 14%       | wolf 40%              | L 字 wolf rim（強）      | ring `wolf` + 外側 halo    | `text-wolf`     |
-| fanatic      | fanatic 12%    | fanatic 32%           | L 字 fanatic rim（中）   | ring `fanatic` + 外側 halo | `text-fanatic`  |
-| mason        | mason 12%      | mason 38%             | L 字 mason rim（強）     | ring `mason` + 外側 halo   | `text-mason`    |
-| mono         | mono 6% / 縮小 | mono 10% / 縮小・透過 | L 字 mono rim（灰）      | なし。本文 italic          | 個人識別カラー  |
-| grave        | grave 10%      | grave 30%             | L 字 grave rim           | ring `grave`。本文 italic  | `text-grave`    |
-| seer         | seer 8%        | seer 20%              | L 字 seer rim（弱）      | ring `seer`                | 個人識別カラー  |
-| creator      | medium 10%     | medium 26%            | L 字 medium rim          | ring `medium`              | 個人識別カラー  |
-| village_info | **なし**       | mason 24%             | **全周 solid** mason 45% | なし                       | 個人識別カラー  |
-| psychic_info | **なし**       | grave 24%             | **全周 solid** grave 45% | なし                       | 個人識別カラー  |
-| system       | **なし**       | bone 6%               | **全周 solid** bone 35%  | なし                       | 個人識別カラー  |
+（会話・独り言系のみ。creator・fanatic 等のシステム通知系は下記「システム通知（firewolf dark 準拠）」へ移動）
+
+| variant | 右上 bg radial | 左下 bg radial        | rim                  | アバターリング            | 名前色 override |
+| ------- | -------------- | --------------------- | -------------------- | ------------------------- | --------------- |
+| normal  | なし           | なし                  | なし                 | なし                      | 個人識別カラー  |
+| wolf    | wolf 14%       | wolf 40%              | L 字 wolf rim（強）  | ring `wolf` + 外側 halo   | `text-wolf`     |
+| mason   | mason 12%      | mason 38%             | L 字 mason rim（強） | ring `mason` + 外側 halo  | `text-mason`    |
+| mono    | mono 6% / 縮小 | mono 10% / 縮小・透過 | L 字 mono rim（灰）  | なし。本文 italic         | 個人識別カラー  |
+| grave   | grave 10%      | grave 30%             | L 字 grave rim       | ring `grave`。本文 italic | `text-grave`    |
+| seer    | seer 8%        | seer 20%              | L 字 seer rim（弱）  | ring `seer`               | 個人識別カラー  |
 
 ねらい:
 
 - **左下を主アクセント** にすることで「光が床から漏れる」directional lighting を再現（BaseButton 等と同じ言語）
 - 会話系（wolf / fanatic / mason）は左下 radial を強めに、独り言・墓下・観戦は控えめに区別
 - 独り言は透過 bg + L 字灰 rim + 副光源を絞って本文（text-fg-secondary）の可読性を確保（他 variant の `linear-gradient(elev, elev)` 補完層を省略しているため bg は外側コンテナの色が透ける）
-- 創建者は紫系（medium）の rim で「特別な発信者だが他 variant と視覚言語は揃える」位置付け
-- システム通知（system / village_info / psychic_info）は **全周 solid rim** で「会話ではなく情報枠」と一目で区別。右上 radial を省き、左下 radial のみで主役感を出さない
+- システム通知（info\_\*）は firewolf dark の **フラット塗り箱**（暗グレー bg + 原色 border + 白系テキスト）で「会話ではなく情報枠」と一目で区別。会話バブルの directional とは別系統（後述）
 - **名前色 override**: 閉じた特別な場（wolf / fanatic / mason / grave）では個人識別カラーよりロール色が場の意味を強化するため、名前色を該当ロール色に固定する
 
-#### 役職限定システム通知の色分け
+#### システム通知（firewolf dark 準拠 / 2026-06）
 
-- **village_info**（緑 = mason 色）: `PRIVATE_SEER`（占い結果）/ `PRIVATE_WISE`（賢者）/ `PRIVATE_GURU`（グル）/ `PRIVATE_CORONER`（検視官）— 村陣営の象徴色として揃える
-- **psychic_info**（水色 = grave 色）: `PRIVATE_PSYCHIC`（霊媒結果）— 死霊との繋がりを示唆するため墓下と同系の水色
-- 第三陣営（狐 / 恋人）/ 共鳴者（PRIVATE_SYMPATHIZER）は陣営定義が不明確なため `normal` フォールバック維持
+会話バブルとは別系統の **フラットな塗り箱**。bg は暗いグレー系（陣営ごとに微かな色味）、border は firewolf の原色、本文・名前は白系（`text-fg`）。中間グレー bg 上ではミュート役職色が AA 不足になるため陣営色は **border が担い**、本文は読みやすさ優先で白に統一する。色グループは firewolf の `SystemMessage.vue` に準拠。値は `main.css` の `--color-sysmsg-*`（fox は firewolf `.message-private-fox` 準拠で別値）。
+
+| variant (info\_\*) | 対象コード                                             | bg                          | border                  |
+| ------------------ | ------------------------------------------------------ | --------------------------- | ----------------------- |
+| info_wolf          | `PRIVATE_WEREWOLF` / `PRIVATE_FANATIC`                 | `#403333`                   | `#f00`（赤）            |
+| info_village       | `PRIVATE_SEER` / `PRIVATE_WISE`                        | `#334033`                   | `#0f0`（緑）            |
+| info_psychic       | `PRIVATE_PSYCHIC` / `PRIVATE_GURU` / `PRIVATE_CORONER` | `#333340`                   | `#00f`（青）            |
+| info_mason         | `PRIVATE_MASON` / `PRIVATE_SYMPATHIZER`                | `#404033`                   | `#fa0`（橙）            |
+| info_lovers        | `PRIVATE_LOVERS`                                       | `#404033`                   | `#f0a`（桃）            |
+| info_creator       | `CREATOR_SAY`                                          | `#403340`                   | `#c0f`（紫）            |
+| info_fox           | `PRIVATE_FOX`                                          | `#403333`                   | `#c9c934`（くすんだ黄） |
+| info_public        | `PUBLIC_SYSTEM`                                        | なし（透明 / くすんでない） | `#fff`（白）            |
+| info_system        | `PRIVATE_SYSTEM`                                       | `#404040`（くすんだ灰）     | `#ccc`（薄灰）          |
+
+- `PRIVATE_FANATIC` は firewolf 同様 **WEREWOLF と同じ赤グループ**（[信] prefix で区別）。`CREATOR_SAY` は会話バブルではなく firewolf 同様システム箱（紫）扱い。
+- `LOVERS_SAY` / `SECRET_SAY`（発言系）は `normal` フォールバック維持。`PRIVATE_ABILITY` は独り言（mono）扱い（firewolf はグレー箱だが当アプリは内的ログとして mono を維持）
 
 > 観戦発言は占い師ロールと同じ `--color-seer`（淡金）を流用している。視覚的に色相が近いため共有とした。「観戦と占い師の発話が同画面に並ぶケース」が問題化したら専用トークン `--color-spectate` を分離する。
 
@@ -221,11 +227,14 @@ primary / danger の hover では ember / blood の明度を上げ、外側の b
 - ロゴ: `text-bone` + 二段の blood グロー（近距離 `blood-deep` + 遠距離 `blood`、`color-mix(... transparent)` 経由）。`lastwolf.webp` の赤いオーラと整合（Phase 2 で steel-blue から Black & Blood にピボット済）
 - 旧仕様にあった月色順のコニックグラデアバターは、トップにアバター表示がないため未実装（必要になったタイミングで blood/ember/gold 構成で再設計する）
 
-### カードヘッダー（村画面の参加者・進行・チャット等のセクションヘッダ）
+### 村画面の小型カード（`.panel-compact` + `.panel-compact-header`）
 
-- 背景: `bg-soft`、下端 `border-line-soft` 1px
-- 文字: `text-fg` + `font-bold`
-- 本体: `bg-elev`、外周 `border-line-soft` 1px
+参加者 / 進行 / チャット / 村建て機能 / デバッグ の各カード。実体は `main.css` の共通クラス。
+
+- カード本体: `.panel-compact`（`border-radius: 14px`）。rim は **辺・四隅とも均一**（`blood .62` floor で全辺を光らせ、各コーナーに ember→blood の radial 4 枚を上乗せして僅かに暖色）。outer halo は `.panel` の約 1/2〜1/3
+- ヘッダ帯: `.panel-compact-header`（`padding: .5rem .75rem .4rem` / `font-bold` / 上端を 13px で角丸）。背景は `wine 32%→transparent` の縦グラデで僅かに沈める
+- **header / content の境界線**: `::after` で**両端まで均一な `blood` の 1px 線**（rim の floor と同色。フェードさせない）。旧 `border-b border-line-soft`（#2a1818）は暗背景でほぼ見えず境目が曖昧だったため置換（2026-06 村画面レビュー）
+- content: `px-3 py-2`
 - 旧 `bg-[#363636]` + `bg-[#fafafa]` のコントラスト強めヘッダから dark theme に統一
 
 ### ドキュメントページ（about / rule / faq / release-note / google-auth 等の長文ページ）
