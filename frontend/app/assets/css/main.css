@@ -275,7 +275,7 @@ a {
 
 /*
  * サイト全体の背景: 右上から赤光が差し込む warm-dark gradient wash。
- * layouts/top.vue と layouts/default.vue の両方で使用するため、共通化して DRY 違反を避ける。
+ * 単一レイアウト layouts/default.vue の `.site` に付与する共通クラス。
  * `.panel` のリムが「ページ自体の主光源に照らされている」見え方を支える。
  */
 .site-bg {
