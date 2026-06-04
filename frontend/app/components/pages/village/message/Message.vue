@@ -46,9 +46,13 @@ import {
   MASON_SAY_CODES,
   MONO_CODES,
   INFO_WOLF_CODES,
-  INFO_FANATIC_CODES,
   INFO_VILLAGE_CODES,
   INFO_PSYCHIC_CODES,
+  INFO_MASON_CODES,
+  INFO_LOVERS_CODES,
+  INFO_CREATOR_CODES,
+  INFO_FOX_CODES,
+  INFO_PUBLIC_CODES,
   INFO_SYSTEM_CODES,
   type RoleVariant,
 } from "~/lib/api/message-role";
@@ -145,16 +149,17 @@ const roleVariant = computed<RoleVariant>(() => {
   if (MONO_CODES.has(code)) return "mono";
   if (code === MESSAGE_TYPE.GRAVE_SAY) return "grave";
   if (code === MESSAGE_TYPE.SPECTATE_SAY) return "seer";
-  if (code === MESSAGE_TYPE.CREATOR_SAY) return "creator";
-  // 情報通知系（bg なし、ロール色テキスト）
+  // 情報通知系（firewolf dark の塗り箱）
   if (INFO_WOLF_CODES.has(code)) return "info_wolf";
-  if (INFO_FANATIC_CODES.has(code)) return "info_fanatic";
   if (INFO_VILLAGE_CODES.has(code)) return "info_village";
   if (INFO_PSYCHIC_CODES.has(code)) return "info_psychic";
+  if (INFO_MASON_CODES.has(code)) return "info_mason";
+  if (INFO_LOVERS_CODES.has(code)) return "info_lovers";
+  if (INFO_CREATOR_CODES.has(code)) return "info_creator";
+  if (INFO_FOX_CODES.has(code)) return "info_fox";
+  if (INFO_PUBLIC_CODES.has(code)) return "info_public";
   if (INFO_SYSTEM_CODES.has(code)) return "info_system";
-  // フォールバック normal:
-  //   LOVERS_SAY / SECRET_SAY: 通常発言と同列の "発言" 系
-  //   PRIVATE_FOX / PRIVATE_LOVERS / PRIVATE_SYMPATHIZER: 第三陣営寄り or 不明確
+  // フォールバック normal: LOVERS_SAY / SECRET_SAY（通常発言と同列の "発言" 系）
   return "normal";
 });
 
@@ -167,12 +172,15 @@ const containerClasses = computed(() => {
     mono: "msg-mono italic",
     grave: "msg-grave italic",
     seer: "msg-seer",
-    creator: "msg-creator",
-    // 情報通知系（bg なし）
+    // 情報通知系（firewolf dark の塗り箱）
     info_wolf: "msg-info msg-info-wolf",
-    info_fanatic: "msg-info msg-info-fanatic",
     info_village: "msg-info msg-info-village",
     info_psychic: "msg-info msg-info-psychic",
+    info_mason: "msg-info msg-info-mason",
+    info_lovers: "msg-info msg-info-lovers",
+    info_creator: "msg-info msg-info-creator",
+    info_fox: "msg-info msg-info-fox",
+    info_public: "msg-info msg-info-public",
     info_system: "msg-info msg-info-system",
   };
   return map[roleVariant.value];
@@ -187,11 +195,14 @@ const avatarRingClass = computed(() => {
     mono: "",
     grave: "msg-avatar-grave",
     seer: "msg-avatar-seer",
-    creator: "msg-avatar-creator",
     info_wolf: "",
-    info_fanatic: "",
     info_village: "",
     info_psychic: "",
+    info_mason: "",
+    info_lovers: "",
+    info_creator: "",
+    info_fox: "",
+    info_public: "",
     info_system: "",
   };
   return map[roleVariant.value];
@@ -219,7 +230,9 @@ const roleTag = computed<{ label: string; cls: string } | null>(() => {
 });
 
 const bodyColorClass = computed(() => {
-  // 会話系は fg / fg-secondary ベース、情報通知系は陣営色そのものを本文色に
+  // 会話系は fg / fg-secondary ベース。
+  // 情報通知系（info_*）は firewolf dark の塗り箱（中間グレー bg）上で読めるよう白系 text-fg に統一。
+  // 陣営色はミュート役職色だと AA 不足のため本文には載せず、border 色で陣営を示す。
   const map: Record<RoleVariant, string> = {
     normal: "text-fg",
     wolf: "text-fg",
@@ -227,12 +240,15 @@ const bodyColorClass = computed(() => {
     mono: "text-fg-secondary",
     grave: "text-fg-secondary",
     seer: "text-fg",
-    creator: "text-fg",
-    info_wolf: "text-wolf",
-    info_fanatic: "text-fanatic",
-    info_village: "text-mason",
-    info_psychic: "text-grave",
-    info_system: "text-fg-secondary",
+    info_wolf: "text-fg",
+    info_village: "text-fg",
+    info_psychic: "text-fg",
+    info_mason: "text-fg",
+    info_lovers: "text-fg",
+    info_creator: "text-fg",
+    info_fox: "text-fg",
+    info_public: "text-fg",
+    info_system: "text-fg",
   };
   return map[roleVariant.value];
 });
@@ -244,11 +260,16 @@ const nameOverrideClass: Partial<Record<RoleVariant, string>> = {
   wolf: "text-wolf",
   mason: "text-mason",
   grave: "text-grave",
-  info_wolf: "text-wolf",
-  info_fanatic: "text-fanatic",
-  info_village: "text-mason",
-  info_psychic: "text-grave",
-  info_system: "text-fg-secondary",
+  // 情報通知系は firewolf dark の塗り箱上で読めるよう名前も白系に（陣営色は border が担う）
+  info_wolf: "text-fg",
+  info_village: "text-fg",
+  info_psychic: "text-fg",
+  info_mason: "text-fg",
+  info_lovers: "text-fg",
+  info_creator: "text-fg",
+  info_fox: "text-fg",
+  info_public: "text-fg",
+  info_system: "text-fg",
 };
 const nameColorClass = computed(() => {
   const override = nameOverrideClass[roleVariant.value];
@@ -466,67 +487,52 @@ const filter = () => {
   box-shadow: 0 0 8px -4px color-mix(in srgb, var(--color-seer) 20%, transparent);
 }
 
-/* Creator — 村建て。青紫(medium)染め + L 字 medium rim + 薄 halo */
-.msg-creator {
-  background:
-    radial-gradient(
-        ellipse 60% 130% at 100% 0%,
-        color-mix(in srgb, var(--color-medium) 14%, transparent) 0%,
-        transparent 60%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 80% 130% at 0% 100%,
-        color-mix(in srgb, var(--color-medium) 34%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--color-medium) 10%, var(--color-elev)) 0%,
-        color-mix(in srgb, var(--color-medium) 4%, var(--color-elev)) 100%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 110% 110% at 0% 100%,
-        var(--color-medium) 0%,
-        color-mix(in srgb, var(--color-medium) 65%, transparent) 18%,
-        color-mix(in srgb, var(--color-medium) 30%, transparent) 45%,
-        color-mix(in srgb, var(--color-medium) 20%, transparent) 100%
-      )
-      border-box;
-  box-shadow: 0 0 8px -4px color-mix(in srgb, var(--color-medium) 22%, transparent);
-}
-
-/* ============ 情報通知系 (info_*): bg なし、全周ロール色 border、ロール色テキスト ============
+/* ============ 情報通知系 (info_*): firewolf dark 準拠の「塗り箱」============
  *
- * 「システム生成の通知」は会話バブルとは別の存在感にする:
- * - bg なし → 縦に並んだ際にチャットの「発言の流れ」を圧迫しない
- * - **全周 1px のロール色 border**（会話バブルの bg + frame + halo に対する「軽い枠」）
- * - 本文はロール色そのまま（人狼通知=赤、狂信者通知=橙、村陣営通知=緑、霊媒結果=水色、汎用=fg）
- * - アバター ring も出さない（情報通知に発信者ロール色を二重で付けない）
- * - 微かな box-shadow halo で会話バブルとの「並びの中での沈み込み」を防ぐ */
-.msg-info {
-  background-color: transparent;
-}
+ * 「システム生成の通知」は会話バブルとは別の存在感にする。2026-06 に firewolf の
+ * ダークモード（暗いグレー塗り bg + 原色 border）に合わせてフラットな箱型へ変更:
+ * - bg: 陣営ごとの暗いグレー塗り（`--color-sysmsg-*-bg`）。会話バブルの directional とは別系統
+ * - border: firewolf の原色枠（`--color-sysmsg-*-border`）で陣営を即判別
+ * - 本文・名前は白系（text-fg）— 中間グレー bg 上でミュート役職色は AA 不足のため（陣営色は border が担う）
+ * - halo / 会話系の L 字 rim は持たない（フラット）
+ * トークン定義と出典は main.css の `--color-sysmsg-*` 参照。 */
 .msg-info-wolf {
-  border-color: color-mix(in srgb, var(--color-wolf) 55%, transparent);
-  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-wolf) 18%, transparent);
-}
-.msg-info-fanatic {
-  border-color: color-mix(in srgb, var(--color-fanatic) 55%, transparent);
-  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-fanatic) 15%, transparent);
+  background-color: var(--color-sysmsg-wolf-bg);
+  border-color: var(--color-sysmsg-wolf-border);
 }
 .msg-info-village {
-  border-color: color-mix(in srgb, var(--color-mason) 55%, transparent);
-  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-mason) 18%, transparent);
+  background-color: var(--color-sysmsg-village-bg);
+  border-color: var(--color-sysmsg-village-border);
 }
 .msg-info-psychic {
-  border-color: color-mix(in srgb, var(--color-grave) 55%, transparent);
-  box-shadow: 0 0 6px -3px color-mix(in srgb, var(--color-grave) 18%, transparent);
+  background-color: var(--color-sysmsg-psychic-bg);
+  border-color: var(--color-sysmsg-psychic-border);
 }
+.msg-info-mason {
+  background-color: var(--color-sysmsg-mason-bg);
+  border-color: var(--color-sysmsg-mason-border);
+}
+.msg-info-lovers {
+  background-color: var(--color-sysmsg-lovers-bg);
+  border-color: var(--color-sysmsg-lovers-border);
+}
+.msg-info-creator {
+  background-color: var(--color-sysmsg-creator-bg);
+  border-color: var(--color-sysmsg-creator-border);
+}
+.msg-info-fox {
+  background-color: var(--color-sysmsg-fox-bg);
+  border-color: var(--color-sysmsg-fox-border);
+}
+/* PUBLIC_SYSTEM: firewolf 同様 bg なし（くすんでない）+ 白枠のみ */
+.msg-info-public {
+  background-color: transparent;
+  border-color: var(--color-sysmsg-public-border);
+}
+/* PRIVATE_SYSTEM: くすんだグレー塗り */
 .msg-info-system {
-  border-color: color-mix(in srgb, var(--color-bone) 35%, transparent);
+  background-color: var(--color-sysmsg-system-bg);
+  border-color: var(--color-sysmsg-system-border);
 }
 
 /* === Avatar ring — wolf / mason はロール色の弱い halo を外側に重ねて主役感を出す === */
@@ -545,8 +551,5 @@ const filter = () => {
 }
 .msg-avatar-seer {
   box-shadow: 0 0 0 1px var(--color-seer);
-}
-.msg-avatar-creator {
-  box-shadow: 0 0 0 1px var(--color-medium);
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="panel-compact text-fg text-xs mb-2">
-    <div class="px-3 pt-2 pb-1.5 font-bold border-b border-line-soft">チャット</div>
+    <div class="panel-compact-header">チャット</div>
     <div class="px-3 py-2">
       <!-- 日付タブ -->
       <div class="flex flex-wrap gap-1 mb-2">

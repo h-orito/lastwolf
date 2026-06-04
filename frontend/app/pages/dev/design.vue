@@ -10,6 +10,7 @@
         <nav class="mt-3 flex flex-wrap gap-3 text-xs">
           <a href="#tokens" class="text-blood hover:underline">tokens</a>
           <a href="#buttons" class="text-blood hover:underline">buttons</a>
+          <a href="#panels" class="text-blood hover:underline">panels</a>
           <a href="#forms" class="text-blood hover:underline">forms</a>
           <a href="#modal" class="text-blood hover:underline">modal</a>
           <a href="#toast" class="text-blood hover:underline">toast</a>
@@ -79,6 +80,61 @@
             <UiButton button-type="primary" block>村に入る</UiButton>
             <UiButton button-type="secondary" block>キャンセル</UiButton>
           </div>
+        </div>
+      </section>
+
+      <!-- ===================== Panels ===================== -->
+      <section id="panels" class="space-y-4">
+        <h2 class="font-serif text-xl text-bone">Panels</h2>
+        <p class="text-xs text-fg-secondary">
+          村画面の各カードに使う <code>.panel-compact</code>。rim は四隅が ember→blood で光り、辺は
+          blood-deep floor で繋ぐ対称構成。ヘッダは
+          <code>.panel-compact-header</code> の発光グラデ線で content と区切る。
+        </p>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          <!-- 参加者カード相当 -->
+          <div class="panel-compact text-fg text-xs">
+            <div class="panel-compact-header">参加者</div>
+            <div class="px-3 py-2 space-y-1">
+              <div class="flex items-center justify-between">
+                <span>太郎</span><span class="text-fg-secondary">村人</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>花子</span><span class="text-fg-secondary">占い師</span>
+              </div>
+              <div class="flex items-center justify-between text-fg-muted">
+                <span>次郎</span><span>（死亡）</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 進行カード相当（中に input） -->
+          <div class="panel-compact text-fg text-xs">
+            <div class="panel-compact-header">進行</div>
+            <div class="px-3 py-2 space-y-2">
+              <p>2日目 / 昼</p>
+              <FormInput v-model="formText" placeholder="発言を入力" />
+              <FormSelect
+                v-model="formSelect"
+                :options="selectOptions"
+                placeholder="投票先を選択"
+              />
+              <div class="text-right">
+                <UiButton button-type="primary">発言</UiButton>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="pt-2 text-xs text-fg-secondary">
+          比較: 大型 <code>.panel</code>（トップ / ドキュメントページ用 = 従来の directional 維持）
+        </p>
+        <div class="panel px-5 py-5 text-fg">
+          <div class="section-heading"><h3 class="section-title">大型パネル</h3></div>
+          <p class="text-sm text-fg-secondary">
+            directional lighting（右上から赤光）を保持。村カードの対称 rim とは別系統。
+          </p>
         </div>
       </section>
 
@@ -361,8 +417,8 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.PRIVATE_FANATIC,
-      "狂信者の私語。fanatic variant（くすんだ橙）+ 名前も橙 override + 「狂信」タグ。",
-      "狂C",
+      "狂信者への通知。firewolf 同様 WEREWOLF と同じ赤グループ（暗赤グレー bg + 赤枠）。",
+      null,
     ),
     color: null,
   },
@@ -401,7 +457,15 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.CREATOR_SAY,
-      "村建てメッセージ。紫系（medium）の rim で他 variant と統一。",
+      "村建て発言。firewolf 同様システム箱扱い: 紫 bg #403340 + 紫枠 #c0f。",
+      null,
+    ),
+    color: null,
+  },
+  {
+    message: makeMessage(
+      MESSAGE_TYPE.PRIVATE_WEREWOLF,
+      "人狼への通知（襲撃先等）。firewolf dark werewolf: 暗赤グレー bg + 赤枠。",
       null,
     ),
     color: null,
@@ -409,7 +473,7 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.PRIVATE_SEER,
-      "占い結果のシステム通知。村陣営 → village_info（緑系）。",
+      "占い結果のシステム通知。firewolf dark seer: 暗緑グレー bg + 緑枠。",
       null,
     ),
     color: null,
@@ -417,7 +481,31 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.PRIVATE_PSYCHIC,
-      "霊媒結果のシステム通知。死霊と繋がる役 → psychic_info（grave 系の水色 / 全周 border）。",
+      "霊媒結果のシステム通知。firewolf dark psychic: 暗青グレー bg + 青枠。",
+      null,
+    ),
+    color: null,
+  },
+  {
+    message: makeMessage(
+      MESSAGE_TYPE.PRIVATE_FOX,
+      "妖狐への私信。firewolf fox: 暗赤グレー bg + くすんだ黄枠 #c9c934。",
+      null,
+    ),
+    color: null,
+  },
+  {
+    message: makeMessage(
+      MESSAGE_TYPE.PRIVATE_MASON,
+      "共有者/共鳴者への通知。firewolf 橙: bg #404033 + 橙枠 #fa0。",
+      null,
+    ),
+    color: null,
+  },
+  {
+    message: makeMessage(
+      MESSAGE_TYPE.PRIVATE_LOVERS,
+      "恋人への私信。firewolf ピンク: bg #404033 + 桃枠 #f0a。",
       null,
     ),
     color: null,
@@ -425,7 +513,15 @@ const sampleMessages: { message: MessageView; color: string | null }[] = [
   {
     message: makeMessage(
       MESSAGE_TYPE.PUBLIC_SYSTEM,
-      "システム通知のサンプル（投票結果 / 開始終了等）。白系の全周 border。",
+      "全体システム通知（PUBLIC: 投票結果 / 開始終了等）。bg なし（くすんでない）+ 白枠。",
+      null,
+    ),
+    color: null,
+  },
+  {
+    message: makeMessage(
+      MESSAGE_TYPE.PRIVATE_SYSTEM,
+      "個別システム通知（PRIVATE）。くすんだグレー bg #404040 + 薄灰枠。",
       null,
     ),
     color: null,
