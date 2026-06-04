@@ -43,7 +43,7 @@ export const WOLF_SAY_CODES = new Set<string>([MESSAGE_TYPE.WEREWOLF_SAY]);
 export const MASON_SAY_CODES = new Set<string>([MESSAGE_TYPE.SYMPATHIZE_SAY]);
 
 // 独り言。MONOLOGUE_SAY = ユーザー手入力、PRIVATE_ABILITY = 能力行使確認（個人内ログ）
-// どちらも「個人の内的ログ」として mono 灰染め + italic で表示
+// どちらも「個人の内的ログ」として本文ボックスを灰色（--color-say-monologue-*）で表示（italic は 2026-06 に廃止）
 export const MONO_CODES = new Set<string>([
   MESSAGE_TYPE.MONOLOGUE_SAY,
   MESSAGE_TYPE.PRIVATE_ABILITY,
