@@ -75,9 +75,6 @@
   /* ピンク: 恋人（LOVERS）。bg は firewolf 上 mason と同値 #404033 だが別陣営として独立管理（border のみ差) */
   --color-sysmsg-lovers-bg: #404033;
   --color-sysmsg-lovers-border: #f0a;
-  /* 紫: 村建て発言（CREATOR_SAY） */
-  --color-sysmsg-creator-bg: #403340;
-  --color-sysmsg-creator-border: #c0f;
   /* PRIVATE_SYSTEM（個別通知）: くすんだグレー塗り */
   --color-sysmsg-system-bg: #404040;
   --color-sysmsg-system-border: #ccc;
@@ -86,6 +83,38 @@
   /* fox: firewolf の `.message-private-fox`（bg #403333 / border #c9c934 のくすんだ黄）に準拠 */
   --color-sysmsg-fox-bg: #403333;
   --color-sysmsg-fox-border: #c9c934;
+}
+
+/*
+ * 発言（会話系）本文ボックス配色（firewolf dark 準拠 / 2026-06）
+ *
+ * 会話メッセージの「本文ボックス」だけに付く色。firewolf の SayMessage.vue messageClass（dark）に忠実:
+ *   淡いパステル地 + 黒文字（#0a0a0a）+ 同系 border。例外は lovers（赤文字）と creator（暗地 + 薄文字 + 紫枠）。
+ * Black & Blood の directional rim とは別系統。名前・種別(roleTag)・時間は lastwolf 配色のまま、
+ * 本文ボックス（Message.vue の .msg-say-*）にのみ適用する。@theme には入れない。
+ */
+:root {
+  --color-say-text: #0a0a0a; /* lovers/creator 以外の全 say 本文に共通の黒文字 */
+  --color-say-normal-bg: #ffffff;
+  --color-say-normal-border: #d1d5db;
+  --color-say-werewolf-bg: #f2aeae;
+  --color-say-werewolf-border: #f2aeae;
+  --color-say-sympathize-bg: #aef2ae;
+  --color-say-sympathize-border: #aef2ae;
+  --color-say-lovers-bg: #edcece;
+  --color-say-lovers-border: #edcece;
+  --color-say-lovers-text: #cc2222;
+  --color-say-monologue-bg: #aaaaaa;
+  --color-say-monologue-border: #aaaaaa;
+  --color-say-grave-bg: #a9edf7;
+  --color-say-grave-border: #a9edf7;
+  --color-say-spectate-bg: #f2f2ae;
+  --color-say-spectate-border: #f2f2ae;
+  --color-say-secret-bg: #aa99aa;
+  --color-say-secret-border: #aa99aa;
+  --color-say-creator-bg: #403340;
+  --color-say-creator-border: #c0f;
+  --color-say-creator-text: #eeeeee;
 }
 
 /* リンクスタイル */

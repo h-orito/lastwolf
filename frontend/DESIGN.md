@@ -145,68 +145,78 @@ hover は全 variant 共通で `filter: brightness(1.12)` による一段明る�
 
 ### チャットメッセージ
 
-**ロール色は線ではなく「光」として背景に滲ませる + 縁に光を載せる** 方針（Black & Blood directional lighting をメッセージにも展開）。役割別に 2 つの rim パターンを使い分け:
+**2026-06 に firewolf のダークモードへ準拠**（旧 Black & Blood の directional rim / halo / アバターリングは撤去）。会話系（発言）と情報通知系（システム）で構造を分ける:
 
-- **会話・独り言系（wolf / mason / mono / grave / seer）**: 左下角中心の **L 字 rim**（`radial-gradient(ellipse 100% 100% at 0% 100%) border-box`）で左辺と下辺だけ光らせ、上辺・右辺は透明。両コーナー（右上・左下）に bg radial も重ね、光が両側から差し込む構図。
-- **システム通知系（info_wolf / info_village / info_psychic / info_mason / info_lovers / info_creator / info_fox / info_public / info_system）**: 2026-06 に firewolf のダークモードに合わせ、会話バブルの directional とは別系統の **フラットな塗り箱** に変更。暗いグレー系の solid bg（陣営ごとに微かな色味）+ 原色の border + 白系テキスト。例外として **PUBLIC_SYSTEM（info_public）は bg なし（くすんでない）+ 白枠**、PRIVATE_SYSTEM（info_system）は **くすんだグレー塗り** で対比させる（後述「システム通知（firewolf dark 準拠）」）。
+- **会話系（normal / wolf / mason / mono / grave / seer + 村建て）**: レイアウトは「アバター ｜ 名前行 / 本文ボックス」の 2 段。`.msg` 全体は無装飾で、**本文ボックスにだけ** firewolf dark の bg/border/color を付ける（淡パステル地 + 黒文字）。本文ボックスは `rounded border p-2` + **`flex-1`**（右側がアバターより低いとき縦に伸びて高さを合わせる。flex の `min-height:auto` により画像が低くても padding は潰れない）。名前・種別(roleTag)・時間は名前行に置き lastwolf 配色のまま。
+- **情報通知系（info\_\*）**: `.msg` 全体を firewolf dark の **フラットな塗り箱**（暗グレー bg + 原色 border + 白系テキスト）。レイアウトは「本文 + 種別 + 時間」の 1 行。発言者名は出さない（旧「システム」表記を撤去）。本文が長ければ本文だけ折返し、種別・時間は `items-baseline` で 1 行目に残す。
 
-全 variant 共通: `rounded-lg` + `border: 1px solid transparent`。透明度合成は `color-mix(in srgb, var(--color-X) N%, transparent)` で CSS 変数を単一情報源化（rgba ハードコード禁止）。
+#### 会話系 本文ボックス（firewolf dark / コード単位）
 
-（会話・独り言系のみ。creator・fanatic 等のシステム通知系は下記「システム通知（firewolf dark 準拠）」へ移動）
+色は firewolf `SayMessage.vue` の `messageClass`（dark）に忠実。値は `main.css` の `--color-say-*`。本文文字は黒 `#0a0a0a`（lovers / creator を除く）。lastwolf の roleVariant ではなく **発言コード単位**で割り当てる（normal / lovers / secret を区別するため）。
 
-| variant | 右上 bg radial | 左下 bg radial        | rim                  | アバターリング            | 名前色 override |
-| ------- | -------------- | --------------------- | -------------------- | ------------------------- | --------------- |
-| normal  | なし           | なし                  | なし                 | なし                      | 個人識別カラー  |
-| wolf    | wolf 14%       | wolf 40%              | L 字 wolf rim（強）  | ring `wolf` + 外側 halo   | `text-wolf`     |
-| mason   | mason 12%      | mason 38%             | L 字 mason rim（強） | ring `mason` + 外側 halo  | `text-mason`    |
-| mono    | mono 6% / 縮小 | mono 10% / 縮小・透過 | L 字 mono rim（灰）  | なし。本文 italic         | 個人識別カラー  |
-| grave   | grave 10%      | grave 30%             | L 字 grave rim       | ring `grave`。本文 italic | `text-grave`    |
-| seer    | seer 8%        | seer 20%              | L 字 seer rim（弱）  | ring `seer`               | 個人識別カラー  |
+| コード                          | bg        | 文字      | border    |
+| ------------------------------- | --------- | --------- | --------- |
+| NORMAL_SAY                      | `#fff`    | `#0a0a0a` | `#d1d5db` |
+| WEREWOLF_SAY                    | `#f2aeae` | `#0a0a0a` | `#f2aeae` |
+| SYMPATHIZE_SAY                  | `#aef2ae` | `#0a0a0a` | `#aef2ae` |
+| LOVERS_SAY                      | `#edcece` | `#cc2222` | `#edcece` |
+| MONOLOGUE_SAY / PRIVATE_ABILITY | `#aaa`    | `#0a0a0a` | `#aaa`    |
+| GRAVE_SAY                       | `#a9edf7` | `#0a0a0a` | `#a9edf7` |
+| SPECTATE_SAY                    | `#f2f2ae` | `#0a0a0a` | `#f2f2ae` |
+| SECRET_SAY                      | `#aa99aa` | `#0a0a0a` | `#aa99aa` |
+| CREATOR_SAY                     | `#403340` | `#eee`    | `#c0f`    |
 
-ねらい:
+- mono / grave の本文 italic は廃止（2026-06、通常字形に統一）。
+- 名前色 override（wolf=`text-wolf` / mason=`text-mason` / grave=`text-grave`）と個人識別カラー（`message-color.ts` の 10 色）は名前行に維持（本文ボックスの色とは別系統）。
 
-- **左下を主アクセント** にすることで「光が床から漏れる」directional lighting を再現（BaseButton 等と同じ言語）
-- 会話系（wolf / fanatic / mason）は左下 radial を強めに、独り言・墓下・観戦は控えめに区別
-- 独り言は透過 bg + L 字灰 rim + 副光源を絞って本文（text-fg-secondary）の可読性を確保（他 variant の `linear-gradient(elev, elev)` 補完層を省略しているため bg は外側コンテナの色が透ける）
-- システム通知（info\_\*）は firewolf dark の **フラット塗り箱**（暗グレー bg + 原色 border + 白系テキスト）で「会話ではなく情報枠」と一目で区別。会話バブルの directional とは別系統（後述）
-- **名前色 override**: 閉じた特別な場（wolf / fanatic / mason / grave）では個人識別カラーよりロール色が場の意味を強化するため、名前色を該当ロール色に固定する
+#### システム通知 塗り箱（firewolf dark 準拠）
 
-#### システム通知（firewolf dark 準拠 / 2026-06）
+bg は暗いグレー系（陣営ごとに微かな色味）、border は firewolf の原色、本文・名前は白系（`text-fg`）。中間グレー bg 上ではミュート役職色が AA 不足になるため陣営色は **border が担い**、本文は白に統一。色グループは firewolf `SystemMessage.vue` に準拠。値は `main.css` の `--color-sysmsg-*`。
 
-会話バブルとは別系統の **フラットな塗り箱**。bg は暗いグレー系（陣営ごとに微かな色味）、border は firewolf の原色、本文・名前は白系（`text-fg`）。中間グレー bg 上ではミュート役職色が AA 不足になるため陣営色は **border が担い**、本文は読みやすさ優先で白に統一する。色グループは firewolf の `SystemMessage.vue` に準拠。値は `main.css` の `--color-sysmsg-*`（fox は firewolf `.message-private-fox` 準拠で別値）。
+| variant (info\_\*) | 対象コード                                       | bg                      | border                  |
+| ------------------ | ------------------------------------------------ | ----------------------- | ----------------------- |
+| info_wolf          | PRIVATE_WEREWOLF / PRIVATE_FANATIC               | `#403333`               | `#f00`（赤）            |
+| info_village       | PRIVATE_SEER / PRIVATE_WISE                      | `#334033`               | `#0f0`（緑）            |
+| info_psychic       | PRIVATE_PSYCHIC / PRIVATE_GURU / PRIVATE_CORONER | `#333340`               | `#00f`（青）            |
+| info_mason         | PRIVATE_MASON / PRIVATE_SYMPATHIZER              | `#404033`               | `#fa0`（橙）            |
+| info_lovers        | PRIVATE_LOVERS                                   | `#404033`               | `#f0a`（桃）            |
+| info_fox           | PRIVATE_FOX                                      | `#403333`               | `#c9c934`（くすんだ黄） |
+| info_public        | PUBLIC_SYSTEM                                    | なし（透明）            | `#fff`（白）            |
+| info_system        | PRIVATE_SYSTEM                                   | `#404040`（くすんだ灰） | `#ccc`（薄灰）          |
 
-| variant (info\_\*) | 対象コード                                             | bg                          | border                  |
-| ------------------ | ------------------------------------------------------ | --------------------------- | ----------------------- |
-| info_wolf          | `PRIVATE_WEREWOLF` / `PRIVATE_FANATIC`                 | `#403333`                   | `#f00`（赤）            |
-| info_village       | `PRIVATE_SEER` / `PRIVATE_WISE`                        | `#334033`                   | `#0f0`（緑）            |
-| info_psychic       | `PRIVATE_PSYCHIC` / `PRIVATE_GURU` / `PRIVATE_CORONER` | `#333340`                   | `#00f`（青）            |
-| info_mason         | `PRIVATE_MASON` / `PRIVATE_SYMPATHIZER`                | `#404033`                   | `#fa0`（橙）            |
-| info_lovers        | `PRIVATE_LOVERS`                                       | `#404033`                   | `#f0a`（桃）            |
-| info_creator       | `CREATOR_SAY`                                          | `#403340`                   | `#c0f`（紫）            |
-| info_fox           | `PRIVATE_FOX`                                          | `#403333`                   | `#c9c934`（くすんだ黄） |
-| info_public        | `PUBLIC_SYSTEM`                                        | なし（透明 / くすんでない） | `#fff`（白）            |
-| info_system        | `PRIVATE_SYSTEM`                                       | `#404040`（くすんだ灰）     | `#ccc`（薄灰）          |
+- `CREATOR_SAY` は「村建て」名を持つため会話系（本文ボックス creator）で扱う。info_creator の塗り箱は廃止。
+- `LOVERS_SAY` / `SECRET_SAY` は会話系本文ボックス（lovers / secret）。`PRIVATE_ABILITY` は独り言（mono）の本文ボックスを流用。
 
-- `PRIVATE_FANATIC` は firewolf 同様 **WEREWOLF と同じ赤グループ**（[信] prefix で区別）。`CREATOR_SAY` は会話バブルではなく firewolf 同様システム箱（紫）扱い。
-- `LOVERS_SAY` / `SECRET_SAY`（発言系）は `normal` フォールバック維持。`PRIVATE_ABILITY` は独り言（mono）扱い（firewolf はグレー箱だが当アプリは内的ログとして mono を維持）
+> 観戦発言は占い師ロールと同じ `--color-seer`（淡金、roleTag 用）を流用。視覚的に色相が近いため共有とした。
 
-> 観戦発言は占い師ロールと同じ `--color-seer`（淡金）を流用している。視覚的に色相が近いため共有とした。「観戦と占い師の発話が同画面に並ぶケース」が問題化したら専用トークン `--color-spectate` を分離する。
+#### システム通知の種別タグ（種別1文字 / 色付き）
 
-#### 小タグ (roleTag)
+情報通知系には発言者名がない代わりに、**種別1文字**を枠（border）と同色で名前行右に出す（観戦 roleTag と同じ `text-[10px] tracking-widest`）。コード単位で割り当て。色は `--color-sysmsg-*-border` を流用するが、**赤（`#f00`）と青（`#00f`）は暗背景で沈むため white を混ぜて明度を上げる**（緑/橙/桃/黄は枠色そのまま）。
 
-- 表記: 日本語（`人狼` / `共有` / `独白` / `墓下` / `観戦`）を維持
-- スタイル: `text-[10px] tracking-widest` + 該当ロール色。`font-display` への切替（Cinzel + 英字 `WOLF` / `MASON`）は今回見送り — Cinzel は和文非対応で `Noto Serif JP` フォールバックになり、BaseButton (#15) で明朝化を見送ったのと同じ理由（短文・和文で明朝は崩れやすい）
-- `messageType` (`[狼]` `[共]` 等) と重複するため、`roleTag` が出るケースでは `messageType` を抑制。例外は `PRIVATE_FANATIC`（[信] は固有情報）
+| 種別         | コード                                           | 色                                       |
+| ------------ | ------------------------------------------------ | ---------------------------------------- |
+| 狼 / 信      | PRIVATE_WEREWOLF / PRIVATE_FANATIC               | 赤（`wolf-border` に white 60% 混ぜ）    |
+| 占 / 賢      | PRIVATE_SEER / PRIVATE_WISE                      | 緑（`village-border`）                   |
+| 霊 / 導 / 検 | PRIVATE_PSYCHIC / PRIVATE_GURU / PRIVATE_CORONER | 青（`psychic-border` に white 50% 混ぜ） |
+| 共 / 鳴      | PRIVATE_MASON / PRIVATE_SYMPATHIZER              | 橙（`mason-border`）                     |
+| 恋           | PRIVATE_LOVERS                                   | 桃（`lovers-border`）                    |
+| 狐           | PRIVATE_FOX                                      | 黄（`fox-border`）                       |
+| （なし）     | CREATOR_SAY / PUBLIC_SYSTEM / PRIVATE_SYSTEM     | —                                        |
+
+#### 小タグ (roleTag) — 会話系のみ
+
+- 表記: 日本語（`人狼` / `共有` / `独白` / `墓下` / `観戦`）、`text-[10px] tracking-widest` + 該当ロール色。会話系の名前行に名前と並べて表示。
+- 情報通知系は roleTag ではなく上記「種別タグ」で識別する。
 
 #### 個人識別カラー
 
-- 名前テキストの inline style 適用は維持（`message-color.ts` の 10 色）
-- ダーク背景上のコントラスト検証は派生 TODO として `.issues/HANDOFF.md` に残す（必要なら別 Issue）
+- 会話系の名前テキストの inline style 適用は維持（`message-color.ts` の 10 色）。
+- ダーク背景上のコントラスト検証は派生 TODO として `.issues/HANDOFF.md` に残す（必要なら別 Issue）。
 
 #### 実装
 
-- 実体は `Message.vue` の `<style scoped>` 内 `.msg-*` クラスに閉じる（BaseButton の `.btn-*` 同手法）
-- `RoleVariant` 型は `frontend/app/lib/api/message-role.ts` を流用（不変）
+- 色実体は `main.css` の `--color-say-*`（会話本文）/ `--color-sysmsg-*`（通知塗り箱）。クラスは `Message.vue` の `<style scoped>` 内 `.msg-say-*` / `.msg-info-*`。
+- 種別タグ・本文クラスのコード単位割り当ては `Message.vue` の `SYSTEM_TAG` / `SAY_BODY_CLASS`。`RoleVariant` 型は `frontend/app/lib/api/message-role.ts` を流用。
 
 ### システム通知
 
