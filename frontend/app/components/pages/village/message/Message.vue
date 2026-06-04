@@ -232,23 +232,16 @@ const roleTag = computed<{ label: string; cls: string } | null>(() => {
   return map[roleVariant.value] ?? null;
 });
 
-// 名前テキストの色: ロールが閉じた特別な場（wolf / mason / grave）と情報通知系では
-// ロール色に固定（個人識別カラー props.color は使わない）。それ以外は個人識別カラー優先、
-// 無ければ fg。
+// 名前テキストの色 override（名前行を持つ＝ hasSender のバリアントのみ対象）。
+// 閉じた特別な場（wolf / mason / grave）はロール色に固定（個人識別カラー props.color は使わない）。
+// info_creator（村建て）は塗り箱でなく会話レイアウトなので名前を白系（text-fg）に固定。
+// それ以外（normal / mono / seer）は個人識別カラー優先、無ければ fg（map に入れない）。
+// ※ 他の情報通知系（info_wolf 等）は名前行が描画されないためここに入れない（dead を避ける）。
 const nameOverrideClass: Partial<Record<RoleVariant, string>> = {
   wolf: "text-wolf",
   mason: "text-mason",
   grave: "text-grave",
-  // 情報通知系は firewolf dark の塗り箱上で読めるよう名前も白系に（陣営色は border が担う）
-  info_wolf: "text-fg",
-  info_village: "text-fg",
-  info_psychic: "text-fg",
-  info_mason: "text-fg",
-  info_lovers: "text-fg",
   info_creator: "text-fg",
-  info_fox: "text-fg",
-  info_public: "text-fg",
-  info_system: "text-fg",
 };
 const nameColorClass = computed(() => {
   const override = nameOverrideClass[roleVariant.value];

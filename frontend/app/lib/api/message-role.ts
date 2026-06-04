@@ -8,7 +8,9 @@ import { MESSAGE_TYPE } from "~/lib/api/message-constants";
  *     firewolf dark の bg/border/color を付ける（淡パステル地 + 黒文字）。directional rim / halo /
  *     アバターリングは撤去済み。normal / wolf / mason / mono / grave / seer
  *   - 情報通知系 (info_* variants): firewolf dark 準拠の「塗り箱」(暗グレー bg + 原色 border + 白系テキスト)
- *     info_wolf / info_village / info_psychic / info_mason / info_lovers / info_creator / info_fox / info_public / info_system
+ *     info_wolf / info_village / info_psychic / info_mason / info_lovers / info_fox / info_public / info_system
+ *     ※ 例外: info_creator（CREATOR_SAY）は「村建て」名を持つため塗り箱ではなく会話レイアウトで描画する
+ *       （roleVariant としては残すが名前色 override 専用。下記 INFO_CREATOR_CODES 参照）
  *
  * UI 上のレイアウト分岐・名前色 override・小タグ（roleTag / 種別タグ）の表示分岐に使う。
  */
