@@ -72,7 +72,7 @@
   /* 橙: 共有・共鳴系（MASON / SYMPATHIZER） */
   --color-sysmsg-mason-bg: #404033;
   --color-sysmsg-mason-border: #fa0;
-  /* ピンク: 恋人（LOVERS） */
+  /* ピンク: 恋人（LOVERS）。bg は firewolf 上 mason と同値 #404033 だが別陣営として独立管理（border のみ差) */
   --color-sysmsg-lovers-bg: #404033;
   --color-sysmsg-lovers-border: #f0a;
   /* 紫: 村建て発言（CREATOR_SAY） */

@@ -173,15 +173,15 @@ const containerClasses = computed(() => {
     grave: "msg-grave italic",
     seer: "msg-seer",
     // 情報通知系（firewolf dark の塗り箱）
-    info_wolf: "msg-info msg-info-wolf",
-    info_village: "msg-info msg-info-village",
-    info_psychic: "msg-info msg-info-psychic",
-    info_mason: "msg-info msg-info-mason",
-    info_lovers: "msg-info msg-info-lovers",
-    info_creator: "msg-info msg-info-creator",
-    info_fox: "msg-info msg-info-fox",
-    info_public: "msg-info msg-info-public",
-    info_system: "msg-info msg-info-system",
+    info_wolf: "msg-info-wolf",
+    info_village: "msg-info-village",
+    info_psychic: "msg-info-psychic",
+    info_mason: "msg-info-mason",
+    info_lovers: "msg-info-lovers",
+    info_creator: "msg-info-creator",
+    info_fox: "msg-info-fox",
+    info_public: "msg-info-public",
+    info_system: "msg-info-system",
   };
   return map[roleVariant.value];
 });
