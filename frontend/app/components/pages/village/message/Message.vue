@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="msg flex flex-row w-full leading-relaxed py-1.5 px-2.5 text-xs rounded-lg"
-    :class="containerClasses"
-  >
+  <div class="msg flex flex-row w-full leading-relaxed text-xs" :class="containerClasses">
     <!-- キャラ画像 -->
     <div v-if="image" class="mr-1.5 cursor-pointer shrink-0" @click="filter">
       <img
@@ -10,29 +7,46 @@
         :width="imgWidth"
         :height="imgHeight"
         class="align-top rounded msg-avatar"
-        :class="avatarRingClass"
       />
     </div>
     <!-- メッセージ内容 -->
     <div class="flex-1 flex flex-col min-w-0">
-      <div class="flex items-baseline gap-1.5">
-        <span class="flex-1 truncate" :class="nameColorClass" :style="nameStyle">{{
-          fromName
-        }}</span>
-        <span v-if="roleTag" class="text-[10px] shrink-0 tracking-widest" :class="roleTag.cls">{{
-          roleTag.label
-        }}</span>
-        <span v-if="showMessageType" class="text-fg-secondary text-xs shrink-0">{{
-          messageType
-        }}</span>
-        <span class="text-fg-secondary text-xs shrink-0">{{ messageTime }}</span>
-      </div>
-      <div>
+      <!-- 会話系（各種発言 / 村建て）: 名前行 → 本文ボックス の 2 段 -->
+      <template v-if="isConversation">
+        <div class="flex items-baseline gap-1.5">
+          <span class="flex-1 truncate" :class="nameColorClass" :style="nameStyle">{{
+            fromName
+          }}</span>
+          <span v-if="roleTag" class="text-[10px] shrink-0 tracking-widest" :class="roleTag.cls">{{
+            roleTag.label
+          }}</span>
+          <span class="text-fg-secondary text-xs shrink-0">{{ messageTime }}</span>
+        </div>
+        <!-- 本文ボックス: ここにだけ firewolf dark の bg/border/color を付ける。
+             flex-1 で、右側（名前行+本文）がアバター画像より低いとき縦に伸びて高さを合わせる。 -->
+        <div
+          class="mt-0.5 flex-1 rounded border p-2 text-left whitespace-pre-wrap break-all font-sans"
+          :class="[sayBodyClass, message.content.is_strong ? 'font-bold' : '']"
+        >
+          {{ message.content.text }}
+        </div>
+      </template>
+      <!-- 発言者なし（システム通知）: 本文 + 種別 + 時間 を 1 行に。
+           本文が長い場合は本文だけ折り返し、種別/時間は items-baseline で 1 行目に残る。 -->
+      <div v-else class="flex items-baseline gap-1.5 min-w-0">
+        <!-- システム通知の本文は塗り箱（暗グレー）上で読めるよう常に白系（text-fg）。陣営色は border が担う。 -->
         <span
-          class="whitespace-pre-wrap break-all font-sans"
-          :class="[bodyColorClass, message.content.is_strong ? 'font-bold' : '']"
+          class="flex-1 min-w-0 whitespace-pre-wrap break-all font-sans text-fg"
+          :class="message.content.is_strong ? 'font-bold' : ''"
           >{{ message.content.text }}</span
         >
+        <span
+          v-if="systemTag"
+          class="text-[10px] shrink-0 tracking-widest"
+          :class="systemTag.cls"
+          >{{ systemTag.label }}</span
+        >
+        <span class="text-fg-secondary text-xs shrink-0">{{ messageTime }}</span>
       </div>
     </div>
   </div>
@@ -78,10 +92,13 @@ const emit = defineEmits<Emits>();
 
 const villageStore = useVillageStore();
 
+// 名前行に出す発言者名。テンプレート上は会話レイアウト（v-if="isConversation"）でのみ参照され、
+// システム通知（v-else）では描画されない。CREATOR_SAY は from=null だが会話系（SAY_BODY_CLASS に含む）
+// なので「村建て」を返す。それ以外の from=null（システム通知）は会話側に来ないため "" は実質描画されない。
 const fromName = computed(() => {
   if (props.message.from) return props.message.from.chara.name.name;
   if (props.message.content.type.code === MESSAGE_TYPE.CREATOR_SAY) return "村建て";
-  return "システム";
+  return "";
 });
 
 const messageTime = computed(() => {
@@ -93,32 +110,52 @@ const messageTime = computed(() => {
   return `${mesDatetime.diff(startDatetime, "second")}秒`;
 });
 
-const messageType = computed(() => {
-  const code = props.message.content.type.code;
-  switch (code) {
-    case MESSAGE_TYPE.PUBLIC_SYSTEM:
-      return "";
-    case MESSAGE_TYPE.PRIVATE_ABILITY:
-    case MESSAGE_TYPE.MONOLOGUE_SAY:
-      return "[独]";
-    case MESSAGE_TYPE.PRIVATE_PSYCHIC:
-      return "[霊]";
-    case MESSAGE_TYPE.PRIVATE_WEREWOLF:
-    case MESSAGE_TYPE.WEREWOLF_SAY:
-      return "[狼]";
-    case MESSAGE_TYPE.PRIVATE_FANATIC:
-      return "[信]";
-    case MESSAGE_TYPE.PRIVATE_MASON:
-    case MESSAGE_TYPE.SYMPATHIZE_SAY:
-      return "[共]";
-    case MESSAGE_TYPE.PRIVATE_FOX:
-      return "[狐]";
-    case MESSAGE_TYPE.GRAVE_SAY:
-      return "[墓]";
-    default:
-      return "";
-  }
-});
+// システム通知の種別タグ（1 文字）。色は枠（info_* の border）= firewolf 原色トークン由来で、
+// scoped の .systag-* クラスに閉じる（赤/青は暗背景で沈むため white 寄せの明るめ版にしている）。
+// 会話系（roleTag を持つ wolf/mason/mono/grave/seer）は roleTag で表示するためここに含めない。
+// CREATOR_SAY（「村建て」名で表示）/ PUBLIC_SYSTEM（全体通知）/ PRIVATE_SYSTEM はタグなし。
+const SYSTEM_TAG: Record<string, { label: string; cls: string }> = {
+  [MESSAGE_TYPE.PRIVATE_WEREWOLF]: { label: "狼", cls: "systag-wolf" },
+  [MESSAGE_TYPE.PRIVATE_FANATIC]: { label: "信", cls: "systag-wolf" },
+  [MESSAGE_TYPE.PRIVATE_SEER]: { label: "占", cls: "systag-village" },
+  [MESSAGE_TYPE.PRIVATE_WISE]: { label: "賢", cls: "systag-village" },
+  [MESSAGE_TYPE.PRIVATE_PSYCHIC]: { label: "霊", cls: "systag-psychic" },
+  [MESSAGE_TYPE.PRIVATE_GURU]: { label: "導", cls: "systag-psychic" },
+  [MESSAGE_TYPE.PRIVATE_CORONER]: { label: "検", cls: "systag-psychic" },
+  [MESSAGE_TYPE.PRIVATE_MASON]: { label: "共", cls: "systag-mason" },
+  [MESSAGE_TYPE.PRIVATE_SYMPATHIZER]: { label: "鳴", cls: "systag-mason" },
+  [MESSAGE_TYPE.PRIVATE_LOVERS]: { label: "恋", cls: "systag-lovers" },
+  [MESSAGE_TYPE.PRIVATE_FOX]: { label: "狐", cls: "systag-fox" },
+};
+const systemTag = computed(() => SYSTEM_TAG[props.message.content.type.code] ?? null);
+
+// 発言（会話系）本文ボックスのクラス（コード単位）。firewolf dark の SayMessage.vue messageClass に対応。
+// 色実体は main.css の --color-say-* を参照する .msg-say-* クラス（scoped）。
+const SAY_BODY_CLASS: Record<string, string> = {
+  [MESSAGE_TYPE.NORMAL_SAY]: "msg-say-normal",
+  [MESSAGE_TYPE.WEREWOLF_SAY]: "msg-say-werewolf",
+  [MESSAGE_TYPE.SYMPATHIZE_SAY]: "msg-say-sympathize",
+  [MESSAGE_TYPE.LOVERS_SAY]: "msg-say-lovers",
+  [MESSAGE_TYPE.MONOLOGUE_SAY]: "msg-say-monologue",
+  [MESSAGE_TYPE.PRIVATE_ABILITY]: "msg-say-monologue",
+  [MESSAGE_TYPE.GRAVE_SAY]: "msg-say-grave",
+  [MESSAGE_TYPE.SPECTATE_SAY]: "msg-say-spectate",
+  [MESSAGE_TYPE.SECRET_SAY]: "msg-say-secret",
+  [MESSAGE_TYPE.CREATOR_SAY]: "msg-say-creator",
+};
+// isConversation=true なら必ず SAY_BODY_CLASS にヒットするため ?? は理論上到達しない安全ネット。
+const sayBodyClass = computed(
+  () => SAY_BODY_CLASS[props.message.content.type.code] ?? "msg-say-normal",
+);
+
+// 会話レイアウト（アバター ｜ 名前行 / 本文ボックス）で描画するか。
+// 会話系の truth source は SAY_BODY_CLASS のキー集合（各種発言 + 村建て）。from の有無ではなく
+// メッセージ種別で判定するため、from=null の say（恋人/秘話 等）が来ても誤ってシステム通知に落ちない。
+// message-constants の isSayType() を使わないのは、CREATOR_SAY / PRIVATE_ABILITY が MESSAGE_TYPE_MAP では
+// "system" に分類される一方、lastwolf では会話レイアウト（村建て / 独り言）で扱うため分類が一致しないから。
+const isConversation = computed(() =>
+  Object.hasOwn(SAY_BODY_CLASS, props.message.content.type.code),
+);
 
 const image = computed((): CharaImage | null => {
   const map = villageStore.participantIdImgMap;
@@ -163,61 +200,32 @@ const roleVariant = computed<RoleVariant>(() => {
   return "normal";
 });
 
+// root のクラス。
+//  - 会話系（isConversation）: 本文ボックス（.msg-say-*）が色を持つので root は無装飾。
+//  - システム系: root 自体を firewolf dark の塗り箱（rounded + border + padding + bg）にする。
+//    info_creator（CREATOR_SAY）は会話系（SAY_BODY_CLASS に含む）なので会話レイアウトで扱う。
 const containerClasses = computed(() => {
-  const map: Record<RoleVariant, string> = {
-    // 会話系
-    normal: "msg-normal",
-    wolf: "msg-wolf",
-    mason: "msg-mason",
-    mono: "msg-mono italic",
-    grave: "msg-grave italic",
-    seer: "msg-seer",
-    // 情報通知系（firewolf dark の塗り箱）
+  if (isConversation.value) return "";
+  const map: Partial<Record<RoleVariant, string>> = {
     info_wolf: "msg-info-wolf",
     info_village: "msg-info-village",
     info_psychic: "msg-info-psychic",
     info_mason: "msg-info-mason",
     info_lovers: "msg-info-lovers",
-    info_creator: "msg-info-creator",
     info_fox: "msg-info-fox",
     info_public: "msg-info-public",
     info_system: "msg-info-system",
   };
-  return map[roleVariant.value];
+  // !isConversation で到達するのは info_*（creator 除く）。想定外のシステム種別（PARTICIPANTS / ACTION 等が
+  // 万一メッセージ列に混入した場合）は roleVariant=normal で map 未登録になるため、個別システム通知
+  // （info_system / くすんだグレー塗り箱）の見た目にフォールバックして「枠だけ」になるのを防ぐ。
+  const base = "rounded-lg border px-2.5 py-1.5";
+  return `${base} ${map[roleVariant.value] ?? "msg-info-system"}`;
 });
 
-const avatarRingClass = computed(() => {
-  // 会話系のみ avatar ring を出す。情報通知系は基本 from=null でアバター自体が出ない
-  const map: Record<RoleVariant, string> = {
-    normal: "",
-    wolf: "msg-avatar-wolf",
-    mason: "msg-avatar-mason",
-    mono: "",
-    grave: "msg-avatar-grave",
-    seer: "msg-avatar-seer",
-    info_wolf: "",
-    info_village: "",
-    info_psychic: "",
-    info_mason: "",
-    info_lovers: "",
-    info_creator: "",
-    info_fox: "",
-    info_public: "",
-    info_system: "",
-  };
-  return map[roleVariant.value];
-});
-
-// roleTag（"人狼" "共有" "独白" "墓下" "観戦"）と messageType（"[狼]" "[共]" "[独]" ...）は
-// 意味が重複するため、roleTag が出るケースでは messageType を抑制する。
-//   例: WEREWOLF_SAY → roleTag "人狼" だけ表示し、"[狼]" は隠す
-// 情報通知系（info_*）は roleTag を持たないため messageType "[狼]" 等が表示される
-const showMessageType = computed(() => {
-  if (!messageType.value) return false;
-  return !roleTag.value;
-});
-
-// 小タグ（人狼/共有/独白/墓下/観戦）。会話系のみ。情報通知系は messageType 接頭辞で識別。
+// 小タグ（人狼/共有/独白/墓下/観戦）。会話系のみ。情報通知系は systemTag（種別1文字）で識別。
+// NORMAL_SAY / LOVERS_SAY / SECRET_SAY（roleVariant=normal）は roleTag を出さない（意図的）。
+// 恋人=桃 / 秘話=灰紫 は本文ボックスの色で識別できるため小タグは不要。
 const roleTag = computed<{ label: string; cls: string } | null>(() => {
   const map: Partial<Record<RoleVariant, { label: string; cls: string }>> = {
     wolf: { label: "人狼", cls: "text-wolf" },
@@ -229,47 +237,16 @@ const roleTag = computed<{ label: string; cls: string } | null>(() => {
   return map[roleVariant.value] ?? null;
 });
 
-const bodyColorClass = computed(() => {
-  // 会話系は fg / fg-secondary ベース。
-  // 情報通知系（info_*）は firewolf dark の塗り箱（中間グレー bg）上で読めるよう白系 text-fg に統一。
-  // 陣営色はミュート役職色だと AA 不足のため本文には載せず、border 色で陣営を示す。
-  const map: Record<RoleVariant, string> = {
-    normal: "text-fg",
-    wolf: "text-fg",
-    mason: "text-fg",
-    mono: "text-fg-secondary",
-    grave: "text-fg-secondary",
-    seer: "text-fg",
-    info_wolf: "text-fg",
-    info_village: "text-fg",
-    info_psychic: "text-fg",
-    info_mason: "text-fg",
-    info_lovers: "text-fg",
-    info_creator: "text-fg",
-    info_fox: "text-fg",
-    info_public: "text-fg",
-    info_system: "text-fg",
-  };
-  return map[roleVariant.value];
-});
-
-// 名前テキストの色: ロールが閉じた特別な場（wolf / mason / grave）と情報通知系では
-// ロール色に固定（個人識別カラー props.color は使わない）。それ以外は個人識別カラー優先、
-// 無ければ fg。
+// 名前テキストの色 override（名前行を持つ＝会話系 isConversation のバリアントのみ対象）。
+// 閉じた特別な場（wolf / mason / grave）はロール色に固定（個人識別カラー props.color は使わない）。
+// info_creator（村建て）は塗り箱でなく会話レイアウトなので名前を白系（text-fg）に固定。
+// それ以外（normal / mono / seer）は個人識別カラー優先、無ければ fg（map に入れない）。
+// ※ 他の情報通知系（info_wolf 等）は名前行が描画されないためここに入れない（dead を避ける）。
 const nameOverrideClass: Partial<Record<RoleVariant, string>> = {
   wolf: "text-wolf",
   mason: "text-mason",
   grave: "text-grave",
-  // 情報通知系は firewolf dark の塗り箱上で読めるよう名前も白系に（陣営色は border が担う）
-  info_wolf: "text-fg",
-  info_village: "text-fg",
-  info_psychic: "text-fg",
-  info_mason: "text-fg",
-  info_lovers: "text-fg",
   info_creator: "text-fg",
-  info_fox: "text-fg",
-  info_public: "text-fg",
-  info_system: "text-fg",
 };
 const nameColorClass = computed(() => {
   const override = nameOverrideClass[roleVariant.value];
@@ -288,203 +265,68 @@ const filter = () => {
 
 <style scoped>
 /*
- * Black & Blood directional lighting をチャットメッセージにも展開。
+ * チャットメッセージのスタイル（2026-06: firewolf dark 準拠へ再編）。
  *
- * 改訂方針 (2026-05):
- *   - base bg を「ロール色を 14% 程度混ぜた elev」に変更（純黒ではなく、ロール色が透けて見える）
- *   - L 字 rim の outer stop を transparent から「ロール色 20-25%」に上げて、全周にロール色のラインを残す
- *     （左下→右上方向に減衰する directional は維持）
- *   - 外側に box-shadow でロール色の halo を追加。「囁き」が発光して見える
+ * 2 系統:
+ *   - 会話系（発言バブル）: root（.msg）は無装飾。アバター ｜ 名前行 / 本文ボックス の構成で、
+ *     本文ボックス（.msg-say-*）にだけ firewolf dark の bg/border/color を付ける（淡パステル地 + 黒文字）。
+ *   - 情報通知系（info_*）: root 自体を firewolf dark の塗り箱（暗グレー bg + 原色 border + 白系テキスト）。
  *
- * 役割別 rim パターン:
- *   - 会話・mono 系: L 字 rim（radial-gradient(ellipse at 0% 100%) border-box）
- *     左下角で最大、上辺・右辺もロール色の floor 値で薄く可視。
- *   - システム系（system / village_info / psychic_info）: 全周 solid rim
- *     （linear-gradient(color, color) border-box）。情報通知の枠を強調。
- *
- * 配色は `var(--color-*)` トークンを単一情報源にし、透明度合成は
- * `color-mix(in srgb, var(--color-X) N%, transparent)` で表現する。
- * rgba ハードコードは禁止（トークン値が変わったときに二重管理になるため）。
- *
+ * 配色は main.css の --color-say-*（会話）/ --color-sysmsg-*（通知）を単一情報源にし、ハードコードしない。
  * 詳細は DESIGN.md「チャットメッセージ」節を参照。
  */
 
 .msg {
-  /* 共通ベース。padding-box / border-box を使うため border 透明を指定するだけに留め、
-   * 背景は各 variant が `background:` ショートハンドで自前管理する。
-   * （`.msg` に background-color を書くと background ショートハンドにリセットされ
-   * 機能しないため。新 variant 追加時は必ず elev 層を含めること） */
   position: relative;
-  border: 1px solid transparent;
 }
 
-/* Normal — 中性色。base bg-elev + 薄い line-soft 線で枠を出す */
-.msg-normal {
-  background-color: var(--color-elev);
-  border-color: color-mix(in srgb, var(--color-line-bright) 85%, transparent);
+/* ============ 発言系（会話）本文ボックス: firewolf dark 準拠 ============
+ * firewolf SayMessage.vue の messageClass（dark）を本文ボックスにのみ適用。
+ * 淡いパステル地 + 黒文字（#0a0a0a）+ 同系 border。例外: lovers=赤文字 / creator=暗地+薄文字+紫枠。 */
+.msg-say-normal {
+  background-color: var(--color-say-normal-bg);
+  border-color: var(--color-say-normal-border);
+  color: var(--color-say-text);
 }
-
-/* ============ 会話・独り言系: L 字 rim + ロール色 base + 外側 halo ============ */
-
-/* Wolf — 血色の囁き。base に wolf 14% を混ぜて赤く染め、L 字 rim 強化 + 外側 halo */
-.msg-wolf {
-  background:
-    radial-gradient(
-        ellipse 70% 140% at 100% 0%,
-        color-mix(in srgb, var(--color-wolf) 22%, transparent) 0%,
-        transparent 60%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 80% 130% at 0% 100%,
-        color-mix(in srgb, var(--color-wolf) 50%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--color-wolf) 14%, var(--color-elev)) 0%,
-        color-mix(in srgb, var(--color-wolf) 6%, var(--color-elev)) 100%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 110% 110% at 0% 100%,
-        var(--color-wolf) 0%,
-        color-mix(in srgb, var(--color-wolf) 75%, transparent) 18%,
-        color-mix(in srgb, var(--color-wolf) 40%, transparent) 45%,
-        color-mix(in srgb, var(--color-wolf) 25%, transparent) 100%
-      )
-      border-box;
-  box-shadow: 0 0 12px -4px color-mix(in srgb, var(--color-wolf) 32%, transparent);
+.msg-say-werewolf {
+  background-color: var(--color-say-werewolf-bg);
+  border-color: var(--color-say-werewolf-border);
+  color: var(--color-say-text);
 }
-
-/* Mason — 共有の会話。苔緑染め + L 字 mason rim + halo */
-.msg-mason {
-  background:
-    radial-gradient(
-        ellipse 70% 140% at 100% 0%,
-        color-mix(in srgb, var(--color-mason) 16%, transparent) 0%,
-        transparent 60%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 80% 130% at 0% 100%,
-        color-mix(in srgb, var(--color-mason) 46%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--color-mason) 12%, var(--color-elev)) 0%,
-        color-mix(in srgb, var(--color-mason) 5%, var(--color-elev)) 100%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 110% 110% at 0% 100%,
-        var(--color-mason) 0%,
-        color-mix(in srgb, var(--color-mason) 70%, transparent) 18%,
-        color-mix(in srgb, var(--color-mason) 38%, transparent) 45%,
-        color-mix(in srgb, var(--color-mason) 24%, transparent) 100%
-      )
-      border-box;
-  box-shadow: 0 0 10px -4px color-mix(in srgb, var(--color-mason) 28%, transparent);
+.msg-say-sympathize {
+  background-color: var(--color-say-sympathize-bg);
+  border-color: var(--color-say-sympathize-border);
+  color: var(--color-say-text);
 }
-
-/* Mono — 独り言（内側の声）。控えめのまま、tint を僅かに加え rim 全周を可視化
- *  - base に mono 4% を混ぜて純黒を避ける
- *  - 他 variant と違い halo は付けない（発光しない、内側の声） */
-.msg-mono {
-  background:
-    radial-gradient(
-        ellipse 50% 100% at 100% 0%,
-        color-mix(in srgb, var(--color-mono) 8%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 50% 90% at 0% 100%,
-        color-mix(in srgb, var(--color-mono) 16%, transparent) 0%,
-        transparent 45%
-      )
-      padding-box,
-    linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--color-mono) 4%, var(--color-elev)) 0%,
-        var(--color-elev) 100%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 100% 100% at 0% 100%,
-        var(--color-mono) 0%,
-        color-mix(in srgb, var(--color-mono) 55%, transparent) 18%,
-        color-mix(in srgb, var(--color-mono) 28%, transparent) 45%,
-        color-mix(in srgb, var(--color-mono) 18%, transparent) 100%
-      )
-      border-box;
+.msg-say-lovers {
+  background-color: var(--color-say-lovers-bg);
+  border-color: var(--color-say-lovers-border);
+  color: var(--color-say-lovers-text);
 }
-
-/* Grave — 墓下発言。幽霊水色染め + L 字 grave rim + halo + italic */
-.msg-grave {
-  background:
-    radial-gradient(
-        ellipse 70% 130% at 100% 0%,
-        color-mix(in srgb, var(--color-grave) 14%, transparent) 0%,
-        transparent 60%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 80% 130% at 0% 100%,
-        color-mix(in srgb, var(--color-grave) 36%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--color-grave) 10%, var(--color-elev)) 0%,
-        color-mix(in srgb, var(--color-grave) 4%, var(--color-elev)) 100%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 110% 110% at 0% 100%,
-        var(--color-grave) 0%,
-        color-mix(in srgb, var(--color-grave) 65%, transparent) 18%,
-        color-mix(in srgb, var(--color-grave) 32%, transparent) 45%,
-        color-mix(in srgb, var(--color-grave) 22%, transparent) 100%
-      )
-      border-box;
-  box-shadow: 0 0 8px -4px color-mix(in srgb, var(--color-grave) 22%, transparent);
+.msg-say-monologue {
+  background-color: var(--color-say-monologue-bg);
+  border-color: var(--color-say-monologue-border);
+  color: var(--color-say-text);
 }
-
-/* Seer — 観戦。淡金染め + L 字 seer rim + 薄 halo */
-.msg-seer {
-  background:
-    radial-gradient(
-        ellipse 60% 130% at 100% 0%,
-        color-mix(in srgb, var(--color-seer) 12%, transparent) 0%,
-        transparent 60%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 70% 120% at 0% 100%,
-        color-mix(in srgb, var(--color-seer) 28%, transparent) 0%,
-        transparent 55%
-      )
-      padding-box,
-    linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--color-seer) 8%, var(--color-elev)) 0%,
-        color-mix(in srgb, var(--color-seer) 3%, var(--color-elev)) 100%
-      )
-      padding-box,
-    radial-gradient(
-        ellipse 110% 110% at 0% 100%,
-        var(--color-seer) 0%,
-        color-mix(in srgb, var(--color-seer) 55%, transparent) 18%,
-        color-mix(in srgb, var(--color-seer) 26%, transparent) 45%,
-        color-mix(in srgb, var(--color-seer) 18%, transparent) 100%
-      )
-      border-box;
-  box-shadow: 0 0 8px -4px color-mix(in srgb, var(--color-seer) 20%, transparent);
+.msg-say-grave {
+  background-color: var(--color-say-grave-bg);
+  border-color: var(--color-say-grave-border);
+  color: var(--color-say-text);
+}
+.msg-say-spectate {
+  background-color: var(--color-say-spectate-bg);
+  border-color: var(--color-say-spectate-border);
+  color: var(--color-say-text);
+}
+.msg-say-secret {
+  background-color: var(--color-say-secret-bg);
+  border-color: var(--color-say-secret-border);
+  color: var(--color-say-text);
+}
+.msg-say-creator {
+  background-color: var(--color-say-creator-bg);
+  border-color: var(--color-say-creator-border);
+  color: var(--color-say-creator-text);
 }
 
 /* ============ 情報通知系 (info_*): firewolf dark 準拠の「塗り箱」============
@@ -516,10 +358,7 @@ const filter = () => {
   background-color: var(--color-sysmsg-lovers-bg);
   border-color: var(--color-sysmsg-lovers-border);
 }
-.msg-info-creator {
-  background-color: var(--color-sysmsg-creator-bg);
-  border-color: var(--color-sysmsg-creator-border);
-}
+/* CREATOR_SAY は「村建て」名を持つため会話系（.msg-say-creator）で扱う。info_creator の塗り箱は廃止。 */
 .msg-info-fox {
   background-color: var(--color-sysmsg-fox-bg);
   border-color: var(--color-sysmsg-fox-border);
@@ -535,21 +374,24 @@ const filter = () => {
   border-color: var(--color-sysmsg-system-border);
 }
 
-/* === Avatar ring — wolf / mason はロール色の弱い halo を外側に重ねて主役感を出す === */
-.msg-avatar-wolf {
-  box-shadow:
-    0 0 0 2px var(--color-wolf),
-    0 0 10px -2px color-mix(in srgb, var(--color-wolf) 55%, transparent);
+/* システム通知の種別タグ（1 文字）の色。枠（--color-sysmsg-*-border）と同色。
+ * 赤(#f00)/青(#00f) は暗背景で文字が沈むため white を混ぜて明度を上げる（緑/橙/桃/黄は枠色そのまま）。 */
+.systag-wolf {
+  color: color-mix(in srgb, var(--color-sysmsg-wolf-border) 60%, white);
 }
-.msg-avatar-mason {
-  box-shadow:
-    0 0 0 2px var(--color-mason),
-    0 0 10px -2px color-mix(in srgb, var(--color-mason) 45%, transparent);
+.systag-village {
+  color: var(--color-sysmsg-village-border);
 }
-.msg-avatar-grave {
-  box-shadow: 0 0 0 1px var(--color-grave);
+.systag-psychic {
+  color: color-mix(in srgb, var(--color-sysmsg-psychic-border) 50%, white);
 }
-.msg-avatar-seer {
-  box-shadow: 0 0 0 1px var(--color-seer);
+.systag-mason {
+  color: var(--color-sysmsg-mason-border);
+}
+.systag-lovers {
+  color: var(--color-sysmsg-lovers-border);
+}
+.systag-fox {
+  color: var(--color-sysmsg-fox-border);
 }
 </style>
