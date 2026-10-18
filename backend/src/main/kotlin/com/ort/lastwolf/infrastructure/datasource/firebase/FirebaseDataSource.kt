@@ -42,7 +42,9 @@ class FirebaseDataSource {
             )
         val now = LastwolfDateUtil.currentLocalDateTime()
         val epocTimeMilli = now.toInstant(ZoneOffset.ofHours(+9)).toEpochMilli()
-        var messageView = MessageView(message, village, false)
+        // 共有ノードは未ログインでも誰でも読めるため、発言者の役職・役職希望・プレイヤー情報は常に含めない
+        // (画面は from の id と chara しか使わない)
+        var messageView = MessageView(message, village, true)
         messageView =
             messageView.copy(
                 time =
