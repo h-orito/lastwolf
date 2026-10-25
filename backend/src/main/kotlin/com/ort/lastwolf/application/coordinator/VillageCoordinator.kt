@@ -501,6 +501,9 @@ class VillageCoordinator(
         targetId: Int?,
         abilityTypeCode: String,
     ) {
+        // 同時に送られても占いなどを 1 晩に 1 回に保てるよう、村の行をロックしてから最新の状態で確認する
+        // (日付更新も先に村の行を更新するので、ロックの順番は同じになる)
+        villageService.lockVillage(villageId)
         // 能力セットできない状況ならエラー
         val village: Village = villageService.findVillage(villageId)
         val participant: VillageParticipant? = findParticipant(village, user)
