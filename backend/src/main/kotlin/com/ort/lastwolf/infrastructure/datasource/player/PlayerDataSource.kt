@@ -142,10 +142,5 @@ class PlayerDataSource(
      * @param text
      * @return 4byte文字を除いた文字列
      */
-    private fun removeSurrogate(text: String): String =
-        text
-            .chunked(1)
-            .filter { c ->
-                !c.matches("[\\uD800-\\uDFFF]".toRegex())
-            }.joinToString(separator = "")
+    private fun removeSurrogate(text: String): String = text.filterNot { it.isSurrogate() }
 }

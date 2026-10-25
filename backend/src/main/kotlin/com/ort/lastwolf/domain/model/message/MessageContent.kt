@@ -13,6 +13,10 @@ data class MessageContent(
     companion object {
         const val DEFAULT_LENGTH_MAX = 200
 
+        // リクエストで受け付ける発言の長さの上限。本来の文字数の確認 (assertMessageLength) は絵文字を除いた後に行うので、
+        // ここでは改行や絵文字を含めた通常の発言では届かない値にして、極端に長いものだけを先に断る
+        const val INPUT_LENGTH_MAX = 2000
+
         operator fun invoke(
             messageType: String,
             text: String,
@@ -31,12 +35,7 @@ data class MessageContent(
          * @param text
          * @return 4byte文字を除いた文字列
          */
-        private fun removeSurrogate(text: String): String =
-            text
-                .chunked(1)
-                .filter { c ->
-                    !c.matches("[\\uD800-\\uDFFF]".toRegex())
-                }.joinToString(separator = "")
+        private fun removeSurrogate(text: String): String = text.filterNot { it.isSurrogate() }
     }
 
     fun assertMessageLength() {
