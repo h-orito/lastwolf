@@ -47,6 +47,14 @@ class CreatorDomainService(
         if (!isAvailableCancelVillage(village, player, user)) throw LastwolfBusinessException("廃村できません")
     }
 
+    // キックはプロローグ中の村建て / GM だけができる (画面のボタン表示と同じ判定)
+    fun assertKick(
+        village: Village,
+        player: Player,
+    ) {
+        if (!isAvailableKick(village, player)) throw LastwolfBusinessException("キックできません")
+    }
+
     fun assertModifySetting(
         village: Village,
         player: Player,

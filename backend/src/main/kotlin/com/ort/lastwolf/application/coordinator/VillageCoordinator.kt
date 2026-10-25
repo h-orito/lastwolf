@@ -334,6 +334,35 @@ class VillageCoordinator(
     }
 
     /**
+     * 村建てによるキック
+     * @param villageId villageId
+     * @param user user
+     * @param targetId キックする参加者のID
+     */
+    @Transactional(rollbackFor = [Exception::class, LastwolfBusinessException::class])
+    fun kick(
+        villageId: Int,
+        user: LastwolfUser,
+        targetId: Int,
+    ) {
+        // キックできない状況ならエラー
+        val village: Village = villageService.findVillage(villageId)
+        val player = playerService.findPlayer(user)
+        creatorDomainService.assertKick(village, player)
+        val participant = village.participants.first(targetId)
+        if (participant.player.id == 1) return // ダミーはキックできない
+        // キック
+        val updatedVillage: Village =
+            villageService.updateVillageDifference(
+                village,
+                village.leaveParticipant(targetId),
+            )
+        // シスメ
+        val chara: Chara = charachipService.findChara(participant.chara.id)
+        messageService.registerLeaveMessage(updatedVillage, chara)
+    }
+
+    /**
      * 村を開始
      * @param villageId villageId
      * @param user user
