@@ -202,6 +202,8 @@ data class Village(
         assertPassword(password)
     }
 
+    fun isCorrectJoinPassword(password: String?): Boolean = setting.password.matches(password)
+
     /** 村として退村可能か */
     fun isAvailableLeave(): Boolean = status.isRecruiting()
 
@@ -484,7 +486,7 @@ data class Village(
 
     private fun assertPassword(password: String?) {
         if (!setting.password.joinPasswordRequired) return
-        if (setting.password.joinPassword != password) throw LastwolfBusinessException("入村パスワードが誤っています")
+        if (!isCorrectJoinPassword(password)) throw LastwolfBusinessException("入村パスワードが誤っています")
     }
 
     private fun villagerCount(): Int =

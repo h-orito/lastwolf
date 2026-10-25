@@ -5,6 +5,7 @@ import com.ort.lastwolf.application.service.AbilityService
 import com.ort.lastwolf.application.service.CharachipService
 import com.ort.lastwolf.application.service.ComingOutService
 import com.ort.lastwolf.application.service.CommitService
+import com.ort.lastwolf.application.service.JoinPasswordAttemptLimiter
 import com.ort.lastwolf.application.service.MessageService
 import com.ort.lastwolf.application.service.PlayerService
 import com.ort.lastwolf.application.service.VillageService
@@ -66,6 +67,7 @@ class VillageCoordinator(
     private val creatorDomainService: CreatorDomainService,
     private val villageSettingDomainService: VillageSettingDomainService,
     private val comingOutDomainService: ComingOutDomainService,
+    private val joinPasswordAttemptLimiter: JoinPasswordAttemptLimiter,
 ) {
     /**
      * 村参加者取得
@@ -215,6 +217,14 @@ class VillageCoordinator(
         // 参加できない状況ならエラー
         val village: Village = villageService.findVillage(villageId)
         val player: Player = playerService.findPlayer(user)
+
+        // 入村パスワードは試行回数を制限する (実際の確認は下の assertParticipate で行う)
+        if (village.setting.password.joinPasswordRequired) {
+            if (!joinPasswordAttemptLimiter.acquire(player.id, villageId)) {
+                throw LastwolfBusinessException("入村パスワードを続けて間違えたため、しばらく参加できません。時間をおいてから再度お試しください")
+            }
+            joinPasswordAttemptLimiter.release(player.id, villageId, failed = !village.isCorrectJoinPassword(password))
+        }
 
         participateDomainService.assertParticipate(
             player,
