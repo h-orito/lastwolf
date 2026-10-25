@@ -9,6 +9,16 @@ import org.springframework.stereotype.Repository
 class PlayerDataSource(
     private val playerBhv: PlayerBhv,
 ) {
+    /**
+     * プレイヤーの行をロックする (トランザクションが終わるまで、同じプレイヤーをロックしようとする処理を待たせる)
+     */
+    fun lockPlayer(id: Int) {
+        playerBhv.selectEntityWithDeletedCheck {
+            it.query().setPlayerId_Equal(id)
+            it.lockForUpdate()
+        }
+    }
+
     fun findPlayer(id: Int): com.ort.lastwolf.domain.model.player.Player {
         val player =
             playerBhv.selectEntityWithDeletedCheck {

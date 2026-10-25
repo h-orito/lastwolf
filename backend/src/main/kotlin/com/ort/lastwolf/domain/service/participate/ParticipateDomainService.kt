@@ -59,6 +59,19 @@ class ParticipateDomainService {
     }
 
     /**
+     * 参加登録の直前に、最新の村とプレイヤーで定員・1 人 1 村・キャラの重複を確認し直す
+     * (事前の確認から登録までの間に他の参加があることがあるため。パスワードと役職希望は事前に確認済み)
+     */
+    fun assertParticipateCapacity(
+        player: Player,
+        village: Village,
+        charaId: Int,
+    ) {
+        if (!isAvailableParticipate(player, village)) throw LastwolfBusinessException("参加できません")
+        if (village.isAlreadyParticipateCharacter(charaId)) throw LastwolfBusinessException("既に参加されているキャラクターです")
+    }
+
+    /**
      * 参加メッセージ
      * @param village village
      * @param chara chara

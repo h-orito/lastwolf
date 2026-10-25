@@ -480,7 +480,7 @@ data class Village(
     // ===================================================================================
     //                                                                        Assist Logic
     //                                                                        ============
-    private fun isAlreadyParticipateCharacter(charaId: Int): Boolean = participants.list.any { it.chara.id == charaId }
+    fun isAlreadyParticipateCharacter(charaId: Int): Boolean = participants.list.any { it.chara.id == charaId }
 
     private fun assertPassword(password: String?) {
         if (!setting.password.joinPasswordRequired) return

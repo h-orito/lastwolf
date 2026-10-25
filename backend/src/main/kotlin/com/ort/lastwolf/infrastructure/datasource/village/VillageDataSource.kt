@@ -51,6 +51,16 @@ class VillageDataSource(
     }
 
     /**
+     * 村の行をロックする (トランザクションが終わるまで、同じ村をロックしようとする処理を待たせる)
+     */
+    fun lockVillage(villageId: Int) {
+        villageBhv.selectEntityWithDeletedCheck {
+            it.query().setVillageId_Equal(villageId)
+            it.lockForUpdate()
+        }
+    }
+
+    /**
      * 村一覧取得
      * @param user 指定した場合は自分が参加した村一覧
      * @param villageStatusList 指定した場合はそのステータスで絞り込む

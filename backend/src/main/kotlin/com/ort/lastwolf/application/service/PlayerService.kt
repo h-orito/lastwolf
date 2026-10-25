@@ -12,6 +12,11 @@ class PlayerService(
 ) {
     fun findPlayer(id: Int): Player = playerDataSource.findPlayer(id)
 
+    /**
+     * プレイヤーの行をロックする (トランザクション内で呼ぶ)
+     */
+    fun lockPlayer(id: Int) = playerDataSource.lockPlayer(id)
+
     fun findPlayer(user: LastwolfUser): Player = playerDataSource.findPlayer(user.uid)
 
     fun findPlayers(villageId: Int): Players = playerDataSource.findPlayers(villageId)
