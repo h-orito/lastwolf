@@ -29,11 +29,9 @@
                 {{ setting.description }}
               </div>
             </td>
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <td
-              class="border border-gray-300 px-3 py-1"
-              v-html="setting.value.replace(/\n/g, '<br />')"
-            />
+            <td class="border border-gray-300 px-3 py-1 whitespace-pre-line">
+              {{ setting.value }}
+            </td>
           </tr>
         </tbody>
       </table>
