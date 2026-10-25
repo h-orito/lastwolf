@@ -242,8 +242,39 @@ class VillageCoordinator(
         firstRequestSkill: CDef.Skill = CDef.Skill.おまかせ,
         secondRequestSkill: CDef.Skill = CDef.Skill.おまかせ,
     ) {
+        // 同時に参加されても定員・1 人 1 村・キャラの重複を守れるよう、村とプレイヤーの行をロックしてから最新の状態で確認し直す
+        // (ロックは常に 村 → プレイヤー の順で取る)
+        villageService.lockVillage(villageId)
+        playerService.lockPlayer(playerId)
+        val village: Village = villageService.findVillage(villageId)
+        participateDomainService.assertParticipateCapacity(playerService.findPlayer(playerId), village, charaId)
+        registerParticipant(village, playerId, charaId, firstRequestSkill, secondRequestSkill)
+    }
+
+    /**
+     * 参加条件を確認せずに村に参加させる (ダミーキャラとデバッグ用)
+     * ダミーのプレイヤーはすべての村に参加しているため、1 人 1 村の確認を通らない
+     */
+    @Transactional(rollbackFor = [Exception::class, LastwolfBusinessException::class])
+    fun participateWithoutCheck(
+        villageId: Int,
+        playerId: Int,
+        charaId: Int,
+        firstRequestSkill: CDef.Skill = CDef.Skill.おまかせ,
+        secondRequestSkill: CDef.Skill = CDef.Skill.おまかせ,
+    ) {
+        registerParticipant(villageService.findVillage(villageId), playerId, charaId, firstRequestSkill, secondRequestSkill)
+    }
+
+    private fun registerParticipant(
+        before: Village,
+        playerId: Int,
+        charaId: Int,
+        firstRequestSkill: CDef.Skill,
+        secondRequestSkill: CDef.Skill,
+    ) {
+        var village: Village = before
         // 村参加者登録
-        var village: Village = villageService.findVillage(villageId)
         val changedVillage: Village =
             village.participate(
                 playerId = playerId,
@@ -611,7 +642,7 @@ class VillageCoordinator(
         village: Village,
     ) {
         val dummyPlayerId = 1 // 固定
-        this.participate(
+        this.participateWithoutCheck(
             villageId = villageId,
             playerId = dummyPlayerId,
             charaId = village.setting.charachip.dummyCharaId,

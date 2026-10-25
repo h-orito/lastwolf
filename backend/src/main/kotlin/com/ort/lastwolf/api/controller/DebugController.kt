@@ -99,7 +99,7 @@ class DebugController(
                     .shuffled()
                     .first()
             // 入村
-            villageCoordinator.participate(
+            villageCoordinator.participateWithoutCheck(
                 villageId = villageId,
                 playerId = playerId,
                 charaId = chara.charaId,
