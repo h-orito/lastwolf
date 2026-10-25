@@ -74,6 +74,8 @@ export const useAuth = () => {
     await firebaseAuth.signOut();
     authStore.setUser(null);
     authStore.setMyselfPlayer(null);
+    // 以前の Service Worker が保存した API の結果を残さない
+    if ("caches" in window) await caches.delete("api-cache").catch(() => false);
   };
 
   /**

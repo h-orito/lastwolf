@@ -169,22 +169,7 @@ export default defineNuxtConfig({
             },
           },
         },
-        // API呼び出し（NetworkFirst）
-        {
-          urlPattern: /^https:\/\/.*\/lastwolf\/.*/,
-          handler: "NetworkFirst",
-          options: {
-            cacheName: "api-cache",
-            networkTimeoutSeconds: 10,
-            expiration: {
-              maxEntries: 50,
-              maxAgeSeconds: 60 * 5, // 5分
-            },
-            cacheableResponse: {
-              statuses: [0, 200],
-            },
-          },
-        },
+        // API の結果はログイン中の人ごとに違うので保存しない (以前保存したものは plugins/clear-api-cache.client.ts で消す)
       ],
       // クリーンアップ設定
       cleanupOutdatedCaches: true,
