@@ -9,7 +9,6 @@ import com.ort.lastwolf.application.service.CharachipService
 import com.ort.lastwolf.application.service.MessageService
 import com.ort.lastwolf.application.service.PlayerService
 import com.ort.lastwolf.application.service.VillageService
-import com.ort.lastwolf.domain.model.charachip.Chara
 import com.ort.lastwolf.domain.model.message.Message
 import com.ort.lastwolf.domain.model.message.MessageContent
 import com.ort.lastwolf.domain.model.message.MessageTime
@@ -35,33 +34,17 @@ class CreatorController(
     private val villageCoordinator: VillageCoordinator,
     private val creatorDomainService: CreatorDomainService,
 ) {
-    // TODO: Issue #20 — updateVillageDifference / registerLeaveMessage の 2 段書き込みが @Transactional でガードされていない。
-    // cancel と同じ atomic 問題を抱えている。Coordinator 移行と合わせて整理する
     @PostMapping("/creator/village/{villageId}/kick")
     fun kick(
         @PathVariable("villageId") villageId: Int,
         @AuthenticationPrincipal user: LastwolfUser,
         @RequestBody @Validated body: CreatorKickBody,
     ) {
-        val village = villageService.findVillage(villageId)
-        val player = playerService.findPlayer(user)
-
-        if (user.authority != CDef.Authority.管理者 && village.creatorPlayer.id != player.id) {
-            throw LastwolfBusinessException("村建てか管理者しか使えません")
-        }
-
-        // キック
-        val changedVillage = village.leaveParticipant(body.targetId!!)
-        val participant = village.participants.first(body.targetId)
-        if (participant.player.id == 1) return // ダミーはキックできない
-        // シスメ
-        val chara: Chara = charachipService.findChara(participant.chara.id)
-        val updatedVillage = villageService.updateVillageDifference(village, changedVillage)
-        messageService.registerLeaveMessage(updatedVillage, chara)
+        villageCoordinator.kick(villageId, user, body.targetId!!)
     }
 
     // 認可は domain 層 (CreatorDomainService#assertCancelVillage) に集約。Controller → Coordinator 移行と
-     // 同 Controller の他エンドポイント (kick / say 等) の認可・トランザクション整理は Issue #20 で別途扱う。
+    // 同 Controller の他エンドポイント (say 等) の認可・トランザクション整理は Issue #20 で別途扱う。
     // @Transactional は updateVillageDifference + registerMessage の 2 段書き込みを atomic にするための暫定対応
     // （Spring AOP proxy で intercept されるため Controller 配置でも動作する）。
     @PostMapping("/creator/village/{villageId}/cancel")
