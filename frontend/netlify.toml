@@ -42,6 +42,14 @@ X-Frame-Options = "DENY"
 X-Content-Type-Options = "nosniff"
 X-XSS-Protection = "1; mode=block"
 Referrer-Policy = "strict-origin-when-cross-origin"
+# Content-Security-Policy（まずは Report-Only で様子を見る）
+# - script-src: Nuxt が index.html に埋め込むスクリプト（__NUXT__ / importmap）のため 'unsafe-inline'。
+#   apis.google.com は Firebase Auth のポップアップログイン、*.firebaseio.com は Realtime Database の long polling 用
+# - img-src: キャラチップ画像（wolfort.net）
+# - connect-src: API（wolfort.dev）、Firebase Auth / Realtime Database、
+#   Service Worker が画像をキャッシュするときの取得（wolfort.net）
+# - frame-src: Firebase Auth の iframe（authDomain は本番ドメイン固定なのでプレビューでも本番ドメインを読む）
+Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://*.firebaseio.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wolfort.net; font-src 'self'; connect-src 'self' https://wolfort.dev https://wolfort.net https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com; frame-src 'self' https://lastwolf.netlify.app https://lastwolf-b534f.firebaseapp.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 
 # 静的アセットのキャッシュ設定（ハッシュ付きファイル）
 [[headers]]
